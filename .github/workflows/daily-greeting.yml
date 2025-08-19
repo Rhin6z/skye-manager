@@ -60,10 +60,10 @@ jobs:
               "description": "${DESCS[$INDEX]}",
               "color": 16766720,
               "thumbnail": {
-                "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
+                "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif?ex=68a5b89b&is=68a4671b&hm=2bc283716f14281f2518ac14003d41ca9fd58200a446e21a7682d2cdb6b4f38b"
               },
               "footer": {
-                "text": "${FOOTERS[$INDEX]}",
+                "text": "${FOOTERS[$INDEX]} | by server dev <@399393175904714752>",
                 "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
               },
               "timestamp": "$TIMESTAMP"
@@ -110,10 +110,10 @@ jobs:
               "description": "${DESCS[$INDEX]}",
               "color": 16763904,
               "thumbnail": {
-                "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
+                "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif?ex=68a5b89b&is=68a4671b&hm=2bc283716f14281f2518ac14003d41ca9fd58200a446e21a7682d2cdb6b4f38b"
               },
               "footer": {
-                "text": "${FOOTERS[$INDEX]}",
+                "text": "${FOOTERS[$INDEX]} | by server dev <@399393175904714752>",
                 "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
               },
               "timestamp": "$TIMESTAMP"
@@ -160,10 +160,10 @@ jobs:
               "description": "${DESCS[$INDEX]}",
               "color": 16744448,
               "thumbnail": {
-                "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
+                "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif?ex=68a5b89b&is=68a4671b&hm=2bc283716f14281f2518ac14003d41ca9fd58200a446e21a7682d2cdb6b4f38b"
               },
               "footer": {
-                "text": "${FOOTERS[$INDEX]}",
+                "text": "${FOOTERS[$INDEX]} | by server dev <@399393175904714752>",
                 "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
               },
               "timestamp": "$TIMESTAMP"
@@ -210,10 +210,10 @@ jobs:
               "description": "${DESCS[$INDEX]}",
               "color": 8947848,
               "thumbnail": {
-                "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
+                "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif?ex=68a5b89b&is=68a4671b&hm=2bc283716f14281f2518ac14003d41ca9fd58200a446e21a7682d2cdb6b4f38b"
               },
               "footer": {
-                "text": "${FOOTERS[$INDEX]}",
+                "text": "${FOOTERS[$INDEX]} | by server dev <@399393175904714752>",
                 "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
               },
               "timestamp": "$TIMESTAMP"
