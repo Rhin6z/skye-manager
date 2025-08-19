@@ -28,7 +28,7 @@ jobs:
               "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
             },
             "footer": {
-              "text": "Semoga hari ini penuh berkah! | by server dev @399393175904714752 🌈",
+              "text": "Semoga hari ini penuh berkah! | by server dev <@399393175904714752> 🌈",
               "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
             },
             "timestamp": "'"$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"'"
@@ -42,7 +42,6 @@ jobs:
         curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
         -H "Content-Type: application/json" \
         -d '{
-          "content": "<@&1374047008829997157>",
           "embeds": [{
             "title": "☀️ Selamat Siang! Udah makan belum?",
             "description": "**Waktunya break juga nih!** 🛑\n\nEhh jangan lupa makan ya, nanti sakit perutnya gimana 😅\nIstirahat sebentar dari kerja keras kalian!\n\n*\"Take care of your body, its the only place you have to live.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇬🇧 Lunch Time Everyone!**\nDont skip your meal okay! Your body needs fuel 🔋",
@@ -65,7 +64,6 @@ jobs:
         curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
         -H "Content-Type: application/json" \
         -d '{
-          "content": "<@&1374047008829997157>",
           "embeds": [{
             "title": "🌙 Selamat Malam! Udah ngantuk belum?",
             "description": "**Waktunya istirahat nih!** 🛏️\n\nHari ini udah capek banget ya! Sekarang saatnya recharge energi 🔋\nJangan begadang terus, besok masih ada aktivitas lagi!\n\n*\"Rest when you are weary. Refresh and renew yourself.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇬🇧 Good Night Everyone!**\nTime to rest and recharge! Sweet dreams await 🌟",
