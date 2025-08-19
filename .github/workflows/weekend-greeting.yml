@@ -45,16 +45,14 @@ jobs:
           idx=$((RANDOM % ${#titles[@]}))
           export TITLE="${titles[$idx]}" DESC="${descs[$idx]}" FOOT="${footers[$idx]}" COLOR=16766720 TS
 
-          python3 - <<'PY' > payload.json
+          python3 - <<EOF > payload.json
 import json, os
 payload = {
     "embeds": [{
         "title": os.environ["TITLE"],
         "description": os.environ["DESC"],
         "color": int(os.environ["COLOR"]),
-        "thumbnail": {
-            "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
-        },
+        "thumbnail": {"url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"},
         "footer": {
             "text": os.environ["FOOT"],
             "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
@@ -63,7 +61,7 @@ payload = {
     }]
 }
 print(json.dumps(payload))
-PY
+EOF
           curl -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" -H "content-type: application/json" --data @payload.json
 
       - name: send afternoon greeting (weekend, rotating)
