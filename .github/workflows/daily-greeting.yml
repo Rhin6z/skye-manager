@@ -1,4 +1,4 @@
-name: Daily Discord Greeting
+name: daily discord greeting — bilingual (english-first)
 
 on:
   schedule:
@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
     inputs:
       greeting_type:
-        description: 'Select greeting type'
+        description: 'select greeting type'
         required: true
         default: 'morning'
         type: choice
@@ -28,7 +28,7 @@ jobs:
   send-greeting:
     runs-on: ubuntu-latest
     steps:
-      - name: Send Morning Greeting
+      - name: send morning greeting
         if: github.event.schedule == '0 0 * * 1-5' || (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'morning')
         run: |
           TS="$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
@@ -37,17 +37,17 @@ jobs:
             -d @- <<JSON
           {
             "embeds": [{
-              "title": "🌅 Good Morning Everyone!",
-              "description": "**Rise and shine!**\\n\\nStart your day with intention. One focused hour > ten busy ones.\\n\\n> Have a productive day! | by server dev <@399393175904714752>",
+              "title": "🌅 good morning, team",
+              "description": "[yaaa, haloww chatt]\\n\\nset the tone: pick one tiny win to start. clean desk, clean mind, clean commit.\\n\\n> lezgoo — steady pace beats random rush. | by server dev <@399393175904714752>",
               "color": 16766720,
               "thumbnail": {"url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"},
-              "footer": {"text": "Small steps. Big wins.", "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"},
+              "footer": {"text": "sip kopi, ship kode ☕", "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"},
               "timestamp": "$TS"
             }]
           }
           JSON
 
-      - name: Send Afternoon Greeting
+      - name: send afternoon greeting
         if: github.event.schedule == '0 5 * * 1-5' || (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'afternoon')
         run: |
           TS="$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
@@ -56,17 +56,17 @@ jobs:
             -d @- <<JSON
           {
             "embeds": [{
-              "title": "🌞 Midday Boost",
-              "description": "**Halfway there.**\\n\\nStretch, hydrate, then land one meaningful task before you break.\\n\\n> Keep it moving! | by server dev <@399393175904714752>",
+              "title": "🌞 midday boost",
+              "description": "[udah lunch belum? minum dulu, gengs]\\n\\nlock in a 25-min focus, then breathe. one meaningful task > five busy tabs.\\n\\n> keep it rolling, pelan tapi nancep. | by server dev <@399393175904714752>",
               "color": 16763904,
               "thumbnail": {"url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"},
-              "footer": {"text": "Fuel your body, fuel your brain.", "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"},
+              "footer": {"text": "hydrate, then iterate", "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"},
               "timestamp": "$TS"
             }]
           }
           JSON
 
-      - name: Send Evening Greeting
+      - name: send evening greeting
         if: github.event.schedule == '0 10 * * 1-5' || (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'evening')
         run: |
           TS="$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
@@ -75,17 +75,17 @@ jobs:
             -d @- <<JSON
           {
             "embeds": [{
-              "title": "🌆 Evening Check-in",
-              "description": "**How’s your day going?**\\n\\nWrap one loose end so tomorrow starts cleaner.\\n\\n> You’re doing great. | by server dev <@399393175904714752>",
+              "title": "🌆 evening check-in",
+              "description": "[selooww dulu] how’s the day going? wrap one loose end so tomorrow starts lighter. note: done, pending, next.\\n\\n> you got this — lanjut tipis tipis. | by server dev <@399393175904714752>",
               "color": 16744448,
               "thumbnail": {"url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"},
-              "footer": {"text": "Reflect, plan, and keep moving.", "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"},
+              "footer": {"text": "tidy desk, tidy brain", "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"},
               "timestamp": "$TS"
             }]
           }
           JSON
 
-      - name: Send Night Greeting
+      - name: send night greeting
         if: github.event.schedule == '0 15 * * 1-5' || (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'night')
         run: |
           TS="$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
@@ -94,11 +94,11 @@ jobs:
             -d @- <<JSON
           {
             "embeds": [{
-              "title": "🌙 Night Wind Down",
-              "description": "**You made it through the day.**\\n\\nTime to unplug, breathe, and reset. Sleep well so tomorrow hits different.\\n\\n> Rest well, team. See you tomorrow. | by server dev <@399393175904714752>",
+              "title": "🌙 night wind down",
+              "description": "[udah capek? wajar kok]\\n\\nunplug a bit: mute 2 noisiest notifs, breathe 4-4-4, jot 1 thing for tomorrow. sleep is meta.\\n\\n> good night — besok gas lagi, no drama. | by server dev <@399393175904714752>",
               "color": 8947848,
               "thumbnail": {"url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"},
-              "footer": {"text": "Rest well, recharge, repeat ✨", "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"},
+              "footer": {"text": "recharge mode: on", "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"},
               "timestamp": "$TS"
             }]
           }

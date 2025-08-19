@@ -1,104 +1,105 @@
-name: Weekend Discord Greeting
+name: weekend discord greeting — bilingual (english-first)
 
 on:
   schedule:
-    # Sabtu pagi jam 9:00 WIB (02:00 UTC = 9:00 WIB)
-    - cron: '0 2 * * 6'
-    # Sabtu sore jam 15:00 WIB (08:00 UTC = 15:00 WIB)
-    - cron: '0 8 * * 6'
-    # Minggu pagi jam 10:00 WIB (03:00 UTC = 10:00 WIB)
-    - cron: '0 3 * * 0'
-    # Minggu sore jam 17:00 WIB (10:00 UTC = 17:00 WIB)
-    - cron: '0 10 * * 0'
+    # 07:00 WIB (00:00 UTC) — sat & sun
+    - cron: '0 0 * * 6,0'
+    # 12:00 WIB (05:00 UTC)
+    - cron: '0 5 * * 6,0'
+    # 17:00 WIB (10:00 UTC)
+    - cron: '0 10 * * 6,0'
+    # 22:00 WIB (15:00 UTC)
+    - cron: '0 15 * * 6,0'
+
+  workflow_dispatch:
+    inputs:
+      greeting_type:
+        description: 'select greeting type (weekend)'
+        required: true
+        default: 'morning'
+        type: choice
+        options:
+          - morning
+          - afternoon
+          - evening
+          - night
 
 jobs:
-  send-weekend-greeting:
+  send-greeting:
     runs-on: ubuntu-latest
     steps:
-    - name: Send Saturday Morning Greeting
-      if: github.event.schedule == '0 2 * * 6'
-      run: |
-        curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
-        -H "Content-Type: application/json" \
-        -d '{
-          "content": "<@&1374047008829997157>",
-          "embeds": [{
-            "title": "🌅 Weekend Mode Activated!",
-            "description": "**Finally, it's Saturday!** 🎉\n\nTime to unwind, pursue your passions, and enjoy some well-deserved downtime. Whether you're being productive or just relaxing, make it count.\n\n*\"Weekends are a celebration for the good work done.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇮🇩 Selamat Akhir Pekan!**\nWaktunya santai dan nikmati weekend! ✨\n\n> Have an amazing weekend! | by server dev <@399393175904714752> 🌟",
-            "color": 16766720,
-            "thumbnail": {
-              "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
-            },
-            "footer": {
-              "text": "Weekend goals: Rest, recharge, and enjoy! ⚡",
-              "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
-            },
-            "timestamp": "'"$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"'"
-          }]
-        }'
+      - name: send morning greeting (weekend)
+        if: github.event.schedule == '0 0 * * 6,0' || (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'morning')
+        run: |
+          TS="$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
+          curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            -d @- <<JSON
+          {
+            "embeds": [{
+              "title": "🌅 happy weekend, good morning",
+              "description": "[bangun santai aja, bro sis]\\n\\nlow effort wins: 10-min tidy, light stretch, sunlight hit. kalau mau tidur lagi juga gapapa.\\n\\n> soft start, strong mood. | by server dev <@399393175904714752>",
+              "color": 16766720,
+              "thumbnail": {"url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"},
+              "footer": {"text": "weekend pace: santuy tapi happy", "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"},
+              "timestamp": "$TS"
+            }]
+          }
+          JSON
 
-    - name: Send Saturday Afternoon Greeting
-      if: github.event.schedule == '0 8 * * 6'
-      run: |
-        curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
-        -H "Content-Type: application/json" \
-        -d '{
-          "content": "<@&1374047008829997157>",
-          "embeds": [{
-            "title": "☀️ Saturday Afternoon Vibes",
-            "description": "**How's your weekend going so far?** 🌞\n\nHopefully you're finding the perfect balance between productivity and relaxation. Remember to take care of yourself and stay hydrated.\n\n*\"Self-care is not selfish, it's essential.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇮🇩 Sabtu Sore yang Santai!**\nSemoga weekend kalian menyenangkan! 🌈\n\n> Stay refreshed and energized! | by server dev <@399393175904714752> 🎊",
-            "color": 16776960,
-            "thumbnail": {
-              "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
-            },
-            "footer": {
-              "text": "Balance is key to a perfect weekend! ⚖️",
-              "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
-            },
-            "timestamp": "'"$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"'"
-          }]
-        }'
+      - name: send afternoon greeting (weekend)
+        if: github.event.schedule == '0 5 * * 6,0' || (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'afternoon')
+        run: |
+          TS="$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
+          curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            -d @- <<JSON
+          {
+            "embeds": [{
+              "title": "🌞 weekend midday",
+              "description": "[makan enak dulu, baru lanjut seru2an]\\n\\nwatch/read something that sparks you for 30 mins. joy bar naik dulu baru grind.\\n\\n> have fun, tapi pelan pelan. | by server dev <@399393175904714752>",
+              "color": 16763904,
+              "thumbnail": {"url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"},
+              "footer": {"text": "vitamin d + playlist favorit", "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"},
+              "timestamp": "$TS"
+            }]
+          }
+          JSON
 
-    - name: Send Sunday Morning Greeting
-      if: github.event.schedule == '0 3 * * 0'
-      run: |
-        curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
-        -H "Content-Type: application/json" \
-        -d '{
-          "content": "<@&1374047008829997157>",
-          "embeds": [{
-            "title": "🌻 Sunday Funday!",
-            "description": "**Happy Sunday, everyone!** ☀️\n\nIt's the perfect day to slow down, reflect on the week ahead, and spend quality time with what matters most to you.\n\n*\"Sunday is the perfect day to refuel your soul.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇮🇩 Selamat Hari Minggu!**\nNikmati hari terakhir weekend dengan tenang! 🌸\n\n> Make every moment count! | by server dev <@399393175904714752> 🎭",
-            "color": 16744192,
-            "thumbnail": {
-              "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
-            },
-            "footer": {
-              "text": "Sundays are for soul recharging! 🔋",
-              "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
-            },
-            "timestamp": "'"$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"'"
-          }]
-        }'
+      - name: send evening greeting (weekend)
+        if: github.event.schedule == '0 10 * * 6,0' || (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'evening')
+        run: |
+          TS="$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
+          curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            -d @- <<JSON
+          {
+            "embeds": [{
+              "title": "🌆 golden hour vibes",
+              "description": "[foto langit dikit, kirim ke chat]\\n\\nstep outside for 10 minutes. breathe. kalau mager, buka jendela juga jadi.\\n\\n> slow it down, nikmatin momennya. | by server dev <@399393175904714752>",
+              "color": 16744448,
+              "thumbnail": {"url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"},
+              "footer": {"text": "sunset therapy, murah meriah", "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"},
+              "timestamp": "$TS"
+            }]
+          }
+          JSON
 
-    - name: Send Sunday Evening Greeting
-      if: github.event.schedule == '0 10 * * 0'
-      run: |
-        curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
-        -H "Content-Type: application/json" \
-        -d '{
-          "content": "<@&1374047008829997157>",
-          "embeds": [{
-            "title": "🌆 Sunday Evening Prep",
-            "description": "**Weekend's coming to an end, but that's okay!** ⏰\n\nHopefully you've had a refreshing break and feel ready to tackle the new week with renewed energy and focus.\n\n*\"Sunday evening: the calm before the Monday storm.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇮🇩 Minggu Sore - Persiapan Senin!**\nSiap menghadapi minggu baru dengan semangat! 🚀\n\n> Ready to conquer the new week! | by server dev <@399393175904714752> 💫",
-            "color": 9055202,
-            "thumbnail": {
-              "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
-            },
-            "footer": {
-              "text": "New week, new opportunities ahead! 🌟",
-              "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
-            },
-            "timestamp": "'"$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"'"
-          }]
-        }'
+      - name: send night greeting (weekend)
+        if: github.event.schedule == '0 15 * * 6,0' || (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'night')
+        run: |
+          TS="$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
+          curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            -d @- <<JSON
+          {
+            "embeds": [{
+              "title": "🌙 weekend night reset",
+              "description": "[scroll boleh, tapi tidur tetep nomor satu]\\n\\nhot shower, comfy clothes, airplane mode kalau perlu. tulis satu hal yang bikin kamu senyum hari ini.\\n\\n> good night — besok santai lagi, no pressure. | by server dev <@399393175904714752>",
+              "color": 8947848,
+              "thumbnail": {"url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"},
+              "footer": {"text": "see u tomorrow, same vibe ✨", "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"},
+              "timestamp": "$TS"
+            }]
+          }
+          JSON
