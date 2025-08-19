@@ -9,35 +9,44 @@ on:
     # Malam jam 21:00 WIB (14:00 UTC = 21:00 WIB)
     - cron: '0 14 * * 1-5'
   workflow_dispatch:
+    inputs:
+      greeting_type:
+        description: 'Select greeting type'
+        required: true
+        default: 'morning'
+        type: choice
+        options:
+        - morning
+        - afternoon 
+        - evening
 
 jobs:
   send-greeting:
     runs-on: ubuntu-latest
     steps:
     - name: Send Morning Greeting
-      if: github.event.schedule == '0 0 * * 1-5' || github.event_name == 'workflow_dispatch'
+      if: github.event.schedule == '0 0 * * 1-5' || (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'morning')
       run: |
         curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
         -H "Content-Type: application/json" \
         -d '{
           "embeds": [{
             "title": "🌅 Selamat Pagi Semuanya!",
-            "description": "**Hayoo bangun-bangun!** \n\nWaktunya memulai hari dengan semangat baru! Jangan sampai ketiduran lagi ya 😊\n\n*\"The future belongs to those who believe in the beauty of their dreams.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇬🇧 Good Morning Everyone!**\nTime to wake up and shine! Dont be lazy today 💪",
+            "description": "**Hayoo bangun-bangun!** \n\nWaktunya memulai hari dengan semangat baru! Jangan sampai ketiduran lagi ya 😊\n\n*\"The future belongs to those who believe in the beauty of their dreams.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇬🇧 Good Morning Everyone!**\nTime to wake up and shine! Dont be lazy today 💪\n\nMessage by <@399393175904714752>",
             "color": 16766720,
             "thumbnail": {
               "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
             },
             "footer": {
-              "text": "Semoga hari ini penuh berkah! | by server dev <@399393175904714752> 🌈",
+              "text": "Semoga hari ini penuh berkah! 🌈",
               "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
             },
             "timestamp": "'"$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"'"
           }]
-        }' \
-        "${{ secrets.DISCORD_WEBHOOK_URL }}"
+        }'
 
     - name: Send Afternoon Greeting  
-      if: github.event.schedule == '0 5 * * 1-5'
+      if: github.event.schedule == '0 5 * * 1-5' || (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'afternoon')
       run: |
         curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
         -H "Content-Type: application/json" \
@@ -59,7 +68,7 @@ jobs:
         "${{ secrets.DISCORD_WEBHOOK_URL }}"
 
     - name: Send Evening Greeting
-      if: github.event.schedule == '0 14 * * 1-5'
+      if: github.event.schedule == '0 14 * * 1-5' || (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'evening')
       run: |
         curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
         -H "Content-Type: application/json" \
