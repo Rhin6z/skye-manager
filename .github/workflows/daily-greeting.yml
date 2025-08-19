@@ -1,0 +1,81 @@
+# File: .github/workflows/daily-greeting.yml
+name: Daily Discord Greeting - Ekspresif Edition
+
+on:
+  schedule:
+    # Pagi jam 7:00 WIB (00:00 UTC = 7:00 WIB)
+    - cron: '0 0 * * *'
+    # Siang jam 12:00 WIB (05:00 UTC = 12:00 WIB)  
+    - cron: '0 5 * * *'
+    # Malam jam 21:00 WIB (14:00 UTC = 21:00 WIB)
+    - cron: '0 14 * * *'
+
+jobs:
+  send-greeting:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Send Morning Greeting
+      if: github.event.schedule == '0 0 * * *'
+      run: |
+        curl -H "Content-Type: application/json" \
+        -X POST \
+        -d '{
+          "embeds": [{
+            "title": "🌅 Selamaaat Pagiii Semuanyaaa! ☕✨",
+            "description": "**Hayooo bangun-banguun!** 😴➡️😊\n\nWaktunya memulai hari dengan semangaaat baru! Jangan sampe ketiduran lagiii yaaa~ 🤭\n\n*\"The future belongs to those who believe in the beauty of their dreams.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇬🇧 Good Morninggg Everyone!**\nTime to wake up and shine! Dont be lazy todayyy~ 💪\n*Rise and grind, dreamers!* ⭐",
+            "color": 16766720,
+            "thumbnail": {
+              "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
+            },
+            "footer": {
+              "text": "Semoga hari ini penuh berkaaaah! 🌈",
+              "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
+            },
+            "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'"
+          }]
+        }' \
+        ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+    - name: Send Afternoon Greeting  
+      if: github.event.schedule == '0 5 * * *'
+      run: |
+        curl -H "Content-Type: application/json" \
+        -X POST \
+        -d '{
+          "embeds": [{
+            "title": "☀️ Selamaaat Siaaang! Udah makan beluuum? 🍽️",
+            "description": "**Waktunya break jugaaa nih!** 🛑\n\nEhh jangan lupa makaaan yaaa, nanti sakit perutnya gimanaaa~ 😅\nIstirahat sebentar dari kerja keras kalian! 💼➡️🏖️\n\n*\"Take care of your body, its the only place you have to live.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇬🇧 Lunch Time Everyoneee!**\nDont skip your meal okayyy~ Your body needs fuel! 🔋\n*Healthy body, happy mind!* 😊",
+            "color": 16776960,
+            "thumbnail": {
+              "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
+            },
+            "footer": {
+              "text": "Jaga kesehatan selaluuu! Stay healthy! 💚",
+              "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
+            },
+            "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'"
+          }]
+        }' \
+        ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+    - name: Send Evening Greeting
+      if: github.event.schedule == '0 14 * * *' 
+      run: |
+        curl -H "Content-Type: application/json" \
+        -X POST \
+        -d '{
+          "embeds": [{
+            "title": "🌙 Selamaaat Malaaam! Udah ngantuk beluuum? 😴",
+            "description": "**Waktunya istirahaaat niih!** 🛏️\n\nHari ini udah capek bangeeet yaaa~ Sekarang saatnya recharge energi! 🔋\nJangan begadang teruuus, besok masih ada aktivitas lagiii! 📅\n\n*\"Rest when you are weary. Refresh and renew yourself.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇬🇧 Good Night Everyoneee!**\nTime to rest and rechargeee~ Sweet dreams await! 🌟\n*Tomorrow is another day to shine!* ✨",
+            "color": 6967348,
+            "thumbnail": {
+              "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
+            },
+            "footer": {
+              "text": "Mimpi indah semuanyaaa! Sweet dreams! 🌙💤",
+              "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
+            },
+            "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'"
+          }]
+        }' \
+        ${{ secrets.DISCORD_WEBHOOK_URL }}
