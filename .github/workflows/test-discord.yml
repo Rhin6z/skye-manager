@@ -2,8 +2,6 @@ name: Test Discord Webhook
 
 on:
   workflow_dispatch:  # Manual trigger
-  push:
-    branches: [ main ]
 
 jobs:
   test-webhook:
