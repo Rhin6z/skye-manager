@@ -8,6 +8,7 @@ on:
     - cron: '0 5 * * 1-5'
     # Malam jam 21:00 WIB (14:00 UTC = 21:00 WIB)
     - cron: '0 14 * * 1-5'
+  workflow_dispatch:
 
 jobs:
   send-greeting:
