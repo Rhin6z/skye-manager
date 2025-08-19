@@ -1,4 +1,4 @@
-name: Daily Discord Greeting - Cool Edition (Fixed)
+name: Daily Discord Greeting
 
 on:
   schedule:
