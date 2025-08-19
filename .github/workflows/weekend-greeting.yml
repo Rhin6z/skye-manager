@@ -29,8 +29,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - name: send morning greeting (weekend, rotating)
-        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'morning' || github.event.schedule == '0 0 * * 6,0' }}
+      - name: send morning greeting (rotating)
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'morning' || github.event.schedule == '0 0 * * 1-5' }}
         run: |
           set -euo pipefail
           TS="$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
@@ -47,8 +47,22 @@ jobs:
 
           python3 - <<'PY' > payload.json
 import json, os
-print(json.dumps({"embeds":[{"title":os.environ['TITLE'],"description":os.environ['DESC'],"color":int(os.environ['COLOR']),"thumbnail":{"url":"https://cdn.discordapp.com/emojis/692428734822645770.gif"},"footer":{"text":os.environ['FOOT'],"icon_url":"https://cdn.discordapp.com/emojis/692428869338931240.png"},"timestamp":os.environ['TS']}]}
-))
+payload = {
+    "embeds": [{
+        "title": os.environ["TITLE"],
+        "description": os.environ["DESC"],
+        "color": int(os.environ["COLOR"]),
+        "thumbnail": {
+            "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
+        },
+        "footer": {
+            "text": os.environ["FOOT"],
+            "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
+        },
+        "timestamp": os.environ["TS"]
+    }]
+}
+print(json.dumps(payload))
 PY
           curl -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" -H "content-type: application/json" --data @payload.json
 
