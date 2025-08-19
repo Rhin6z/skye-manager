@@ -1,0 +1,115 @@
+name: Daily Discord Greeting - Cool Edition (Fixed)
+
+on:
+  schedule:
+    # Pagi jam 7:00 WIB (00:00 UTC = 7:00 WIB)
+    - cron: '0 0 * * 1-5'
+    # Siang jam 12:00 WIB (05:00 UTC = 12:00 WIB)  
+    - cron: '0 5 * * 1-5'
+    # Sore jam 17:00 WIB (10:00 UTC = 17:00 WIB)
+    - cron: '0 10 * * 1-5'
+      # Malam jam 22:00 WIB (15:00 UTC = 22:00 WIB)
+    - cron: '0 15 * * 1-5'
+workflow_dispatch:
+    inputs:
+      greeting_type:
+        description: 'Select greeting type'
+        required: true
+        default: 'morning'
+        type: choice
+        options:
+        - morning
+        - afternoon 
+        - evening
+        - night
+jobs:
+  send-greeting:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Send Morning Greeting
+      if: github.event.schedule == '0 0 * * 1-5' || (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'morning')
+      run: |
+        curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+        -H "Content-Type: application/json" \
+        -d '{
+
+          "embeds": [{
+            "title": "🌅 Good Morning Everyone!",
+            "description": "**Rise and shine!** \n\nStart your day with purpose and positive energy. Let's make today count and achieve something great.\n\n*\"The future belongs to those who believe in the beauty of their dreams.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇮🇩 Selamat Pagi Semuanya!**\nWaktunya memulai hari dengan semangat baru! 💪\n\n> Have a productive day! | by server dev <@399393175904714752>",
+            "color": 16766720,
+            "thumbnail": {
+              "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
+            },
+            "footer": {
+              "text": "Start strong, finish stronger! 🌟",
+              "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
+            },
+            "timestamp": "'"$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"'"
+          }]
+        }'
+
+    - name: Send Afternoon Greeting  
+      if: github.event.schedule == '0 5 * * 1-5' || (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'afternoon')
+      run: |
+        curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+        -H "Content-Type: application/json" \
+        -d '{
+
+          "embeds": [{
+            "title": "☀️ Lunch Break Time!",
+            "description": "**Time to refuel and recharge!** 🍽️\n\nTake a proper break, enjoy your meal, and give your mind some rest. You've been working hard this morning.\n\n*\"Take care of your body, it's the only place you have to live.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇮🇩 Selamat Makan Siang!**\nJangan lupa istirahat dan jaga kesehatan 🔋\n\n> Stay healthy and energized! | by server dev <@399393175904714752> 💚",
+            "color": 16776960,
+            "thumbnail": {
+              "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
+            },
+            "footer": {
+              "text": "Fuel your body, fuel your dreams 🍽️",
+              "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
+            },
+            "timestamp": "'"$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"'"
+          }]
+        }'
+
+    - name: Send Evening Greeting
+      if: github.event.schedule == '0 10 * * 1-5' || (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'evening')
+      run: |
+        curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+        -H "Content-Type: application/json" \
+        -d '{
+
+          "embeds": [{
+            "title": "🌆 Evening Check-in!",
+            "description": "**How was your day today?** 🤔\n\nHopefully you've accomplished something meaningful and are feeling satisfied with your progress. Time to wrap up and prepare for tomorrow.\n\n*\"Success is the sum of small efforts repeated day in and day out.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇮🇩 Selamat Sore Semuanya!**\nSemoga hari ini produktif dan bermakna ✨\n\n> Keep up the great work! | by server dev <@399393175904714752> 🌟",
+            "color": 16744448,
+            "thumbnail": {
+              "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
+            },
+            "footer": {
+              "text": "Reflect, plan, and keep moving forward! 🚀",
+              "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
+            },
+            "timestamp": "'"$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"'"
+          }]
+        }'
+
+    - name: Send Night Greeting
+      if: github.event.schedule == '0 15 * * 1-5' || (github.event_name == 'workflow_dispatch' && (github.event.inputs.greeting_type == 'night' || github.event.inputs.greeting_type == 'malam'))
+      run: |
+        curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+        -H "Content-Type: application/json" \
+        -d '{
+
+          "embeds": [{
+            "title": "🌙 Night Wind Down",
+            "description": "**You made it through the day.**\n\nTime to unplug, breathe, and reset. Sleep well so tomorrow hits different.\n\n> Rest well, team. See you tomorrow. | by server dev <@399393175904714752>",
+            "color": 8947848,
+            "thumbnail": {
+              "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
+            },
+            "footer": {
+              "text": "Rest well, recharge, repeat ✨",
+              "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
+            },
+            "timestamp": "'"$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"' 
+          }]
+        }'
