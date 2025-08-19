@@ -40,9 +40,9 @@ jobs:
           )
           
           DESCS=(
-            "[haloww chatt]\\n\\nlowkey warm-up: pick 1 tiny win to start today. maybe clean your workspace or prep that coffee ritual.\\n\\n> lezgoo, small steps lead to big wins.\\n\\n> server dev - <@399393175904714752>"
-            "[pagiii gng]\\n\\nsip coffee, set intention, breathe deep. what's one thing you wanna ship today?\\n\\n> small steps, steady progress.\\n\\n> server dev - <@399393175904714752>"
-            "[yaa, morning fam]\\n\\nnew day, new reps, fresh energy. drop your morning vibe in chat!\\n\\n> steady momentum beats rushed chaos.\\n\\n> server dev - <@399393175904714752>"
+            "[heyyo geng, mari kita gas]\\n\\nlowkey warm-up: pick 1 tiny win to start today. beresin workspace kek, atau bikin kopi dulu gih.\\n\\n> gas tipis-tipis, small wins juga wins.\\n\\n> server dev - <@399393175904714752>"
+            "[skuyy ngopi dulu gaes]\\n\\nngopi dulu, set goals, tarik napas. mau ngerjain apa nih hari ini bestie?\\n\\n> santuy tapi jalan terus ya.\\n\\n> server dev - <@399393175904714752>"
+            "[whaddup squad, morning check]\\n\\nhari baru, semangat baru! share morning mood lu di chat dong.\\n\\n> pelan-pelan nga papa yang penting jalan.\\n\\n> server dev - <@399393175904714752>"
           )
           
           FOOTERS=(
@@ -88,10 +88,10 @@ jobs:
           )
           
           DESCS=(
-            "[udah lunch? minum dulu, gng]\\n\\nlock 25-min focus, then breathe deep. satu progress bermakna > lima tab random browsing.\\n\\n> keep it rolling, pelan tapi nancep di hati.\\n\\n> server dev - <@399393175904714752>"
-            "[halo halo, siang dulu nih]\\n\\nwhat's your one thing before break? drop it di chat - kita dorong bareng, support each other.\\n\\n> less noise, more meaningful signal.\\n\\n> server dev - <@399393175904714752>"
-            "[lanjut tipis tipis ya]\\n\\nstretch those muscles, refill water bottle, ship a tiny update - consistency is king.\\n\\n> progress over perfection, always.\\n\\n> server dev - <@399393175904714752>"
-            "[ayo ayo, power hour dikit]\\n\\nno doomscroll, just one clean commit or small task done. bet you can do it!\\n\\n> ship small, ship often, ship with love.\\n\\n> server dev - <@399393175904714752>"
+            "[dah makan belom nih? jangan telat makan ya]\\n\\nfokus 25 menit dulu, terus break bentar. progress dikit > scroll tiktok mulu.\\n\\n> santuy tapi jalan terus bestie.\\n\\n> server dev - <@399393175904714752>"
+            "[yo waddup, masih semangat kan?]\\n\\nmau achieve apa sebelum break? share di chat - kita support bareng yak.\\n\\n> slow but sure, gang!\\n\\n> server dev - <@399393175904714752>"
+            "[gas dikit lagi gaes]\\n\\nstretch dulu, isi botol, push update dikit - konsisten > sempurna.\\n\\n> jangan lupa istirahat ya bestie.\\n\\n> server dev - <@399393175904714752>"
+            "[skuy power hour dulu]\\n\\nstop doomscroll, gas commit kecil atau task ringan. pasti bisa kok!\\n\\n> yang penting jalan terus gaes.\\n\\n> server dev - <@399393175904714752>"
           )
           
           FOOTERS=(
@@ -138,10 +138,10 @@ jobs:
           )
           
           DESCS=(
-            "[gimana harinya? cerita dikit yuk]\\n\\nwrap one loose end biar besok startnya ringan - categorize: done, pending, next action.\\n\\n> proud of you, keep going strong.\\n\\n> server dev - <@399393175904714752>"
-            "[selow dulu, tarik napas dalam]\\n\\nshare your best moment today - besar/kecil gapapa, we celebrate all wins here.\\n\\n> you did enough today, for real.\\n\\n> server dev - <@399393175904714752>"
-            "[halo tim, finish strong bareng]\\n\\nclose one tab, jot one note for tomorrow, log off with peace of mind.\\n\\n> you're allowed to slow down, it's okay.\\n\\n> server dev - <@399393175904714752>"
-            "[golden hour check-in time]\\n\\nif mager, at least tidy desk 2 menit - tiny reset, big positive vibe shift.\\n\\n> tomorrow you will definitely thank you.\\n\\n> server dev - <@399393175904714752>"
+            "[gimana hari ini bestie? share dong]\\n\\nberesin kerjaan dikit biar besok fresh - list dulu: done, pending, next move.\\n\\n> proud of you sih, fr fr.\\n\\n> server dev - <@399393175904714752>"
+            "[time to slow down gaes]\\n\\nshare highlight hari ini dong - kecil gede gapapa, we celebrate everything here.\\n\\n> udah cukup kok hari ini, istirahat gih.\\n\\n> server dev - <@399393175904714752>"
+            "[halo squad, gas closing strong]\\n\\ntutup tab, notes buat besok, logout dengan tenang.\\n\\n> gaskeun pelan-pelan aja.\\n\\n> server dev - <@399393175904714752>"
+            "[golden hour check yok]\\n\\nkalo mager, at least beresin meja 2 menit - reset mini, vibe maksimal.\\n\\n> besok pasti berterimakasih kok.\\n\\n> server dev - <@399393175904714752>"
           )
           
           FOOTERS=(
@@ -188,10 +188,10 @@ jobs:
           )
           
           DESCS=(
-            "[malam semua - good job today]\\n\\nmute 2 notifs paling berisik, breathe 4-4-4, tulis satu hal yang bikin kamu senyum hari ini.\\n\\n> rest is part of the plan, good night.\\n\\n> server dev - <@399393175904714752>"
-            "[yaa, waktunya cooldown]\\n\\nunplug a bit - lamp dim, mind calm. besok gas lagi, no rush no drama, santai aja.\\n\\n> sleep easy, gng. sweet dreams.\\n\\n> server dev - <@399393175904714752>"
-            "[thank you for today's effort]\\n\\ndrop one tiny win di chat, lalu tutup layar with gratitude. sisanya besok - no cap.\\n\\n> good night, fam. rest well.\\n\\n> server dev - <@399393175904714752>"
-            "[last call before good night]\\n\\nwash face, water sip, airplane mode if needed - then lights off, mind off.\\n\\n> recharge mode: officially activated.\\n\\n> server dev - <@399393175904714752>"
+            "[waktunya cooling down bestie]\\n\\nmute notif yang berisik, tarik napas 4-4-4, tulis satu hal yang bikin happy hari ini.\\n\\n> istirahat itu wajib, gada nego.\\n\\n> server dev - <@399393175904714752>"
+            "[yok waktunya tidur gaes]\\n\\nunplug bentar - lamp dim, pikiran clear. besok gas lagi, no drama no rusuh.\\n\\n> bobo yang nyenyak ya bestie.\\n\\n> server dev - <@399393175904714752>"
+            "[makasih effort hari ini squad]\\n\\nshare mini win di chat, trus tidur dengan damai. sisanya besok aja - fr fr.\\n\\n> good night fam, rest well.\\n\\n> server dev - <@399393175904714752>"
+            "[last call sebelum bobo gaes]\\n\\ncuci muka, minum air putih, airplane mode kalo perlu - then bobo time.\\n\\n> recharge mode: on gaes.\\n\\n> server dev - <@399393175904714752>"
           )
           
           FOOTERS=(
