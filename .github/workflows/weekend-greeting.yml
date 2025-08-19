@@ -1,20 +1,20 @@
-name: weekend discord greeting - rotating (english-first)
+name: daily discord greeting - rotating (english-first)
 
 on:
   schedule:
-    # 07:00 WIB (00:00 UTC) - weekends only
-    - cron: '0 0 * * 6,0'
+    # 07:00 WIB (00:00 UTC) - weekdays
+    - cron: '0 0 * * 1-5'
     # 12:00 WIB (05:00 UTC)
-    - cron: '0 5 * * 6,0'
+    - cron: '0 5 * * 1-5'
     # 17:00 WIB (10:00 UTC)
-    - cron: '0 10 * * 6,0'
+    - cron: '0 10 * * 1-5'
     # 22:00 WIB (15:00 UTC)
-    - cron: '0 15 * * 6,0'
+    - cron: '0 15 * * 1-5'
 
   workflow_dispatch:
     inputs:
       greeting_type:
-        description: 'select greeting type (weekend)'
+        description: 'select greeting type'
         required: true
         default: 'morning'
         type: choice
@@ -29,29 +29,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: send morning greeting (rotating)
-        if: (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'morning') || github.event.schedule == '0 0 * * 6,0'
+        if: (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'morning') || github.event.schedule == '0 0 * * 1-5'
         run: |
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
           
           TITLES=(
-            "🌅 happy weekend, good morning"
-            "🌅 saturday/sunday vibes"
-            "🌅 weekend soft start"
+            "🌅 rise and grind, no cap"
+            "🌅 periodt! morning is served"
+            "🌅 wakey wakey it's slay o'clock"
+            "🌅 bestie energy: activated"
+            "🌅 main character morning fr"
+            "🌅 time to touch grass and win"
           )
           
           DESCS=(
-            "[bangun santuy aja bestie]\\n\\nberesin kamar 10 menit, stretching dikit, touch some grass. mau rebahan lagi juga gpp.\\n\\n> weekend vibes: activated.\\n\\n> server dev - <@399393175904714752>"
-            "[gm squad, happy weekend!]\\n\\nplanning weekend: main + produktif dikit, perfectly balanced as all things should be.\\n\\n> jangan lupa self care ya gaes.\\n\\n> server dev - <@399393175904714752>"
-            "[morning weekend warriors]\\n\\nshare plan dong: ngegame, netflix, atau full mager - semua valid kok.\\n\\n> do what makes your soul happy.\\n\\n> server dev - <@399393175904714752>"
+            "another banger day to absolutely demolish your goals and serve that iconic energy bestie! we're not doing mid vibes today - only premium main character moments and that unstoppable sigma grindset that makes everyone wonder how you're this legendary!\\n\\n> bangun tidur langsung scrolling? ancis banget, mending push up dulu biar jadi sigma male\\n\\n> server dev - <@399393175904714752>"
+            "good morning gorgeous humans! today's forecast: 100% chance of you being absolutely fire and serving looks that would make the sun jealous. time to hydrate that beautiful brain and start manifesting some serious w's because you're literally built different!\\n\\n> minum air putih 2 gelas, dehidrasi bikin otak lemot - lu sampah kalo gak minum air\\n\\n> server dev - <@399393175904714752>"
+            "wakey wakey eggs and bakey squad! your bed was cozy but your dreams are calling and they're not gonna chase themselves bestie. today's mission: be so iconic that even your haters have to admit you're absolutely crushing it in every possible way!\\n\\n> sarapan yang bener ya, jangan cuma kopi doang - nanti maag kumat sedih amat\\n\\n> server dev - <@399393175904714752>"
+            "periodt! time to exit that cozy cocoon and enter your butterfly era because today is literally designed for you to glow up in ways that haven't even been invented yet. let's make this tuesday so fire that monday gets jealous!\\n\\n> cuci muka pake air dingin biar melek, jangan sampe ngantuk di meeting - ancis banget\\n\\n> server dev - <@399393175904714752>"
+            "rise and shine my beautiful chaotic gremlins! it's time to caffeinate that magnificent brain of yours and start serving the kind of energy that makes productivity apps cry tears of joy. today we're not just surviving, we're absolutely thriving!\\n\\n> pagi-pagi udah excited nih, energy kayak anak tk - tapi yang penting semangat bukan ancis\\n\\n> server dev - <@399393175904714752>"
+            "morning bestie! your pillow was nice but your potential is nicer, so let's get up and show this world what happens when talent meets determination and a really good cup of coffee. spoiler alert: magic happens and it's about to be legendary!\\n\\n> bangun tidur langsung beresin kasur - hidup rapi dimulai dari hal kecil, lu sampah kalo kamar berantakan\\n\\n> server dev - <@399393175904714752>"
           )
           
           FOOTERS=(
-            "weekend pace: santuy tapi happy"
-            "rest hard, play kind"
-            "joy first, then the rest"
+            "stay hydrated stay iconic"
+            "morning energy is unmatched" 
+            "today's main character moment"
+            "let's secure this tuesday"
+            "rise up bestie"
+            "manifest that glow up"
           )
           
-          INDEX=$((RANDOM % 3))
+          INDEX=$((RANDOM % 6))
           
           cat > payload.json << EOF
           {
@@ -75,30 +84,39 @@ jobs:
             -H "Content-Type: application/json" \
             --data @payload.json
 
-      - name: send afternoon greeting (weekend, rotating)
-        if: (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'afternoon') || github.event.schedule == '0 5 * * 6,0'
+      - name: send afternoon greeting (rotating)
+        if: (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'afternoon') || github.event.schedule == '0 5 * * 1-5'
         run: |
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
           
           TITLES=(
-            "🌞 weekend midday"
-            "🌞 siang santuy"
-            "🌞 reset & play"
+            "🌞 midday check-in squad"
+            "🌞 lunch break main character moment"
+            "🌞 afternoon glow is immaculate"
+            "🌞 keep slaying bestie"
+            "🌞 vitamin d and good vibes only"
+            "🌞 halfway through being iconic"
           )
           
           DESCS=(
-            "[makan enak dulu gaes]\\n\\nwatch/read something that sparks joy 30 menit - invest in happiness dulu bestie.\\n\\n> charge that joy first, grind later.\\n\\n> server dev - <@399393175904714752>"
-            "[yok break time squad]\\n\\nno doom scrolling ya! touch grass 10 menit atau telpon temen catch up.\\n\\n> human connection > endless hustle fr fr.\\n\\n> server dev - <@399393175904714752>"
-            "[santuy time activated]\\n\\nkasih rekomendasi lagu di chat dong, biar weekend makin chill.\\n\\n> musik enak = mood boost instant.\\n\\n> server dev - <@399393175904714752>"
+            "bestie! hope your morning was absolutely sending and you're still radiating that premium energy we love to see. time to fuel up that gorgeous brain with some actual nutrition and keep serving excellence for the rest of this legendary day!\\n\\n> jangan skip makan siang ya, nanti lemes - sedih amat kalo sampe pingsan gara-gara lapar\\n\\n> server dev - <@399393175904714752>"
+            "periodt afternoon warriors! we're living in the golden hour of productivity right now and your energy is still hitting different. maybe step away from the screen for a hot second and remember that you're a human being, not a productivity machine!\\n\\n> mata udah capek kan? lihat yang ijo-ijo dulu - ancis banget kalo sampe buta gara-gara layar\\n\\n> server dev - <@399393175904714752>"
+            "hey gorgeous! the day is serving perfect vibes for a little reset and recharge session. grab some water, do a tiny stretch, and remember that you're literally the main character of this whole storyline we call life!\\n\\n> minum yang banyak, dehidrasi bikin kepala pusing - lu sampah kalo gak peduli sama tubuh sendiri\\n\\n> server dev - <@399393175904714752>"
+            "afternoon legends! your consistency today is absolutely unmatched and honestly inspiring to witness. if you need to adjust your game plan for the rest of the day, that's not failing - that's called being strategic and iconic!\\n\\n> udah setengah hari nih, evaluasi bentar: masih on track atau perlu pivot?\\n\\n> server dev - <@399393175904714752>"
+            "midday bestie check! don't let that afternoon energy dip get you down because you're literally built different and capable of pushing through anything. maybe try the pomodoro technique or just vibe with your favorite playlist for a bit!\\n\\n> kalo ngantuk jangan maksa, power nap 15 menit lebih efektif daripada ngopi 5 cangkir\\n\\n> server dev - <@399393175904714752>"
+            "lunch time legends! remember that taking proper breaks and actually eating real food is not optional - it's literally an investment in your ability to continue being absolutely phenomenal for the rest of this beautiful day!\\n\\n> istirahat bukan tanda lemah, itu tanda pinter manage energi kayak atlet profesional\\n\\n> server dev - <@399393175904714752>"
           )
           
           FOOTERS=(
-            "vitamin d + playlist favorit"
-            "be present, be kind"
-            "good tunes, good mood"
+            "stay fueled stay legendary"
+            "midday glow is real"  
+            "hydration nation member"
+            "afternoon excellence activated"
+            "consistency is everything"
+            "break time is sacred time"
           )
           
-          INDEX=$((RANDOM % 3))
+          INDEX=$((RANDOM % 6))
           
           cat > payload.json << EOF
           {
@@ -122,30 +140,39 @@ jobs:
             -H "Content-Type: application/json" \
             --data @payload.json
 
-      - name: send evening greeting (weekend, rotating)
-        if: (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'evening') || github.event.schedule == '0 10 * * 6,0'
+      - name: send evening greeting (rotating)
+        if: (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'evening') || github.event.schedule == '0 10 * * 1-5'
         run: |
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
           
           TITLES=(
-            "🌆 golden hour vibes"
-            "🌆 evening chitchat"
-            "🌆 wrap-up lite"
+            "🌆 sunset therapy session fr"
+            "🌆 golden hour glow bestie"
+            "🌆 evening vibes are sending"
+            "🌆 wind down time legends"
+            "🌆 reflection hour activated"
+            "🌆 cozy evening energy unlocked"
           )
           
           DESCS=(
-            "[sunset reveal dong gaes]\\n\\nkeluar 10 menit, touch some grass. kalo mager buka jendela aja gapapa.\\n\\n> slow down, nikmatin vibesnya.\\n\\n> server dev - <@399393175904714752>"
-            "[sharing session yok, weekend edition]\\n\\ncerita highlight/lowlight hari ini - judgment free zone here bestie.\\n\\n> we got your back always.\\n\\n> server dev - <@399393175904714752>"
-            "[weekend cleanup time!]\\n\\nclear notif atau close tab - small reset, big impact.\\n\\n> besok pasti berterimakasih kok.\\n\\n> server dev - <@399393175904714752>"
+            "besties! the sun is literally giving us a free light show right now and that's honestly so beautiful. take a moment to step back from whatever you're grinding on and appreciate how far you've traveled today - both literally and metaphorically speaking!\\n\\n> keluar rumah bentar, sunset gratis lebih cantik daripada wallpaper hp mahal\\n\\n> server dev - <@399393175904714752>"
+            "evening legends! time to transition into that soft life energy where you can just exist without the pressure of being constantly productive. your worth isn't measured by your output, it's measured by the fact that you're absolutely iconic just by being yourself!\\n\\n> jangan lupa makan malam, perut kosong bikin mood jelek kayak wifi lemot\\n\\n> server dev - <@399393175904714752>"
+            "periodt! golden hour is nature's way of reminding us that endings can be just as gorgeous as beginnings bestie. maybe use this transition time to plan some fun activities for tonight or just vibe with your favorite comfort content!\\n\\n> sore-sore gini enaknya ngobrol sama temen sambil minum teh anget\\n\\n> server dev - <@399393175904714752>"
+            "hey gorgeous souls! evening energy is perfect for some gentle creative work or maybe just chilling with that playlist that hits different when the sun starts setting. remember that inspiration often comes when we're relaxed and not forcing it!\\n\\n> matiin notif kerja dulu, saatnya transisi ke mode santai kayak kucing di sofa\\n\\n> server dev - <@399393175904714752>"
+            "evening squad! time to celebrate every single win from today because they're building blocks toward your bigger dreams and honestly you should feel proud of every step you took toward becoming your most authentic self today!\\n\\n> hari ini capek? wajar kok, hidup emang butuh effort kayak main game hard mode\\n\\n> server dev - <@399393175904714752>"
+            "wind down warriors! the evening is giving perfect vibes for some digital cleanup or maybe journaling about what made you smile today. small moments of gratitude can literally rewire your brain for more happiness and that's scientifically proven bestie!\\n\\n> beresin workspace dikit, besok pagi bakal berterima kasih sama evening-you\\n\\n> server dev - <@399393175904714752>"
           )
           
           FOOTERS=(
-            "sunset therapy, murah meriah"
-            "safe space, safe pace"
-            "light close, easy start"
+            "golden hour hits different"
+            "sunset wisdom is free"
+            "evening glow activated"
+            "wind down like a legend"
+            "gentle productivity vibes"
+            "gratitude changes everything"
           )
           
-          INDEX=$((RANDOM % 3))
+          INDEX=$((RANDOM % 6))
           
           cat > payload.json << EOF
           {
@@ -169,30 +196,39 @@ jobs:
             -H "Content-Type: application/json" \
             --data @payload.json
 
-      - name: send night greeting (weekend, rotating)
-        if: (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'night') || github.event.schedule == '0 15 * * 6,0'
+      - name: send night greeting (rotating)
+        if: (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'night') || github.event.schedule == '0 15 * * 1-5'
         run: |
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
           
           TITLES=(
-            "🌙 weekend night reset"
-            "🌙 good night, gng"
-            "🌙 lights down"
+            "🌙 bedtime bestie check-in"
+            "🌙 goodnight gorgeous legends"
+            "🌙 time to log off and recharge"
+            "🌙 sweet dreams main character"
+            "🌙 night night productivity queen"
+            "🌙 digital sunset activated"
           )
           
           DESCS=(
-            "[scroll time boleh, tapi bobo first ya bestie]\\n\\nmandi air anget, pake baju nyaman, airplane mode buat digital detox.\\n\\n> tidur yang nyenyak gaes.\\n\\n> server dev - <@399393175904714752>"
-            "[mari kita cooldown squad]\\n\\nunplug bentar, share win hari ini, trus bobo dengan damai.\\n\\n> sleep well no drama bestie.\\n\\n> server dev - <@399393175904714752>"
-            "[time to rest gaes]\\n\\ntarik napas 3x, tulis gratitude, device down with peace.\\n\\n> see u tomorrow with better mood.\\n\\n> server dev - <@399393175904714752>"
+            "besties! your phone has been working overtime today and honestly so have you, so maybe it's time to give both of you a well-deserved break. tomorrow is going to bring fresh opportunities to be absolutely legendary, but tonight belongs to peaceful sleep and beautiful dreams!\\n\\n> tidur jangan terlalu malam, besok mata bengkak susah dijelasin ke bos\\n\\n> server dev - <@399393175904714752>"
+            "periodt night owls! time to disconnect from the digital chaos and reconnect with that inner peace that's been waiting patiently for you all day. your subconscious is about to do some serious processing work while you sleep, so trust the process bestie!\\n\\n> matiin lampu terang, bikin suasana kayak spa murah meriah di kamar sendiri\\n\\n> server dev - <@399393175904714752>"
+            "goodnight beautiful chaotic gremlins! sleep is literally your brain's way of organizing all the amazing memories and lessons from today, so treat it like the important maintenance ritual it actually is. sweet dreams and wake up ready to absolutely demolish tomorrow!\\n\\n> jangan scroll tiktok sampe pagi, nanti bangun tidur mata kayak panda ngantuk\\n\\n> server dev - <@399393175904714752>"
+            "night time legends! perfect moment for some gentle gratitude practice before you drift off into that magical dreamland where your future self is probably already celebrating all the good choices you made today. you genuinely did amazing things today bestie!\\n\\n> sebelum bobo mikir 3 hal positif hari ini, otak butuh input bagus sebelum istirahat\\n\\n> server dev - <@399393175904714752>"
+            "bedtime bestie! tomorrow's gonna be another opportunity to serve absolute excellence and live your most authentic life, but tonight is sacred rest time where you let your beautiful mind and body recharge so you can wake up feeling fresh and unstoppable!\\n\\n> minum air putih dulu sebelum tidur, biar gak dehidrasi tengah malam\\n\\n> server dev - <@399393175904714752>"
+            "sleep time warriors! your productivity today was honestly iconic and now it's time to power down those devices and power up your natural healing processes. deep sleep is where the real magic happens and your cells literally repair themselves while you dream!\\n\\n> taruh hp jauh-jauh, radiasi dekat kepala bikin tidur gak nyenyak\\n\\n> server dev - <@399393175904714752>"
           )
           
           FOOTERS=(
-            "see u tomorrow, same vibe ✨"
-            "dream well, team"
-            "rest is meta"
+            "sweet dreams bestie"
+            "rest is sacred too"  
+            "recharge like a legend"
+            "goodnight main character"
+            "digital detox activated"
+            "sleep tight warrior"
           )
           
-          INDEX=$((RANDOM % 3))
+          INDEX=$((RANDOM % 6))
           
           cat > payload.json << EOF
           {
