@@ -33,47 +33,54 @@ jobs:
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'morning' || github.event.schedule == '0 0 * * 1-5' }}
         run: |
           set -euo pipefail
-          TS="$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
-
-          titles=(
+          
+          # Define arrays
+          declare -a titles=(
             "🌅 good morning, gng"
             "🌅 morning check-in"
             "🌅 hey, welcome in"
             "🌅 rise & stretch"
           )
-          descs=(
-            "[haloww chatt — sleep well?]\\n\\nlowkey warm-up: pick 1 tiny win to start. jangan ghosting task, fr.\\n\\n> lezgoo — we move together."
-            "[pagiii gng]\\n\\nsip coffee, set intention, drop your first task — no cap.\\n\\n> small steps, big momentum."
-            "[yaa, morning fam]\\n\\nnew day, new reps. 1% better is a w.\\n\\n> steady over speedy."
-            "[gm gm, gang]\\n\\nopen one tab that actually matters. rest? save it for later.\\n\\n> focus > frenzy."
+          
+          declare -a descs=(
+            "[haloww chatt — sleep well?]\\\\n\\\\nlowkey warm-up: pick 1 tiny win to start. jangan ghosting task, fr.\\\\n\\\\n> lezgoo — we move together."
+            "[pagiii gng]\\\\n\\\\nsip coffee, set intention, drop your first task — no cap.\\\\n\\\\n> small steps, big momentum."
+            "[yaa, morning fam]\\\\n\\\\nnew day, new reps. 1% better is a w.\\\\n\\\\n> steady over speedy."
+            "[gm gm, gang]\\\\n\\\\nopen one tab that actually matters. rest? save it for later.\\\\n\\\\n> focus > frenzy."
           )
-          footers=(
+          
+          declare -a footers=(
             "warm start, clean slate"
             "sip kopi, ship kode"
             "light focus, strong flow"
             "touch grass, touch goals"
           )
 
+          # Get random index
           idx=$((RANDOM % ${#titles[@]}))
-          export TITLE="${titles[$idx]}" DESC="${descs[$idx]}" FOOT="${footers[$idx]}" COLOR=16766720 TS
+          
+          # Create JSON directly with bash
+          json_data=$(cat << EOF
+          {
+            "embeds": [{
+              "title": "${titles[$idx]}",
+              "description": "${descs[$idx]}",
+              "color": 16766720,
+              "thumbnail": {"url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"},
+              "footer": {
+                "text": "${footers[$idx]}",
+                "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
+              },
+              "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
+            }]
+          }
+EOF
+          )
 
-          # Simplified JSON generation without heredoc
-          python3 -c '
-import json, os
-payload = {
-    "embeds": [{
-        "title": os.environ["TITLE"],
-        "description": os.environ["DESC"],
-        "color": int(os.environ["COLOR"]),
-        "thumbnail": {"url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"},
-        "footer": {"text": os.environ["FOOT"], "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"},
-        "timestamp": os.environ["TS"]
-    }]
-}
-with open("payload.json", "w") as f:
-    json.dump(payload, f)
-'
-          curl -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" -H "content-type: application/json" --data @payload.json
+          # Send to Discord
+          curl -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            -d "$json_data"
 
       - name: send afternoon greeting (rotating)
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'afternoon' || github.event.schedule == '0 5 * * 1-5' }}
