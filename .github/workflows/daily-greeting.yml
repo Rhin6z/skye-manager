@@ -20,7 +20,6 @@ jobs:
         curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
         -H "Content-Type: application/json" \
         -d '{
-          "content": "<@&1374047008829997157>",
           "embeds": [{
             "title": "🌅 Selamat Pagi Semuanya!",
             "description": "**Hayoo bangun-bangun!** \n\nWaktunya memulai hari dengan semangat baru! Jangan sampai ketiduran lagi ya 😊\n\n*\"The future belongs to those who believe in the beauty of their dreams.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇬🇧 Good Morning Everyone!**\nTime to wake up and shine! Dont be lazy today 💪",
@@ -29,7 +28,7 @@ jobs:
               "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
             },
             "footer": {
-              "text": "Semoga hari ini penuh berkah! | by server dev <@399393175904714752> 🌈",
+              "text": "Semoga hari ini penuh berkah! | by server dev @399393175904714752 🌈",
               "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
             },
             "timestamp": "'"$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"'"
@@ -38,7 +37,7 @@ jobs:
         "${{ secrets.DISCORD_WEBHOOK_URL }}"
 
     - name: Send Afternoon Greeting  
-      if: github.event.schedule == '0 5 * * 1-5' || github.event_name == 'workflow_dispatch'
+      if: github.event.schedule == '0 5 * * 1-5'
       run: |
         curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
         -H "Content-Type: application/json" \
@@ -61,7 +60,7 @@ jobs:
         "${{ secrets.DISCORD_WEBHOOK_URL }}"
 
     - name: Send Evening Greeting
-      if: github.event.schedule == '0 14 * * 1-5' || github.event_name == 'workflow_dispatch' 
+      if: github.event.schedule == '0 14 * * 1-5'
       run: |
         curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
         -H "Content-Type: application/json" \

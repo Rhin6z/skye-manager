@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Send Saturday Morning Greeting
-      if: github.event.schedule == '0 2 * * 6' || github.event_name == 'workflow_dispatch'
+      if: github.event.schedule == '0 2 * * 6'
       run: |
         curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
         -H "Content-Type: application/json" \
@@ -40,7 +40,7 @@ jobs:
         "${{ secrets.DISCORD_WEBHOOK_URL }}"
 
     - name: Send Saturday Afternoon Greeting
-      if: github.event.schedule == '0 8 * * 6' || github.event_name == 'workflow_dispatch'
+      if: github.event.schedule == '0 8 * * 6'
       run: |
         curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
         -H "Content-Type: application/json" \
@@ -63,7 +63,7 @@ jobs:
         "${{ secrets.DISCORD_WEBHOOK_URL }}"
 
     - name: Send Sunday Morning Greeting
-      if: github.event.schedule == '0 3 * * 0' || github.event_name == 'workflow_dispatch'
+      if: github.event.schedule == '0 3 * * 0'
       run: |
         curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
         -H "Content-Type: application/json" \
@@ -86,7 +86,7 @@ jobs:
         "${{ secrets.DISCORD_WEBHOOK_URL }}"
 
     - name: Send Sunday Evening Greeting
-      if: github.event.schedule == '0 10 * * 0' || github.event_name == 'workflow_dispatch'
+      if: github.event.schedule == '0 10 * * 0'
       run: |
         curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
         -H "Content-Type: application/json" \
