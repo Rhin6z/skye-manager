@@ -1,8 +1,8 @@
-name: weekend discord greeting — rotating (english-first)
+name: weekend discord greeting - rotating (english-first)
 
 on:
   schedule:
-    # 07:00 WIB (00:00 UTC) — sat & sun
+    # 07:00 WIB (00:00 UTC) - weekends only
     - cron: '0 0 * * 6,0'
     # 12:00 WIB (05:00 UTC)
     - cron: '0 5 * * 6,0'
@@ -28,107 +28,190 @@ jobs:
   send-greeting:
     runs-on: ubuntu-latest
     steps:
-
       - name: send morning greeting (rotating)
-        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'morning' || github.event.schedule == '0 0 * * 1-5' }}
+        if: (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'morning') || github.event.schedule == '0 0 * * 6,0'
         run: |
-          set -euo pipefail
-          TS="$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
-          titles=("🌅 happy weekend, good morning" "🌅 saturday/sunday vibes" "🌅 weekend soft start")
-          descs=(
+          TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
+          
+          TITLES=(
+            "🌅 happy weekend, good morning"
+            "🌅 saturday/sunday vibes"
+            "🌅 weekend soft start"
+          )
+          
+          DESCS=(
             "[bangun santai aja, gang]\\n\\n10-min tidy, light stretch, sunlight hit. kalau mau tidur lagi juga gapapa.\\n\\n> soft start, strong mood."
             "[gm gm, have a chill one]\\n\\nlowkey plan: one fun thing + one tiny chore.\\n\\n> balance > burnout."
-            "[pagiii, weekend crew]\\n\\nshare your plan: main, movie, or mager — all valid.\\n\\n> do what fills the bar."
+            "[pagiii, weekend crew]\\n\\nshare your plan: main, movie, or mager - all valid.\\n\\n> do what fills the bar."
           )
-          footers=("weekend pace: santuy tapi happy" "rest hard, play kind" "joy first, then the rest")
-
-          idx=$((RANDOM % ${#titles[@]}))
-          export TITLE="${titles[$idx]}" DESC="${descs[$idx]}" FOOT="${footers[$idx]}" COLOR=16766720 TS
-
-          python3 - <<EOF > payload.json
-import json, os
-payload = {
-    "embeds": [{
-        "title": os.environ["TITLE"],
-        "description": os.environ["DESC"],
-        "color": int(os.environ["COLOR"]),
-        "thumbnail": {"url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"},
-        "footer": {
-            "text": os.environ["FOOT"],
-            "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
-        },
-        "timestamp": os.environ["TS"]
-    }]
-}
-print(json.dumps(payload))
-EOF
-          curl -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" -H "content-type: application/json" --data @payload.json
+          
+          FOOTERS=(
+            "weekend pace: santuy tapi happy"
+            "rest hard, play kind"
+            "joy first, then the rest"
+          )
+          
+          INDEX=$((RANDOM % 3))
+          
+          cat > payload.json << EOF
+          {
+            "embeds": [{
+              "title": "${TITLES[$INDEX]}",
+              "description": "${DESCS[$INDEX]}",
+              "color": 16766720,
+              "thumbnail": {
+                "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
+              },
+              "footer": {
+                "text": "${FOOTERS[$INDEX]}",
+                "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
+              },
+              "timestamp": "$TIMESTAMP"
+            }]
+          }
+          EOF
+          
+          curl -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            --data @payload.json
 
       - name: send afternoon greeting (weekend, rotating)
-        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'afternoon' || github.event.schedule == '0 5 * * 6,0' }}
+        if: (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'afternoon') || github.event.schedule == '0 5 * * 6,0'
         run: |
-          set -euo pipefail
-          TS="$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
-          titles=("🌞 weekend midday" "🌞 siang santuy" "🌞 reset & play")
-          descs=(
-            "[makan enak dulu, baru lanjut seru2an]\\n\\nwatch/read something that sparks you 30 mins — fr.\\n\\n> charge joy bar dulu."
+          TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
+          
+          TITLES=(
+            "🌞 weekend midday"
+            "🌞 siang santuy"
+            "🌞 reset & play"
+          )
+          
+          DESCS=(
+            "[makan enak dulu, baru lanjut seru2an]\\n\\nwatch/read something that sparks you 30 mins - fr.\\n\\n> charge joy bar dulu."
             "[halo halo, break dulu lah]\\n\\nno doomscroll. go outside 10 mins or call a friend.\\n\\n> human > hustle."
             "[lanjut santai aja]\\n\\npost a song rec di chat, biar vibes naik.\\n\\n> music is a buff."
           )
-          footers=("vitamin d + playlist favorit" "be present, be kind" "good tunes, good mood")
-
-          idx=$((RANDOM % ${#titles[@]}))
-          export TITLE="${titles[$idx]}" DESC="${descs[$idx]}" FOOT="${footers[$idx]}" COLOR=16763904 TS
-
-          python3 - <<'PY' > payload.json
-import json, os
-print(json.dumps({"embeds":[{"title":os.environ['TITLE'],"description":os.environ['DESC'],"color":int(os.environ['COLOR']),"thumbnail":{"url":"https://cdn.discordapp.com/emojis/692428734822645770.gif"},"footer":{"text":os.environ['FOOT'],"icon_url":"https://cdn.discordapp.com/emojis/692428869338931240.png"},"timestamp":os.environ['TS']}]}
-))
-PY
-          curl -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" -H "content-type: application/json" --data @payload.json
+          
+          FOOTERS=(
+            "vitamin d + playlist favorit"
+            "be present, be kind"
+            "good tunes, good mood"
+          )
+          
+          INDEX=$((RANDOM % 3))
+          
+          cat > payload.json << EOF
+          {
+            "embeds": [{
+              "title": "${TITLES[$INDEX]}",
+              "description": "${DESCS[$INDEX]}",
+              "color": 16763904,
+              "thumbnail": {
+                "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
+              },
+              "footer": {
+                "text": "${FOOTERS[$INDEX]}",
+                "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
+              },
+              "timestamp": "$TIMESTAMP"
+            }]
+          }
+          EOF
+          
+          curl -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            --data @payload.json
 
       - name: send evening greeting (weekend, rotating)
-        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'evening' || github.event.schedule == '0 10 * * 6,0' }}
+        if: (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'evening') || github.event.schedule == '0 10 * * 6,0'
         run: |
-          set -euo pipefail
-          TS="$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
-          titles=("🌆 golden hour vibes" "🌆 evening chitchat" "🌆 wrap-up lite")
-          descs=(
-            "[foto langit dikit, kirim ke chat]\\n\\nstep outside 10 mins. kalau mager, buka jendela juga jadi.\\n\\n> slow it down, nikmatin moment."
-            "[ngobrol dikit yok]\\n\\nshare your highlight/lowlight — we listen, no judgy.\\n\\n> we’re in this together."
-            "[finishing move]\\n\\nclear 3 notifs or 1 tab — tiny reset, big vibe.\\n\\n> tomorrow you will thank you."
+          TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
+          
+          TITLES=(
+            "🌆 golden hour vibes"
+            "🌆 evening chitchat"
+            "🌆 wrap-up lite"
           )
-          footers=("sunset therapy, murah meriah" "safe space, safe pace" "light close, easy start")
-
-          idx=$((RANDOM % ${#titles[@]}))
-          export TITLE="${titles[$idx]}" DESC="${descs[$idx]}" FOOT="${footers[$idx]}" COLOR=16744448 TS
-
-          python3 - <<'PY' > payload.json
-import json, os
-print(json.dumps({"embeds":[{"title":os.environ['TITLE'],"description":os.environ['DESC'],"color":int(os.environ['COLOR']),"thumbnail":{"url":"https://cdn.discordapp.com/emojis/692428734822645770.gif"},"footer":{"text":os.environ['FOOT'],"icon_url":"https://cdn.discordapp.com/emojis/692428869338931240.png"},"timestamp":os.environ['TS']}]}
-))
-PY
-          curl -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" -H "content-type: application/json" --data @payload.json
+          
+          DESCS=(
+            "[foto langit dikit, kirim ke chat]\\n\\nstep outside 10 mins. kalau mager, buka jendela juga jadi.\\n\\n> slow it down, nikmatin moment."
+            "[ngobrol dikit yok]\\n\\nshare your highlight/lowlight - we listen, no judgy.\\n\\n> we're in this together."
+            "[finishing move]\\n\\nclear 3 notifs or 1 tab - tiny reset, big vibe.\\n\\n> tomorrow you will thank you."
+          )
+          
+          FOOTERS=(
+            "sunset therapy, murah meriah"
+            "safe space, safe pace"
+            "light close, easy start"
+          )
+          
+          INDEX=$((RANDOM % 3))
+          
+          cat > payload.json << EOF
+          {
+            "embeds": [{
+              "title": "${TITLES[$INDEX]}",
+              "description": "${DESCS[$INDEX]}",
+              "color": 16744448,
+              "thumbnail": {
+                "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
+              },
+              "footer": {
+                "text": "${FOOTERS[$INDEX]}",
+                "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
+              },
+              "timestamp": "$TIMESTAMP"
+            }]
+          }
+          EOF
+          
+          curl -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            --data @payload.json
 
       - name: send night greeting (weekend, rotating)
-        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'night' || github.event.schedule == '0 15 * * 6,0' }}
+        if: (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'night') || github.event.schedule == '0 15 * * 6,0'
         run: |
-          set -euo pipefail
-          TS="$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
-          titles=("🌙 weekend night reset" "🌙 good night, gng" "🌙 lights down")
-          descs=(
-            "[scroll boleh, tapi tidur tetep nomor satu]\\n\\nhot shower, comfy clothes, airplane mode kalau perlu.\\n\\n> gn — rest well, ship well."
+          TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
+          
+          TITLES=(
+            "🌙 weekend night reset"
+            "🌙 good night, gng"
+            "🌙 lights down"
+          )
+          
+          DESCS=(
+            "[scroll boleh, tapi tidur tetep nomor satu]\\n\\nhot shower, comfy clothes, airplane mode kalau perlu.\\n\\n> gn - rest well, ship well."
             "[yaa, cooldown dulu]\\n\\nunplug a bit, share 1 tiny win di chat, then off.\\n\\n> sleep easy, no drama."
             "[lamp low, heart calm]\\n\\n3 deep breaths, gratitude 1 line, device down.\\n\\n> see u tomorrow, same vibe."
           )
-          footers=("see u tomorrow, same vibe ✨" "dream well, team" "rest is meta")
-
-          idx=$((RANDOM % ${#titles[@]}))
-          export TITLE="${titles[$idx]}" DESC="${descs[$idx]}" FOOT="${footers[$idx]}" COLOR=8947848 TS
-
-          python3 - <<'PY' > payload.json
-import json, os
-print(json.dumps({"embeds":[{"title":os.environ['TITLE'],"description":os.environ['DESC'],"color":int(os.environ['COLOR']),"thumbnail":{"url":"https://cdn.discordapp.com/emojis/692428734822645770.gif"},"footer":{"text":os.environ['FOOT'],"icon_url":"https://cdn.discordapp.com/emojis/692428869338931240.png"},"timestamp":os.environ['TS']}]}
-))
-PY
-          curl -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" -H "content-type: application/json" --data @payload.json
+          
+          FOOTERS=(
+            "see u tomorrow, same vibe ✨"
+            "dream well, team"
+            "rest is meta"
+          )
+          
+          INDEX=$((RANDOM % 3))
+          
+          cat > payload.json << EOF
+          {
+            "embeds": [{
+              "title": "${TITLES[$INDEX]}",
+              "description": "${DESCS[$INDEX]}",
+              "color": 8947848,
+              "thumbnail": {
+                "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
+              },
+              "footer": {
+                "text": "${FOOTERS[$INDEX]}",
+                "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
+              },
+              "timestamp": "$TIMESTAMP"
+            }]
+          }
+          EOF
+          
+          curl -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            --data @payload.json
