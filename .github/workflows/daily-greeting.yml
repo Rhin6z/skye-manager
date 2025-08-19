@@ -64,7 +64,7 @@ jobs:
               },
               "footer": {
                 "text": "${FOOTERS[$INDEX]}",
-                "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
+                "icon_url": "https://files.catbox.moe/npfh4e.jpg"
               },
               "timestamp": "$TIMESTAMP"
             }]
@@ -114,7 +114,7 @@ jobs:
               },
               "footer": {
                 "text": "${FOOTERS[$INDEX]}",
-                "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
+                "icon_url": "https://files.catbox.moe/npfh4e.jpg"
               },
               "timestamp": "$TIMESTAMP"
             }]
@@ -164,7 +164,7 @@ jobs:
               },
               "footer": {
                 "text": "${FOOTERS[$INDEX]}",
-                "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
+                "icon_url": "https://files.catbox.moe/npfh4e.jpg"
               },
               "timestamp": "$TIMESTAMP"
             }]
@@ -214,7 +214,7 @@ jobs:
               },
               "footer": {
                 "text": "${FOOTERS[$INDEX]}",
-                "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
+                "icon_url": "https://files.catbox.moe/npfh4e.jpg"
               },
               "timestamp": "$TIMESTAMP"
             }]
