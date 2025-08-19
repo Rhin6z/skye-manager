@@ -1,4 +1,4 @@
-name: Weekend Discord Greeting - Ekspresif Edition (Fixed)
+name: Weekend Discord Greeting
 
 on:
   schedule:
@@ -23,14 +23,14 @@ jobs:
         -d '{
           "content": "<@&1374047008829997157>",
           "embeds": [{
-            "title": "🌅 Weekend Vibe Check - Sabtu Pagi!",
-            "description": "**Akhirnyaaa weekenddd!** 🎉\n\nWaktunya santai dan nikmatin hari libur. Mau ngapain nih hari ini?\nJangan lupa tetap produktif tapi juga have fun ya!\n\n*\"Weekends are a celebration for the good work done.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇬🇧 Saturday Morning Everyone!**\nTime to relax and enjoy the weekend vibes! ✨\n\n> Selamat weekend semuanya! | by server dev <@399393175904714752> 🌟",
+            "title": "🌅 Weekend Mode Activated!",
+            "description": "**Finally, it's Saturday!** 🎉\n\nTime to unwind, pursue your passions, and enjoy some well-deserved downtime. Whether you're being productive or just relaxing, make it count.\n\n*\"Weekends are a celebration for the good work done.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇮🇩 Selamat Akhir Pekan!**\nWaktunya santai dan nikmati weekend! ✨\n\n> Have an amazing weekend! | by server dev <@399393175904714752> 🌟",
             "color": 16766720,
             "thumbnail": {
               "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
             },
             "footer": {
-              "text": "Saturday vibes!",
+              "text": "Weekend goals: Rest, recharge, and enjoy! ⚡",
               "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
             },
             "timestamp": "'"$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"'"
@@ -45,14 +45,14 @@ jobs:
         -d '{
           "content": "<@&1374047008829997157>",
           "embeds": [{
-            "title": "☀️ Sabtu Sore - Time to Recharge!",
-            "description": "**Gimana weekend kalian sejauh ini?** 🤔\n\nSemoga lagi santai dan nikmatin waktu luang ya!\nJangan lupa minum air putih dan jaga kesehatan 💧\n\n*\"Self-care is not selfish, its essential.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇬🇧 Saturday Afternoon Check-in!**\nHope everyone is having a great weekend so far! 🌈\n\n> Weekend vibes activated! | by server dev <@399393175904714752> 🎊",
+            "title": "☀️ Saturday Afternoon Vibes",
+            "description": "**How's your weekend going so far?** 🌞\n\nHopefully you're finding the perfect balance between productivity and relaxation. Remember to take care of yourself and stay hydrated.\n\n*\"Self-care is not selfish, it's essential.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇮🇩 Sabtu Sore yang Santai!**\nSemoga weekend kalian menyenangkan! 🌈\n\n> Stay refreshed and energized! | by server dev <@399393175904714752> 🎊",
             "color": 16776960,
             "thumbnail": {
               "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
             },
             "footer": {
-              "text": "Saturday afternoon check!",
+              "text": "Balance is key to a perfect weekend! ⚖️",
               "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
             },
             "timestamp": "'"$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"'"
@@ -67,14 +67,14 @@ jobs:
         -d '{
           "content": "<@&1374047008829997157>",
           "embeds": [{
-            "title": "🌻 Sunday Funday - Minggu Santai!",
-            "description": "**Selamat hari Minggu semuanya!** ☀️\n\nHari terakhir weekend nih, manfaatin sebaik-baiknya ya!\nMungkin waktunya quality time sama keluarga atau me-time 🏠\n\n*\"Sunday is the perfect day to refuel your soul.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇬🇧 Happy Sunday Everyone!**\nMake the most of this beautiful day! 🌸\n\n> Sunday mood on! | by server dev <@399393175904714752> 🎭",
+            "title": "🌻 Sunday Funday!",
+            "description": "**Happy Sunday, everyone!** ☀️\n\nIt's the perfect day to slow down, reflect on the week ahead, and spend quality time with what matters most to you.\n\n*\"Sunday is the perfect day to refuel your soul.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇮🇩 Selamat Hari Minggu!**\nNikmati hari terakhir weekend dengan tenang! 🌸\n\n> Make every moment count! | by server dev <@399393175904714752> 🎭",
             "color": 16744192,
             "thumbnail": {
               "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
             },
             "footer": {
-              "text": "Sunday funday!",
+              "text": "Sundays are for soul recharging! 🔋",
               "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
             },
             "timestamp": "'"$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"'"
@@ -89,14 +89,14 @@ jobs:
         -d '{
           "content": "<@&1374047008829997157>",
           "embeds": [{
-            "title": "🌆 Sunday Evening - Persiapan Senin!",
-            "description": "**Weekend hampir berakhir nih!** ⏰\n\nSemoga kalian udah puas santai dan recharge energi ya!\nBesok Senin lagi, tapi kita hadapi dengan semangat baru 💪\n\n*\"Sunday evening: the calm before the Monday storm.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇬🇧 Sunday Evening Prep!**\nReady to conquer the new week? Lets go team! 🚀\n\n> Siap-siap untuk minggu baru! | by server dev <@399393175904714752> 💫",
+            "title": "🌆 Sunday Evening Prep",
+            "description": "**Weekend's coming to an end, but that's okay!** ⏰\n\nHopefully you've had a refreshing break and feel ready to tackle the new week with renewed energy and focus.\n\n*\"Sunday evening: the calm before the Monday storm.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇮🇩 Minggu Sore - Persiapan Senin!**\nSiap menghadapi minggu baru dengan semangat! 🚀\n\n> Ready to conquer the new week! | by server dev <@399393175904714752> 💫",
             "color": 9055202,
             "thumbnail": {
               "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
             },
             "footer": {
-              "text": "Ready for new week!",
+              "text": "New week, new opportunities ahead! 🌟",
               "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
             },
             "timestamp": "'"$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"'"
