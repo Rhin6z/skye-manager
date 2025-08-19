@@ -34,53 +34,21 @@ jobs:
         run: |
           set -euo pipefail
           
-          # Define arrays
-          declare -a titles=(
-            "🌅 good morning, gng"
-            "🌅 morning check-in"
-            "🌅 hey, welcome in"
-            "🌅 rise & stretch"
-          )
+          # Arrays
+          titles=("🌅 good morning, gng" "🌅 morning check-in" "🌅 hey, welcome in")
+          descs=("[haloww chatt]\\n\\nlowkey warm-up: pick 1 tiny win to start.\\n\\n> lezgoo." "[pagiii gng]\\n\\nsip coffee, set intention.\\n\\n> small steps." "[yaa, morning fam]\\n\\nnew day, new reps.\\n\\n> steady.")
+          footers=("warm start, clean slate" "sip kopi, ship kode" "light focus, strong flow")
           
-          declare -a descs=(
-            "[haloww chatt — sleep well?]\\\\n\\\\nlowkey warm-up: pick 1 tiny win to start. jangan ghosting task, fr.\\\\n\\\\n> lezgoo — we move together."
-            "[pagiii gng]\\\\n\\\\nsip coffee, set intention, drop your first task — no cap.\\\\n\\\\n> small steps, big momentum."
-            "[yaa, morning fam]\\\\n\\\\nnew day, new reps. 1% better is a w.\\\\n\\\\n> steady over speedy."
-            "[gm gm, gang]\\\\n\\\\nopen one tab that actually matters. rest? save it for later.\\\\n\\\\n> focus > frenzy."
-          )
-          
-          declare -a footers=(
-            "warm start, clean slate"
-            "sip kopi, ship kode"
-            "light focus, strong flow"
-            "touch grass, touch goals"
-          )
-
           # Get random index
           idx=$((RANDOM % ${#titles[@]}))
           
-          # Create JSON directly with bash
-          json_data=$(cat << EOF
-          {
-            "embeds": [{
-              "title": "${titles[$idx]}",
-              "description": "${descs[$idx]}",
-              "color": 16766720,
-              "thumbnail": {"url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"},
-              "footer": {
-                "text": "${footers[$idx]}",
-                "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
-              },
-              "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
-            }]
-          }
-EOF
-          )
-
+          # Build JSON string directly
+          json="{\"embeds\":[{\"title\":\"${titles[$idx]}\",\"description\":\"${descs[$idx]}\",\"color\":16766720,\"thumbnail\":{\"url\":\"https://cdn.discordapp.com/emojis/692428734822645770.gif\"},\"footer\":{\"text\":\"${footers[$idx]}\",\"icon_url\":\"https://cdn.discordapp.com/emojis/692428869338931240.png\"},\"timestamp\":\"$(date -u +%Y-%m-%dT%H:%M:%S.000Z)\"}]}"
+          
           # Send to Discord
           curl -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
             -H "Content-Type: application/json" \
-            -d "$json_data"
+            -d "$json"
 
       - name: send afternoon greeting (rotating)
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'afternoon' || github.event.schedule == '0 5 * * 1-5' }}
