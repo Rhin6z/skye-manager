@@ -1,0 +1,108 @@
+name: Weekend Discord Greeting - Ekspresif Edition
+
+on:
+  schedule:
+    # Sabtu pagi jam 9:00 WIB (02:00 UTC = 9:00 WIB)
+    - cron: '0 2 * * 6'
+    # Sabtu sore jam 15:00 WIB (08:00 UTC = 15:00 WIB)
+    - cron: '0 8 * * 6'
+    # Minggu pagi jam 10:00 WIB (03:00 UTC = 10:00 WIB)
+    - cron: '0 3 * * 0'
+    # Minggu sore jam 17:00 WIB (10:00 UTC = 17:00 WIB)
+    - cron: '0 10 * * 0'
+
+jobs:
+  send-weekend-greeting:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Send Saturday Morning Greeting
+      if: github.event.schedule == '0 2 * * 6'
+      run: |
+        curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+        -H "Content-Type: application/json" \
+        -d '{
+          "content": "<@&1374047008829997157>",
+          "embeds": [{
+            "title": "🌅 Weekend Vibe Check - Sabtu Pagi!",
+            "description": "**Akhirnyaaa weekenddd!** 🎉\n\nWaktunya santai dan nikmatin hari libur. Mau ngapain nih hari ini?\nJangan lupa tetap produktif tapi juga have fun ya!\n\n*\"Weekends are a celebration for the good work done.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇬🇧 Saturday Morning Everyone!**\nTime to relax and enjoy the weekend vibes! ✨",
+            "color": 16766720,
+            "thumbnail": {
+              "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
+            },
+            "footer": {
+              "text": "Selamat weekend semuanya! | by server dev <@399393175904714752> 🌟",
+              "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
+            },
+            "timestamp": "'"$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"'"
+          }]
+        }' \
+        "${{ secrets.DISCORD_WEBHOOK_URL }}"
+
+    - name: Send Saturday Afternoon Greeting
+      if: github.event.schedule == '0 8 * * 6'
+      run: |
+        curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+        -H "Content-Type: application/json" \
+        -d '{
+          "content": "<@&1374047008829997157>",
+          "embeds": [{
+            "title": "☀️ Sabtu Sore - Time to Recharge!",
+            "description": "**Gimana weekend kalian sejauh ini?** 🤔\n\nSemoga lagi santai dan nikmatin waktu luang ya!\nJangan lupa minum air putih dan jaga kesehatan 💧\n\n*\"Self-care is not selfish, its essential.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇬🇧 Saturday Afternoon Check-in!**\nHope everyone is having a great weekend so far! 🌈",
+            "color": 16776960,
+            "thumbnail": {
+              "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
+            },
+            "footer": {
+              "text": "Weekend vibes activated! | by server dev <@399393175904714752> 🎊",
+              "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
+            },
+            "timestamp": "'"$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"'"
+          }]
+        }' \
+        "${{ secrets.DISCORD_WEBHOOK_URL }}"
+
+    - name: Send Sunday Morning Greeting
+      if: github.event.schedule == '0 3 * * 0'
+      run: |
+        curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+        -H "Content-Type: application/json" \
+        -d '{
+          "content": "<@&1374047008829997157>",
+          "embeds": [{
+            "title": "🌻 Sunday Funday - Minggu Santai!",
+            "description": "**Selamat hari Minggu semuanya!** ☀️\n\nHari terakhir weekend nih, manfaatin sebaik-baiknya ya!\nMungkin waktunya quality time sama keluarga atau me-time 🏠\n\n*\"Sunday is the perfect day to refuel your soul.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇬🇧 Happy Sunday Everyone!**\nMake the most of this beautiful day! 🌸",
+            "color": 16744192,
+            "thumbnail": {
+              "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
+            },
+            "footer": {
+              "text": "Sunday mood on! | by server dev <@399393175904714752> 🎭",
+              "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
+            },
+            "timestamp": "'"$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"'"
+          }]
+        }' \
+        "${{ secrets.DISCORD_WEBHOOK_URL }}"
+
+    - name: Send Sunday Evening Greeting
+      if: github.event.schedule == '0 10 * * 0'
+      run: |
+        curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+        -H "Content-Type: application/json" \
+        -d '{
+          "content": "<@&1374047008829997157>",
+          "embeds": [{
+            "title": "🌆 Sunday Evening - Persiapan Senin!",
+            "description": "**Weekend hampir berakhir nih!** ⏰\n\nSemoga kalian udah puas santai dan recharge energi ya!\nBesok Senin lagi, tapi kita hadapi dengan semangat baru 💪\n\n*\"Sunday evening: the calm before the Monday storm.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇬🇧 Sunday Evening Prep!**\nReady to conquer the new week? Lets go team! 🚀",
+            "color": 9055202,
+            "thumbnail": {
+              "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
+            },
+            "footer": {
+              "text": "Siap-siap untuk minggu baru! | by server dev <@399393175904714752> 💫",
+              "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
+            },
+            "timestamp": "'"$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"'"
+          }]
+        }' \
+        "${{ secrets.DISCORD_WEBHOOK_URL }}"

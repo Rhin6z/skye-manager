@@ -1,80 +1,83 @@
-name: Daily Discord Greeting - Ekspresif Edition
+name: Daily Discord Greeting - Ekspresif Edition (Improved)
 
 on:
   schedule:
     # Pagi jam 7:00 WIB (00:00 UTC = 7:00 WIB)
-    - cron: '0 0 * * *'
+    - cron: '0 0 * * 1-5'
     # Siang jam 12:00 WIB (05:00 UTC = 12:00 WIB)  
-    - cron: '0 5 * * *'
+    - cron: '0 5 * * 1-5'
     # Malam jam 21:00 WIB (14:00 UTC = 21:00 WIB)
-    - cron: '0 14 * * *'
+    - cron: '0 14 * * 1-5'
 
 jobs:
   send-greeting:
     runs-on: ubuntu-latest
     steps:
     - name: Send Morning Greeting
-      if: github.event.schedule == '0 0 * * *'
+      if: github.event.schedule == '0 0 * * 1-5'
       run: |
-        curl -H "Content-Type: application/json" \
-        -X POST \
+        curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+        -H "Content-Type: application/json" \
         -d '{
+          "content": "<@&1374047008829997157>",
           "embeds": [{
-            "title": "🌅 Selamaaat Pagiii Semuanyaaa! ☕✨",
-            "description": "**Hayooo bangun-banguun!** 😴➡️😊\n\nWaktunya memulai hari dengan semangaaat baru! Jangan sampe ketiduran lagiii yaaa~ 🤭\n\n*\"The future belongs to those who believe in the beauty of their dreams.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇬🇧 Good Morninggg Everyone!**\nTime to wake up and shine! Dont be lazy todayyy~ 💪\n*Rise and grind, dreamers!* ⭐",
+            "title": "🌅 Selamat Pagi Semuanya!",
+            "description": "**Hayoo bangun-bangun!** \n\nWaktunya memulai hari dengan semangat baru! Jangan sampai ketiduran lagi ya 😊\n\n*\"The future belongs to those who believe in the beauty of their dreams.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇬🇧 Good Morning Everyone!**\nTime to wake up and shine! Dont be lazy today 💪",
             "color": 16766720,
             "thumbnail": {
               "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
             },
             "footer": {
-              "text": "Semoga hari ini penuh berkaaaah! 🌈",
+              "text": "Semoga hari ini penuh berkah! | by server dev <@399393175904714752> 🌈",
               "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
             },
-            "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'"
+            "timestamp": "'"$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"'"
           }]
         }' \
-        ${{ secrets.DISCORD_WEBHOOK_URL }}
+        "${{ secrets.DISCORD_WEBHOOK_URL }}"
 
     - name: Send Afternoon Greeting  
-      if: github.event.schedule == '0 5 * * *'
+      if: github.event.schedule == '0 5 * * 1-5'
       run: |
-        curl -H "Content-Type: application/json" \
-        -X POST \
+        curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+        -H "Content-Type: application/json" \
         -d '{
+          "content": "<@&1374047008829997157>",
           "embeds": [{
-            "title": "☀️ Selamaaat Siaaang! Udah makan beluuum? 🍽️",
-            "description": "**Waktunya break jugaaa nih!** 🛑\n\nEhh jangan lupa makaaan yaaa, nanti sakit perutnya gimanaaa~ 😅\nIstirahat sebentar dari kerja keras kalian! 💼➡️🏖️\n\n*\"Take care of your body, its the only place you have to live.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇬🇧 Lunch Time Everyoneee!**\nDont skip your meal okayyy~ Your body needs fuel! 🔋\n*Healthy body, happy mind!* 😊",
+            "title": "☀️ Selamat Siang! Udah makan belum?",
+            "description": "**Waktunya break juga nih!** 🛑\n\nEhh jangan lupa makan ya, nanti sakit perutnya gimana 😅\nIstirahat sebentar dari kerja keras kalian!\n\n*\"Take care of your body, its the only place you have to live.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇬🇧 Lunch Time Everyone!**\nDont skip your meal okay! Your body needs fuel 🔋",
             "color": 16776960,
             "thumbnail": {
               "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
             },
             "footer": {
-              "text": "Jaga kesehatan selaluuu! Stay healthy! 💚",
+              "text": "Jaga kesehatan selalu! Stay healthy! | by server dev <@399393175904714752> 💚",
               "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
             },
-            "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'"
+            "timestamp": "'"$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"'"
           }]
         }' \
-        ${{ secrets.DISCORD_WEBHOOK_URL }}
+        "${{ secrets.DISCORD_WEBHOOK_URL }}"
 
     - name: Send Evening Greeting
-      if: github.event.schedule == '0 14 * * *' 
+      if: github.event.schedule == '0 14 * * 1-5' 
       run: |
-        curl -H "Content-Type: application/json" \
-        -X POST \
+        curl -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+        -H "Content-Type: application/json" \
         -d '{
+          "content": "<@&1374047008829997157>",
           "embeds": [{
-            "title": "🌙 Selamaaat Malaaam! Udah ngantuk beluuum? 😴",
-            "description": "**Waktunya istirahaaat niih!** 🛏️\n\nHari ini udah capek bangeeet yaaa~ Sekarang saatnya recharge energi! 🔋\nJangan begadang teruuus, besok masih ada aktivitas lagiii! 📅\n\n*\"Rest when you are weary. Refresh and renew yourself.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇬🇧 Good Night Everyoneee!**\nTime to rest and rechargeee~ Sweet dreams await! 🌟\n*Tomorrow is another day to shine!* ✨",
+            "title": "🌙 Selamat Malam! Udah ngantuk belum?",
+            "description": "**Waktunya istirahat nih!** 🛏️\n\nHari ini udah capek banget ya! Sekarang saatnya recharge energi 🔋\nJangan begadang terus, besok masih ada aktivitas lagi!\n\n*\"Rest when you are weary. Refresh and renew yourself.\"*\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇬🇧 Good Night Everyone!**\nTime to rest and recharge! Sweet dreams await 🌟",
             "color": 6967348,
             "thumbnail": {
               "url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"
             },
             "footer": {
-              "text": "Mimpi indah semuanyaaa! Sweet dreams! 🌙💤",
+              "text": "Mimpi indah semuanya! Sweet dreams! | by server dev <@399393175904714752> 🌙",
               "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
             },
-            "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'"
+            "timestamp": "'"$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"'"
           }]
         }' \
-        ${{ secrets.DISCORD_WEBHOOK_URL }}
+        "${{ secrets.DISCORD_WEBHOOK_URL }}"
