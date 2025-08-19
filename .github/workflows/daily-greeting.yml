@@ -40,9 +40,9 @@ jobs:
           )
           
           DESCS=(
-            "[haloww chatt]\\n\\nlowkey warm-up: pick 1 tiny win to start.\\n\\n> lezgoo."
-            "[pagiii gng]\\n\\nsip coffee, set intention.\\n\\n> small steps."
-            "[yaa, morning fam]\\n\\nnew day, new reps.\\n\\n> steady."
+            "[haloww chatt]\\n\\nlowkey warm-up: pick 1 tiny win to start today. maybe clean your workspace or prep that coffee ritual.\\n\\n> lezgoo, small steps lead to big wins.\\n\\n> server dev - <@399393175904714752>"
+            "[pagiii gng]\\n\\nsip coffee, set intention, breathe deep. what's one thing you wanna ship today?\\n\\n> small steps, steady progress.\\n\\n> server dev - <@399393175904714752>"
+            "[yaa, morning fam]\\n\\nnew day, new reps, fresh energy. drop your morning vibe in chat!\\n\\n> steady momentum beats rushed chaos.\\n\\n> server dev - <@399393175904714752>"
           )
           
           FOOTERS=(
@@ -63,7 +63,7 @@ jobs:
                 "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif?ex=68a5b89b&is=68a4671b&hm=2bc283716f14281f2518ac14003d41ca9fd58200a446e21a7682d2cdb6b4f38b"
               },
               "footer": {
-                "text": "${FOOTERS[$INDEX]} | by server dev <@399393175904714752>",
+                "text": "${FOOTERS[$INDEX]}",
                 "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
               },
               "timestamp": "$TIMESTAMP"
@@ -88,10 +88,10 @@ jobs:
           )
           
           DESCS=(
-            "[udah lunch? minum dulu, gng]\\n\\nlock 25-min focus, then breathe. satu progress bermakna > lima tab random.\\n\\n> keep it rolling, pelan tapi nancep."
-            "[halo halo, siang dulu nih]\\n\\nwhat's your one thing before break? drop it - kita dorong bareng.\\n\\n> less noise, more signal."
-            "[lanjut tipis tipis ya]\\n\\nstretch, refill water, ship a tiny update - ong.\\n\\n> progress > perfection."
-            "[ayo ayo, power hour dikit]\\n\\nno doomscroll, just one clean commit - bet.\\n\\n> ship small, ship often."
+            "[udah lunch? minum dulu, gng]\\n\\nlock 25-min focus, then breathe deep. satu progress bermakna > lima tab random browsing.\\n\\n> keep it rolling, pelan tapi nancep di hati.\\n\\n> server dev - <@399393175904714752>"
+            "[halo halo, siang dulu nih]\\n\\nwhat's your one thing before break? drop it di chat - kita dorong bareng, support each other.\\n\\n> less noise, more meaningful signal.\\n\\n> server dev - <@399393175904714752>"
+            "[lanjut tipis tipis ya]\\n\\nstretch those muscles, refill water bottle, ship a tiny update - consistency is king.\\n\\n> progress over perfection, always.\\n\\n> server dev - <@399393175904714752>"
+            "[ayo ayo, power hour dikit]\\n\\nno doomscroll, just one clean commit or small task done. bet you can do it!\\n\\n> ship small, ship often, ship with love.\\n\\n> server dev - <@399393175904714752>"
           )
           
           FOOTERS=(
@@ -113,7 +113,7 @@ jobs:
                 "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif?ex=68a5b89b&is=68a4671b&hm=2bc283716f14281f2518ac14003d41ca9fd58200a446e21a7682d2cdb6b4f38b"
               },
               "footer": {
-                "text": "${FOOTERS[$INDEX]} | by server dev <@399393175904714752>",
+                "text": "${FOOTERS[$INDEX]}",
                 "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
               },
               "timestamp": "$TIMESTAMP"
@@ -138,10 +138,10 @@ jobs:
           )
           
           DESCS=(
-            "[gimana harinya? cerita dikit yuk]\\n\\nwrap one loose end biar besok startnya ringan - done, pending, next.\\n\\n> proud of you, keep going."
-            "[selow dulu, tarik napas]\\n\\nshare your best moment today - besar/kecil gapapa.\\n\\n> you did enough, fr."
-            "[halo tim, finish strong bareng]\\n\\nclose one tab, jot one note for tomorrow, log off with peace.\\n\\n> you're allowed to slow down."
-            "[golden hour check]\\n\\nif mager, at least tidy desk 2 menit - tiny reset, big vibe.\\n\\n> tomorrow you will thank you."
+            "[gimana harinya? cerita dikit yuk]\\n\\nwrap one loose end biar besok startnya ringan - categorize: done, pending, next action.\\n\\n> proud of you, keep going strong.\\n\\n> server dev - <@399393175904714752>"
+            "[selow dulu, tarik napas dalam]\\n\\nshare your best moment today - besar/kecil gapapa, we celebrate all wins here.\\n\\n> you did enough today, for real.\\n\\n> server dev - <@399393175904714752>"
+            "[halo tim, finish strong bareng]\\n\\nclose one tab, jot one note for tomorrow, log off with peace of mind.\\n\\n> you're allowed to slow down, it's okay.\\n\\n> server dev - <@399393175904714752>"
+            "[golden hour check-in time]\\n\\nif mager, at least tidy desk 2 menit - tiny reset, big positive vibe shift.\\n\\n> tomorrow you will definitely thank you.\\n\\n> server dev - <@399393175904714752>"
           )
           
           FOOTERS=(
@@ -163,7 +163,7 @@ jobs:
                 "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif?ex=68a5b89b&is=68a4671b&hm=2bc283716f14281f2518ac14003d41ca9fd58200a446e21a7682d2cdb6b4f38b"
               },
               "footer": {
-                "text": "${FOOTERS[$INDEX]} | by server dev <@399393175904714752>",
+                "text": "${FOOTERS[$INDEX]}",
                 "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
               },
               "timestamp": "$TIMESTAMP"
@@ -188,10 +188,10 @@ jobs:
           )
           
           DESCS=(
-            "[malam semua - good job today]\\n\\nmute 2 notifs paling berisik, breathe 4-4-4, tulis satu hal yang bikin kamu senyum.\\n\\n> rest is part of the plan, gn."
-            "[yaa, waktunya cooldown]\\n\\nunplug a bit - lamp dim, mind calm. besok gas lagi, no rush no drama.\\n\\n> sleep easy, gng."
-            "[thank you for today]\\n\\ndrop one tiny win di chat, lalu tutup layar. sisanya besok - no cap.\\n\\n> good night, fam."
-            "[last call before gn]\\n\\nwash face, water sip, airplane mode - then off.\\n\\n> recharge mode: on."
+            "[malam semua - good job today]\\n\\nmute 2 notifs paling berisik, breathe 4-4-4, tulis satu hal yang bikin kamu senyum hari ini.\\n\\n> rest is part of the plan, good night.\\n\\n> server dev - <@399393175904714752>"
+            "[yaa, waktunya cooldown]\\n\\nunplug a bit - lamp dim, mind calm. besok gas lagi, no rush no drama, santai aja.\\n\\n> sleep easy, gng. sweet dreams.\\n\\n> server dev - <@399393175904714752>"
+            "[thank you for today's effort]\\n\\ndrop one tiny win di chat, lalu tutup layar with gratitude. sisanya besok - no cap.\\n\\n> good night, fam. rest well.\\n\\n> server dev - <@399393175904714752>"
+            "[last call before good night]\\n\\nwash face, water sip, airplane mode if needed - then lights off, mind off.\\n\\n> recharge mode: officially activated.\\n\\n> server dev - <@399393175904714752>"
           )
           
           FOOTERS=(
@@ -213,7 +213,7 @@ jobs:
                 "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif?ex=68a5b89b&is=68a4671b&hm=2bc283716f14281f2518ac14003d41ca9fd58200a446e21a7682d2cdb6b4f38b"
               },
               "footer": {
-                "text": "${FOOTERS[$INDEX]} | by server dev <@399393175904714752>",
+                "text": "${FOOTERS[$INDEX]}",
                 "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
               },
               "timestamp": "$TIMESTAMP"
