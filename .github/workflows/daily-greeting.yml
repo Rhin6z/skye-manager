@@ -57,7 +57,8 @@ jobs:
           idx=$((RANDOM % ${#titles[@]}))
           export TITLE="${titles[$idx]}" DESC="${descs[$idx]}" FOOT="${footers[$idx]}" COLOR=16766720 TS
 
-          python3 - <<EOF > payload.json
+          # Simplified JSON generation without heredoc
+          python3 -c '
 import json, os
 payload = {
     "embeds": [{
@@ -65,15 +66,13 @@ payload = {
         "description": os.environ["DESC"],
         "color": int(os.environ["COLOR"]),
         "thumbnail": {"url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"},
-        "footer": {
-            "text": os.environ["FOOT"],
-            "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
-        },
+        "footer": {"text": os.environ["FOOT"], "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"},
         "timestamp": os.environ["TS"]
     }]
 }
-print(json.dumps(payload))
-EOF
+with open("payload.json", "w") as f:
+    json.dump(payload, f)
+'
           curl -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" -H "content-type: application/json" --data @payload.json
 
       - name: send afternoon greeting (rotating)
@@ -94,7 +93,8 @@ EOF
           idx=$((RANDOM % ${#titles[@]}))
           export TITLE="${titles[$idx]}" DESC="${descs[$idx]}" FOOT="${footers[$idx]}" COLOR=16763904 TS
 
-          python3 - <<EOF > payload.json
+          # Simplified JSON generation without heredoc
+          python3 -c '
 import json, os
 payload = {
     "embeds": [{
@@ -102,15 +102,13 @@ payload = {
         "description": os.environ["DESC"],
         "color": int(os.environ["COLOR"]),
         "thumbnail": {"url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"},
-        "footer": {
-            "text": os.environ["FOOT"],
-            "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
-        },
+        "footer": {"text": os.environ["FOOT"], "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"},
         "timestamp": os.environ["TS"]
     }]
 }
-print(json.dumps(payload))
-EOF
+with open("payload.json", "w") as f:
+    json.dump(payload, f)
+'
           curl -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" -H "content-type: application/json" --data @payload.json
 
       - name: send evening greeting (rotating)
@@ -131,7 +129,8 @@ EOF
           idx=$((RANDOM % ${#titles[@]}))
           export TITLE="${titles[$idx]}" DESC="${descs[$idx]}" FOOT="${footers[$idx]}" COLOR=16744448 TS
 
-          python3 - <<EOF > payload.json
+          # Simplified JSON generation without heredoc
+          python3 -c '
 import json, os
 payload = {
     "embeds": [{
@@ -139,15 +138,13 @@ payload = {
         "description": os.environ["DESC"],
         "color": int(os.environ["COLOR"]),
         "thumbnail": {"url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"},
-        "footer": {
-            "text": os.environ["FOOT"],
-            "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
-        },
+        "footer": {"text": os.environ["FOOT"], "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"},
         "timestamp": os.environ["TS"]
     }]
 }
-print(json.dumps(payload))
-EOF
+with open("payload.json", "w") as f:
+    json.dump(payload, f)
+'
           curl -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" -H "content-type: application/json" --data @payload.json
 
       - name: send night greeting (rotating)
@@ -168,7 +165,8 @@ EOF
           idx=$((RANDOM % ${#titles[@]}))
           export TITLE="${titles[$idx]}" DESC="${descs[$idx]}" FOOT="${footers[$idx]}" COLOR=8947848 TS
 
-          python3 - <<EOF > payload.json
+          # Simplified JSON generation without heredoc
+          python3 -c '
 import json, os
 payload = {
     "embeds": [{
@@ -176,13 +174,11 @@ payload = {
         "description": os.environ["DESC"],
         "color": int(os.environ["COLOR"]),
         "thumbnail": {"url": "https://cdn.discordapp.com/emojis/692428734822645770.gif"},
-        "footer": {
-            "text": os.environ["FOOT"],
-            "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"
-        },
+        "footer": {"text": os.environ["FOOT"], "icon_url": "https://cdn.discordapp.com/emojis/692428869338931240.png"},
         "timestamp": os.environ["TS"]
     }]
 }
-print(json.dumps(payload))
-EOF
+with open("payload.json", "w") as f:
+    json.dump(payload, f)
+'
           curl -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" -H "content-type: application/json" --data @payload.json
