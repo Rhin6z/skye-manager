@@ -1,0 +1,27 @@
+name: Test Discord Webhook
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  test-webhook:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Test Morning Message
+      run: |
+        curl -H "Content-Type: application/json" \
+        -X POST \
+        -d '{
+          "embeds": [{
+            "title": "🧪 TEST: Selamaaat Pagiii! ☕✨",
+            "description": "**Testing webhook connection!** 🚀\n\nKalau pesan ini muncul di Discord, berarti setup berhasiiiil! 🎉\n\n━━━━━━━━━━━━━━━━━━━━━━\n**🇬🇧 TEST: Good Morning!**\nIf you see this message, the webhook is working perfectly! ✅",
+            "color": 65280,
+            "footer": {
+              "text": "GitHub Actions Test - " "$(date)"
+            },
+            "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'"
+          }]
+        }' \
+        ${{ secrets.DISCORD_WEBHOOK_URL }}
