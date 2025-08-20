@@ -1,7 +1,3 @@
-# GitHub Actions workflow untuk mengirim pesan sapaan Discord secara otomatis
-# Kata-kata sudah di-update biar lebih santuy, banyakin jokes Windah Basudara, dan lebih relate
-# Kata-kata toxic/badword sedikit is okay (sesuai request)
-# Kalimat English-nya dipersingkat dan lebih chill
 name: daily discord greeting - rotating (english-first)
 
 on:
@@ -36,36 +32,36 @@ jobs:
         if: (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'morning') || github.event.schedule == '0 0 * * 1-5'
         run: |
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
-          
+
           TITLES=(
-            "🌄 Pagi, goblok! Bangun lah anjir! 🤬"
-            "🌅 Gaspol, bangsat! Waktunya kerja rodi! 😤"
-            "🐣 Morning, cuk! Waktunya berulah! 😂"
-            "🌅 Waktunya push rank kehidupan! ✨"
-            "🌅 GGWP! Selamat pagi kawan-kawan! 🙌"
-            "☀️ Bangun! Nanti rejekinya dipatok ayam! 🐓"
+            "🌄 pagi woy, bangun dulu lah—jangan jadi beban kasur 😴"
+            "🌅 gas tipis, gausa ngegas—pelan tapi jalan, anjayy"
+            "🐣 morning squad, kopi dulu baru bacot produktif ☕"
+            "🌅 push rank kehidupan dikit-dikit yaa, santai tapi nyicil ✨"
+            "☀️ rejeki ayam aja pagi, masa lu kalah sama ayam 🐓"
+            "🌞 selamat pagi, fokus ke 1 hal aja dulu—sisanya belakangan"
           )
-          
+
           DESCS=(
-            "Yo, morning! Another day to crush it. Pagi-pagi jangan mager kayak babi, gaspol sampe sukses. Kalo nggak, yaudah gapapa, hidup lu emang sampah. 😂\\n\\n> Satu kata, T A M A T ! (from Windut)\\n> server dev - <@399393175904714752>"
-            "Rise and shine, legend! Let's make today iconic. Kalo ada kerjaan yang susah, coba aja dulu. Kalo gak bisa? Ya coba lagi sampai bisa, anjing!\\n\\n> Gak tamat gak asik! (from Windut)\\n> server dev - <@399393175904714752>"
-            "Morning, gorgeous souls! The grind is real. Jangan lupa senyum, biar rejeki datang. Kalo gak datang? Ya cari sendiri, tolol!\\n\\n> Hidup ini emang penuh penderitaan, makanya kita harus bahagia. (from Windut)\\n> server dev - <@399393175904714752>"
-            "Pagi, bestie! It's time to activate main character energy. Jangan cuma rebahan, nanti skill pasif lu aktif, yaitu jadi beban.\\n\\n> Jangan pernah menyerah, tapi kalau menyerah jangan lupa senyum. (from Windut)\\n> server dev - <@399393175904714752}"
-            "What's up, everyone? Time to touch grass and get things done. Kalo udah mulai capek, coba dengerin playlist nge-chill dulu, bangsat!\\n\\n> Tolong... tolong... tolong! (from Windut)\\n> server dev - <@399393175904714752}"
-            "Yo, what's good? Pagi-pagi jangan kebanyakan scroll, mending push up biar sigma. Kalo gak mau, yaudah gak usah. Gaspol lu babi!\\n\\n> Tidur adalah kebutuhan bagi orang-orang lemah, makanya gua gak pernah tidur (from Windut)\\n> server dev - <@399393175904714752}"
+            "yo morning fam! new day new grind, no cap—jangan afk mulu anying. bangun siang mah auto low rank fr 😏\\n> by server dev - <@399393175904714752>"
+            "rise up squad! fresh start, keep it steady—gerak dikit aja udah win. jangan jadi pajangan lobby, kocak 😂\\n> by server dev - <@399393175904714752>"
+            "gm legends! touch grass or touch goals—pilih satu dulu. pelan² tapi konsisten, jangan banyak alasan anjir.\\n> by server dev - <@399393175904714752>"
+            "top of the morning, brodie! small dubs matter—minum air, tarik napas, abis itu gas tipis. jangan typo hidup lu sendiri lah 😴\\n> by server dev - <@399393175904714752>"
+            "good morning gang! lowkey today feels winnable—asal lu bukan npc parkir di base, cuk. kopi dulu terus jalan.\\n> by server dev - <@399393175904714752>"
+            "mornin’ squad! no snooze, just moves—bikin progress 1% juga udah mantap. jangan drama dulu, save buat nanti 🤏\\n> by server dev - <@399393175904714752>"
           )
-          
+
           FOOTERS=(
-            "Gaspol!"
-            "Semangat pagi!"
-            "Santuy tapi produktif"
-            "GGWP, Bro"
-            "The show must go on"
-            "Gak tamat gak asik"
+            "gas pelan tapi tahan lama"
+            "semangat tipis-tipis"
+            "santuy tapi kelar"
+            "ggwp pagi"
+            "the show keeps going"
+            "gak tamat gak asik"
           )
-          
+
           INDEX=$((RANDOM % 6))
-          
+
           cat > payload.json << EOF
           {
             "embeds": [{
@@ -73,7 +69,7 @@ jobs:
               "description": "${DESCS[$INDEX]}",
               "color": 16766720,
               "thumbnail": {
-                "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif?ex=68a5b89b&is=68a4671b&hm=2bc283716f14281f2518ac14003d41ca9fd58200a446e21a7682d2cdb6b4f38b"
+                "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif"
               },
               "footer": {
                 "text": "${FOOTERS[$INDEX]}",
@@ -83,45 +79,43 @@ jobs:
             }]
           }
           EOF
-          
-          curl -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
-            -H "Content-Type: application/json" \
-            --data @payload.json
+
+          curl -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" -H "Content-Type: application/json" --data @payload.json
 
       - name: send afternoon greeting (rotating)
         if: (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'afternoon') || github.event.schedule == '0 5 * * 1-5'
         run: |
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
-          
+
           TITLES=(
-            "🌞 Udah siang, jangan goblok! Bangun! 🤬"
-            "🍔 Waktunya makan siang, bro!"
-            "🎮 Break sejenak, jangan push terus!"
-            "✨ GGWP hari ini! Santai dulu! 🙌"
-            "😎 Santai, lu bukan robot! Lu anjing! 🐕"
-            "💡 Waktunya mikir ide gila! 🤯"
+            "🌞 siang² gini, nap dulu—reset otak bentaran"
+            "🍔 lunch dulu ga sih? perut ga bisa diajak nego"
+            "🎮 break tipis, biar ga kebakar kaya cpu fan 100%"
+            "✨ tengah hari check: masih waras? hydrate dulu"
+            "😎 santai, lu bukan robot—ga usah sok 24/7 on"
+            "💡 ide liar biasanya muncul abis makan—gas"
           )
-          
+
           DESCS=(
-            "Yo, afternoon! Hope your day is going well. Kalo udah mulai puyeng, jangan dipaksa. Mending istirahat, cari udara segar. Dasar monyet!\\n\\n> Istirahat itu penting, gak cuma ngoding terus. (dari gua)\\n> server dev - <@399393175904714752>"
-            "Lunch time, squad! Time to refuel. Jangan lupa makan yang bener, jangan cuma mie instan. Kalo gak makan? Lu babi kalo gak peduli sama diri sendiri.\\n\\n> Makan, jangan makan teman! (from Windut)\\n> server dev - <@399393175904714752>"
-            "What's good? The day is halfway done. Ambil napas, minum air putih, dan kembali kerja dengan semangat baru. Jangan mager anjing!\\n\\n> Jangan pernah menyerah, tapi kalau menyerah jangan lupa senyum. (from Windut)\\n> server dev - <@399393175904714752}"
-            "Afternoon, legend! Take a break, you've earned it. Jangan sampai burnout, nanti malah nggak bisa kerja sama sekali, goblok!\\n\\n> Hidup ini emang penuh penderitaan, makanya kita harus bahagia. (from Windut)\\n> server dev - <@399393175904714752}"
-            "Hey bestie! Need a recharge? Go get some vitamin D! Kalo udah terlalu fokus, mata bisa jereng. Jangan sampai buta gara-gara layar, tolol!\\n\\n> Jangan panik, ini cuma game. (from Windut)\\n> server dev - <@399393175904714752}"
-            "Afternoon, everyone! It's been a busy day. Jangan lupa cek progress, udah di jalur yang bener apa belom. Kalo nggak, yaudah diperbaiki aja, bangsat!\\n\\n> Gas pol! (from Windut)\\n> server dev - <@399393175904714752}"
+            "what’s good squad? half the day cooked, lowkey saatnya refill energy. makan siang itu buff, bukan side quest anying 🍔\\n> by server dev - <@399393175904714752>"
+            "yo fam! pace yourself, no burnout—isi perut dulu biar aim ga ngaco. jangan jadi singa di chat, koala di real life 😴\\n> by server dev - <@399393175904714752>"
+            "good afternoon gamers! hydrate or diedrate—minum dulu terus nap dikit, baru lanjut war. drama nanti aja kocak.\\n> by server dev - <@399393175904714752>"
+            "sup team! mid-day vibe check—kalau kepala panas, cooldown 10 menit. baliknya jangan salty, malu dong anjir 😌\\n> by server dev - <@399393175904714752>"
+            "hey brodie! snack, stretch, scroll dikit—yang penting baliknya fresh. jangan overcommit, nanti overtilt.\\n> by server dev - <@399393175904714752>"
+            "afternoon gang! \"makan, jangan makan temen.\" (Windut) — tapi kalo makan bareng sih hayuk 🔥\\n> by server dev - <@399393175904714752>"
           )
-          
+
           FOOTERS=(
-            "Santai sejenak"
-            "Recharge!"
-            "Makan dulu, boss!"
-            "Stay chill"
-            "Stay hydrated"
-            "Mid-day check"
+            "santai sejenak"
+            "recharge dulu"
+            "makan dulu, boss!"
+            "stay chill"
+            "stay hydrated"
+            "weekend vibes"
           )
-          
+
           INDEX=$((RANDOM % 6))
-          
+
           cat > payload.json << EOF
           {
             "embeds": [{
@@ -129,7 +123,7 @@ jobs:
               "description": "${DESCS[$INDEX]}",
               "color": 16763904,
               "thumbnail": {
-                "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif?ex=68a5b89b&is=68a4671b&hm=2bc283716f14281f2518ac14003d41ca9fd58200a446e21a7682d2cdb6b4f38b"
+                "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif"
               },
               "footer": {
                 "text": "${FOOTERS[$INDEX]}",
@@ -139,45 +133,43 @@ jobs:
             }]
           }
           EOF
-          
-          curl -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
-            -H "Content-Type: application/json" \
-            --data @payload.json
+
+          curl -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" -H "Content-Type: application/json" --data @payload.json
 
       - name: send evening greeting (rotating)
         if: (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'evening') || github.event.schedule == '0 10 * * 1-5'
         run: |
-          TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:S.000Z)
-          
+          TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
+
           TITLES=(
-            "🌆 Waktunya nge-chill, anjing! 😎"
-            "🌅 Sore santai, kontol!"
-            "☕ Ngopi dulu, baru lanjut, cuk! ☕"
-            "🌃 Malam ini milik kita, babi! ✨"
-            "✨ Waktunya berbuat maksiat! 😈"
-            "🌠 Enjoy the moment, asu! 😊"
+            "🌆 sore², turunin rpm—cooldown dulu lah"
+            "🌅 golden hour = izin buat log off pelan²"
+            "☕ ngopi senja? boleh. overthink? ntar aja"
+            "🌃 jangan sok produktif 24/7, chill dulu kek"
+            "✨ bosen? ganti suasana 15 menit, balik war lagi"
+            "🌠 cukupin buat hari ini, sisanya besok aja"
           )
-          
+
           DESCS=(
-            "Evening, everyone! Time to chill. Jangan terlalu serius sama kerjaan, hidup ini butuh santai juga. Kalo nggak, nanti stres. Jangan stres, nanti sakit, goblok!\\n\\n> Hidup itu emang penuh penderitaan, makanya kita harus bahagia. (from Windut)\\n> server dev - <@399393175904714752>"
-            "What's good? The sun is setting, and so is our productivity. Waktunya log off dan nikmatin hidup. Cari game yang seru, atau nonton film anjir.\\n\\n> Matiin notif kerja dulu. (dari gua)\\n> server dev - <@399393175904714752>"
-            "Evening, legend! Lu udah GG hari ini. Give yourself a pat on the back. Kalo ada yang bilang lu sampah, cuekin aja. Kalo ada yang bilang lu GG, ya iyain aja, monyet!\\n\\n> Jangan pernah menyerah, tapi kalau menyerah jangan lupa senyum. (from Windut)\\n> server dev - <@399393175904714752}"
-            "Hey bestie! Golden hour hits different. Waktunya nge-chill bareng teman, atau main game bareng. Jangan sendirian, nanti ngenes, tolol!\\n\\n> Gak tamat gak asik! (from Windut)\\n> server dev - <@399393175904714752}"
-            "Evening, squad! Time to unwind. Jangan mikirin kerjaan besok dulu, santai aja. Kalo udah tenang, baru deh mikir lagi, bangsat!\\n\\n> Jangan panik, ini cuma game. (from Windut)\\n> server dev - <@399393175904714752}"
-            "Yo, what's up? Waktunya dengerin musik, atau nonton youtube. Jangan cuma nonton yang itu-itu aja, coba tonton Windah Basudara. Dasar anjing!\\n\\n> Tolong... tolong... tolong! (from Windut)\\n> server dev - <@399393175904714752}"
+            "good evening gamers! vibe check dulu, sunset hits different—santai bentar biar ga tilt, feeding itu dosa sosial anjir 😂\\n> by server dev - <@399393175904714752>"
+            "yo evening fam! log off pelan², nyalain musik, mute drama. besok masih panjang, sekarang santai aja dulu anying.\\n> by server dev - <@399393175904714752>"
+            "evening squad! cooldown dulu—ganti playlist, cemil dikit, terus balik war. lose streak jangan sampe bikin uninstall kocak 🤡\\n> by server dev - <@399393175904714752>"
+            "what’s poppin brodie! golden hour moment—ketawain aja dikit, mmr turun ga sekejam kata netizen kok fr 😌\\n> by server dev - <@399393175904714752>"
+            "good evening team! ganti map: dari kerja ke santai. snack dikit, chat dikit, hidup aman. slow is a strat fr.\\n> by server dev - <@399393175904714752>"
+            "good evening gang! \"jangan panik, ini cuma game.\" (Windut) tapi kalo lose streak, off mic bentar gapapa 😮‍💨\\n> by server dev - <@399393175904714752>"
           )
-          
+
           FOOTERS=(
-            "Chill vibes only"
-            "Rest & recharge"
-            "Malam ini milik kita"
-            "Santai sejenak"
-            "Waktunya nge-game"
-            "GGWP"
+            "chill vibes only"
+            "rest & recharge"
+            "malam ini milik kita"
+            "santai sejenak"
+            "waktunya nge-game"
+            "ggwp"
           )
-          
+
           INDEX=$((RANDOM % 6))
-          
+
           cat > payload.json << EOF
           {
             "embeds": [{
@@ -185,7 +177,7 @@ jobs:
               "description": "${DESCS[$INDEX]}",
               "color": 16744448,
               "thumbnail": {
-                "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif?ex=68a5b89b&is=68a4671b&hm=2bc283716f14281f2518ac14003d41ca9fd58200a446e21a7682d2cdb6b4f38b"
+                "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif"
               },
               "footer": {
                 "text": "${FOOTERS[$INDEX]}",
@@ -195,45 +187,43 @@ jobs:
             }]
           }
           EOF
-          
-          curl -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
-            -H "Content-Type: application/json" \
-            --data @payload.json
+
+          curl -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" -H "Content-Type: application/json" --data @payload.json
 
       - name: send night greeting (rotating)
         if: (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'night') || github.event.schedule == '0 15 * * 1-5'
         run: |
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
-          
+
           TITLES=(
-            "🌙 Waktunya bobo, anjir! 😴"
-            "💤 Goodnight, bangsat!"
-            "✨ Waktunya mimpi indah, tolol! 🌠"
-            "🚀 GGWP hari ini! Saatnya rehat, cuk! 💖"
-            "😴 Tidur adalah kebutuhan, eh, lu bukan robot, babi!"
-            "🌙 Tamat? Gak semudah itu, Ferguso!"
+            "🌙 time to power down—good night"
+            "💤 tidur dulu, biar besok ga error 500"
+            "✨ bobo cantik, mimpi yang manis"
+            "🚀 hari ini tamat. besok season baru"
+            "😴 rest mode: ON. notif: OFF"
+            "🌙 malem ini buat recharge, bukan overthink"
           )
-          
+
           DESCS=(
-            "Yo, goodnight! Time to log off and recharge. Jangan begadang cuma buat nonton YouTube atau TikTok gak jelas, nanti besok kayak zombie. Lu babi kalo gak tidur!\\n\\n> Tidur adalah kebutuhan bagi orang-orang lemah, makanya gua gak pernah tidur (from Windut)\\n> server dev - <@399393175904714752>"
-            "Night, everyone! Get some rest. Besok masih ada hari baru buat ngelanjutin hidup. Jangan overthinking, tolol, nanti gak bisa tidur.\\n\\n> Gak tamat gak asik! (from Windut)\\n> server dev - <@399393175904714752}"
-            "Night night, legend! Sleep is your brain's way of organizing all the amazing memories from today. Jangan lupa mimpiin hal yang indah-indah, jangan mimpi dikejar hantu, asu!\\n\\n> Jangan pernah menyerah, tapi kalau menyerah jangan lupa senyum. (from Windut)\\n> server dev - <@399393175904714752}"
-            "Goodnight, bestie! Time to disconnect from the digital world and reconnect with yourself. Jangan main game sampai mampus, anjir!\\n\\n> Jangan panik, ini cuma game. (from Windut)\\n> server dev - <@399393175904714752}"
-            "What's good? Sleep well, legend! Your productivity today was iconic, now it's time to rest. Kalo ada kerjaan yang belum selesai, yaudah, besok aja, bangsat!\\n\\n> Tolong... tolong... tolong! (from Windut)\\n> server dev - <@399393175904714752}"
-            "Night, squad! Tomorrow's gonna be another chance to slay. But tonight is sacred rest time. Kalo masih mau nge-game, yaudah, tapi jangan sampai pagi ya, goblok!\\n\\n> Gas pol! (from Windut)\\n> server dev - <@399393175904714752}"
+            "night night squad! log off, recharge—no heroics tonight. hp aja ada low battery warning anying ⚡ lu juga perlu tidur.\\n> by server dev - <@399393175904714752>"
+            "good night fam! save progress, close app—bukan close friend. besok lanjut war dengan energi full, fr.\\n> by server dev - <@399393175904714752>"
+            "sleep tight gamers! jangan bawa rank ke mimpi—biar hati ga kebakaran. bobo bentar aja udah beda, kocak.\\n> by server dev - <@399393175904714752>"
+            "gn team! \"tidur itu penting, gengs.\" (Windut) tahan dikit lawan fyp, tutup hp, tutup mata.\\n> by server dev - <@399393175904714752>"
+            "rest well brodie! yang belum kelar, besok hajar. sekarang waktunya jadi guling enjoyer, no cap.\\n> by server dev - <@399393175904714752>"
+            "good night gang! jangan flex begadang—besok pagi malah jadi npc ngantuk, anjir 😴\\n> by server dev - <@399393175904714752>"
           )
-          
+
           FOOTERS=(
-            "Tidur, cuy!"
-            "Recharge like a legend"
-            "Mimpi indah"
-            "Rest well"
-            "See you tomorrow"
-            "Digital detox"
+            "tidur, cuy"
+            "recharge like a legend"
+            "mimpi indah"
+            "rest well"
+            "see u tomorrow"
+            "digital detox"
           )
-          
+
           INDEX=$((RANDOM % 6))
-          
+
           cat > payload.json << EOF
           {
             "embeds": [{
@@ -241,7 +231,7 @@ jobs:
               "description": "${DESCS[$INDEX]}",
               "color": 8947848,
               "thumbnail": {
-                "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif?ex=68a5b89b&is=68a4671b&hm=2bc283716f14281f2518ac14003d41ca9fd58200a446e21a7682d2cdb6b4f38b"
+                "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif"
               },
               "footer": {
                 "text": "${FOOTERS[$INDEX]}",
@@ -251,7 +241,5 @@ jobs:
             }]
           }
           EOF
-          
-          curl -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
-            -H "Content-Type: application/json" \
-            --data @payload.json
+
+          curl -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" -H "Content-Type: application/json" --data @payload.json
