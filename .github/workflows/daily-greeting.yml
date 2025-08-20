@@ -1,3 +1,7 @@
+# GitHub Actions workflow untuk mengirim pesan sapaan Discord secara otomatis
+# Kata-kata sudah di-update biar lebih santuy, banyakin jokes Windah Basudara, dan lebih relate
+# Kata-kata toxic/badword sedikit is okay (sesuai request)
+# Kalimat English-nya dipersingkat dan lebih chill
 name: daily discord greeting - rotating (english-first)
 
 on:
@@ -34,30 +38,30 @@ jobs:
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
           
           TITLES=(
-            "🌅 rise and grind, no cap"
-            "🌅 periodt! morning is served"
-            "🌅 wakey wakey it's slay o'clock"
-            "🌅 bestie energy: activated"
-            "🌅 main character morning fr"
-            "🌅 time to touch grass and win"
+            "🌄 Pagi, goblok! Bangun lah anjir! 🤬"
+            "🌅 Gaspol, bangsat! Waktunya kerja rodi! 😤"
+            "🐣 Morning, cuk! Waktunya berulah! 😂"
+            "🌅 Waktunya push rank kehidupan! ✨"
+            "🌅 GGWP! Selamat pagi kawan-kawan! 🙌"
+            "☀️ Bangun! Nanti rejekinya dipatok ayam! 🐓"
           )
           
           DESCS=(
-            "another banger day to absolutely demolish your goals and serve that iconic energy bestie! we're not doing mid vibes today - only premium main character moments and that unstoppable sigma grindset that makes everyone wonder how you're this legendary!\\n\\n> bangun tidur langsung scrolling? ancis banget, mending push up dulu biar jadi sigma male\\n\\n> server dev - <@399393175904714752>"
-            "good morning gorgeous humans! today's forecast: 100% chance of you being absolutely fire and serving looks that would make the sun jealous. time to hydrate that beautiful brain and start manifesting some serious w's because you're literally built different!\\n\\n> minum air putih 2 gelas, dehidrasi bikin otak lemot - lu sampah kalo gak minum air\\n\\n> server dev - <@399393175904714752>"
-            "wakey wakey eggs and bakey squad! your bed was cozy but your dreams are calling and they're not gonna chase themselves bestie. today's mission: be so iconic that even your haters have to admit you're absolutely crushing it in every possible way!\\n\\n> sarapan yang bener ya, jangan cuma kopi doang - nanti maag kumat sedih amat\\n\\n> server dev - <@399393175904714752>"
-            "periodt! time to exit that cozy cocoon and enter your butterfly era because today is literally designed for you to glow up in ways that haven't even been invented yet. let's make this tuesday so fire that monday gets jealous!\\n\\n> cuci muka pake air dingin biar melek, jangan sampe ngantuk di meeting - ancis banget\\n\\n> server dev - <@399393175904714752>"
-            "rise and shine my beautiful chaotic gremlins! it's time to caffeinate that magnificent brain of yours and start serving the kind of energy that makes productivity apps cry tears of joy. today we're not just surviving, we're absolutely thriving!\\n\\n> pagi-pagi udah excited nih, energy kayak anak tk - tapi yang penting semangat bukan ancis\\n\\n> server dev - <@399393175904714752>"
-            "morning bestie! your pillow was nice but your potential is nicer, so let's get up and show this world what happens when talent meets determination and a really good cup of coffee. spoiler alert: magic happens and it's about to be legendary!\\n\\n> bangun tidur langsung beresin kasur - hidup rapi dimulai dari hal kecil, lu sampah kalo kamar berantakan\\n\\n> server dev - <@399393175904714752>"
+            "Yo, morning! Another day to crush it. Pagi-pagi jangan mager kayak babi, gaspol sampe sukses. Kalo nggak, yaudah gapapa, hidup lu emang sampah. 😂\\n\\n> Satu kata, T A M A T ! (from Windut)\\n> server dev - <@399393175904714752>"
+            "Rise and shine, legend! Let's make today iconic. Kalo ada kerjaan yang susah, coba aja dulu. Kalo gak bisa? Ya coba lagi sampai bisa, anjing!\\n\\n> Gak tamat gak asik! (from Windut)\\n> server dev - <@399393175904714752>"
+            "Morning, gorgeous souls! The grind is real. Jangan lupa senyum, biar rejeki datang. Kalo gak datang? Ya cari sendiri, tolol!\\n\\n> Hidup ini emang penuh penderitaan, makanya kita harus bahagia. (from Windut)\\n> server dev - <@399393175904714752>"
+            "Pagi, bestie! It's time to activate main character energy. Jangan cuma rebahan, nanti skill pasif lu aktif, yaitu jadi beban.\\n\\n> Jangan pernah menyerah, tapi kalau menyerah jangan lupa senyum. (from Windut)\\n> server dev - <@399393175904714752}"
+            "What's up, everyone? Time to touch grass and get things done. Kalo udah mulai capek, coba dengerin playlist nge-chill dulu, bangsat!\\n\\n> Tolong... tolong... tolong! (from Windut)\\n> server dev - <@399393175904714752}"
+            "Yo, what's good? Pagi-pagi jangan kebanyakan scroll, mending push up biar sigma. Kalo gak mau, yaudah gak usah. Gaspol lu babi!\\n\\n> Tidur adalah kebutuhan bagi orang-orang lemah, makanya gua gak pernah tidur (from Windut)\\n> server dev - <@399393175904714752}"
           )
           
           FOOTERS=(
-            "stay hydrated stay iconic"
-            "morning energy is unmatched" 
-            "today's main character moment"
-            "let's secure this tuesday"
-            "rise up bestie"
-            "manifest that glow up"
+            "Gaspol!"
+            "Semangat pagi!"
+            "Santuy tapi produktif"
+            "GGWP, Bro"
+            "The show must go on"
+            "Gak tamat gak asik"
           )
           
           INDEX=$((RANDOM % 6))
@@ -90,30 +94,30 @@ jobs:
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
           
           TITLES=(
-            "🌞 midday check-in squad"
-            "🌞 lunch break main character moment"
-            "🌞 afternoon glow is immaculate"
-            "🌞 keep slaying bestie"
-            "🌞 vitamin d and good vibes only"
-            "🌞 halfway through being iconic"
+            "🌞 Udah siang, jangan goblok! Bangun! 🤬"
+            "🍔 Waktunya makan siang, bro!"
+            "🎮 Break sejenak, jangan push terus!"
+            "✨ GGWP hari ini! Santai dulu! 🙌"
+            "😎 Santai, lu bukan robot! Lu anjing! 🐕"
+            "💡 Waktunya mikir ide gila! 🤯"
           )
           
           DESCS=(
-            "bestie! hope your morning was absolutely sending and you're still radiating that premium energy we love to see. time to fuel up that gorgeous brain with some actual nutrition and keep serving excellence for the rest of this legendary day!\\n\\n> jangan skip makan siang ya, nanti lemes - sedih amat kalo sampe pingsan gara-gara lapar\\n\\n> server dev - <@399393175904714752>"
-            "periodt afternoon warriors! we're living in the golden hour of productivity right now and your energy is still hitting different. maybe step away from the screen for a hot second and remember that you're a human being, not a productivity machine!\\n\\n> mata udah capek kan? lihat yang ijo-ijo dulu - ancis banget kalo sampe buta gara-gara layar\\n\\n> server dev - <@399393175904714752>"
-            "hey gorgeous! the day is serving perfect vibes for a little reset and recharge session. grab some water, do a tiny stretch, and remember that you're literally the main character of this whole storyline we call life!\\n\\n> minum yang banyak, dehidrasi bikin kepala pusing - lu sampah kalo gak peduli sama tubuh sendiri\\n\\n> server dev - <@399393175904714752>"
-            "afternoon legends! your consistency today is absolutely unmatched and honestly inspiring to witness. if you need to adjust your game plan for the rest of the day, that's not failing - that's called being strategic and iconic!\\n\\n> udah setengah hari nih, evaluasi bentar: masih on track atau udah ancis mode?\\n\\n> server dev - <@399393175904714752>"
-            "midday bestie check! don't let that afternoon energy dip get you down because you're literally built different and capable of pushing through anything. maybe try the pomodoro technique or just vibe with your favorite playlist for a bit!\\n\\n> kalo ngantuk jangan maksa - power nap 15 menit, lu sampah kalo maksa ngoding sambil ngantuk\\n\\n> server dev - <@399393175904714752>"
-            "lunch time legends! remember that taking proper breaks and actually eating real food is not optional - it's literally an investment in your ability to continue being absolutely phenomenal for the rest of this beautiful day!\\n\\n> istirahat bukan tanda lemah - itu tanda pinter, ancis banget kalo maksa burnout\\n\\n> server dev - <@399393175904714752>"
+            "Yo, afternoon! Hope your day is going well. Kalo udah mulai puyeng, jangan dipaksa. Mending istirahat, cari udara segar. Dasar monyet!\\n\\n> Istirahat itu penting, gak cuma ngoding terus. (dari gua)\\n> server dev - <@399393175904714752>"
+            "Lunch time, squad! Time to refuel. Jangan lupa makan yang bener, jangan cuma mie instan. Kalo gak makan? Lu babi kalo gak peduli sama diri sendiri.\\n\\n> Makan, jangan makan teman! (from Windut)\\n> server dev - <@399393175904714752>"
+            "What's good? The day is halfway done. Ambil napas, minum air putih, dan kembali kerja dengan semangat baru. Jangan mager anjing!\\n\\n> Jangan pernah menyerah, tapi kalau menyerah jangan lupa senyum. (from Windut)\\n> server dev - <@399393175904714752}"
+            "Afternoon, legend! Take a break, you've earned it. Jangan sampai burnout, nanti malah nggak bisa kerja sama sekali, goblok!\\n\\n> Hidup ini emang penuh penderitaan, makanya kita harus bahagia. (from Windut)\\n> server dev - <@399393175904714752}"
+            "Hey bestie! Need a recharge? Go get some vitamin D! Kalo udah terlalu fokus, mata bisa jereng. Jangan sampai buta gara-gara layar, tolol!\\n\\n> Jangan panik, ini cuma game. (from Windut)\\n> server dev - <@399393175904714752}"
+            "Afternoon, everyone! It's been a busy day. Jangan lupa cek progress, udah di jalur yang bener apa belom. Kalo nggak, yaudah diperbaiki aja, bangsat!\\n\\n> Gas pol! (from Windut)\\n> server dev - <@399393175904714752}"
           )
           
           FOOTERS=(
-            "stay fueled stay legendary"
-            "midday glow is real"  
-            "hydration nation member"
-            "afternoon excellence activated"
-            "consistency is everything"
-            "break time is sacred time"
+            "Santai sejenak"
+            "Recharge!"
+            "Makan dulu, boss!"
+            "Stay chill"
+            "Stay hydrated"
+            "Mid-day check"
           )
           
           INDEX=$((RANDOM % 6))
@@ -143,33 +147,33 @@ jobs:
       - name: send evening greeting (rotating)
         if: (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'evening') || github.event.schedule == '0 10 * * 1-5'
         run: |
-          TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
+          TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:S.000Z)
           
           TITLES=(
-            "🌆 sunset therapy session fr"
-            "🌆 golden hour glow bestie"
-            "🌆 evening vibes are sending"
-            "🌆 wind down time legends"
-            "🌆 reflection hour activated"
-            "🌆 cozy evening energy unlocked"
+            "🌆 Waktunya nge-chill, anjing! 😎"
+            "🌅 Sore santai, kontol!"
+            "☕ Ngopi dulu, baru lanjut, cuk! ☕"
+            "🌃 Malam ini milik kita, babi! ✨"
+            "✨ Waktunya berbuat maksiat! 😈"
+            "🌠 Enjoy the moment, asu! 😊"
           )
           
           DESCS=(
-            "besties! the sun is literally giving us a free light show right now and that's honestly so beautiful. take a moment to step back from whatever you're grinding on and appreciate how far you've traveled today - both literally and metaphorically speaking!\\n\\n> keluar rumah bentar, sunset gratis - sedih amat kalo gak pernah liat matahari\\n\\n> server dev - <@399393175904714752>"
-            "evening legends! time to transition into that soft life energy where you can just exist without the pressure of being constantly productive. your worth isn't measured by your output, it's measured by the fact that you're absolutely iconic just by being yourself!\\n\\n> jangan lupa makan malam - lu sampah kalo skip makan terus, nanti sakit\\n\\n> server dev - <@399393175904714752>"
-            "periodt! golden hour is nature's way of reminding us that endings can be just as gorgeous as beginnings bestie. maybe use this transition time to plan some fun activities for tonight or just vibe with your favorite comfort content!\\n\\n> sore-sore gini enaknya ngobrol sama temen - ancis banget kalo cuma scroll sendirian\\n\\n> server dev - <@399393175904714752>"
-            "hey gorgeous souls! evening energy is perfect for some gentle creative work or maybe just chilling with that playlist that hits different when the sun starts setting. remember that inspiration often comes when we're relaxed and not forcing it!\\n\\n> matiin notif kerja dulu - sedih amat kalo weekend masih mikirin kerjaan\\n\\n> server dev - <@399393175904714752>"
-            "evening squad! time to celebrate every single win from today because they're building blocks toward your bigger dreams and honestly you should feel proud of every step you took toward becoming your most authentic self today!\\n\\n> hari ini capek? wajar kok, hidup emang butuh effort - ancis kalo gak pernah capek\\n\\n> server dev - <@399393175904714752>"
-            "wind down warriors! the evening is giving perfect vibes for some digital cleanup or maybe journaling about what made you smile today. small moments of gratitude can literally rewire your brain for more happiness and that's scientifically proven bestie!\\n\\n> beresin workspace dikit - lu sampah kalo besok pagi chaos gara-gara meja berantakan\\n\\n> server dev - <@399393175904714752>"
+            "Evening, everyone! Time to chill. Jangan terlalu serius sama kerjaan, hidup ini butuh santai juga. Kalo nggak, nanti stres. Jangan stres, nanti sakit, goblok!\\n\\n> Hidup itu emang penuh penderitaan, makanya kita harus bahagia. (from Windut)\\n> server dev - <@399393175904714752>"
+            "What's good? The sun is setting, and so is our productivity. Waktunya log off dan nikmatin hidup. Cari game yang seru, atau nonton film anjir.\\n\\n> Matiin notif kerja dulu. (dari gua)\\n> server dev - <@399393175904714752>"
+            "Evening, legend! Lu udah GG hari ini. Give yourself a pat on the back. Kalo ada yang bilang lu sampah, cuekin aja. Kalo ada yang bilang lu GG, ya iyain aja, monyet!\\n\\n> Jangan pernah menyerah, tapi kalau menyerah jangan lupa senyum. (from Windut)\\n> server dev - <@399393175904714752}"
+            "Hey bestie! Golden hour hits different. Waktunya nge-chill bareng teman, atau main game bareng. Jangan sendirian, nanti ngenes, tolol!\\n\\n> Gak tamat gak asik! (from Windut)\\n> server dev - <@399393175904714752}"
+            "Evening, squad! Time to unwind. Jangan mikirin kerjaan besok dulu, santai aja. Kalo udah tenang, baru deh mikir lagi, bangsat!\\n\\n> Jangan panik, ini cuma game. (from Windut)\\n> server dev - <@399393175904714752}"
+            "Yo, what's up? Waktunya dengerin musik, atau nonton youtube. Jangan cuma nonton yang itu-itu aja, coba tonton Windah Basudara. Dasar anjing!\\n\\n> Tolong... tolong... tolong! (from Windut)\\n> server dev - <@399393175904714752}"
           )
           
           FOOTERS=(
-            "golden hour hits different"
-            "sunset wisdom is free"
-            "evening glow activated"
-            "wind down like a legend"
-            "gentle productivity vibes"
-            "gratitude changes everything"
+            "Chill vibes only"
+            "Rest & recharge"
+            "Malam ini milik kita"
+            "Santai sejenak"
+            "Waktunya nge-game"
+            "GGWP"
           )
           
           INDEX=$((RANDOM % 6))
@@ -202,30 +206,30 @@ jobs:
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
           
           TITLES=(
-            "🌙 bedtime bestie check-in"
-            "🌙 goodnight gorgeous legends"
-            "🌙 time to log off and recharge"
-            "🌙 sweet dreams main character"
-            "🌙 night night productivity queen"
-            "🌙 digital sunset activated"
+            "🌙 Waktunya bobo, anjir! 😴"
+            "💤 Goodnight, bangsat!"
+            "✨ Waktunya mimpi indah, tolol! 🌠"
+            "🚀 GGWP hari ini! Saatnya rehat, cuk! 💖"
+            "😴 Tidur adalah kebutuhan, eh, lu bukan robot, babi!"
+            "🌙 Tamat? Gak semudah itu, Ferguso!"
           )
           
           DESCS=(
-            "besties! your phone has been working overtime today and honestly so have you, so maybe it's time to give both of you a well-deserved break. tomorrow is going to bring fresh opportunities to be absolutely legendary, but tonight belongs to peaceful sleep and beautiful dreams!\\n\\n> tidur jangan terlalu malam - sedih amat kalo besok mata bengkak kayak habis nangis\\n\\n> server dev - <@399393175904714752>"
-            "periodt night owls! time to disconnect from the digital chaos and reconnect with that inner peace that's been waiting patiently for you all day. your subconscious is about to do some serious processing work while you sleep, so trust the process bestie!\\n\\n> matiin lampu terang, bikin suasana cozy - ancis banget kalo tidur kayak di kantor\\n\\n> server dev - <@399393175904714752>"
-            "goodnight beautiful chaotic gremlins! sleep is literally your brain's way of organizing all the amazing memories and lessons from today, so treat it like the important maintenance ritual it actually is. sweet dreams and wake up ready to absolutely demolish tomorrow!\\n\\n> jangan scroll tiktok sampe pagi - lu sampah kalo begadang cuma buat konten gajelas\\n\\n> server dev - <@399393175904714752>"
-            "night time legends! perfect moment for some gentle gratitude practice before you drift off into that magical dreamland where your future self is probably already celebrating all the good choices you made today. you genuinely did amazing things today bestie!\\n\\n> sebelum bobo mikir 3 hal positif hari ini - ancis banget kalo tidur sambil overthinking hal negatif\\n\\n> server dev - <@399393175904714752>"
-            "bedtime bestie! tomorrow's gonna be another opportunity to serve absolute excellence and live your most authentic life, but tonight is sacred rest time where you let your beautiful mind and body recharge so you can wake up feeling fresh and unstoppable!\\n\\n> minum air putih dulu sebelum tidur - sedih amat kalo dehidrasi tengah malam\\n\\n> server dev - <@399393175904714752>"
-            "sleep time warriors! your productivity today was honestly iconic and now it's time to power down those devices and power up your natural healing processes. deep sleep is where the real magic happens and your cells literally repair themselves while you dream!\\n\\n> taruh hp jauh-jauh - lu sampah kalo tidur sambil pegang hp, radiasi ancis\\n\\n> server dev - <@399393175904714752>"
+            "Yo, goodnight! Time to log off and recharge. Jangan begadang cuma buat nonton YouTube atau TikTok gak jelas, nanti besok kayak zombie. Lu babi kalo gak tidur!\\n\\n> Tidur adalah kebutuhan bagi orang-orang lemah, makanya gua gak pernah tidur (from Windut)\\n> server dev - <@399393175904714752>"
+            "Night, everyone! Get some rest. Besok masih ada hari baru buat ngelanjutin hidup. Jangan overthinking, tolol, nanti gak bisa tidur.\\n\\n> Gak tamat gak asik! (from Windut)\\n> server dev - <@399393175904714752}"
+            "Night night, legend! Sleep is your brain's way of organizing all the amazing memories from today. Jangan lupa mimpiin hal yang indah-indah, jangan mimpi dikejar hantu, asu!\\n\\n> Jangan pernah menyerah, tapi kalau menyerah jangan lupa senyum. (from Windut)\\n> server dev - <@399393175904714752}"
+            "Goodnight, bestie! Time to disconnect from the digital world and reconnect with yourself. Jangan main game sampai mampus, anjir!\\n\\n> Jangan panik, ini cuma game. (from Windut)\\n> server dev - <@399393175904714752}"
+            "What's good? Sleep well, legend! Your productivity today was iconic, now it's time to rest. Kalo ada kerjaan yang belum selesai, yaudah, besok aja, bangsat!\\n\\n> Tolong... tolong... tolong! (from Windut)\\n> server dev - <@399393175904714752}"
+            "Night, squad! Tomorrow's gonna be another chance to slay. But tonight is sacred rest time. Kalo masih mau nge-game, yaudah, tapi jangan sampai pagi ya, goblok!\\n\\n> Gas pol! (from Windut)\\n> server dev - <@399393175904714752}"
           )
           
           FOOTERS=(
-            "sweet dreams bestie"
-            "rest is sacred too"  
-            "recharge like a legend"
-            "goodnight main character"
-            "digital detox activated"
-            "sleep tight warrior"
+            "Tidur, cuy!"
+            "Recharge like a legend"
+            "Mimpi indah"
+            "Rest well"
+            "See you tomorrow"
+            "Digital detox"
           )
           
           INDEX=$((RANDOM % 6))
