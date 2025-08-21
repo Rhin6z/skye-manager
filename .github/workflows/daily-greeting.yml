@@ -43,32 +43,32 @@ jobs:
           case $INDEX in
             0)
               TITLE="🌄 pagi woy, bangun dulu lah—jangan jadi beban kasur 😴"
-              DESC="yo morning fam! new day new grind, no cap—jangan afk mulu anying. bangun siang mah auto low rank fr 😏\\\\n> by server dev - <@399393175904714752>"
+              DESC="yo morning fam! new day new grind, no cap—jangan afk mulu anying. bangun siang mah auto low rank fr 😏\\n> by server dev - <@399393175904714752>"
               FOOTER="gas pelan tapi tahan lama"
               ;;
             1)
               TITLE="🌅 gas tipis, gausa ngegas—pelan tapi jalan, anjayy"
-              DESC="rise up squad! fresh start, keep it steady—gerak dikit aja udah win. jangan jadi pajangan lobby, kocak 😂\\\\n> by server dev - <@399393175904714752>"
+              DESC="rise up squad! fresh start, keep it steady—gerak dikit aja udah win. jangan jadi pajangan lobby, kocak 😂\\n> by server dev - <@399393175904714752>"
               FOOTER="semangat tipis-tipis"
               ;;
             2)
               TITLE="🐣 morning squad, kopi dulu baru bacot produktif ☕"
-              DESC="gm legends! touch grass or touch goals—pilih satu dulu. pelan² tapi konsisten, jangan banyak alasan anjir.\\\\n> by server dev - <@399393175904714752>"
+              DESC="gm legends! touch grass or touch goals—pilih satu dulu. pelan² tapi konsisten, jangan banyak alasan anjir.\\n> by server dev - <@399393175904714752>"
               FOOTER="santuy tapi kelar"
               ;;
             3)
               TITLE="🌅 push rank kehidupan dikit-dikit yaa, santai tapi nyicil ✨"
-              DESC="top of the morning, brodie! small dubs matter—minum air, tarik napas, abis itu gas tipis. jangan typo hidup lu sendiri lah 😴\\\\n> by server dev - <@399393175904714752>"
+              DESC="top of the morning, brodie! small dubs matter—minum air, tarik napas, abis itu gas tipis. jangan typo hidup lu sendiri lah 😴\\n> by server dev - <@399393175904714752>"
               FOOTER="ggwp pagi"
               ;;
             4)
               TITLE="☀️ rejeki ayam aja pagi, masa lu kalah sama ayam 🐓"
-              DESC="good morning gang! lowkey today feels winnable—asal lu bukan npc parkir di base, cuk. kopi dulu terus jalan.\\\\n> by server dev - <@399393175904714752>"
+              DESC="good morning gang! lowkey today feels winnable—asal lu bukan npc parkir di base, cuk. kopi dulu terus jalan.\\n> by server dev - <@399393175904714752>"
               FOOTER="the show keeps going"
               ;;
             5)
               TITLE="🌞 selamat pagi, fokus ke 1 hal aja dulu—sisanya belakangan"
-              DESC="mornin' squad! no snooze, just moves—bikin progress 1% juga udah mantap. jangan drama dulu, save buat nanti 🤏\\\\n> by server dev - <@399393175904714752>"
+              DESC="mornin' squad! no snooze, just moves—bikin progress 1% juga udah mantap. jangan drama dulu, save buat nanti 🤏\\n> by server dev - <@399393175904714752>"
               FOOTER="gak tamat gak asik"
               ;;
           esac
@@ -122,32 +122,32 @@ jobs:
           case $INDEX in
             0)
               TITLE="🌞 siang² gini, nap dulu—reset otak bentaran"
-              DESC="what's good squad? half the day cooked, lowkey saatnya refill energy. makan siang itu buff, bukan side quest anying 🍔\\\\n> by server dev - <@399393175904714752>"
+              DESC="what's good squad? half the day cooked, lowkey saatnya refill energy. makan siang itu buff, bukan side quest anying 🍔\\n> by server dev - <@399393175904714752>"
               FOOTER="santai sejenak"
               ;;
             1)
               TITLE="🍔 lunch dulu ga sih? perut ga bisa diajak nego"
-              DESC="yo fam! pace yourself, no burnout—isi perut dulu biar aim ga ngaco. jangan jadi singa di chat, koala di real life 😴\\\\n> by server dev - <@399393175904714752>"
+              DESC="yo fam! pace yourself, no burnout—isi perut dulu biar aim ga ngaco. jangan jadi singa di chat, koala di real life 😴\\n> by server dev - <@399393175904714752>"
               FOOTER="recharge dulu"
               ;;
             2)
               TITLE="🎮 break tipis, biar ga kebakar kaya cpu fan 100%"
-              DESC="good afternoon gamers! hydrate or diedrate—minum dulu terus nap dikit, baru lanjut war. drama nanti aja kocak.\\\\n> by server dev - <@399393175904714752>"
+              DESC="good afternoon gamers! hydrate or diedrate—minum dulu terus nap dikit, baru lanjut war. drama nanti aja kocak.\\n> by server dev - <@399393175904714752>"
               FOOTER="makan dulu, boss!"
               ;;
             3)
               TITLE="✨ tengah hari check: masih waras? hydrate dulu"
-              DESC="sup team! mid-day vibe check—kalau kepala panas, cooldown 10 menit. baliknya jangan salty, malu dong anjir 😌\\\\n> by server dev - <@399393175904714752>"
+              DESC="sup team! mid-day vibe check—kalau kepala panas, cooldown 10 menit. baliknya jangan salty, malu dong anjir 😌\\n> by server dev - <@399393175904714752>"
               FOOTER="stay chill"
               ;;
             4)
               TITLE="😎 santai, lu bukan robot—ga usah sok 24/7 on"
-              DESC="hey brodie! snack, stretch, scroll dikit—yang penting baliknya fresh. jangan overcommit, nanti overtilt.\\\\n> by server dev - <@399393175904714752>"
+              DESC="hey brodie! snack, stretch, scroll dikit—yang penting baliknya fresh. jangan overcommit, nanti overtilt.\\n> by server dev - <@399393175904714752>"
               FOOTER="stay hydrated"
               ;;
             5)
               TITLE="💡 ide liar biasanya muncul abis makan—gas"
-              DESC="afternoon gang! \\\"makan, jangan makan temen.\\\" (Windut) — tapi kalo makan bareng sih hayuk 🔥\\\\n> by server dev - <@399393175904714752>"
+              DESC="afternoon gang! \"makan, jangan makan temen.\" (Windut) — tapi kalo makan bareng sih hayuk 🔥\\n> by server dev - <@399393175904714752>"
               FOOTER="weekend vibes"
               ;;
           esac
@@ -201,32 +201,32 @@ jobs:
           case $INDEX in
             0)
               TITLE="🌆 sore², turunin rpm—cooldown dulu lah"
-              DESC="good evening gamers! vibe check dulu, sunset hits different—santai bentar biar ga tilt, feeding itu dosa sosial anjir 😂\\\\n> by server dev - <@399393175904714752>"
+              DESC="good evening gamers! vibe check dulu, sunset hits different—santai bentar biar ga tilt, feeding itu dosa sosial anjir 😂\\n> by server dev - <@399393175904714752>"
               FOOTER="chill vibes only"
               ;;
             1)
               TITLE="🌅 golden hour = izin buat log off pelan²"
-              DESC="yo evening fam! log off pelan², nyalain musik, mute drama. besok masih panjang, sekarang santai aja dulu anying.\\\\n> by server dev - <@399393175904714752>"
+              DESC="yo evening fam! log off pelan², nyalain musik, mute drama. besok masih panjang, sekarang santai aja dulu anying.\\n> by server dev - <@399393175904714752>"
               FOOTER="rest & recharge"
               ;;
             2)
               TITLE="☕ ngopi senja? boleh. overthink? ntar aja"
-              DESC="evening squad! cooldown dulu—ganti playlist, cemil dikit, terus balik war. lose streak jangan sampe bikin uninstall kocak 🤡\\\\n> by server dev - <@399393175904714752>"
+              DESC="evening squad! cooldown dulu—ganti playlist, cemil dikit, terus balik war. lose streak jangan sampe bikin uninstall kocak 🤡\\n> by server dev - <@399393175904714752>"
               FOOTER="malam ini milik kita"
               ;;
             3)
               TITLE="🌃 jangan sok produktif 24/7, chill dulu kek"
-              DESC="what's poppin brodie! golden hour moment—ketawain aja dikit, mmr turun ga sekejam kata netizen kok fr 😌\\\\n> by server dev - <@399393175904714752>"
+              DESC="what's poppin brodie! golden hour moment—ketawain aja dikit, mmr turun ga sekejam kata netizen kok fr 😌\\n> by server dev - <@399393175904714752>"
               FOOTER="santai sejenak"
               ;;
             4)
               TITLE="✨ bosen? ganti suasana 15 menit, balik war lagi"
-              DESC="good evening team! ganti map: dari kerja ke santai. snack dikit, chat dikit, hidup aman. slow is a strat fr.\\\\n> by server dev - <@399393175904714752>"
+              DESC="good evening team! ganti map: dari kerja ke santai. snack dikit, chat dikit, hidup aman. slow is a strat fr.\\n> by server dev - <@399393175904714752>"
               FOOTER="waktunya nge-game"
               ;;
             5)
               TITLE="🌠 cukupin buat hari ini, sisanya besok aja"
-              DESC="good evening gang! \\\"jangan panik, ini cuma game.\\\" (Windut) tapi kalo lose streak, off mic bentar gapapa 😮‍💨\\\\n> by server dev - <@399393175904714752>"
+              DESC="good evening gang! \"jangan panik, ini cuma game.\" (Windut) tapi kalo lose streak, off mic bentar gapapa 😮‍💨\\n> by server dev - <@399393175904714752>"
               FOOTER="ggwp"
               ;;
           esac
@@ -280,32 +280,32 @@ jobs:
           case $INDEX in
             0)
               TITLE="🌙 time to power down—good night"
-              DESC="night night squad! log off, recharge—no heroics tonight. hp aja ada low battery warning anying ⚡ lu juga perlu tidur.\\\\n> by server dev - <@399393175904714752>"
+              DESC="night night squad! log off, recharge—no heroics tonight. hp aja ada low battery warning anying ⚡ lu juga perlu tidur.\\n> by server dev - <@399393175904714752>"
               FOOTER="tidur, cuy"
               ;;
             1)
               TITLE="💤 tidur dulu, biar besok ga error 500"
-              DESC="good night fam! save progress, close app—bukan close friend. besok lanjut war dengan energi full, fr.\\\\n> by server dev - <@399393175904714752>"
+              DESC="good night fam! save progress, close app—bukan close friend. besok lanjut war dengan energi full, fr.\\n> by server dev - <@399393175904714752>"
               FOOTER="recharge like a legend"
               ;;
             2)
               TITLE="✨ bobo cantik, mimpi yang manis"
-              DESC="sleep tight gamers! jangan bawa rank ke mimpi—biar hati ga kebakaran. bobo bentar aja udah beda, kocak.\\\\n> by server dev - <@399393175904714752>"
+              DESC="sleep tight gamers! jangan bawa rank ke mimpi—biar hati ga kebakaran. bobo bentar aja udah beda, kocak.\\n> by server dev - <@399393175904714752>"
               FOOTER="mimpi indah"
               ;;
             3)
               TITLE="🚀 hari ini tamat. besok season baru"
-              DESC="gn team! \\\"tidur itu penting, gengs.\\\" (Windut) tahan dikit lawan fyp, tutup hp, tutup mata.\\\\n> by server dev - <@399393175904714752>"
+              DESC="gn team! \"tidur itu penting, gengs.\" (Windut) tahan dikit lawan fyp, tutup hp, tutup mata.\\n> by server dev - <@399393175904714752>"
               FOOTER="rest well"
               ;;
             4)
               TITLE="😴 rest mode: ON. notif: OFF"
-              DESC="rest well brodie! yang belum kelar, besok hajar. sekarang waktunya jadi guling enjoyer, no cap.\\\\n> by server dev - <@399393175904714752>"
+              DESC="rest well brodie! yang belum kelar, besok hajar. sekarang waktunya jadi guling enjoyer, no cap.\\n> by server dev - <@399393175904714752>"
               FOOTER="see u tomorrow"
               ;;
             5)
               TITLE="🌙 malem ini buat recharge, bukan overthink"
-              DESC="good night gang! jangan flex begadang—besok pagi malah jadi npc ngantuk, anjir 😴\\\\n> by server dev - <@399393175904714752>"
+              DESC="good night gang! jangan flex begadang—besok pagi malah jadi npc ngantuk, anjir 😴\\n> by server dev - <@399393175904714752>"
               FOOTER="digital detox"
               ;;
           esac
