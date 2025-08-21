@@ -51,25 +51,27 @@ jobs:
           
           echo "🤖 generating greeting: $TYPE ($CONTEXT)"
           
-          # English-Indo mixed slang prompt (simplified like your working version)
+          # English-Indo mixed slang prompt with fresh slang
           read -r -d '' PROMPT << 'EOF' || true
           Buatkan greeting Discord untuk waktu TYPE_PLACEHOLDER hari CONTEXT_PLACEHOLDER.
 
-          Style: Indonesian slang casual + gaming terms (anying, kocak, fr, no cap, woy, santuy, gas)
+          Style requirements:
+          - Mulai dengan English slang dulu, lanjut Indonesian 
+          - Pakai slang fresh: "periodt", "slay", "no cap", "fr fr", "lowkey", "highkey", "bussin", "mid", "it's giving", "finna", "bet"
+          - Indo slang baru: "anying", "kocak", "woy", "cuy", "gas", "santuy", "ngab", "anjir", "kampret", "gabut", "bucin", "kepo", "baper"
+          - Gaming terms: "npc energy", "touching grass", "respawn", "afk life", "main character", "side quest"
+          - Mix natural, jangan cringe
 
           Format output:
-          TITLE: [judul dengan emoji, lowercase]
-          DESC: [2 kalimat casual, lowercase kecuali emoji]
+          TITLE: [english slang start + indo, emoji, lowercase]
+          DESC: [english sentence + indonesian sentence, natural flow, lowercase except emoji]
           > by server dev - <@399393175904714752>
-          FOOTER: [footer pendek, lowercase]
+          FOOTER: [mix eng-indo footer, lowercase]
 
-          Contoh:
-          TITLE: 🌅 pagi santuy, gas tipis aja
-          DESC: morning squad! jangan jadi npc parkir di base, gerak dikit udah win kocak 😂
-          > by server dev - <@399393175904714752>
-          FOOTER: santai tapi jalan
+          Example style:
+          "yo what's good fam, it's giving evening vibes fr! sore anying, waktunya rehat sejenak ngab"
 
-          Penting: semua output lowercase kecuali emoji!
+          Output semua lowercase kecuali emoji!
           EOF
           
           # Replace placeholders
@@ -130,71 +132,71 @@ jobs:
             USE_AI=false
           fi
           
-          # Fallback messages if AI fails (updated to lowercase indo slang style)
+          # Fallback messages with fresh eng-indo mix style
           if [[ "$USE_AI" != "true" ]]; then
             echo "🎲 using fallback greeting"
             INDEX=$((RANDOM % 3))
             
             case "$TYPE-$INDEX" in
               "morning-0")
-                TITLE="🌄 pagi woy, gas tipis aja"
-                DESC="yo morning fam! jangan jadi npc parkir di base, gerak dikit udah win fr 😂\\n> by server dev - <@399393175904714752>"
-                FOOTER="santai tapi jalan"
+                TITLE="🌄 good morning bestie, pagi yang slay"
+                DESC="yooo what's the tea today? pagi ini lowkey giving main character energy fr! bangun santuy tapi tetep gas ngab 😂\\n> by server dev - <@399393175904714752>"
+                FOOTER="periodt but make it indo"
                 ;;
               "morning-1")
-                TITLE="🌅 bangun santuy, hidup santuy"
-                DESC="good morning squad! kopi dulu baru bacot produktif, anying ☕\\n> by server dev - <@399393175904714752>"
-                FOOTER="pelan tapi konsisten"
+                TITLE="🌅 rise and grind, bangun kampret"
+                DESC="morning hits different when you're not mid fr! kopi dulu baru bacot produktif anying, jangan jadi npc pagi-pagi ☕\\n> by server dev - <@399393175904714752>"
+                FOOTER="bussin energy only"
                 ;;
               "morning-2")
-                TITLE="☀️ morning vibe check"
-                DESC="gm legends! mmr turun ga sekejam kata netizen kok, santai kocak 😌\\n> by server dev - <@399393175904714752>"
-                FOOTER="good vibes only"
+                TITLE="☀️ it's giving sunrise, pagi gabut"
+                DESC="yo fam this morning is absolutely sending me! mmr turun kemarin? forget it bestie, today we finna slay kocak 😌\\n> by server dev - <@399393175904714752>"
+                FOOTER="no cap pagi vibes"
                 ;;
               "afternoon-0")
-                TITLE="🌞 siang², break dulu"
-                DESC="what's good squad? makan siang itu buff utama, bukan side quest anying 🍔\\n> by server dev - <@399393175904714752>"
-                FOOTER="recharge mode"
+                TITLE="🌞 lunch break periodt, siang bucin"
+                DESC="bestie your stomach said what now? makan siang itu main quest bukan side quest anying, feed yourself fr 🍔\\n> by server dev - <@399393175904714752>"
+                FOOTER="recharge arc activated"
                 ;;
               "afternoon-1")
-                TITLE="🍔 lunch time = sacred time"
-                DESC="yo fam! jangan jadi singa di chat, koala di real life 😴\\n> by server dev - <@399393175904714752>"
-                FOOTER="makan dulu boss"
+                TITLE="🍛 midday check, siang kepo"
+                DESC="yo it's giving sleepy vibes rn! jangan jadi singa di chat koala di dunia nyata cuy, makan dulu baru war 😴\\n> by server dev - <@399393175904714752>"
+                FOOTER="touching food not grass"
                 ;;
               "afternoon-2")
-                TITLE="😎 tengah hari check"
-                DESC="good afternoon gamers! hydrate or diedrate, minum dulu baru war kocak\\n> by server dev - <@399393175904714752>"
-                FOOTER="stay hydrated"
+                TITLE="😎 afternoon tea bestie, siang anjir"
+                DESC="what's poppin legends? hydrate or diedrate no cap! air putih dulu baru ranked match ngab, jangan sampai dehidrasi kocak\\n> by server dev - <@399393175904714752>"
+                FOOTER="stay hydrated kampret"
                 ;;
               "evening-0")
-                TITLE="🌆 sore santai mode"
-                DESC="good evening fam! sunset hits different, cooldown bentar biar ga tilt 😂\\n> by server dev - <@399393175904714752>"
-                FOOTER="chill vibes"
+                TITLE="🌆 golden hour slay, sore anying"
+                DESC="yo evening squad it's absolutely bussin! sunset hits different when you're not tilted fr, cooldown sejenak biar ga baper 😂\\n> by server dev - <@399393175904714752>"
+                FOOTER="chill but make it aesthetic"
                 ;;
               "evening-1")
-                TITLE="🌅 golden hour energy"
-                DESC="evening squad! ganti playlist, cemil dikit, terus lanjut mabar anying\\n> by server dev - <@399393175904714752>"
-                FOOTER="malam ini milik kita"
+                TITLE="🌅 it's giving sunset, sore gabut"
+                DESC="evening besties what's the move? playlist chill, cemil dikit, terus lanjut mabar cuy, malam ini milik kita ngab\\n> by server dev - <@399393175904714752>"
+                FOOTER="tonight we ride"
                 ;;
               "evening-2")
-                TITLE="✨ sore² santai"
-                DESC="what's poppin brodie! ketawain aja dikit, hidup tuh ga seseram drama discord fr 😌\\n> by server dev - <@399393175904714752>"
-                FOOTER="santai sejenak"
+                TITLE="✨ evening vibes, sore santuy"
+                DESC="yooo this day was a whole movie periodt! hidup ga seseram drama discord anying, ketawa dikit santai sejenak 😌\\n> by server dev - <@399393175904714752>"
+                FOOTER="we been through it"
                 ;;
               "night-0")
-                TITLE="🌙 time to rest"
-                DESC="night night squad! hp aja ada low battery warning anying ⚡ lu juga butuh tidur\\n> by server dev - <@399393175904714752>"
-                FOOTER="bobo cantik"
+                TITLE="🌙 bedtime bestie, malem kampret"
+                DESC="night night legends it's giving sleepy! hp aja ada low battery warning cuy, lu juga butuh tidur fr anying ⚡\\n> by server dev - <@399393175904714752>"
+                FOOTER="sleep is self care ngab"
                 ;;
               "night-1")
-                TITLE="💤 sleep mode activated"
-                DESC="good night fam! jangan bawa rank ke mimpi, nanti mimpi dimarahin random kocak 😪\\n> by server dev - <@399393175904714752>"
-                FOOTER="mimpi indah"
+                TITLE="💤 sleepy girl era, malem bucin"
+                DESC="gn fam don't bring today's drama to tomorrow! jangan bawa rank ke mimpi nanti mimpi dimarahin random kocak 😪\\n> by server dev - <@399393175904714752>"
+                FOOTER="dream of victory royales"
                 ;;
               "night-2")
-                TITLE="🌜 rest well"
-                DESC="gn team! besok masih panjang, sekarang waktunya jadi guling enjoyer no cap\\n> by server dev - <@399393175904714752>"
-                FOOTER="see u tomorrow"
+                TITLE="🌜 it's giving bedtime, malem gabut"
+                DESC="yo besok another episode awaits fr! sekarang waktunya jadi guling enjoyer no cap, rest well legends cuy\\n> by server dev - <@399393175904714752>"
+                FOOTER="see u in the morning anjir"
                 ;;
             esac
           fi
