@@ -80,7 +80,7 @@ jobs:
               "description": "${DESC}",
               "color": 16766720,
               "thumbnail": {
-                "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif"
+                "url": "https://raw.githubusercontent.com/twitter/twemoji/master/assets/svg/1f305.svg"
               },
               "footer": {
                 "text": "${FOOTER}",
@@ -159,7 +159,7 @@ jobs:
               "description": "${DESC}",
               "color": 16763904,
               "thumbnail": {
-                "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif"
+                "url": "https://raw.githubusercontent.com/twitter/twemoji/master/assets/svg/2600.svg"
               },
               "footer": {
                 "text": "${FOOTER}",
@@ -238,7 +238,7 @@ jobs:
               "description": "${DESC}",
               "color": 16744448,
               "thumbnail": {
-                "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif"
+                "url": "https://raw.githubusercontent.com/twitter/twemoji/master/assets/svg/1f307.svg"
               },
               "footer": {
                 "text": "${FOOTER}",
@@ -317,7 +317,7 @@ jobs:
               "description": "${DESC}",
               "color": 8947848,
               "thumbnail": {
-                "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif"
+                "url": "https://raw.githubusercontent.com/twitter/twemoji/master/assets/svg/1f319.svg"
               },
               "footer": {
                 "text": "${FOOTER}",
