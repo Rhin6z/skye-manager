@@ -321,16 +321,16 @@ jobs:
           echo "Title: $TITLE"
           echo "Footer: $FOOTER"
           
-          # Escape special characters for JSON
-          TITLE_ESCAPED=$(echo "$TITLE" | sed 's/"/\\"/g' | sed "s/'/\\'/g")
-          DESC_ESCAPED=$(echo "$DESC" | sed 's/"/\\"/g' | sed "s/'/\\'/g")
-          FOOTER_ESCAPED=$(echo "$FOOTER" | sed 's/"/\\"/g' | sed "s/'/\\'/g")
+          # Clean variables for JSON (remove newlines and escape quotes)
+          TITLE_CLEAN=$(echo "$TITLE" | tr -d '\n\r' | sed 's/"/\\"/g')
+          DESC_CLEAN=$(echo "$DESC" | tr -d '\n\r' | sed 's/"/\\"/g')
+          FOOTER_CLEAN=$(echo "$FOOTER" | tr -d '\n\r' | sed 's/"/\\"/g')
           
           # Send to Discord
           curl -f -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
                -H "Content-Type: application/json" \
                --connect-timeout 10 --max-time 15 \
-               -d "{\"embeds\":[{\"title\":\"$TITLE_ESCAPED\",\"description\":\"$DESC_ESCAPED\",\"color\":$COLOR,\"thumbnail\":{\"url\":\"https://twemoji.maxcdn.com/v/latest/72x72/$THUMB.png\"},\"footer\":{\"text\":\"$FOOTER_ESCAPED\",\"icon_url\":\"https://files.catbox.moe/npfh4e.jpg\"},\"timestamp\":\"$TIMESTAMP\"}]}"
+               -d '{"embeds":[{"title":"'"$TITLE_CLEAN"'","description":"'"$DESC_CLEAN"'","color":'"$COLOR"',"thumbnail":{"url":"https://twemoji.maxcdn.com/v/latest/72x72/'"$THUMB"'.png"},"footer":{"text":"'"$FOOTER_CLEAN"'","icon_url":"https://files.catbox.moe/npfh4e.jpg"},"timestamp":"'"$TIMESTAMP"'"}]}'
           
           echo "✅ Sent $TYPE greeting (AI: ${USE_AI:-false}, Context: $CONTEXT)"
         env:
