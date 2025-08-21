@@ -50,25 +50,26 @@ jobs:
           
           # Create simple prompt without problematic characters
           cat > /tmp/prompt.txt << 'EOF'
-          Buatin greeting Discord casual untuk waktu TIME_HERE di hari CONTEXT_HERE.
+          Create a casual Discord greeting for TIME_HERE on CONTEXT_HERE.
           
-          Style yang diinginkan:
-          - Mix bahasa Inggris dan Indonesia yang natural
-          - Casual dan santai, jangan formal
-          - Pakai slang seperti: brodie, fr, lowkey, kek, dikit, anjir, gabut
+          Requirements:
+          - Start with English, end with Indonesian - must flow naturally
+          - Mix slang: brodie, fr, lowkey, anjir, dikit, gabut, cuy
           - Gaming terms: mmr, noob, mabar, touching grass
-          - Tone santai dan relatable
+          - Keep it SHORT and conversational (max 2 lines)
+          - International Discord server vibe
           
-          Contoh yang bagus:
-          jangan sok produktif terus, chill dulu kek
-          what's poppin brodie! golden hour vibes, mmr turun ga sekejam netizen kok fr
+          Good examples:
+          Morning legends! Ready to grind? Atau masih ngantuk dikit?
+          What's good afternoon crew! Time to touch grass atau lanjut mabar?
+          Evening vibes hitting different today, santai dulu gih
           
-          Format output:
-          TITLE: [title casual dengan emoji]
-          DESC: [description natural yang flow]
-          FOOTER: [footer pendek]
+          Format:
+          TITLE: [casual title with emoji]
+          DESC: [short natural flow English-Indonesian mix]
+          FOOTER: [short footer]
           
-          Bikin yang relatable!
+          Keep it natural and short!
           EOF
           
           # Replace placeholders
@@ -160,29 +161,29 @@ jobs:
           if [[ "$USE_AI" != "true" ]]; then
             case "$TYPE" in
               "morning")
-                TITLE="🌅 morning vibes check"
-                DESC_RAW="what's poppin early squad! another day another chance buat gas produktif, tapi santai aja dulu kopi sambil scroll meme"
-                FOOTER="caffeine loading..."
+                TITLE="🌅 Morning Check"
+                DESC_RAW="GM legends! Ready to grind today? Atau masih ngantuk dikit?"
+                FOOTER="coffee loading..."
                 ;;
               "afternoon")
-                TITLE="🌞 midday energy drop"
-                DESC_RAW="yo afternoon crew! perut udah protes belum? makan siang itu mandatory quest bukan side mission anjir"
-                FOOTER="fuel up time"
+                TITLE="☀️ Afternoon Vibes"
+                DESC_RAW="What's good crew! Time to touch grass atau lanjut mabar nih?"
+                FOOTER="recharge time"
                 ;;
               "evening")
-                TITLE="🌆 golden hour tapi gabut"
-                DESC_RAW="what's good evening squad! sunset $CONTEXT hits different ketawain aja dikit, besok masih ada episode baru"
-                FOOTER="chill evening mode"
+                TITLE="🌆 Evening Squad"
+                DESC_RAW="How we doing tonight? Golden hour hits different, santai dulu gih"
+                FOOTER="chill mode on"
                 ;;
               "night")
                 if [[ "$CONTEXT" == "weekend" ]]; then
-                  TITLE="🌙 weekend night owl mode"
-                  DESC_RAW="yo night squad! weekend night perfect buat mabar atau binge series, tapi jangan begadang sampe subuh ya"
-                  FOOTER="weekend night energy"
+                  TITLE="🌙 Late Night Gang"
+                  DESC_RAW="Weekend night energy! Still grinding or udah gabut mode?"
+                  FOOTER="weekend vibes"
                 else
-                  TITLE="🌜 weekday bedtime soon"
-                  DESC_RAW="gn fam! weekday night means prep mode buat besok, tapi sebelumnya satu game dulu kocak"
-                  FOOTER="rest well bestie"
+                  TITLE="🌜 Night Shift"
+                  DESC_RAW="GN fam! Hope you had a good day, besok respawn lagi cuy"
+                  FOOTER="rest well"
                 fi
                 ;;
             esac
