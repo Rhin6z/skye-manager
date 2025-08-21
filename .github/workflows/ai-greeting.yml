@@ -208,11 +208,38 @@ jobs:
           if [[ -s /tmp/ai_response.txt ]]; then
             AI_TEXT=$(cat /tmp/ai_response.txt)
             echo "AI response preview: $(echo "$AI_TEXT" | head -c 100)..."
+            echo "Full AI response:"
+            echo "$AI_TEXT"
+            echo "--- End AI response ---"
             
-            # Extract parts
-            TITLE=$(echo "$AI_TEXT" | grep -i "TITLE:" | head -1 | sed 's/.*TITLE:[[:space:]]*//' || echo "")
-            DESC_RAW=$(echo "$AI_TEXT" | grep -i "DESC:" | head -1 | sed 's/.*DESC:[[:space:]]*//' || echo "")
-            FOOTER=$(echo "$AI_TEXT" | grep -i "FOOTER:" | head -1 | sed 's/.*FOOTER:[[:space:]]*//' || echo "")
+            # Extract parts - more flexible parsing
+            TITLE=$(echo "$AI_TEXT" | grep -i "^TITLE:" | head -1 | sed 's/.*TITLE:[[:space:]]*//' || echo "")
+            DESC_RAW=$(echo "$AI_TEXT" | grep -i "^DESC:" | head -1 | sed 's/.*DESC:[[:space:]]*//' || echo "")
+            FOOTER=$(echo "$AI_TEXT" | grep -i "^FOOTER:" | head -1 | sed 's/.*FOOTER:[[:space:]]*//' || echo "")
+            
+            # If no proper format found, try to extract from emoji patterns
+            if [[ -z "$TITLE" ]]; then
+              TITLE=$(echo "$AI_TEXT" | grep -o "🌙[^🌙]*" | head -1 | sed 's/^🌙[[:space:]]*/🌙 /' || echo "")
+            fi
+            if [[ -z "$TITLE" ]]; then
+              TITLE=$(echo "$AI_TEXT" | grep -o "🌅[^🌅]*" | head -1 | sed 's/^🌅[[:space:]]*/🌅 /' || echo "")
+            fi
+            if [[ -z "$TITLE" ]]; then
+              TITLE=$(echo "$AI_TEXT" | grep -o "🌆[^🌆]*" | head -1 | sed 's/^🌆[[:space:]]*/🌆 /' || echo "")
+            fi
+            if [[ -z "$TITLE" ]]; then
+              TITLE=$(echo "$AI_TEXT" | grep -o "☀️[^☀️]*" | head -1 | sed 's/^☀️[[:space:]]*/☀️ /' || echo "")
+            fi
+            
+            # Extract description from DESC line or after title
+            if [[ -z "$DESC_RAW" && -n "$TITLE" ]]; then
+              DESC_RAW=$(echo "$AI_TEXT" | sed -n "/$TITLE/,\$p" | tail -n +2 | head -1 | sed 's/^DESC:[[:space:]]*//' || echo "")
+            fi
+            
+            # Clean up title if it has extra formatting
+            if [[ -n "$TITLE" ]]; then
+              TITLE=$(echo "$TITLE" | sed 's/[[:space:]]*$//' | head -c 50)
+            fi
             
             if [[ -n "$TITLE" && -n "$DESC_RAW" ]]; then
               echo "✅ Using AI generated content"
@@ -294,11 +321,16 @@ jobs:
           echo "Title: $TITLE"
           echo "Footer: $FOOTER"
           
+          # Escape special characters for JSON
+          TITLE_ESCAPED=$(echo "$TITLE" | sed 's/"/\\"/g' | sed "s/'/\\'/g")
+          DESC_ESCAPED=$(echo "$DESC" | sed 's/"/\\"/g' | sed "s/'/\\'/g")
+          FOOTER_ESCAPED=$(echo "$FOOTER" | sed 's/"/\\"/g' | sed "s/'/\\'/g")
+          
           # Send to Discord
           curl -f -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
                -H "Content-Type: application/json" \
                --connect-timeout 10 --max-time 15 \
-               -d "{\"embeds\":[{\"title\":\"$TITLE\",\"description\":\"$DESC\",\"color\":$COLOR,\"thumbnail\":{\"url\":\"https://twemoji.maxcdn.com/v/latest/72x72/$THUMB.png\"},\"footer\":{\"text\":\"$FOOTER\",\"icon_url\":\"https://files.catbox.moe/npfh4e.jpg\"},\"timestamp\":\"$TIMESTAMP\"}]}"
+               -d "{\"embeds\":[{\"title\":\"$TITLE_ESCAPED\",\"description\":\"$DESC_ESCAPED\",\"color\":$COLOR,\"thumbnail\":{\"url\":\"https://twemoji.maxcdn.com/v/latest/72x72/$THUMB.png\"},\"footer\":{\"text\":\"$FOOTER_ESCAPED\",\"icon_url\":\"https://files.catbox.moe/npfh4e.jpg\"},\"timestamp\":\"$TIMESTAMP\"}]}"
           
           echo "✅ Sent $TYPE greeting (AI: ${USE_AI:-false}, Context: $CONTEXT)"
         env:
