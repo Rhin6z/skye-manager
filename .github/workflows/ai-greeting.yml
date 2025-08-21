@@ -53,27 +53,27 @@ jobs:
             case $DAY in
               5) 
                 WEEKEND_TRANSITION="weekend_starts"
-                NEXT_DAY_INFO="besok udah sabtu nihhh coyyy / tomorrow's saturday brooo"
+                NEXT_DAY_INFO="besok weekend udah mulai coyyy / tomorrow weekend starts brooo"
                 ;;
               6) 
                 WEEKEND_TRANSITION="weekend_continues"
-                NEXT_DAY_INFO="besok minggu santuy banget / tomorrow's sunday super chill"
+                NEXT_DAY_INFO="besok minggu masih weekend santuy / tomorrow sunday still weekend vibes"
                 ;;
               7) 
                 WEEKEND_TRANSITION="weekend_ends"
-                NEXT_DAY_INFO="besok senin balik grind / tomorrow's monday back to grind"
+                NEXT_DAY_INFO="besok senin balik kerja deh / tomorrow monday back to work life"
                 ;;
               1)
-                NEXT_DAY_INFO="besok selasa masih semangat / tomorrow's tuesday still going strong"
+                NEXT_DAY_INFO="besok selasa masih semangat gais / tomorrow tuesday still motivated gang"
                 ;;
               2)
-                NEXT_DAY_INFO="besok rabu hump day / tomorrow's wednesday hump day"
+                NEXT_DAY_INFO="besok rabu hump day energy / tomorrow wednesday halfway there"
                 ;;
               3)
-                NEXT_DAY_INFO="besok kamis almost there / tomorrow's thursday almost there"
+                NEXT_DAY_INFO="besok kamis almost weekend vibes / tomorrow thursday weekend preview"
                 ;;
               4)
-                NEXT_DAY_INFO="besok jumat weekend loading / tomorrow's friday weekend loading"
+                NEXT_DAY_INFO="besok jumat weekend loading banget / tomorrow friday weekend incoming for real"
                 ;;
             esac
           fi
@@ -99,12 +99,13 @@ jobs:
           - Mix slang (use 2–3 max): brodie, fr, lowkey, anjir, dikit, gabut, cuy
           - Allow playful misspells (use 1–2 max): banngh, lowl, deym, dayumm, dangg, cuyy, brodiee, skuy, gais, santuy/santay, wkwwk/lmaoo
           - Gaming terms (use 1 max): mmr, noob, mabar, touching grass
-          - Keep it SHORT and conversational (max 2 lines, ≤18 words per line)
+          - Keep it conversational but substantial (2-3 lines, ≤25 words per line)
           - International Discord server vibe; avoid hyper-local references; readable for non-Indo members
           - Use exactly 1 emoji in TITLE only
           - Make TITLE creative and expressive (3-5 words), not just basic time labels
           - No hyphens or dashes in DESC; use commas or semicolons if needed
           - For evening/night greetings, include casual next-day mentions when provided
+          - Make messages feel like genuine friend check-ins, not robotic announcements
           
           Good examples:
           morning gang lowkey warm up then hop vc lanjut mabar santuy cuyy
@@ -119,21 +120,23 @@ jobs:
           weekend mode we outside dulu terus balik ngepush dikit dayumm
           hello gamers lowkey hang here or slide to lobby yang mau mabar gaskeun
           good afternoon crew tune in vc or lurk aja dulu gais
-          friday evening vibes dangg besok weekend cuyy time to celebrate
-          thursday night energy lowkey besok jumat weekend loading brodiee
-          saturday evening santuy besok minggu super chill dayumm
-          evening squad deym besok sabtu nihhh coyyy weekend mode activated
+          friday evening vibes dangg weekend loading for real, time to celebrate besok weekend udah mulai coyyy
+          thursday night energy lowkey excited brodiee, besok jumat weekend loading banget almost there fam
+          saturday evening santuy banget today, besok minggu masih weekend dayumm perfect timing for lazy mode
+          evening squad deym what a day, besok weekend udah mulai coyyy weekend mode fully activated now
+          morning gang lowkey warm up session dulu then hop vc, lanjut mabar santuy cuyy coffee hits different today
+          afternoon crew hope everyone doing good, just vibing here dulu kalo gabut we can queue together banngh
           
           Creative title examples:
-          🌅 Rise and Grind Squad
-          🌅 Morning Power Up Session
-          ☀️ Midday Energy Check
-          ☀️ Afternoon Recharge Zone
-          🌆 Golden Hour Chronicles
-          🌆 Friday Night Incoming
-          🌙 Weekend Mode Activated
-          🌙 Midnight Gaming Sessions
-          🌜 Late Night Legends
+          🌅 Morning Vibes Loading
+          🌅 Sunrise Squad Assemble
+          ☀️ Midday Check In
+          ☀️ Afternoon Feels Good
+          🌆 Golden Hour Gang
+          🌆 Evening Legends Unite
+          🌙 Night Owls Territory
+          🌙 Midnight Gaming Zone
+          🌜 Late Night Chronicles
           
           Format:
           TITLE: [casual title with emoji]
@@ -260,44 +263,44 @@ jobs:
           if [[ "$USE_AI" != "true" ]]; then
             case "$TYPE" in
               "morning")
-                TITLE="🌅 Rise and Grind Squad"
-                DESC_RAW="GM legends! Ready to grind today? Atau masih ngantuk dikit?"
+                TITLE="🌅 Morning Vibes Loading"
+                DESC_RAW="GM legends hope everyone slept well! Ready to grind today or masih ngantuk dikit? Either way let's warm up together cuyy"
                 FOOTER="coffee loading..."
                 ;;
               "afternoon")
-                TITLE="☀️ Midday Energy Check"
-                DESC_RAW="What's good crew! Time to touch grass atau lanjut mabar nih?"
+                TITLE="☀️ Midday Check In"
+                DESC_RAW="What's good crew hope lunch was solid! Time to touch grass a bit atau lanjut mabar nih? Just vibing here gais"
                 FOOTER="recharge time"
                 ;;
               "evening")
                 if [[ "$DAY" == "5" ]]; then
-                  TITLE="🌆 Friday Night Incoming"
-                  DESC_RAW="Evening vibes fr! Besok udah sabtu nihhh coyyy weekend mode activated"
+                  TITLE="🌆 Weekend Loading Tonight"
+                  DESC_RAW="Friday evening vibes fr weekend mode almost activated! Besok weekend udah mulai coyyy time to celebrate brodiee"
                 elif [[ "$DAY" == "4" ]]; then
-                  TITLE="🌆 Thursday Almost Done"
-                  DESC_RAW="Almost weekend energy lowkey besok jumat weekend loading brodiee"
+                  TITLE="🌆 Almost Weekend Energy"
+                  DESC_RAW="Thursday evening energy lowkey excited, besok jumat weekend loading banget! Almost there fam just one more day"
                 else
-                  TITLE="🌆 Golden Hour Vibes"
-                  DESC_RAW="How we doing tonight? Golden hour hits different, santai dulu gih"
+                  TITLE="🌆 Golden Hour Gang"
+                  DESC_RAW="Evening check in how was the day brodiee? Golden hour hits different today, santai dulu before night activities gih"
                 fi
                 FOOTER="chill mode on"
                 ;;
               "night")
                 if [[ "$DAY" == "5" ]]; then
-                  TITLE="🌙 Weekend Mode Activated"
-                  DESC_RAW="Late night squad deym besok weekend brooo time to celebrate"
+                  TITLE="🌙 Weekend Activated Tonight"
+                  DESC_RAW="Friday night squad deym weekend officially starts! Besok weekend udah mulai coyyy time to celebrate properly brooo"
                 elif [[ "$DAY" == "4" ]]; then
-                  TITLE="🌙 Almost Friday Night"
-                  DESC_RAW="Thursday night energy besok jumat weekend loading cuyy almost there"
+                  TITLE="🌙 Pre Weekend Vibes"
+                  DESC_RAW="Thursday night energy besok jumat weekend loading banget! Almost there cuyy just gotta survive one more day fam"
                 elif [[ "$DAY" == "6" ]]; then
                   TITLE="🌙 Saturday Night Live"
-                  DESC_RAW="Saturday night vibes besok minggu santuy banget dayumm perfect timing"
+                  DESC_RAW="Saturday night vibes besok minggu masih weekend santuy! Perfect timing for late night gaming sessions dayumm"
                 elif [[ "$CONTEXT" == "weekend" ]]; then
-                  TITLE="🌙 Weekend Night Owls"
-                  DESC_RAW="Weekend night energy! Still grinding or udah gabut mode?"
+                  TITLE="🌙 Night Owls Territory"
+                  DESC_RAW="Weekend night energy still going strong! Still grinding or udah gabut mode? Either way we vibing tonight gais"
                 else
                   TITLE="🌜 Midnight Chronicles"
-                  DESC_RAW="GN fam! Hope you had a good day, besok respawn lagi cuy"
+                  DESC_RAW="GN fam hope you had a solid day today! Time to rest up, besok respawn lagi cuy sweet dreams everyone"
                 fi
                 FOOTER="rest well"
                 ;;
