@@ -39,19 +39,20 @@ jobs:
             esac
           fi
           
-          # Get current day and time info for AI
-          CURRENT_DAY=$(date +%A)        # Full day name (Monday, Tuesday, etc.)
-          CURRENT_DATE=$(date +"%B %d, %Y")  # Full date (August 22, 2025)
-          CURRENT_TIME=$(date +"%H:%M")      # Current time (04:17)
+          # Get current day and time info for AI (Indonesia timezone GMT+7)
+          export TZ='Asia/Jakarta'
+          CURRENT_DAY=$(TZ='Asia/Jakarta' date +%A)        # Full day name (Monday, Tuesday, etc.)
+          CURRENT_DATE=$(TZ='Asia/Jakarta' date +"%B %d, %Y")  # Full date (August 22, 2025)
+          CURRENT_TIME=$(TZ='Asia/Jakarta' date +"%H:%M")      # Current time (04:20)
           
-          DAY=$(date +%u)
+          DAY=$(TZ='Asia/Jakarta' date +%u)
           if [[ $DAY -eq 6 || $DAY -eq 7 ]]; then
             CONTEXT="weekend"
           else
             CONTEXT="weekday"
           fi
           
-          # Check for weekend transitions and next day info
+          # Check for weekend transitions and next day info (Indonesia timezone)
           WEEKEND_TRANSITION=""
           NEXT_DAY_INFO=""
           if [[ "$TYPE" == "night" || "$TYPE" == "evening" ]]; then
@@ -84,8 +85,8 @@ jobs:
           fi
           
           echo "🤖 Generating $TYPE greeting for $CONTEXT"
-          echo "📅 Current day: $CURRENT_DAY ($CURRENT_DATE)"
-          echo "🕐 Current time: $CURRENT_TIME"
+          echo "📅 Current day: $CURRENT_DAY ($CURRENT_DATE) - Indonesia time"
+          echo "🕐 Current time: $CURRENT_TIME WIB (GMT+7)"
           if [[ -n "$WEEKEND_TRANSITION" ]]; then
             echo "📅 Weekend transition detected: $WEEKEND_TRANSITION"
           fi
@@ -99,12 +100,12 @@ jobs:
           
           CURRENT_DAY_INFO
           CURRENT_DATE_INFO  
-          CURRENT_TIME_INFO
+          CURRENT_TIME_INFO (Indonesia timezone GMT+7 / WIB)
           WEEKEND_TRANSITION_INFO
           NEXT_DAY_INFO_TEXT
           
           Requirements:
-          - IMPORTANT: Use the ACTUAL current day provided above, not assumptions
+          - IMPORTANT: Use the ACTUAL current day/time provided above (Indonesia timezone)
           - Start with English, end with Indonesian - must flow naturally (no hard cut)
           - Tone: chill, conversational, not try-hard; PG-13; no hashtags; no @everyone
           - Mix slang (use 2–3 max): brodie, fr, lowkey, anjir, dikit, gabut, cuy
@@ -117,9 +118,9 @@ jobs:
           - No hyphens or dashes in DESC; use commas or semicolons if needed
           - For evening/night greetings, include casual next-day mentions when provided
           - Make messages feel like genuine friend check-ins, not robotic announcements
-          - Reference the correct day/time context provided above
+          - Reference the correct day/time context provided above (Indonesia time zone)
           
-          Good examples:
+          Good examples (don't copy the same, just improve it):
           morning gang lowkey warm up then hop vc lanjut mabar santuy cuyy
           what’s good team fr just chill here dulu kalo gabut mabar tipis banngh
           evening check in we touch grass a bit abis itu queue bareng brodiee
@@ -164,9 +165,9 @@ jobs:
           sed -i "s/TIME_HERE/$TYPE/g" /tmp/prompt.txt
           sed -i "s/CONTEXT_HERE/$CONTEXT/g" /tmp/prompt.txt
           sed -i "s|NEXT_DAY_INFO_TEXT|$NEXT_DAY_INFO|g" /tmp/prompt.txt
-          sed -i "s/CURRENT_DAY_INFO/Current day: $CURRENT_DAY/g" /tmp/prompt.txt
-          sed -i "s/CURRENT_DATE_INFO/Current date: $CURRENT_DATE/g" /tmp/prompt.txt
-          sed -i "s/CURRENT_TIME_INFO/Current time: $CURRENT_TIME/g" /tmp/prompt.txt
+          sed -i "s/CURRENT_DAY_INFO/Current day: $CURRENT_DAY (Indonesia timezone)/g" /tmp/prompt.txt
+          sed -i "s/CURRENT_DATE_INFO/Current date: $CURRENT_DATE (WIB)/g" /tmp/prompt.txt
+          sed -i "s/CURRENT_TIME_INFO/Current time: $CURRENT_TIME WIB/g" /tmp/prompt.txt
           
           # Try Gemini API
           echo "🔄 Calling Gemini API..."
@@ -364,7 +365,7 @@ jobs:
             "night") COLOR=8947848; THUMB="1f319" ;;
           esac
           
-          TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
+          TIMESTAMP=$(TZ='Asia/Jakarta' date -u +%Y-%m-%dT%H:%M:%S.000Z)
           
           echo "📤 Sending to Discord..."
           echo "Final Title: $TITLE"
