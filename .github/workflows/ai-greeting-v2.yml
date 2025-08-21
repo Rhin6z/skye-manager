@@ -193,8 +193,8 @@ jobs:
               print("WEATHER_AVAILABLE=false")
           PYTHON_EOF
               
-              # Capture python output
-              WEATHER_OUTPUT=$(WEATHER_RAW="$WEATHER_RAW" python3 << 'PYTHON_EOF'
+              # Capture python output to temp file (safer than eval)
+              WEATHER_RAW="$WEATHER_RAW" python3 << 'PYTHON_EOF' > /tmp/weather_vars.txt
           import json
           import os
           
@@ -207,15 +207,15 @@ jobs:
                   temp = current.get('temp_C', 'unknown')
                   desc = current.get('weatherDesc', [{}])[0].get('value', 'unknown')
                   
-                  weather_vibe = "unknown vibes"
+                  weather_vibe = "unknown_vibes"
                   if 'sunny' in desc.lower() or 'clear' in desc.lower():
-                      weather_vibe = "sunny perfect weather"
+                      weather_vibe = "sunny_perfect_weather"
                   elif 'rain' in desc.lower() or 'drizzle' in desc.lower():
-                      weather_vibe = "cozy rainy vibes"  
+                      weather_vibe = "cozy_rainy_vibes"  
                   elif 'cloud' in desc.lower():
-                      weather_vibe = "cloudy chill weather"
+                      weather_vibe = "cloudy_chill_weather"
                   elif 'storm' in desc.lower():
-                      weather_vibe = "stormy dramatic weather"
+                      weather_vibe = "stormy_dramatic_weather"
                   
                   print(f"WEATHER_TEMP={temp}")
                   print(f"WEATHER_DESC={desc}")  
@@ -226,10 +226,16 @@ jobs:
           except:
               print("WEATHER_AVAILABLE=false")
           PYTHON_EOF
-              )
               
-              # Parse output and set variables
-              eval "$WEATHER_OUTPUT"
+              # Source the variables safely
+              if [[ -f /tmp/weather_vars.txt ]]; then
+                source /tmp/weather_vars.txt
+                
+                # Convert underscores back to spaces for display
+                WEATHER_VIBE=$(echo "$WEATHER_VIBE" | sed 's/_/ /g')
+              else
+                WEATHER_AVAILABLE=false
+              fi
               
               if [[ "$WEATHER_AVAILABLE" == "true" ]]; then
                 echo "✅ Weather fetched: $WEATHER_TEMP°C, $WEATHER_VIBE"
@@ -477,7 +483,11 @@ jobs:
             # Weather-aware fallbacks
             WEATHER_MENTION=""
             if [[ "${{ steps.weather.outputs.WEATHER_AVAILABLE }}" == "true" ]]; then
-              WEATHER_MENTION=" with ${{ steps.weather.outputs.WEATHER_TEMP }}°C ${{ steps.weather.outputs.WEATHER_VIBE }}"
+              WEATHER_TEMP="${{ steps.weather.outputs.WEATHER_TEMP }}"
+              WEATHER_VIBE="${{ steps.weather.outputs.WEATHER_VIBE }}"
+              if [[ "$WEATHER_TEMP" != "unknown" && "$WEATHER_VIBE" != "unknown vibes" ]]; then
+                WEATHER_MENTION=" with ${WEATHER_TEMP}°C ${WEATHER_VIBE}"
+              fi
             fi
             
             case "${{ steps.context.outputs.TYPE }}" in
