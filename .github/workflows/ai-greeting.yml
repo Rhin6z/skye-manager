@@ -49,120 +49,53 @@ jobs:
             CONTEXT="weekday"
           fi
           
-          echo "🤖 generating greeting: $TYPE ($CONTEXT)"
+          echo "🤖 Generating greeting: $TYPE ($CONTEXT)"
           
-          # English-Indo mixed slang prompt with fresh slang
+          # Simple but effective prompt
           read -r -d '' PROMPT << 'EOF' || true
           Buatkan greeting Discord untuk waktu TYPE_PLACEHOLDER hari CONTEXT_PLACEHOLDER.
 
-          Style requirements:
-          - Mulai dengan English slang dulu, lanjut Indonesian 
-          - Pakai slang fresh: "periodt", "slay", "no cap", "fr fr", "lowkey", "highkey", "bussin", "mid", "it's giving", "finna", "bet"
-          - Indo slang baru: "anying", "kocak", "woy", "cuy", "gas", "santuy", "ngab", "anjir", "kampret", "gabut", "bucin", "kepo", "baper"
-          - Gaming terms: "npc energy", "touching grass", "respawn", "afk life", "main character", "side quest"
-          - Mix natural, jangan cringe
+          Style: Indonesian slang casual + gaming terms (anying, kocak, fr, no cap, woy)
 
           Format output:
-          TITLE: [english slang start + indo, emoji, lowercase]
-          DESC: [english sentence + indonesian sentence, natural flow, lowercase except emoji]
+          TITLE: [judul dengan emoji]
+          DESC: [2 kalimat casual]
           > by server dev - <@399393175904714752>
-          FOOTER: [mix eng-indo footer, lowercase]
+          FOOTER: [footer pendek]
 
-          Example style:
-          "yo what's good fam, it's giving evening vibes fr! sore anying, waktunya rehat sejenak ngab"
-
-          Output semua lowercase kecuali emoji!
+          Contoh:
+          TITLE: 🌅 pagi santuy, gas tipis aja
+          DESC: morning squad! jangan jadi NPC parkir di base, gerak dikit udah win kocak 😂
+          > by server dev - <@399393175904714752>
+          FOOTER: santai tapi jalan
           EOF
           
           # Replace placeholders
           PROMPT=${PROMPT//TYPE_PLACEHOLDER/$TYPE}
           PROMPT=${PROMPT//CONTEXT_PLACEHOLDER/$CONTEXT}
           
-          # Try Gemini API (using the working model from your code)
+          # Try Gemini API (with proper error handling) - Updated to gemini-2.5-flash-lite
           GEMINI_RESPONSE=""
-          echo "🔄 trying gemini-1.5-flash api..."
-          
-          # Debug: Check API key format
-          api_key_prefix=$(echo "${{ secrets.GEMINI_API_KEY }}" | cut -c1-10)
-          echo "🔧 API key prefix: ${api_key_prefix}..."
-          
-          # Test with simpler request first
-          simple_response=$(curl -w "%{http_code}" -s -X POST \
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
+          if curl -f -s -X POST \
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
             -H "Content-Type: application/json" \
-            -d '{
-              "contents": [{
-                "parts": [{"text": "hi"}]
+            -d "{
+              \"contents\": [{
+                \"parts\": [{\"text\": \"$PROMPT\"}]
               }],
-              "generationConfig": {
-                "temperature": 0.1,
-                "maxOutputTokens": 10
+              \"generationConfig\": {
+                \"temperature\": 0.8,
+                \"maxOutputTokens\": 200
               }
-            }' \
-            --connect-timeout 15 --max-time 20 2>&1)
-          
-          # Extract HTTP status code
-          http_code="${simple_response: -3}"
-          simple_body="${simple_response%???}"
-          
-          echo "🔧 Simple test HTTP Status: $http_code"
-          
-          if [[ "$http_code" == "200" ]]; then
-            echo "✅ Simple API test successful"
+            }" \
+            --connect-timeout 10 --max-time 15 > /tmp/gemini_response.json 2>/dev/null; then
             
-            # Now try the actual request
-            response=$(curl -w "%{http_code}" -s -X POST \
-              "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
-              -H "Content-Type: application/json" \
-              -d "{
-                \"contents\": [{
-                  \"parts\": [{\"text\": \"$PROMPT\"}]
-                }],
-                \"generationConfig\": {
-                  \"temperature\": 0.8,
-                  \"maxOutputTokens\": 200
-                }
-              }" \
-              --connect-timeout 15 --max-time 20 2>&1)
-            
-            # Extract HTTP status code and response body
-            main_http_code="${response: -3}"
-            main_response_body="${response%???}"
-            
-            echo "🔧 Main request HTTP Status: $main_http_code"
-            
-            if [[ "$main_http_code" == "200" ]]; then
-              echo "$main_response_body" > /tmp/gemini_response.json
-              api_success=true
-            else
-              echo "❌ Main API request failed with status $main_http_code"
-              echo "🔧 Error response: $main_response_body"
-              api_success=false
-            fi
-          else
-            echo "❌ Simple API test failed with status $http_code"
-            echo "🔧 Error response: $simple_body"
-            
-            # Check for common error patterns
-            if echo "$simple_body" | grep -q "API_KEY_INVALID"; then
-              echo "🚨 Invalid API Key detected!"
-            elif echo "$simple_body" | grep -q "PERMISSION_DENIED"; then
-              echo "🚨 Permission denied - check API key permissions!"
-            elif echo "$simple_body" | grep -q "QUOTA_EXCEEDED"; then
-              echo "🚨 Quota exceeded - rate limited!"
-            fi
-            
-            api_success=false
-          fi
-          
-          if [[ "$api_success" == "true" ]]; then
-            
-            # Parse response (simplified like your working code)
+            # Parse response
             if AI_TEXT=$(jq -r '.candidates[0].content.parts[0].text' /tmp/gemini_response.json 2>/dev/null); then
-              echo "✅ gemini api success"
+              echo "✅ Gemini API success"
               echo "$AI_TEXT" > /tmp/ai_content.txt
               
-              # Extract parts with simple parsing (like your working version)
+              # Extract parts with simple parsing
               TITLE=$(echo "$AI_TEXT" | grep -i "TITLE:" | head -1 | sed 's/.*TITLE:[[:space:]]*//' | sed 's/^[[:space:]]*//')
               FOOTER=$(echo "$AI_TEXT" | grep -i "FOOTER:" | head -1 | sed 's/.*FOOTER:[[:space:]]*//' | sed 's/^[[:space:]]*//')
               
@@ -176,151 +109,88 @@ jobs:
               
               # Validate
               if [[ -n "$TITLE" && -n "$DESC" && -n "$FOOTER" ]]; then
-                echo "✅ parsing successful"
-                echo "title: $TITLE"
-                echo "footer: $FOOTER"
+                echo "✅ Parsing successful"
+                echo "Title: $TITLE"
+                echo "Footer: $FOOTER"
                 USE_AI=true
               else
-                echo "❌ parsing failed, using fallback"
+                echo "❌ Parsing failed, using fallback"
                 USE_AI=false
               fi
             else
-              echo "❌ json parsing failed"
+              echo "❌ JSON parsing failed"
               USE_AI=false
             fi
           else
-            echo "❌ gemini api call failed"
-            
-            # Try alternative model as backup
-            echo "🔄 trying gemini-pro as backup..."
-            backup_response=$(curl -w "%{http_code}" -s -X POST \
-              "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
-              -H "Content-Type: application/json" \
-              -d "{
-                \"contents\": [{
-                  \"parts\": [{\"text\": \"$PROMPT\"}]
-                }],
-                \"generationConfig\": {
-                  \"temperature\": 0.8,
-                  \"maxOutputTokens\": 200
-                }
-              }" \
-              --connect-timeout 15 --max-time 20 2>&1)
-            
-            backup_code="${backup_response: -3}"
-            backup_body="${backup_response%???}"
-            
-            if [[ "$backup_code" == "200" ]]; then
-              echo "✅ backup gemini-pro successful"
-              echo "$backup_body" > /tmp/gemini_response.json
-              api_success=true
-            else
-              echo "❌ backup model also failed with status $backup_code"
-              api_success=false
-            fi
-            
-            if [[ "$api_success" == "true" ]]; then
-              # Parse backup response
-              if AI_TEXT=$(jq -r '.candidates[0].content.parts[0].text' /tmp/gemini_response.json 2>/dev/null); then
-                echo "✅ backup gemini api success"
-                echo "$AI_TEXT" > /tmp/ai_content.txt
-                
-                # Extract parts with simple parsing
-                TITLE=$(echo "$AI_TEXT" | grep -i "TITLE:" | head -1 | sed 's/.*TITLE:[[:space:]]*//' | sed 's/^[[:space:]]*//')
-                FOOTER=$(echo "$AI_TEXT" | grep -i "FOOTER:" | head -1 | sed 's/.*FOOTER:[[:space:]]*//' | sed 's/^[[:space:]]*//')
-                
-                # Get DESC
-                DESC=$(echo "$AI_TEXT" | sed -n '/TITLE:/,/> by server dev/p' | grep -v "TITLE:" | grep -v "FOOTER:" | sed '/> by server dev/d' | tr '\n' ' ' | sed 's/DESC:[[:space:]]*//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
-                
-                # Add the required ending
-                if [[ -n "$DESC" ]]; then
-                  DESC="$DESC\\n> by server dev - <@399393175904714752>"
-                fi
-                
-                # Validate
-                if [[ -n "$TITLE" && -n "$DESC" && -n "$FOOTER" ]]; then
-                  echo "✅ backup parsing successful"
-                  echo "title: $TITLE"
-                  echo "footer: $FOOTER"
-                  USE_AI=true
-                else
-                  echo "❌ backup parsing failed, using fallback"
-                  USE_AI=false
-                fi
-              else
-                echo "❌ backup json parsing failed"
-                USE_AI=false
-              fi
-            else
-              USE_AI=false
-            fi
+            echo "❌ Gemini API call failed"
+            USE_AI=false
           fi
           
-          # Fallback messages with fresh eng-indo mix style
+          # Fallback messages if AI fails
           if [[ "$USE_AI" != "true" ]]; then
-            echo "🎲 using fallback greeting"
+            echo "🎲 Using fallback greeting"
             INDEX=$((RANDOM % 3))
             
             case "$TYPE-$INDEX" in
               "morning-0")
-                TITLE="🌄 good morning bestie, pagi yang slay"
-                DESC="yooo what's the tea today? pagi ini lowkey giving main character energy fr! bangun santuy tapi tetep gas ngab 😂\\n> by server dev - <@399393175904714752>"
-                FOOTER="periodt but make it indo"
+                TITLE="🌄 pagi woy, gas tipis aja"
+                DESC="yo morning fam! jangan jadi NPC parkir di base, gerak dikit udah win fr 😂\\n> by server dev - <@399393175904714752>"
+                FOOTER="santai tapi jalan"
                 ;;
               "morning-1")
-                TITLE="🌅 rise and grind, bangun kampret"
-                DESC="morning hits different when you're not mid fr! kopi dulu baru bacot produktif anying, jangan jadi npc pagi-pagi ☕\\n> by server dev - <@399393175904714752>"
-                FOOTER="bussin energy only"
+                TITLE="🌅 bangun santuy, hidup santuy"
+                DESC="good morning squad! kopi dulu baru bacot produktif, anying ☕\\n> by server dev - <@399393175904714752>"
+                FOOTER="pelan tapi konsisten"
                 ;;
               "morning-2")
-                TITLE="☀️ it's giving sunrise, pagi gabut"
-                DESC="yo fam this morning is absolutely sending me! mmr turun kemarin? forget it bestie, today we finna slay kocak 😌\\n> by server dev - <@399393175904714752>"
-                FOOTER="no cap pagi vibes"
+                TITLE="☀️ morning vibe check"
+                DESC="gm legends! MMR turun ga sekejam kata netizen kok, santai kocak 😌\\n> by server dev - <@399393175904714752>"
+                FOOTER="good vibes only"
                 ;;
               "afternoon-0")
-                TITLE="🌞 lunch break periodt, siang bucin"
-                DESC="bestie your stomach said what now? makan siang itu main quest bukan side quest anying, feed yourself fr 🍔\\n> by server dev - <@399393175904714752>"
-                FOOTER="recharge arc activated"
+                TITLE="🌞 siang², break dulu"
+                DESC="what's good squad? makan siang itu buff utama, bukan side quest anying 🍔\\n> by server dev - <@399393175904714752>"
+                FOOTER="recharge mode"
                 ;;
               "afternoon-1")
-                TITLE="🍛 midday check, siang kepo"
-                DESC="yo it's giving sleepy vibes rn! jangan jadi singa di chat koala di dunia nyata cuy, makan dulu baru war 😴\\n> by server dev - <@399393175904714752>"
-                FOOTER="touching food not grass"
+                TITLE="� lunch time = sacred time"
+                DESC="yo fam! jangan jadi singa di chat, koala di real life 😴\\n> by server dev - <@399393175904714752>"
+                FOOTER="makan dulu boss"
                 ;;
               "afternoon-2")
-                TITLE="😎 afternoon tea bestie, siang anjir"
-                DESC="what's poppin legends? hydrate or diedrate no cap! air putih dulu baru ranked match ngab, jangan sampai dehidrasi kocak\\n> by server dev - <@399393175904714752>"
-                FOOTER="stay hydrated kampret"
+                TITLE="😎 tengah hari check"
+                DESC="good afternoon gamers! hydrate or diedrate, minum dulu baru war kocak\\n> by server dev - <@399393175904714752>"
+                FOOTER="stay hydrated"
                 ;;
               "evening-0")
-                TITLE="🌆 golden hour slay, sore anying"
-                DESC="yo evening squad it's absolutely bussin! sunset hits different when you're not tilted fr, cooldown sejenak biar ga baper 😂\\n> by server dev - <@399393175904714752>"
-                FOOTER="chill but make it aesthetic"
+                TITLE="🌆 sore santai mode"
+                DESC="good evening fam! sunset hits different, cooldown bentar biar ga tilt 😂\\n> by server dev - <@399393175904714752>"
+                FOOTER="chill vibes"
                 ;;
               "evening-1")
-                TITLE="🌅 it's giving sunset, sore gabut"
-                DESC="evening besties what's the move? playlist chill, cemil dikit, terus lanjut mabar cuy, malam ini milik kita ngab\\n> by server dev - <@399393175904714752>"
-                FOOTER="tonight we ride"
+                TITLE="🌅 golden hour energy"
+                DESC="evening squad! ganti playlist, cemil dikit, terus lanjut mabar anying\\n> by server dev - <@399393175904714752>"
+                FOOTER="malam ini milik kita"
                 ;;
               "evening-2")
-                TITLE="✨ evening vibes, sore santuy"
-                DESC="yooo this day was a whole movie periodt! hidup ga seseram drama discord anying, ketawa dikit santai sejenak 😌\\n> by server dev - <@399393175904714752>"
-                FOOTER="we been through it"
+                TITLE="✨ sore² santai"
+                DESC="what's poppin brodie! ketawain aja dikit, hidup tuh ga seseram drama discord fr 😌\\n> by server dev - <@399393175904714752>"
+                FOOTER="santai sejenak"
                 ;;
               "night-0")
-                TITLE="🌙 bedtime bestie, malem kampret"
-                DESC="night night legends it's giving sleepy! hp aja ada low battery warning cuy, lu juga butuh tidur fr anying ⚡\\n> by server dev - <@399393175904714752>"
-                FOOTER="sleep is self care ngab"
+                TITLE="🌙 time to rest"
+                DESC="night night squad! hp aja ada low battery warning anying ⚡ lu juga butuh tidur\\n> by server dev - <@399393175904714752>"
+                FOOTER="bobo cantik"
                 ;;
               "night-1")
-                TITLE="💤 sleepy girl era, malem bucin"
-                DESC="gn fam don't bring today's drama to tomorrow! jangan bawa rank ke mimpi nanti mimpi dimarahin random kocak 😪\\n> by server dev - <@399393175904714752>"
-                FOOTER="dream of victory royales"
+                TITLE="💤 sleep mode activated"
+                DESC="good night fam! jangan bawa rank ke mimpi, nanti mimpi dimarahin random kocak 😪\\n> by server dev - <@399393175904714752>"
+                FOOTER="mimpi indah"
                 ;;
               "night-2")
-                TITLE="🌜 it's giving bedtime, malem gabut"
-                DESC="yo besok another episode awaits fr! sekarang waktunya jadi guling enjoyer no cap, rest well legends cuy\\n> by server dev - <@399393175904714752>"
-                FOOTER="see u in the morning anjir"
+                TITLE="🌜 rest well"
+                DESC="gn team! besok masih panjang, sekarang waktunya jadi guling enjoyer no cap\\n> by server dev - <@399393175904714752>"
+                FOOTER="see u tomorrow"
                 ;;
             esac
           fi
@@ -335,13 +205,13 @@ jobs:
           
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
           
-          # Send to Discord (simplified like your working code)
+          # Send to Discord
           curl -f -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
                -H "Content-Type: application/json" \
                --connect-timeout 10 --max-time 15 \
                -d "{\"embeds\":[{\"title\":\"$TITLE\",\"description\":\"$DESC\",\"color\":$COLOR,\"thumbnail\":{\"url\":\"https://twemoji.maxcdn.com/v/latest/72x72/$THUMB.png\"},\"footer\":{\"text\":\"$FOOTER\",\"icon_url\":\"https://files.catbox.moe/npfh4e.jpg\"},\"timestamp\":\"$TIMESTAMP\"}]}"
           
-          echo "✅ sent $TYPE greeting (ai: ${USE_AI:-false}, context: $CONTEXT)"
+          echo "✅ Sent $TYPE greeting (AI: ${USE_AI:-false}, Context: $CONTEXT)"
           
           # Cleanup
           rm -f /tmp/gemini_response.json /tmp/ai_content.txt
