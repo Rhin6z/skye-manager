@@ -1,0 +1,216 @@
+name: AI Discord Greeting
+
+on:
+  schedule:
+    - cron: '0 0 * * 1-5'    # 7 AM WIB weekdays (morning)
+    - cron: '0 5 * * 1-5'    # 12 PM WIB weekdays (afternoon)
+    - cron: '0 10 * * 1-5'   # 5 PM WIB weekdays (evening)
+    - cron: '0 15 * * 1-5'   # 10 PM WIB weekdays (night)
+    - cron: '0 0 * * 6,0'    # 7 AM WIB weekends (morning)
+    - cron: '0 5 * * 6,0'    # 12 PM WIB weekends (afternoon)
+    - cron: '0 10 * * 6,0'   # 5 PM WIB weekends (evening)
+    - cron: '0 15 * * 6,0'   # 10 PM WIB weekends (night)
+  workflow_dispatch:
+    inputs:
+      greeting_type:
+        description: 'Select greeting type'
+        required: true
+        default: 'morning'
+        type: choice
+        options: [morning, afternoon, evening, night]
+
+jobs:
+  send-greeting:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    
+    steps:
+      - name: Generate and Send AI Greeting
+        run: |
+          # Determine greeting type and context
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            TYPE="${{ github.event.inputs.greeting_type }}"
+          else
+            case "${{ github.event.schedule }}" in
+              "0 0 * * 1-5"|"0 0 * * 6,0") TYPE="morning" ;;
+              "0 5 * * 1-5"|"0 5 * * 6,0") TYPE="afternoon" ;;
+              "0 10 * * 1-5"|"0 10 * * 6,0") TYPE="evening" ;;
+              "0 15 * * 1-5"|"0 15 * * 6,0") TYPE="night" ;;
+            esac
+          fi
+          
+          DAY=$(date +%u)
+          if [[ $DAY -eq 6 || $DAY -eq 7 ]]; then
+            CONTEXT="weekend"
+          else
+            CONTEXT="weekday"
+          fi
+          
+          echo "🤖 Generating $TYPE greeting for $CONTEXT"
+          
+          # Create simple prompt without problematic characters
+          cat > /tmp/prompt.txt << 'EOF'
+Buatin greeting Discord casual untuk waktu TIME_HERE di hari CONTEXT_HERE.
+
+Style yang diinginkan:
+- Mix bahasa Inggris dan Indonesia yang natural
+- Casual dan santai, jangan formal
+- Pakai slang seperti: brodie, fr, lowkey, kek, dikit, anjir, gabut
+- Gaming terms: mmr, noob, mabar, touching grass
+- Tone santai dan relatable
+
+Contoh yang bagus:
+jangan sok produktif terus, chill dulu kek
+what's poppin brodie! golden hour vibes, mmr turun ga sekejam netizen kok fr
+
+Format output:
+TITLE: [title casual dengan emoji]
+DESC: [description natural yang flow]
+FOOTER: [footer pendek]
+
+Bikin yang relatable!
+EOF
+          
+          # Replace placeholders
+          sed -i "s/TIME_HERE/$TYPE/g" /tmp/prompt.txt
+          sed -i "s/CONTEXT_HERE/$CONTEXT/g" /tmp/prompt.txt
+          
+          # Try Gemini API
+          echo "🔄 Calling Gemini API..."
+          
+          # Create JSON payload safely
+          python3 << 'PYTHON_EOF'
+import json
+import requests
+import os
+import sys
+
+# Read prompt
+with open('/tmp/prompt.txt', 'r') as f:
+    prompt = f.read().strip()
+
+# Prepare request
+api_key = os.environ.get('GEMINI_API_KEY')
+if not api_key:
+    print("❌ No API key found")
+    sys.exit(1)
+
+url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={api_key}"
+
+payload = {
+    "contents": [{"parts": [{"text": prompt}]}],
+    "generationConfig": {
+        "temperature": 0.8,
+        "maxOutputTokens": 300
+    }
+}
+
+try:
+    response = requests.post(url, json=payload, timeout=30)
+    
+    if response.status_code == 200:
+        data = response.json()
+        if 'candidates' in data and len(data['candidates']) > 0:
+            ai_text = data['candidates'][0]['content']['parts'][0]['text']
+            print("✅ AI response received")
+            with open('/tmp/ai_response.txt', 'w') as f:
+                f.write(ai_text)
+        else:
+            print("❌ No candidates in response")
+            with open('/tmp/ai_response.txt', 'w') as f:
+                f.write("")
+    else:
+        print(f"❌ API error: {response.status_code}")
+        print(f"Response: {response.text}")
+        with open('/tmp/ai_response.txt', 'w') as f:
+            f.write("")
+            
+except Exception as e:
+    print(f"❌ Request failed: {e}")
+    with open('/tmp/ai_response.txt', 'w') as f:
+        f.write("")
+PYTHON_EOF
+          
+          # Parse AI response or use fallback
+          if [[ -s /tmp/ai_response.txt ]]; then
+            AI_TEXT=$(cat /tmp/ai_response.txt)
+            echo "AI response preview: $(echo "$AI_TEXT" | head -c 100)..."
+            
+            # Extract parts
+            TITLE=$(echo "$AI_TEXT" | grep -i "TITLE:" | head -1 | sed 's/.*TITLE:[[:space:]]*//' || echo "")
+            DESC_RAW=$(echo "$AI_TEXT" | grep -i "DESC:" | head -1 | sed 's/.*DESC:[[:space:]]*//' || echo "")
+            FOOTER=$(echo "$AI_TEXT" | grep -i "FOOTER:" | head -1 | sed 's/.*FOOTER:[[:space:]]*//' || echo "")
+            
+            if [[ -n "$TITLE" && -n "$DESC_RAW" ]]; then
+              echo "✅ Using AI generated content"
+              USE_AI=true
+            else
+              echo "🔄 AI format not recognized, using AI text as description"
+              TITLE="🤖 ai vibes activated"
+              DESC_RAW="$AI_TEXT"
+              FOOTER="generated with love"
+              USE_AI=true
+            fi
+          else
+            echo "🎲 Using fallback content"
+            USE_AI=false
+          fi
+          
+          # Fallback messages
+          if [[ "$USE_AI" != "true" ]]; then
+            case "$TYPE" in
+              "morning")
+                TITLE="🌅 morning vibes check"
+                DESC_RAW="what's poppin early squad! another day another chance buat gas produktif, tapi santai aja dulu kopi sambil scroll meme"
+                FOOTER="caffeine loading..."
+                ;;
+              "afternoon")
+                TITLE="🌞 midday energy drop"
+                DESC_RAW="yo afternoon crew! perut udah protes belum? makan siang itu mandatory quest bukan side mission anjir"
+                FOOTER="fuel up time"
+                ;;
+              "evening")
+                TITLE="🌆 golden hour tapi gabut"
+                DESC_RAW="what's good evening squad! sunset $CONTEXT hits different ketawain aja dikit, besok masih ada episode baru"
+                FOOTER="chill evening mode"
+                ;;
+              "night")
+                if [[ "$CONTEXT" == "weekend" ]]; then
+                  TITLE="🌙 weekend night owl mode"
+                  DESC_RAW="yo night squad! weekend night perfect buat mabar atau binge series, tapi jangan begadang sampe subuh ya"
+                  FOOTER="weekend night energy"
+                else
+                  TITLE="🌜 weekday bedtime soon"
+                  DESC_RAW="gn fam! weekday night means prep mode buat besok, tapi sebelumnya satu game dulu kocak"
+                  FOOTER="rest well bestie"
+                fi
+                ;;
+            esac
+          fi
+          
+          # Add required ending to description
+          DESC="$DESC_RAW\\n> by server dev - <@399393175904714752>"
+          
+          # Set colors and thumbnails
+          case "$TYPE" in
+            "morning") COLOR=16766720; THUMB="1f305" ;;
+            "afternoon") COLOR=16763904; THUMB="2600" ;;
+            "evening") COLOR=16744448; THUMB="1f307" ;;
+            "night") COLOR=8947848; THUMB="1f319" ;;
+          esac
+          
+          TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
+          
+          echo "📤 Sending to Discord..."
+          echo "Title: $TITLE"
+          echo "Footer: $FOOTER"
+          
+          # Send to Discord
+          curl -f -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+               -H "Content-Type: application/json" \
+               --connect-timeout 10 --max-time 15 \
+               -d "{\"embeds\":[{\"title\":\"$TITLE\",\"description\":\"$DESC\",\"color\":$COLOR,\"thumbnail\":{\"url\":\"https://twemoji.maxcdn.com/v/latest/72x72/$THUMB.png\"},\"footer\":{\"text\":\"$FOOTER\",\"icon_url\":\"https://files.catbox.moe/npfh4e.jpg\"},\"timestamp\":\"$TIMESTAMP\"}]}"
+          
+          echo "✅ Sent $TYPE greeting (AI: ${USE_AI:-false}, Context: $CONTEXT)"
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
