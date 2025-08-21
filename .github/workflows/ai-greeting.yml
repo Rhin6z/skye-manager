@@ -134,7 +134,7 @@ jobs:
           # Replace placeholders
           sed -i "s/TIME_HERE/$TYPE/g" /tmp/prompt.txt
           sed -i "s/CONTEXT_HERE/$CONTEXT/g" /tmp/prompt.txt
-          sed -i "s/NEXT_DAY_INFO_TEXT/$NEXT_DAY_INFO/g" /tmp/prompt.txt
+          sed -i "s|NEXT_DAY_INFO_TEXT|$NEXT_DAY_INFO|g" /tmp/prompt.txt
           
           # Try Gemini API
           echo "🔄 Calling Gemini API..."
