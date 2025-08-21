@@ -50,26 +50,26 @@ jobs:
           
           # Create simple prompt without problematic characters
           cat > /tmp/prompt.txt << 'EOF'
-Buatin greeting Discord casual untuk waktu TIME_HERE di hari CONTEXT_HERE.
-
-Style yang diinginkan:
-- Mix bahasa Inggris dan Indonesia yang natural
-- Casual dan santai, jangan formal
-- Pakai slang seperti: brodie, fr, lowkey, kek, dikit, anjir, gabut
-- Gaming terms: mmr, noob, mabar, touching grass
-- Tone santai dan relatable
-
-Contoh yang bagus:
-jangan sok produktif terus, chill dulu kek
-what's poppin brodie! golden hour vibes, mmr turun ga sekejam netizen kok fr
-
-Format output:
-TITLE: [title casual dengan emoji]
-DESC: [description natural yang flow]
-FOOTER: [footer pendek]
-
-Bikin yang relatable!
-EOF
+          Buatin greeting Discord casual untuk waktu TIME_HERE di hari CONTEXT_HERE.
+          
+          Style yang diinginkan:
+          - Mix bahasa Inggris dan Indonesia yang natural
+          - Casual dan santai, jangan formal
+          - Pakai slang seperti: brodie, fr, lowkey, kek, dikit, anjir, gabut
+          - Gaming terms: mmr, noob, mabar, touching grass
+          - Tone santai dan relatable
+          
+          Contoh yang bagus:
+          jangan sok produktif terus, chill dulu kek
+          what's poppin brodie! golden hour vibes, mmr turun ga sekejam netizen kok fr
+          
+          Format output:
+          TITLE: [title casual dengan emoji]
+          DESC: [description natural yang flow]
+          FOOTER: [footer pendek]
+          
+          Bikin yang relatable!
+          EOF
           
           # Replace placeholders
           sed -i "s/TIME_HERE/$TYPE/g" /tmp/prompt.txt
@@ -80,56 +80,56 @@ EOF
           
           # Create JSON payload safely
           python3 << 'PYTHON_EOF'
-import json
-import requests
-import os
-import sys
-
-# Read prompt
-with open('/tmp/prompt.txt', 'r') as f:
-    prompt = f.read().strip()
-
-# Prepare request
-api_key = os.environ.get('GEMINI_API_KEY')
-if not api_key:
-    print("❌ No API key found")
-    sys.exit(1)
-
-url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={api_key}"
-
-payload = {
-    "contents": [{"parts": [{"text": prompt}]}],
-    "generationConfig": {
-        "temperature": 0.8,
-        "maxOutputTokens": 300
-    }
-}
-
-try:
-    response = requests.post(url, json=payload, timeout=30)
-    
-    if response.status_code == 200:
-        data = response.json()
-        if 'candidates' in data and len(data['candidates']) > 0:
-            ai_text = data['candidates'][0]['content']['parts'][0]['text']
-            print("✅ AI response received")
-            with open('/tmp/ai_response.txt', 'w') as f:
-                f.write(ai_text)
-        else:
-            print("❌ No candidates in response")
-            with open('/tmp/ai_response.txt', 'w') as f:
-                f.write("")
-    else:
-        print(f"❌ API error: {response.status_code}")
-        print(f"Response: {response.text}")
-        with open('/tmp/ai_response.txt', 'w') as f:
-            f.write("")
-            
-except Exception as e:
-    print(f"❌ Request failed: {e}")
-    with open('/tmp/ai_response.txt', 'w') as f:
-        f.write("")
-PYTHON_EOF
+          import json
+          import requests
+          import os
+          import sys
+          
+          # Read prompt
+          with open('/tmp/prompt.txt', 'r') as f:
+              prompt = f.read().strip()
+          
+          # Prepare request
+          api_key = os.environ.get('GEMINI_API_KEY')
+          if not api_key:
+              print("❌ No API key found")
+              sys.exit(1)
+          
+          url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={api_key}"
+          
+          payload = {
+              "contents": [{"parts": [{"text": prompt}]}],
+              "generationConfig": {
+                  "temperature": 0.8,
+                  "maxOutputTokens": 300
+              }
+          }
+          
+          try:
+              response = requests.post(url, json=payload, timeout=30)
+              
+              if response.status_code == 200:
+                  data = response.json()
+                  if 'candidates' in data and len(data['candidates']) > 0:
+                      ai_text = data['candidates'][0]['content']['parts'][0]['text']
+                      print("✅ AI response received")
+                      with open('/tmp/ai_response.txt', 'w') as f:
+                          f.write(ai_text)
+                  else:
+                      print("❌ No candidates in response")
+                      with open('/tmp/ai_response.txt', 'w') as f:
+                          f.write("")
+              else:
+                  print(f"❌ API error: {response.status_code}")
+                  print(f"Response: {response.text}")
+                  with open('/tmp/ai_response.txt', 'w') as f:
+                      f.write("")
+                      
+          except Exception as e:
+              print(f"❌ Request failed: {e}")
+              with open('/tmp/ai_response.txt', 'w') as f:
+                  f.write("")
+          PYTHON_EOF
           
           # Parse AI response or use fallback
           if [[ -s /tmp/ai_response.txt ]]; then
