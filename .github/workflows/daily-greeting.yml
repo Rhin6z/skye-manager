@@ -80,7 +80,7 @@ jobs:
               "description": "${DESC}",
               "color": 16766720,
               "thumbnail": {
-                "url": "https://raw.githubusercontent.com/twitter/twemoji/master/assets/svg/1f305.svg"
+                "url": "https://twemoji.maxcdn.com/v/latest/72x72/1f305.png"
               },
               "footer": {
                 "text": "${FOOTER}",
@@ -159,7 +159,7 @@ jobs:
               "description": "${DESC}",
               "color": 16763904,
               "thumbnail": {
-                "url": "https://raw.githubusercontent.com/twitter/twemoji/master/assets/svg/2600.svg"
+                "url": "https://twemoji.maxcdn.com/v/latest/72x72/2600.png"
               },
               "footer": {
                 "text": "${FOOTER}",
@@ -238,7 +238,7 @@ jobs:
               "description": "${DESC}",
               "color": 16744448,
               "thumbnail": {
-                "url": "https://raw.githubusercontent.com/twitter/twemoji/master/assets/svg/1f307.svg"
+                "url": "https://twemoji.maxcdn.com/v/latest/72x72/1f307.png"
               },
               "footer": {
                 "text": "${FOOTER}",
@@ -317,7 +317,7 @@ jobs:
               "description": "${DESC}",
               "color": 8947848,
               "thumbnail": {
-                "url": "https://raw.githubusercontent.com/twitter/twemoji/master/assets/svg/1f319.svg"
+                "url": "https://twemoji.maxcdn.com/v/latest/72x72/1f319.png"
               },
               "footer": {
                 "text": "${FOOTER}",
