@@ -1,16 +1,11 @@
-name: weekend discord greeting - rotating (english-first)
+name: weekend discord greeting
 
 on:
   schedule:
-    # 07:00 WIB (00:00 UTC) - weekends only
     - cron: '0 0 * * 6,0'
-    # 12:00 WIB (05:00 UTC)
     - cron: '0 5 * * 6,0'
-    # 17:00 WIB (10:00 UTC)
     - cron: '0 10 * * 6,0'
-    # 22:00 WIB (15:00 UTC)
     - cron: '0 15 * * 6,0'
-
   workflow_dispatch:
     inputs:
       greeting_type:
@@ -27,219 +22,328 @@ on:
 jobs:
   send-greeting:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+    
     steps:
+      - name: Check webhook URL
+        run: |
+          if [ -z "${{ secrets.DISCORD_WEBHOOK_URL }}" ]; then
+            echo "ERROR: DISCORD_WEBHOOK_URL secret is not set"
+            exit 1
+          fi
+
       - name: send morning greeting (weekend, rotating)
         if: (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'morning') || github.event.schedule == '0 0 * * 6,0'
         run: |
+          set -euo pipefail
+          
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
-
-          TITLES=(
-            "🌅 weekend mode on — jangan buru-buru, rileks dulu"
-            "🛌 alarm off, hidup on — santai woy"
-            "☀️ pagi santuy, kopi santuy, vibe santuy"
-            "🎮 pagi weekend: login yang penting, bukan logika"
-            "😴 rebahan is content — approved"
-            "🌄 slow morning, big vibe"
-          )
-
-          DESCS=(
-            "yo weekend warriors! no alarms, no stress — rebahan is the endgame today. bangun siang? gapapa bro, asal jangan skip makan, anying 😴\\n> by server dev - <@399393175904714752>"
-            "good morning fam! lowkey today is for soft launch only — jalanin pelan, jangan jadi npc ngantuk doang kocak ☕\\n> by server dev - <@399393175904714752>"
-            "gm squad! new day same chill — mandi opsional, sarapan wajib. jangan sok produktif, nanti kena karma monday fr 😂\\n> by server dev - <@399393175904714752>"
-            "morning gang! touch grass or touch rank, pilih satu dulu. yang penting happy, bukan heboh, anjir 🌿\\n> by server dev - <@399393175904714752>"
-            "top of the morning brodie! weekend tuh patch khusus: buff ketawa, nerf drama. nikmatin aja dulu lah 😌\\n> by server dev - <@399393175904714752>"
-            "good morning legends! \"gak tamat gak asik!\" (Windut) — tapi tamatnya boleh tamat tidur siang juga sih 😴\\n> by server dev - <@399393175904714752>"
-          )
-
-          FOOTERS=(
-            "weekend mode: ON"
-            "santuy, boss!"
-            "rebahan authorized"
-            "slow but happy"
-            "GG ez weekend"
-            "no rush, just vibes"
-          )
-
           INDEX=$((RANDOM % 6))
+          
+          case $INDEX in
+            0)
+              TITLE="🌅 weekend mode on — jangan buru-buru, rileks dulu"
+              DESC="yo weekend warriors! no alarms, no stress — rebahan is the endgame today. bangun siang? gapapa bro, asal jangan skip makan, anying 😴\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="weekend mode: ON"
+              ;;
+            1)
+              TITLE="🛌 alarm off, hidup on — santai woy"
+              DESC="good morning fam! lowkey today is for soft launch only — jalanin pelan, jangan jadi npc ngantuk doang kocak ☕\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="santuy, boss!"
+              ;;
+            2)
+              TITLE="☀️ pagi santuy, kopi santuy, vibe santuy"
+              DESC="gm squad! new day same chill — mandi opsional, sarapan wajib. jangan sok produktif, nanti kena karma monday fr 😂\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="rebahan authorized"
+              ;;
+            3)
+              TITLE="🎮 pagi weekend: login yang penting, bukan logika"
+              DESC="morning gang! touch grass or touch rank, pilih satu dulu. yang penting happy, bukan heboh, anjir 🌿\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="slow but happy"
+              ;;
+            4)
+              TITLE="😴 rebahan is content — approved"
+              DESC="top of the morning brodie! weekend tuh patch khusus: buff ketawa, nerf drama. nikmatin aja dulu lah 😌\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="GG ez weekend"
+              ;;
+            5)
+              TITLE="🌄 slow morning, big vibe"
+              DESC="good morning legends! \\\"gak tamat gak asik!\\\" (Windut) — tapi tamatnya boleh tamat tidur siang juga sih 😴\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="no rush, just vibes"
+              ;;
+          esac
 
-          cat > payload.json << EOF
+          PAYLOAD=$(cat <<EOF
           {
             "embeds": [{
-              "title": "${TITLES[$INDEX]}",
-              "description": "${DESCS[$INDEX]}",
+              "title": "${TITLE}",
+              "description": "${DESC}",
               "color": 16766720,
               "thumbnail": {
-                "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif?ex=68a5b89b&is=68a4671b&hm=2bc283716f14281f2518ac14003d41ca9fd58200a446e21a7682d2cdb6b4f38b"
+                "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif"
               },
               "footer": {
-                "text": "${FOOTERS[$INDEX]}",
+                "text": "${FOOTER}",
                 "icon_url": "https://files.catbox.moe/npfh4e.jpg"
               },
-              "timestamp": "$TIMESTAMP"
+              "timestamp": "${TIMESTAMP}"
             }]
           }
           EOF
+          )
 
-          curl -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" -H "Content-Type: application/json" --data @payload.json
+          echo "Sending weekend morning greeting (index: $INDEX)"
+          
+          for attempt in {1..3}; do
+            if echo "$PAYLOAD" | curl -f -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+                   -H "Content-Type: application/json" \
+                   -H "User-Agent: GitHub-Actions-Bot/1.0" \
+                   --data-binary @- \
+                   --connect-timeout 10 \
+                   --max-time 30; then
+              echo "✅ Message sent successfully on attempt $attempt"
+              exit 0
+            else
+              echo "❌ Attempt $attempt failed, retrying in 5 seconds..."
+              sleep 5
+            fi
+          done
+          echo "❌ All attempts failed"
+          exit 1
 
       - name: send afternoon greeting (weekend, rotating)
         if: (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'afternoon') || github.event.schedule == '0 5 * * 6,0'
         run: |
+          set -euo pipefail
+          
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
-
-          TITLES=(
-            "🍔 siang santai, perut kenyang, hati senang"
-            "🌞 weekend lunch buff — claim now"
-            "😎 half-day done, full-chill ahead"
-            "🎧 siang² enaknya ngemil + nge-meme"
-            "🥤 hydrate dulu, gosip nanti"
-            "🛋️ post-lunch nap is meta"
-          )
-
-          DESCS=(
-            "what’s good squad! half the day cooked — refill energy dulu. makan siang itu buff utama, bukan side quest, anying 🍔\\n> by server dev - <@399393175904714752>"
-            "yo fam! siang gini enaknya makan trus rebahan 15 menit — bukan koma 5 jam ya, kocak 😴\\n> by server dev - <@399393175904714752>"
-            "good afternoon gamers! hydrate or diedrate — minum dulu, baru lanjut mabar. jangan salty gara² lapar fr 🥤\\n> by server dev - <@399393175904714752>"
-            "sup team! weekend tuh bukan kompetisi produktif — enjoy dulu, produktifnya ngelawak aja di vc 😂\\n> by server dev - <@399393175904714752>"
-            "hey brodie! kalau perut kosong, aim pasti goyang — isi dulu biar malem ga tepar, anjir\\n> by server dev - <@399393175904714752>"
-            "afternoon gang! \"makan, jangan makan temen.\" (Windut) — tapi kalo makan bareng sih hayuk 🔥\\n> by server dev - <@399393175904714752>"
-          )
-
-          FOOTERS=(
-            "santai sejenak"
-            "recharge dulu"
-            "makan dulu, boss!"
-            "stay chill"
-            "stay hydrated"
-            "weekend vibes"
-          )
-
           INDEX=$((RANDOM % 6))
+          
+          case $INDEX in
+            0)
+              TITLE="🍔 siang santai, perut kenyang, hati senang"
+              DESC="what's good squad! half the day cooked — refill energy dulu. makan siang itu buff utama, bukan side quest, anying 🍔\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="santai sejenak"
+              ;;
+            1)
+              TITLE="🌞 weekend lunch buff — claim now"
+              DESC="yo fam! siang gini enaknya makan trus rebahan 15 menit — bukan koma 5 jam ya, kocak 😴\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="recharge dulu"
+              ;;
+            2)
+              TITLE="😎 half-day done, full-chill ahead"
+              DESC="good afternoon gamers! hydrate or diedrate — minum dulu, baru lanjut mabar. jangan salty gara² lapar fr 🥤\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="makan dulu, boss!"
+              ;;
+            3)
+              TITLE="🎧 siang² enaknya ngemil + nge-meme"
+              DESC="sup team! weekend tuh bukan kompetisi produktif — enjoy dulu, produktifnya ngelawak aja di vc 😂\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="stay chill"
+              ;;
+            4)
+              TITLE="🥤 hydrate dulu, gosip nanti"
+              DESC="hey brodie! kalau perut kosong, aim pasti goyang — isi dulu biar malem ga tepar, anjir\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="stay hydrated"
+              ;;
+            5)
+              TITLE="🛋️ post-lunch nap is meta"
+              DESC="afternoon gang! \\\"makan, jangan makan temen.\\\" (Windut) — tapi kalo makan bareng sih hayuk 🔥\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="weekend vibes"
+              ;;
+          esac
 
-          cat > payload.json << EOF
+          PAYLOAD=$(cat <<EOF
           {
             "embeds": [{
-              "title": "${TITLES[$INDEX]}",
-              "description": "${DESCS[$INDEX]}",
+              "title": "${TITLE}",
+              "description": "${DESC}",
               "color": 16763904,
               "thumbnail": {
-                "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif?ex=68a5b89b&is=68a4671b&hm=2bc283716f14281f2518ac14003d41ca9fd58200a446e21a7682d2cdb6b4f38b"
+                "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif"
               },
               "footer": {
-                "text": "${FOOTERS[$INDEX]}",
+                "text": "${FOOTER}",
                 "icon_url": "https://files.catbox.moe/npfh4e.jpg"
               },
-              "timestamp": "$TIMESTAMP"
+              "timestamp": "${TIMESTAMP}"
             }]
           }
           EOF
+          )
 
-          curl -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" -H "Content-Type: application/json" --data @payload.json
+          echo "Sending weekend afternoon greeting (index: $INDEX)"
+          
+          for attempt in {1..3}; do
+            if echo "$PAYLOAD" | curl -f -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+                   -H "Content-Type: application/json" \
+                   -H "User-Agent: GitHub-Actions-Bot/1.0" \
+                   --data-binary @- \
+                   --connect-timeout 10 \
+                   --max-time 30; then
+              echo "✅ Message sent successfully on attempt $attempt"
+              exit 0
+            else
+              echo "❌ Attempt $attempt failed, retrying in 5 seconds..."
+              sleep 5
+            fi
+          done
+          echo "❌ All attempts failed"
+          exit 1
 
       - name: send evening greeting (weekend, rotating)
         if: (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'evening') || github.event.schedule == '0 10 * * 6,0'
         run: |
+          set -euo pipefail
+          
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
-
-          TITLES=(
-            "🌆 golden hour + good company = w"
-            "🌅 sore santai, drama off"
-            "🎮 evening queue: chill first, rank later"
-            "🍿 camilan siap, ketawa siap"
-            "🎵 lagu enak, obrolan receh"
-            "🌠 enjoy dulu, sisanya belakangan"
-          )
-
-          DESCS=(
-            "good evening gamers! vibe check dulu — sunset hits different brodie. santai bentar biar ga tilt, feeding itu dosa sosial anjir 😂\\n> by server dev - <@399393175904714752>"
-            "yo evening fam! log off pelan², nyalain musik, mute drama. weekend tuh untuk war yang fun, bukan debat kusir anying 🎧\\n> by server dev - <@399393175904714752>"
-            "evening squad! ganti playlist, cemil dikit, lanjut mabar. lose streak? break dulu 10 menit, jangan nekat uninstall kocak 🤡\\n> by server dev - <@399393175904714752>"
-            "what’s poppin gang! ketawa tipis, ngobrol receh — mmr turun ga sekejam komentar netizen kok fr 😌\\n> by server dev - <@399393175904714752>"
-            "good evening team! \"jangan panik, ini cuma game.\" (Windut) — kalo lagi apes, jadi penonton lucu aja dulu 😮‍💨\\n> by server dev - <@399393175904714752>"
-            "evening folks! jangan jadi hero sendirian, ajak temen — kalo kalah, kalah bareng lebih lucu, anying 😂\\n> by server dev - <@399393175904714752>"
-          )
-
-          FOOTERS=(
-            "chill vibes only"
-            "rest & recharge"
-            "malam ini milik kita"
-            "santai sejenak"
-            "waktunya nge-game"
-            "ggwp"
-          )
-
           INDEX=$((RANDOM % 6))
+          
+          case $INDEX in
+            0)
+              TITLE="🌆 golden hour + good company = w"
+              DESC="good evening gamers! vibe check dulu — sunset hits different brodie. santai bentar biar ga tilt, feeding itu dosa sosial anjir 😂\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="chill vibes only"
+              ;;
+            1)
+              TITLE="🌅 sore santai, drama off"
+              DESC="yo evening fam! log off pelan², nyalain musik, mute drama. weekend tuh untuk war yang fun, bukan debat kusir anying 🎧\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="rest & recharge"
+              ;;
+            2)
+              TITLE="🎮 evening queue: chill first, rank later"
+              DESC="evening squad! ganti playlist, cemil dikit, lanjut mabar. lose streak? break dulu 10 menit, jangan nekat uninstall kocak 🤡\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="malam ini milik kita"
+              ;;
+            3)
+              TITLE="🍿 camilan siap, ketawa siap"
+              DESC="what's poppin gang! ketawa tipis, ngobrol receh — mmr turun ga sekejam komentar netizen kok fr 😌\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="santai sejenak"
+              ;;
+            4)
+              TITLE="🎵 lagu enak, obrolan receh"
+              DESC="good evening team! \\\"jangan panik, ini cuma game.\\\" (Windut) — kalo lagi apes, jadi penonton lucu aja dulu 😮‍💨\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="waktunya nge-game"
+              ;;
+            5)
+              TITLE="🌠 enjoy dulu, sisanya belakangan"
+              DESC="evening folks! jangan jadi hero sendirian, ajak temen — kalo kalah, kalah bareng lebih lucu, anying 😂\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="ggwp"
+              ;;
+          esac
 
-          cat > payload.json << EOF
+          PAYLOAD=$(cat <<EOF
           {
             "embeds": [{
-              "title": "${TITLES[$INDEX]}",
-              "description": "${DESCS[$INDEX]}",
+              "title": "${TITLE}",
+              "description": "${DESC}",
               "color": 16744448,
               "thumbnail": {
-                "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif?ex=68a5b89b&is=68a4671b&hm=2bc283716f14281f2518ac14003d41ca9fd58200a446e21a7682d2cdb6b4f38b"
+                "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif"
               },
               "footer": {
-                "text": "${FOOTERS[$INDEX]}",
+                "text": "${FOOTER}",
                 "icon_url": "https://files.catbox.moe/npfh4e.jpg"
               },
-              "timestamp": "$TIMESTAMP"
+              "timestamp": "${TIMESTAMP}"
             }]
           }
           EOF
+          )
 
-          curl -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" -H "Content-Type: application/json" --data @payload.json
+          echo "Sending weekend evening greeting (index: $INDEX)"
+          
+          for attempt in {1..3}; do
+            if echo "$PAYLOAD" | curl -f -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+                   -H "Content-Type: application/json" \
+                   -H "User-Agent: GitHub-Actions-Bot/1.0" \
+                   --data-binary @- \
+                   --connect-timeout 10 \
+                   --max-time 30; then
+              echo "✅ Message sent successfully on attempt $attempt"
+              exit 0
+            else
+              echo "❌ Attempt $attempt failed, retrying in 5 seconds..."
+              sleep 5
+            fi
+          done
+          echo "❌ All attempts failed"
+          exit 1
 
       - name: send night greeting (weekend, rotating)
         if: (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'night') || github.event.schedule == '0 15 * * 6,0'
         run: |
+          set -euo pipefail
+          
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
-
-          TITLES=(
-            "🌙 night vibe: cozy + low noise"
-            "💤 tidur boleh, begadang juga boleh (asal kuat)"
-            "✨ bintang terang, kuota aman"
-            "🚀 day complete — next episode tomorrow"
-            "😴 rest mode on, fomo off"
-            "🌜 lampu redup, hati adem"
-          )
-
-          DESCS=(
-            "night night squad! log off, recharge — no heroics tonight. hp aja ada low-battery warning anying ⚡ lu juga butuh tidur.\\n> by server dev - <@399393175904714752>"
-            "good night fam! save progress, close app — bukan close friend. besok lanjut war dengan energi full fr.\\n> by server dev - <@399393175904714752>"
-            "sleep tight gamers! jangan bawa rank ke mimpi — nanti mimpi dimarahin random, kocak 😪\\n> by server dev - <@399393175904714752>"
-            "gn team! \"tidur itu penting, gengs.\" (Windut) — tahan dikit lawan fyp, tutup mata dulu baru scroll lagi besok.\\n> by server dev - <@399393175904714752>"
-            "rest well brodie! yang belum kelar, besok hajar. malem ini waktunya jadi guling enjoyer, no cap.\\n> by server dev - <@399393175904714752>"
-            "good night gang! jangan flex begadang — besok malah jadi npc ngantuk, anjir 😴\\n> by server dev - <@399393175904714752>"
-          )
-
-          FOOTERS=(
-            "tidur, cuy"
-            "recharge like a legend"
-            "mimpi indah"
-            "rest well"
-            "see u tomorrow"
-            "digital detox"
-          )
-
           INDEX=$((RANDOM % 6))
+          
+          case $INDEX in
+            0)
+              TITLE="🌙 night vibe: cozy + low noise"
+              DESC="night night squad! log off, recharge — no heroics tonight. hp aja ada low-battery warning anying ⚡ lu juga butuh tidur.\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="tidur, cuy"
+              ;;
+            1)
+              TITLE="💤 tidur boleh, begadang juga boleh (asal kuat)"
+              DESC="good night fam! save progress, close app — bukan close friend. besok lanjut war dengan energi full fr.\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="recharge like a legend"
+              ;;
+            2)
+              TITLE="✨ bintang terang, kuota aman"
+              DESC="sleep tight gamers! jangan bawa rank ke mimpi — nanti mimpi dimarahin random, kocak 😪\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="mimpi indah"
+              ;;
+            3)
+              TITLE="🚀 day complete — next episode tomorrow"
+              DESC="gn team! \\\"tidur itu penting, gengs.\\\" (Windut) — tahan dikit lawan fyp, tutup mata dulu baru scroll lagi besok.\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="rest well"
+              ;;
+            4)
+              TITLE="😴 rest mode on, fomo off"
+              DESC="rest well brodie! yang belum kelar, besok hajar. malem ini waktunya jadi guling enjoyer, no cap.\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="see u tomorrow"
+              ;;
+            5)
+              TITLE="🌜 lampu redup, hati adem"
+              DESC="good night gang! jangan flex begadang — besok malah jadi npc ngantuk, anjir 😴\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="digital detox"
+              ;;
+          esac
 
-          cat > payload.json << EOF
+          PAYLOAD=$(cat <<EOF
           {
             "embeds": [{
-              "title": "${TITLES[$INDEX]}",
-              "description": "${DESCS[$INDEX]}",
+              "title": "${TITLE}",
+              "description": "${DESC}",
               "color": 8947848,
               "thumbnail": {
-                "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif?ex=68a5b89b&is=68a4671b&hm=2bc283716f14281f2518ac14003d41ca9fd58200a446e21a7682d2cdb6b4f38b"
+                "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif"
               },
               "footer": {
-                "text": "${FOOTERS[$INDEX]}",
+                "text": "${FOOTER}",
                 "icon_url": "https://files.catbox.moe/npfh4e.jpg"
               },
-              "timestamp": "$TIMESTAMP"
+              "timestamp": "${TIMESTAMP}"
             }]
           }
           EOF
+          )
 
-          curl -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" -H "Content-Type: application/json" --data @payload.json
+          echo "Sending weekend night greeting (index: $INDEX)"
+          
+          for attempt in {1..3}; do
+            if echo "$PAYLOAD" | curl -f -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+                   -H "Content-Type: application/json" \
+                   -H "User-Agent: GitHub-Actions-Bot/1.0" \
+                   --data-binary @- \
+                   --connect-timeout 10 \
+                   --max-time 30; then
+              echo "✅ Message sent successfully on attempt $attempt"
+              exit 0
+            else
+              echo "❌ Attempt $attempt failed, retrying in 5 seconds..."
+              sleep 5
+            fi
+          done
+          echo "❌ All attempts failed"
+          exit 1
