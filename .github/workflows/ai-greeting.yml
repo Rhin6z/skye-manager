@@ -51,23 +51,26 @@ jobs:
           
           echo "🤖 Generating greeting: $TYPE ($CONTEXT)"
           
-          # Simple but effective prompt
+          # Natural eng-indo mix prompt
           read -r -d '' PROMPT << 'EOF' || true
           Buatkan greeting Discord untuk waktu TYPE_PLACEHOLDER hari CONTEXT_PLACEHOLDER.
 
-          Style: Indonesian slang casual + gaming terms (anying, kocak, fr, no cap, woy)
+          Style: Natural mix English-Indonesian slang yang flow, ga kaku, casual banget
+          - English slang: "yo", "what's good", "fr", "no cap", "lowkey", "bet", "periodt", "it's giving"
+          - Indo slang natural: "woy", "anjir", "kocak", "gas", "santuy", "gabut", "bucin", "anying"
+          - Gaming terms: "rank", "mabar", "noob", "gg", "afk", "respawn", "main character energy"
+          - Badword chill: "anjir", "anying", "kampret" (yang wajar aja)
 
-          Format output:
-          TITLE: [judul dengan emoji]
-          DESC: [2 kalimat casual]
-          > by server dev - <@399393175904714752>
-          FOOTER: [footer pendek]
+          Buat yang NATURAL, jangan forced. Contoh flow bagus:
+          "yo what's good fam! malem jumat nih perfect buat mabar bareng, jangan pada afk terus anjir 😂"
 
-          Contoh:
-          TITLE: 🌅 pagi santuy, gas tipis aja
-          DESC: morning squad! jangan jadi NPC parkir di base, gerak dikit udah win kocak 😂
+          Format output EXACT:
+          TITLE: [mix eng-indo natural dengan emoji]
+          DESC: [1-2 kalimat yang flow natural, ga kaku]
           > by server dev - <@399393175904714752>
-          FOOTER: santai tapi jalan
+          FOOTER: [footer pendek yang relate]
+
+          PENTING: Bikin yang relate sama waktu dan hari, jangan generic!
           EOF
           
           # Replace placeholders
@@ -178,19 +181,19 @@ jobs:
                 FOOTER="santai sejenak"
                 ;;
               "night-0")
-                TITLE="🌙 time to rest"
-                DESC="night night squad! hp aja ada low battery warning anying ⚡ lu juga butuh tidur\\n> by server dev - <@399393175904714752>"
-                FOOTER="bobo cantik"
+                TITLE="🌙 late night squad, malem weekend"
+                DESC="yo what's good night owls! weekend night perfect buat mabar, jangan pada tidur dulu anjir ⚡\\n> by server dev - <@399393175904714752>"
+                FOOTER="friday night energy"
                 ;;
               "night-1")
-                TITLE="💤 sleep mode activated"
-                DESC="good night fam! jangan bawa rank ke mimpi, nanti mimpi dimarahin random kocak 😪\\n> by server dev - <@399393175904714752>"
-                FOOTER="mimpi indah"
+                TITLE="💤 bedtime vibes, but weekend tho"
+                DESC="gn fam! weekend night hits different, tapi jangan begadang sampai jadi zombie kocak 😪\\n> by server dev - <@399393175904714752>"
+                FOOTER="sleep is important too"
                 ;;
               "night-2")
-                TITLE="🌜 rest well"
-                DESC="gn team! besok masih panjang, sekarang waktunya jadi guling enjoyer no cap\\n> by server dev - <@399393175904714752>"
-                FOOTER="see u tomorrow"
+                TITLE="🌜 weekend night check, malem santuy"
+                DESC="yo night crew! besok weekend lanjutan, sekarang rest well biar besok fresh anjir\\n> by server dev - <@399393175904714752>"
+                FOOTER="weekend continues tomorrow"
                 ;;
             esac
           fi
