@@ -46,27 +46,55 @@ jobs:
             CONTEXT="weekday"
           fi
           
+          # Check for weekend transitions on night greetings
+          WEEKEND_TRANSITION=""
+          if [[ "$TYPE" == "night" ]]; then
+            case $DAY in
+              5) WEEKEND_TRANSITION="weekend_starts" ;;  # Friday night -> Saturday
+              6) WEEKEND_TRANSITION="weekend_continues" ;; # Saturday night -> Sunday
+              7) WEEKEND_TRANSITION="weekend_ends" ;;    # Sunday night -> Monday
+            esac
+          fi
+          
           echo "🤖 Generating $TYPE greeting for $CONTEXT"
+          if [[ -n "$WEEKEND_TRANSITION" ]]; then
+            echo "📅 Weekend transition detected: $WEEKEND_TRANSITION"
+          fi
           
           # Create simple prompt without problematic characters
           cat > /tmp/prompt.txt << 'EOF'
           Create a casual Discord greeting for TIME_HERE on CONTEXT_HERE.
           
+          WEEKEND_TRANSITION_INFO
+          
           Requirements:
-          - Start with English, end with Indonesian - must flow naturally
-          - Mix slang: brodie, fr, lowkey, anjir, dikit, gabut, cuy
-          - Gaming terms: mmr, noob, mabar, touching grass
-          - Keep it SHORT and conversational (max 2 lines)
-          - International Discord server vibe
+          - Start with English, end with Indonesian - must flow naturally (no hard cut)
+          - Tone: chill, conversational, not try-hard; PG-13; no hashtags; no @everyone
+          - Mix slang (use 2–3 max): brodie, fr, lowkey, anjir, dikit, gabut, cuy
+          - Allow playful misspells (use 1–2 max): banngh, lowl, deym, dayumm, dangg, cuyy, brodiee, skuy, gais, santuy/santay, wkwwk/lmaoo
+          - Gaming terms (use 1 max): mmr, noob, mabar, touching grass
+          - Keep it SHORT and conversational (max 2 lines, ≤18 words per line)
+          - International Discord server vibe; avoid hyper-local references; readable for non-Indo members
+          - Use exactly 1 emoji in TITLE only
+          - No hyphens/dashes in DESC; use commas or semicolons if needed
           
           Good examples:
-          Morning legends! Ready to grind? Atau masih ngantuk dikit?
-          What's good afternoon crew! Time to touch grass atau lanjut mabar?
-          Evening vibes hitting different today, santai dulu gih
+          morning gang lowkey warm up then hop vc lanjut mabar santuy cuyy
+          what’s good team fr just chill here dulu kalo gabut mabar tipis banngh
+          evening check in we touch grass a bit abis itu queue bareng brodiee
+          late night lobby lowl still up or tidur dulu aja santay
+          midday reset hydrate then hop back in lanjut grind mmr dikit cuy
+          afterwork vibes deym breathe stretch terus join vc yuk
+          sunday slow start take it easy dulu abis itu skuy mabar barengan
+          sunrise ping coffee first or langsung queue yang noob santai aja ikut
+          midweek energy focus a bit then break sebentar lanjut ngobrol gabut
+          weekend mode we outside dulu terus balik ngepush dikit dayumm
+          hello gamers lowkey hang here or slide to lobby yang mau mabar gaskeun
+          good afternoon crew tune in vc or lurk aja dulu gais
           
           Format:
           TITLE: [casual title with emoji]
-          DESC: [short natural flow English-Indonesian mix]
+          DESC: [short natural flow English-Indonesian mix; 1–2 lines max; no dashes]
           FOOTER: [short footer]
           
           Keep it natural and short!
