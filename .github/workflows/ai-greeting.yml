@@ -51,23 +51,27 @@ jobs:
           
           echo "🤖 Generating greeting: $TYPE ($CONTEXT)"
           
-          # Simple but effective prompt
+          # English-Indo mixed slang prompt
           read -r -d '' PROMPT << 'EOF' || true
-          Buatkan greeting Discord untuk waktu TYPE_PLACEHOLDER hari CONTEXT_PLACEHOLDER.
+          Create a Discord greeting for TYPE_PLACEHOLDER time on CONTEXT_PLACEHOLDER day.
 
-          Style: Indonesian slang casual + gaming terms (anying, kocak, fr, no cap, woy)
+          Style Requirements:
+          - Mix English and Indonesian naturally 
+          - Heavy slang usage: "yoww", "bruh", "bestie", "periodt", "slay", "vibe check", "no cap", "fr fr", "lowkey", "highkey"
+          - Indo slang: "anying", "kocak", "woy", "cuy", "gas", "santuy"
+          - Gaming terms: "NPC behavior", "main character energy", "respawn", "AFK", "touching grass"
+          - Gen Z vibes but not cringe
 
           Format output:
-          TITLE: [judul dengan emoji]
-          DESC: [2 kalimat casual]
+          TITLE: [title with emoji - mix eng/indo]
+          DESC: [2-3 sentences, natural code-switching]
           > by server dev - <@399393175904714752>
-          FOOTER: [footer pendek]
+          FOOTER: [short footer]
 
-          Contoh:
-          TITLE: 🌅 pagi santuy, gas tipis aja
-          DESC: morning squad! jangan jadi NPC parkir di base, gerak dikit udah win kocak 😂
-          > by server dev - <@399393175904714752>
-          FOOTER: santai tapi jalan
+          Example tone:
+          "yoww gd morning bestie! how's your dream? hope it's not NPC behavior dreams fr 😴 time to touch some grass or touch some rank, your choice periodt"
+
+          Make it sound natural, like how Indonesian Gen Z actually talks online.
           EOF
           
           # Replace placeholders
@@ -77,7 +81,7 @@ jobs:
           # Try Gemini API (with proper error handling)
           GEMINI_RESPONSE=""
           if curl -f -s -X POST \
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
             -H "Content-Type: application/json" \
             -d "{
               \"contents\": [{
@@ -133,64 +137,64 @@ jobs:
             
             case "$TYPE-$INDEX" in
               "morning-0")
-                TITLE="🌄 pagi woy, gas tipis aja"
-                DESC="yo morning fam! jangan jadi NPC parkir di base, gerak dikit udah win fr 😂\\n> by server dev - <@399393175904714752>"
-                FOOTER="santai tapi jalan"
+                TITLE="🌄 yoww gd morning bestie"
+                DESC="how's your dream? hope it's not NPC behavior dreams fr 😴 time to touch grass or touch rank periodt\\n> by server dev - <@399393175904714752>"
+                FOOTER="main character energy"
                 ;;
               "morning-1")
-                TITLE="🌅 bangun santuy, hidup santuy"
-                DESC="good morning squad! kopi dulu baru bacot produktif, anying ☕\\n> by server dev - <@399393175904714752>"
-                FOOTER="pelan tapi konsisten"
+                TITLE="🌅 morning vibe check bestie"
+                DESC="yoww what's the tea? coffee first then we slay the day no cap ☕ don't be giving dead energy anying\\n> by server dev - <@399393175904714752>"
+                FOOTER="periodt bestie"
                 ;;
               "morning-2")
-                TITLE="☀️ morning vibe check"
-                DESC="gm legends! MMR turun ga sekejam kata netizen kok, santai kocak 😌\\n> by server dev - <@399393175904714752>"
-                FOOTER="good vibes only"
+                TITLE="☀️ rise n grind but make it chill"
+                DESC="gm squad! lowkey today feels like a W waiting to happen fr 😌 just don't AFK your own life kocak\\n> by server dev - <@399393175904714752>"
+                FOOTER="slay responsibly"
                 ;;
               "afternoon-0")
-                TITLE="🌞 siang², break dulu"
-                DESC="what's good squad? makan siang itu buff utama, bukan side quest anying 🍔\\n> by server dev - <@399393175904714752>"
-                FOOTER="recharge mode"
+                TITLE="🌞 lunch break or mental break?"
+                DESC="yoww bestie! your stomach said what now? 🍔 can't be running on vibes only anying, eat something fr\\n> by server dev - <@399393175904714752>"
+                FOOTER="feed the main character"
                 ;;
               "afternoon-1")
-                TITLE="🍔 lunch time = sacred time"
-                DESC="yo fam! jangan jadi singa di chat, koala di real life 😴\\n> by server dev - <@399393175904714752>"
-                FOOTER="makan dulu boss"
+                TITLE="🍔 midday energy check"
+                DESC="bruh if you're feeling like an NPC rn that's valid 😴 grab some food and respawn your energy periodt\\n> by server dev - <@399393175904714752>"
+                FOOTER="recharge era"
                 ;;
               "afternoon-2")
-                TITLE="😎 tengah hari check"
-                DESC="good afternoon gamers! hydrate or diedrate, minum dulu baru war kocak\\n> by server dev - <@399393175904714752>"
-                FOOTER="stay hydrated"
+                TITLE="😎 afternoon tea (or drama?)"
+                DESC="yo what's good? hydrate or die-drate bestie 🥤 save the salty energy for ranked games kocak\\n> by server dev - <@399393175904714752>"
+                FOOTER="stay hydrated queen"
                 ;;
               "evening-0")
-                TITLE="🌆 sore santai mode"
-                DESC="good evening fam! sunset hits different, cooldown bentar biar ga tilt 😂\\n> by server dev - <@399393175904714752>"
-                FOOTER="chill vibes"
+                TITLE="🌆 golden hour but make it cozy"
+                DESC="yoww evening squad! sunset hits different when you're not tilted fr 😂 time to wind down bestie\\n> by server dev - <@399393175904714752>"
+                FOOTER="chill vibes only"
                 ;;
               "evening-1")
-                TITLE="🌅 golden hour energy"
-                DESC="evening squad! ganti playlist, cemil dikit, terus lanjut mabar anying\\n> by server dev - <@399393175904714752>"
-                FOOTER="malam ini milik kita"
+                TITLE="🌅 it's giving evening main character"
+                DESC="what's the move tonight? snack, chill playlist, maybe some games anying 🎧 lowkey perfect timing\\n> by server dev - <@399393175904714752>"
+                FOOTER="tonight's agenda"
                 ;;
               "evening-2")
-                TITLE="✨ sore² santai"
-                DESC="what's poppin brodie! ketawain aja dikit, hidup tuh ga seseram drama discord fr 😌\\n> by server dev - <@399393175904714752>"
-                FOOTER="santai sejenak"
+                TITLE="✨ evening bestie check-in"
+                DESC="bruh today was a whole movie huh? 😌 but we survived and that's periodt, no cap\\n> by server dev - <@399393175904714752>"
+                FOOTER="we been through it"
                 ;;
               "night-0")
-                TITLE="🌙 time to rest"
-                DESC="night night squad! hp aja ada low battery warning anying ⚡ lu juga butuh tidur\\n> by server dev - <@399393175904714752>"
-                FOOTER="bobo cantik"
+                TITLE="🌙 bedtime or grindtime?"
+                DESC="yoww night owls! even your phone needs to charge bestie ⚡ maybe touch some pillows instead of screens kocak\\n> by server dev - <@399393175904714752>"
+                FOOTER="sleep is self care"
                 ;;
               "night-1")
-                TITLE="💤 sleep mode activated"
-                DESC="good night fam! jangan bawa rank ke mimpi, nanti mimpi dimarahin random kocak 😪\\n> by server dev - <@399393175904714752>"
-                FOOTER="mimpi indah"
+                TITLE="💤 it's giving sleepy girl era"
+                DESC="gn bestie! don't bring today's drama to tomorrow's energy fr 😪 reset and respawn tomorrow periodt\\n> by server dev - <@399393175904714752>"
+                FOOTER="dream of Ws"
                 ;;
               "night-2")
-                TITLE="🌜 rest well"
-                DESC="gn team! besok masih panjang, sekarang waktunya jadi guling enjoyer no cap\\n> by server dev - <@399393175904714752>"
-                FOOTER="see u tomorrow"
+                TITLE="🌜 night night main character"
+                DESC="bruh tomorrow's gonna be another episode anying, get some rest so you can slay properly no cap\\n> by server dev - <@399393175904714752>"
+                FOOTER="see u in the morning"
                 ;;
             esac
           fi
