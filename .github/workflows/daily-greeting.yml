@@ -2,15 +2,10 @@ name: daily discord greeting
 
 on:
   schedule:
-    # 07:00 WIB (00:00 UTC) - weekdays
     - cron: '0 0 * * 1-5'
-    # 12:00 WIB (05:00 UTC)
     - cron: '0 5 * * 1-5'
-    # 17:00 WIB (10:00 UTC)
     - cron: '0 10 * * 1-5'
-    # 22:00 WIB (15:00 UTC)
     - cron: '0 15 * * 1-5'
-
   workflow_dispatch:
     inputs:
       greeting_type:
@@ -40,311 +35,315 @@ jobs:
       - name: send morning greeting (rotating)
         if: (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'morning') || github.event.schedule == '0 0 * * 1-5'
         run: |
-          set -e
+          set -euo pipefail
           
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
-          
-          # Use arrays with proper bash syntax
-          declare -a TITLES=(
-            "🌄 pagi woy, bangun dulu lah—jangan jadi beban kasur 😴"
-            "🌅 gas tipis, gausa ngegas—pelan tapi jalan, anjayy"
-            "🐣 morning squad, kopi dulu baru bacot produktif ☕"
-            "🌅 push rank kehidupan dikit-dikit yaa, santai tapi nyicil ✨"
-            "☀️ rejeki ayam aja pagi, masa lu kalah sama ayam 🐓"
-            "🌞 selamat pagi, fokus ke 1 hal aja dulu—sisanya belakangan"
-          )
-
-          declare -a DESCS=(
-            "yo morning fam! new day new grind, no cap—jangan afk mulu anying. bangun siang mah auto low rank fr 😏\\n> by server dev - <@399393175904714752>"
-            "rise up squad! fresh start, keep it steady—gerak dikit aja udah win. jangan jadi pajangan lobby, kocak 😂\\n> by server dev - <@399393175904714752>"
-            "gm legends! touch grass or touch goals—pilih satu dulu. pelan² tapi konsisten, jangan banyak alasan anjir.\\n> by server dev - <@399393175904714752>"
-            "top of the morning, brodie! small dubs matter—minum air, tarik napas, abis itu gas tipis. jangan typo hidup lu sendiri lah 😴\\n> by server dev - <@399393175904714752>"
-            "good morning gang! lowkey today feels winnable—asal lu bukan npc parkir di base, cuk. kopi dulu terus jalan.\\n> by server dev - <@399393175904714752>"
-            "mornin' squad! no snooze, just moves—bikin progress 1% juga udah mantap. jangan drama dulu, save buat nanti 🤏\\n> by server dev - <@399393175904714752>"
-          )
-
-          declare -a FOOTERS=(
-            "gas pelan tapi tahan lama"
-            "semangat tipis-tipis"
-            "santuy tapi kelar"
-            "ggwp pagi"
-            "the show keeps going"
-            "gak tamat gak asik"
-          )
-
-          # Generate random index
           INDEX=$((RANDOM % 6))
           
-          # Create JSON with proper escaping
-          cat > payload.json << 'EOF'
+          case $INDEX in
+            0)
+              TITLE="🌄 pagi woy, bangun dulu lah—jangan jadi beban kasur 😴"
+              DESC="yo morning fam! new day new grind, no cap—jangan afk mulu anying. bangun siang mah auto low rank fr 😏\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="gas pelan tapi tahan lama"
+              ;;
+            1)
+              TITLE="🌅 gas tipis, gausa ngegas—pelan tapi jalan, anjayy"
+              DESC="rise up squad! fresh start, keep it steady—gerak dikit aja udah win. jangan jadi pajangan lobby, kocak 😂\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="semangat tipis-tipis"
+              ;;
+            2)
+              TITLE="🐣 morning squad, kopi dulu baru bacot produktif ☕"
+              DESC="gm legends! touch grass or touch goals—pilih satu dulu. pelan² tapi konsisten, jangan banyak alasan anjir.\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="santuy tapi kelar"
+              ;;
+            3)
+              TITLE="🌅 push rank kehidupan dikit-dikit yaa, santai tapi nyicil ✨"
+              DESC="top of the morning, brodie! small dubs matter—minum air, tarik napas, abis itu gas tipis. jangan typo hidup lu sendiri lah 😴\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="ggwp pagi"
+              ;;
+            4)
+              TITLE="☀️ rejeki ayam aja pagi, masa lu kalah sama ayam 🐓"
+              DESC="good morning gang! lowkey today feels winnable—asal lu bukan npc parkir di base, cuk. kopi dulu terus jalan.\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="the show keeps going"
+              ;;
+            5)
+              TITLE="🌞 selamat pagi, fokus ke 1 hal aja dulu—sisanya belakangan"
+              DESC="mornin' squad! no snooze, just moves—bikin progress 1% juga udah mantap. jangan drama dulu, save buat nanti 🤏\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="gak tamat gak asik"
+              ;;
+          esac
+
+          PAYLOAD=$(cat <<EOF
           {
             "embeds": [{
-              "title": "TITLE_PLACEHOLDER",
-              "description": "DESC_PLACEHOLDER",
+              "title": "${TITLE}",
+              "description": "${DESC}",
               "color": 16766720,
               "thumbnail": {
                 "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif"
               },
               "footer": {
-                "text": "FOOTER_PLACEHOLDER",
+                "text": "${FOOTER}",
                 "icon_url": "https://files.catbox.moe/npfh4e.jpg"
               },
-              "timestamp": "TIMESTAMP_PLACEHOLDER"
+              "timestamp": "${TIMESTAMP}"
             }]
           }
           EOF
+          )
 
-          # Replace placeholders with proper escaping
-          sed -i "s|TITLE_PLACEHOLDER|${TITLES[$INDEX]}|g" payload.json
-          sed -i "s|DESC_PLACEHOLDER|${DESCS[$INDEX]}|g" payload.json
-          sed -i "s|FOOTER_PLACEHOLDER|${FOOTERS[$INDEX]}|g" payload.json
-          sed -i "s|TIMESTAMP_PLACEHOLDER|${TIMESTAMP}|g" payload.json
-
-          # Debug output
           echo "Sending morning greeting (index: $INDEX)"
-          echo "Payload preview:"
-          head -10 payload.json
-
-          # Send with retry logic
-          for i in {1..3}; do
-            if curl -f -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+          
+          for attempt in {1..3}; do
+            if echo "$PAYLOAD" | curl -f -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
                    -H "Content-Type: application/json" \
                    -H "User-Agent: GitHub-Actions-Bot/1.0" \
-                   --data @payload.json \
+                   --data-binary @- \
                    --connect-timeout 10 \
                    --max-time 30; then
-              echo "Message sent successfully on attempt $i"
-              break
+              echo "✅ Message sent successfully on attempt $attempt"
+              exit 0
             else
-              echo "Attempt $i failed, retrying in 5 seconds..."
+              echo "❌ Attempt $attempt failed, retrying in 5 seconds..."
               sleep 5
             fi
           done
+          echo "❌ All attempts failed"
+          exit 1
 
       - name: send afternoon greeting (rotating)
         if: (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'afternoon') || github.event.schedule == '0 5 * * 1-5'
         run: |
-          set -e
+          set -euo pipefail
           
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
-          
-          declare -a TITLES=(
-            "🌞 siang² gini, nap dulu—reset otak bentaran"
-            "🍔 lunch dulu ga sih? perut ga bisa diajak nego"
-            "🎮 break tipis, biar ga kebakar kaya cpu fan 100%"
-            "✨ tengah hari check: masih waras? hydrate dulu"
-            "😎 santai, lu bukan robot—ga usah sok 24/7 on"
-            "💡 ide liar biasanya muncul abis makan—gas"
-          )
-
-          declare -a DESCS=(
-            "what's good squad? half the day cooked, lowkey saatnya refill energy. makan siang itu buff, bukan side quest anying 🍔\\n> by server dev - <@399393175904714752>"
-            "yo fam! pace yourself, no burnout—isi perut dulu biar aim ga ngaco. jangan jadi singa di chat, koala di real life 😴\\n> by server dev - <@399393175904714752>"
-            "good afternoon gamers! hydrate or diedrate—minum dulu terus nap dikit, baru lanjut war. drama nanti aja kocak.\\n> by server dev - <@399393175904714752>"
-            "sup team! mid-day vibe check—kalau kepala panas, cooldown 10 menit. baliknya jangan salty, malu dong anjir 😌\\n> by server dev - <@399393175904714752>"
-            "hey brodie! snack, stretch, scroll dikit—yang penting baliknya fresh. jangan overcommit, nanti overtilt.\\n> by server dev - <@399393175904714752>"
-            "afternoon gang! \"makan, jangan makan temen.\" (Windut) — tapi kalo makan bareng sih hayuk 🔥\\n> by server dev - <@399393175904714752>"
-          )
-
-          declare -a FOOTERS=(
-            "santai sejenak"
-            "recharge dulu"
-            "makan dulu, boss!"
-            "stay chill"
-            "stay hydrated"
-            "weekend vibes"
-          )
-
           INDEX=$((RANDOM % 6))
           
-          cat > payload.json << 'EOF'
+          case $INDEX in
+            0)
+              TITLE="🌞 siang² gini, nap dulu—reset otak bentaran"
+              DESC="what's good squad? half the day cooked, lowkey saatnya refill energy. makan siang itu buff, bukan side quest anying 🍔\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="santai sejenak"
+              ;;
+            1)
+              TITLE="🍔 lunch dulu ga sih? perut ga bisa diajak nego"
+              DESC="yo fam! pace yourself, no burnout—isi perut dulu biar aim ga ngaco. jangan jadi singa di chat, koala di real life 😴\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="recharge dulu"
+              ;;
+            2)
+              TITLE="🎮 break tipis, biar ga kebakar kaya cpu fan 100%"
+              DESC="good afternoon gamers! hydrate or diedrate—minum dulu terus nap dikit, baru lanjut war. drama nanti aja kocak.\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="makan dulu, boss!"
+              ;;
+            3)
+              TITLE="✨ tengah hari check: masih waras? hydrate dulu"
+              DESC="sup team! mid-day vibe check—kalau kepala panas, cooldown 10 menit. baliknya jangan salty, malu dong anjir 😌\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="stay chill"
+              ;;
+            4)
+              TITLE="😎 santai, lu bukan robot—ga usah sok 24/7 on"
+              DESC="hey brodie! snack, stretch, scroll dikit—yang penting baliknya fresh. jangan overcommit, nanti overtilt.\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="stay hydrated"
+              ;;
+            5)
+              TITLE="💡 ide liar biasanya muncul abis makan—gas"
+              DESC="afternoon gang! \\\"makan, jangan makan temen.\\\" (Windut) — tapi kalo makan bareng sih hayuk 🔥\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="weekend vibes"
+              ;;
+          esac
+
+          PAYLOAD=$(cat <<EOF
           {
             "embeds": [{
-              "title": "TITLE_PLACEHOLDER",
-              "description": "DESC_PLACEHOLDER",
+              "title": "${TITLE}",
+              "description": "${DESC}",
               "color": 16763904,
               "thumbnail": {
                 "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif"
               },
               "footer": {
-                "text": "FOOTER_PLACEHOLDER",
+                "text": "${FOOTER}",
                 "icon_url": "https://files.catbox.moe/npfh4e.jpg"
               },
-              "timestamp": "TIMESTAMP_PLACEHOLDER"
+              "timestamp": "${TIMESTAMP}"
             }]
           }
           EOF
-
-          sed -i "s|TITLE_PLACEHOLDER|${TITLES[$INDEX]}|g" payload.json
-          sed -i "s|DESC_PLACEHOLDER|${DESCS[$INDEX]}|g" payload.json
-          sed -i "s|FOOTER_PLACEHOLDER|${FOOTERS[$INDEX]}|g" payload.json
-          sed -i "s|TIMESTAMP_PLACEHOLDER|${TIMESTAMP}|g" payload.json
+          )
 
           echo "Sending afternoon greeting (index: $INDEX)"
           
-          for i in {1..3}; do
-            if curl -f -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+          for attempt in {1..3}; do
+            if echo "$PAYLOAD" | curl -f -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
                    -H "Content-Type: application/json" \
                    -H "User-Agent: GitHub-Actions-Bot/1.0" \
-                   --data @payload.json \
+                   --data-binary @- \
                    --connect-timeout 10 \
                    --max-time 30; then
-              echo "Message sent successfully on attempt $i"
-              break
+              echo "✅ Message sent successfully on attempt $attempt"
+              exit 0
             else
-              echo "Attempt $i failed, retrying in 5 seconds..."
+              echo "❌ Attempt $attempt failed, retrying in 5 seconds..."
               sleep 5
             fi
           done
+          echo "❌ All attempts failed"
+          exit 1
 
       - name: send evening greeting (rotating)
         if: (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'evening') || github.event.schedule == '0 10 * * 1-5'
         run: |
-          set -e
+          set -euo pipefail
           
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
-          
-          declare -a TITLES=(
-            "🌆 sore², turunin rpm—cooldown dulu lah"
-            "🌅 golden hour = izin buat log off pelan²"
-            "☕ ngopi senja? boleh. overthink? ntar aja"
-            "🌃 jangan sok produktif 24/7, chill dulu kek"
-            "✨ bosen? ganti suasana 15 menit, balik war lagi"
-            "🌠 cukupin buat hari ini, sisanya besok aja"
-          )
-
-          declare -a DESCS=(
-            "good evening gamers! vibe check dulu, sunset hits different—santai bentar biar ga tilt, feeding itu dosa sosial anjir 😂\\n> by server dev - <@399393175904714752>"
-            "yo evening fam! log off pelan², nyalain musik, mute drama. besok masih panjang, sekarang santai aja dulu anying.\\n> by server dev - <@399393175904714752>"
-            "evening squad! cooldown dulu—ganti playlist, cemil dikit, terus balik war. lose streak jangan sampe bikin uninstall kocak 🤡\\n> by server dev - <@399393175904714752>"
-            "what's poppin brodie! golden hour moment—ketawain aja dikit, mmr turun ga sekejam kata netizen kok fr 😌\\n> by server dev - <@399393175904714752>"
-            "good evening team! ganti map: dari kerja ke santai. snack dikit, chat dikit, hidup aman. slow is a strat fr.\\n> by server dev - <@399393175904714752>"
-            "good evening gang! \"jangan panik, ini cuma game.\" (Windut) tapi kalo lose streak, off mic bentar gapapa 😮‍💨\\n> by server dev - <@399393175904714752>"
-          )
-
-          declare -a FOOTERS=(
-            "chill vibes only"
-            "rest & recharge"
-            "malam ini milik kita"
-            "santai sejenak"
-            "waktunya nge-game"
-            "ggwp"
-          )
-
           INDEX=$((RANDOM % 6))
           
-          cat > payload.json << 'EOF'
+          case $INDEX in
+            0)
+              TITLE="🌆 sore², turunin rpm—cooldown dulu lah"
+              DESC="good evening gamers! vibe check dulu, sunset hits different—santai bentar biar ga tilt, feeding itu dosa sosial anjir 😂\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="chill vibes only"
+              ;;
+            1)
+              TITLE="🌅 golden hour = izin buat log off pelan²"
+              DESC="yo evening fam! log off pelan², nyalain musik, mute drama. besok masih panjang, sekarang santai aja dulu anying.\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="rest & recharge"
+              ;;
+            2)
+              TITLE="☕ ngopi senja? boleh. overthink? ntar aja"
+              DESC="evening squad! cooldown dulu—ganti playlist, cemil dikit, terus balik war. lose streak jangan sampe bikin uninstall kocak 🤡\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="malam ini milik kita"
+              ;;
+            3)
+              TITLE="🌃 jangan sok produktif 24/7, chill dulu kek"
+              DESC="what's poppin brodie! golden hour moment—ketawain aja dikit, mmr turun ga sekejam kata netizen kok fr 😌\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="santai sejenak"
+              ;;
+            4)
+              TITLE="✨ bosen? ganti suasana 15 menit, balik war lagi"
+              DESC="good evening team! ganti map: dari kerja ke santai. snack dikit, chat dikit, hidup aman. slow is a strat fr.\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="waktunya nge-game"
+              ;;
+            5)
+              TITLE="🌠 cukupin buat hari ini, sisanya besok aja"
+              DESC="good evening gang! \\\"jangan panik, ini cuma game.\\\" (Windut) tapi kalo lose streak, off mic bentar gapapa 😮‍💨\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="ggwp"
+              ;;
+          esac
+
+          PAYLOAD=$(cat <<EOF
           {
             "embeds": [{
-              "title": "TITLE_PLACEHOLDER",
-              "description": "DESC_PLACEHOLDER",
+              "title": "${TITLE}",
+              "description": "${DESC}",
               "color": 16744448,
               "thumbnail": {
                 "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif"
               },
               "footer": {
-                "text": "FOOTER_PLACEHOLDER",
+                "text": "${FOOTER}",
                 "icon_url": "https://files.catbox.moe/npfh4e.jpg"
               },
-              "timestamp": "TIMESTAMP_PLACEHOLDER"
+              "timestamp": "${TIMESTAMP}"
             }]
           }
           EOF
-
-          sed -i "s|TITLE_PLACEHOLDER|${TITLES[$INDEX]}|g" payload.json
-          sed -i "s|DESC_PLACEHOLDER|${DESCS[$INDEX]}|g" payload.json
-          sed -i "s|FOOTER_PLACEHOLDER|${FOOTERS[$INDEX]}|g" payload.json
-          sed -i "s|TIMESTAMP_PLACEHOLDER|${TIMESTAMP}|g" payload.json
+          )
 
           echo "Sending evening greeting (index: $INDEX)"
           
-          for i in {1..3}; do
-            if curl -f -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+          for attempt in {1..3}; do
+            if echo "$PAYLOAD" | curl -f -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
                    -H "Content-Type: application/json" \
                    -H "User-Agent: GitHub-Actions-Bot/1.0" \
-                   --data @payload.json \
+                   --data-binary @- \
                    --connect-timeout 10 \
                    --max-time 30; then
-              echo "Message sent successfully on attempt $i"
-              break
+              echo "✅ Message sent successfully on attempt $attempt"
+              exit 0
             else
-              echo "Attempt $i failed, retrying in 5 seconds..."
+              echo "❌ Attempt $attempt failed, retrying in 5 seconds..."
               sleep 5
             fi
           done
+          echo "❌ All attempts failed"
+          exit 1
 
       - name: send night greeting (rotating)
         if: (github.event_name == 'workflow_dispatch' && github.event.inputs.greeting_type == 'night') || github.event.schedule == '0 15 * * 1-5'
         run: |
-          set -e
+          set -euo pipefail
           
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
-          
-          declare -a TITLES=(
-            "🌙 time to power down—good night"
-            "💤 tidur dulu, biar besok ga error 500"
-            "✨ bobo cantik, mimpi yang manis"
-            "🚀 hari ini tamat. besok season baru"
-            "😴 rest mode: ON. notif: OFF"
-            "🌙 malem ini buat recharge, bukan overthink"
-          )
-
-          declare -a DESCS=(
-            "night night squad! log off, recharge—no heroics tonight. hp aja ada low battery warning anying ⚡ lu juga perlu tidur.\\n> by server dev - <@399393175904714752>"
-            "good night fam! save progress, close app—bukan close friend. besok lanjut war dengan energi full, fr.\\n> by server dev - <@399393175904714752>"
-            "sleep tight gamers! jangan bawa rank ke mimpi—biar hati ga kebakaran. bobo bentar aja udah beda, kocak.\\n> by server dev - <@399393175904714752>"
-            "gn team! \"tidur itu penting, gengs.\" (Windut) tahan dikit lawan fyp, tutup hp, tutup mata.\\n> by server dev - <@399393175904714752>"
-            "rest well brodie! yang belum kelar, besok hajar. sekarang waktunya jadi guling enjoyer, no cap.\\n> by server dev - <@399393175904714752>"
-            "good night gang! jangan flex begadang—besok pagi malah jadi npc ngantuk, anjir 😴\\n> by server dev - <@399393175904714752>"
-          )
-
-          declare -a FOOTERS=(
-            "tidur, cuy"
-            "recharge like a legend"
-            "mimpi indah"
-            "rest well"
-            "see u tomorrow"
-            "digital detox"
-          )
-
           INDEX=$((RANDOM % 6))
           
-          cat > payload.json << 'EOF'
+          case $INDEX in
+            0)
+              TITLE="🌙 time to power down—good night"
+              DESC="night night squad! log off, recharge—no heroics tonight. hp aja ada low battery warning anying ⚡ lu juga perlu tidur.\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="tidur, cuy"
+              ;;
+            1)
+              TITLE="💤 tidur dulu, biar besok ga error 500"
+              DESC="good night fam! save progress, close app—bukan close friend. besok lanjut war dengan energi full, fr.\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="recharge like a legend"
+              ;;
+            2)
+              TITLE="✨ bobo cantik, mimpi yang manis"
+              DESC="sleep tight gamers! jangan bawa rank ke mimpi—biar hati ga kebakaran. bobo bentar aja udah beda, kocak.\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="mimpi indah"
+              ;;
+            3)
+              TITLE="🚀 hari ini tamat. besok season baru"
+              DESC="gn team! \\\"tidur itu penting, gengs.\\\" (Windut) tahan dikit lawan fyp, tutup hp, tutup mata.\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="rest well"
+              ;;
+            4)
+              TITLE="😴 rest mode: ON. notif: OFF"
+              DESC="rest well brodie! yang belum kelar, besok hajar. sekarang waktunya jadi guling enjoyer, no cap.\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="see u tomorrow"
+              ;;
+            5)
+              TITLE="🌙 malem ini buat recharge, bukan overthink"
+              DESC="good night gang! jangan flex begadang—besok pagi malah jadi npc ngantuk, anjir 😴\\\\n> by server dev - <@399393175904714752>"
+              FOOTER="digital detox"
+              ;;
+          esac
+
+          PAYLOAD=$(cat <<EOF
           {
             "embeds": [{
-              "title": "TITLE_PLACEHOLDER",
-              "description": "DESC_PLACEHOLDER",
+              "title": "${TITLE}",
+              "description": "${DESC}",
               "color": 8947848,
               "thumbnail": {
                 "url": "https://cdn.discordapp.com/attachments/1365248252009644053/1407333123791786077/logo_anim.gif"
               },
               "footer": {
-                "text": "FOOTER_PLACEHOLDER",
+                "text": "${FOOTER}",
                 "icon_url": "https://files.catbox.moe/npfh4e.jpg"
               },
-              "timestamp": "TIMESTAMP_PLACEHOLDER"
+              "timestamp": "${TIMESTAMP}"
             }]
           }
           EOF
-
-          sed -i "s|TITLE_PLACEHOLDER|${TITLES[$INDEX]}|g" payload.json
-          sed -i "s|DESC_PLACEHOLDER|${DESCS[$INDEX]}|g" payload.json
-          sed -i "s|FOOTER_PLACEHOLDER|${FOOTERS[$INDEX]}|g" payload.json
-          sed -i "s|TIMESTAMP_PLACEHOLDER|${TIMESTAMP}|g" payload.json
+          )
 
           echo "Sending night greeting (index: $INDEX)"
           
-          for i in {1..3}; do
-            if curl -f -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+          for attempt in {1..3}; do
+            if echo "$PAYLOAD" | curl -f -sS -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
                    -H "Content-Type: application/json" \
                    -H "User-Agent: GitHub-Actions-Bot/1.0" \
-                   --data @payload.json \
+                   --data-binary @- \
                    --connect-timeout 10 \
                    --max-time 30; then
-              echo "Message sent successfully on attempt $i"
-              break
+              echo "✅ Message sent successfully on attempt $attempt"
+              exit 0
             else
-              echo "Attempt $i failed, retrying in 5 seconds..."
+              echo "❌ Attempt $attempt failed, retrying in 5 seconds..."
               sleep 5
             fi
           done
+          echo "❌ All attempts failed"
+          exit 1
