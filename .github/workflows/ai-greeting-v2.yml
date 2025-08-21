@@ -217,14 +217,14 @@ jobs:
                   elif 'storm' in desc.lower():
                       weather_vibe = "stormy_dramatic_weather"
                   
-                  print(f"WEATHER_TEMP={temp}")
-                  print(f"WEATHER_DESC={desc}")  
-                  print(f"WEATHER_VIBE={weather_vibe}")
-                  print(f"WEATHER_AVAILABLE=true")
+                  print(f"WEATHER_TEMP='{temp}'")
+                  print(f"WEATHER_DESC='{desc}'")  
+                  print(f"WEATHER_VIBE='{weather_vibe}'")
+                  print(f"WEATHER_AVAILABLE='true'")
               else:
-                  print("WEATHER_AVAILABLE=false")
+                  print("WEATHER_AVAILABLE='false'")
           except:
-              print("WEATHER_AVAILABLE=false")
+              print("WEATHER_AVAILABLE='false'")
           PYTHON_EOF
               
               # Source the variables safely
