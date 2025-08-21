@@ -49,96 +49,125 @@ jobs:
             CONTEXT="weekday"
           fi
           
-          echo "🤖 Generating greeting: $TYPE ($CONTEXT)"
+          echo "🤖 generating greeting: $TYPE ($CONTEXT)"
           
-          # English-Indo mixed slang prompt
+          # English-Indo mixed slang prompt (updated for lowercase output)
           read -r -d '' PROMPT << 'EOF' || true
-          Create a Discord greeting for TYPE_PLACEHOLDER time on CONTEXT_PLACEHOLDER day.
+          create a discord greeting for TYPE_PLACEHOLDER time on CONTEXT_PLACEHOLDER day.
 
-          Style Requirements:
-          - Mix English and Indonesian naturally 
-          - Heavy slang usage: "yoww", "bruh", "bestie", "periodt", "slay", "vibe check", "no cap", "fr fr", "lowkey", "highkey"
-          - Indo slang: "anying", "kocak", "woy", "cuy", "gas", "santuy"
-          - Gaming terms: "NPC behavior", "main character energy", "respawn", "AFK", "touching grass"
-          - Gen Z vibes but not cringe
+          style requirements:
+          - mix english and indonesian naturally 
+          - heavy slang usage: "yoww", "bruh", "bestie", "periodt", "slay", "vibe check", "no cap", "fr fr", "lowkey", "highkey"
+          - indo slang: "anying", "kocak", "woy", "cuy", "gas", "santuy"
+          - gaming terms: "npc behavior", "main character energy", "respawn", "afk", "touching grass"
+          - gen z vibes but not cringe
+          - IMPORTANT: output everything in lowercase except emojis
 
-          Format output:
-          TITLE: [title with emoji - mix eng/indo]
-          DESC: [2-3 sentences, natural code-switching]
+          format output:
+          title: [title with emoji - mix eng/indo]
+          desc: [2-3 sentences, natural code-switching]
           > by server dev - <@399393175904714752>
-          FOOTER: [short footer]
+          footer: [short footer]
 
-          Example tone:
-          "yoww gd morning bestie! how's your dream? hope it's not NPC behavior dreams fr 😴 time to touch some grass or touch some rank, your choice periodt"
+          example tone:
+          "yoww gd morning bestie! how's your dream? hope it's not npc behavior dreams fr 😴 time to touch some grass or touch some rank, your choice periodt"
 
-          Make it sound natural, like how Indonesian Gen Z actually talks online.
+          make it sound natural, like how indonesian gen z actually talks online. remember: all lowercase except emojis!
           EOF
           
           # Replace placeholders
           PROMPT=${PROMPT//TYPE_PLACEHOLDER/$TYPE}
           PROMPT=${PROMPT//CONTEXT_PLACEHOLDER/$CONTEXT}
           
-          # Try Gemini API (with proper error handling)
+          # Try Gemini API with updated model (with proper error handling)
           GEMINI_RESPONSE=""
+          echo "🔄 trying gemini-2.5-flash-lite api..."
+          
           if curl -f -s -X POST \
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
             -H "Content-Type: application/json" \
             -d "{
               \"contents\": [{
                 \"parts\": [{\"text\": \"$PROMPT\"}]
               }],
               \"generationConfig\": {
-                \"temperature\": 0.8,
-                \"maxOutputTokens\": 200
-              }
+                \"temperature\": 0.9,
+                \"maxOutputTokens\": 300,
+                \"topP\": 0.8,
+                \"topK\": 40
+              },
+              \"safetySettings\": [
+                {\"category\": \"HARM_CATEGORY_HARASSMENT\", \"threshold\": \"BLOCK_NONE\"},
+                {\"category\": \"HARM_CATEGORY_HATE_SPEECH\", \"threshold\": \"BLOCK_NONE\"},
+                {\"category\": \"HARM_CATEGORY_SEXUALLY_EXPLICIT\", \"threshold\": \"BLOCK_NONE\"},
+                {\"category\": \"HARM_CATEGORY_DANGEROUS_CONTENT\", \"threshold\": \"BLOCK_NONE\"}
+              ]
             }" \
-            --connect-timeout 10 --max-time 15 > /tmp/gemini_response.json 2>/dev/null; then
+            --connect-timeout 15 --max-time 30 > /tmp/gemini_response.json 2>/dev/null; then
             
-            # Parse response
-            if AI_TEXT=$(jq -r '.candidates[0].content.parts[0].text' /tmp/gemini_response.json 2>/dev/null); then
-              echo "✅ Gemini API success"
+            # Parse response with better error handling
+            if AI_TEXT=$(jq -r '.candidates[0].content.parts[0].text // empty' /tmp/gemini_response.json 2>/dev/null) && [[ -n "$AI_TEXT" ]]; then
+              echo "✅ gemini api success"
               echo "$AI_TEXT" > /tmp/ai_content.txt
               
-              # Extract parts with simple parsing
-              TITLE=$(echo "$AI_TEXT" | grep -i "TITLE:" | head -1 | sed 's/.*TITLE:[[:space:]]*//' | sed 's/^[[:space:]]*//')
-              FOOTER=$(echo "$AI_TEXT" | grep -i "FOOTER:" | head -1 | sed 's/.*FOOTER:[[:space:]]*//' | sed 's/^[[:space:]]*//')
+              # Convert to lowercase (except emojis)
+              AI_TEXT_LOWER=$(echo "$AI_TEXT" | sed 's/\([^[:space:]]*[[:alpha:]]\)/\L\1/g')
               
-              # Get DESC (everything between TITLE and "> by server dev")
-              DESC=$(echo "$AI_TEXT" | sed -n '/TITLE:/,/> by server dev/p' | grep -v "TITLE:" | grep -v "FOOTER:" | sed '/> by server dev/d' | tr '\n' ' ' | sed 's/DESC:[[:space:]]*//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+              # Extract parts with improved parsing
+              TITLE=$(echo "$AI_TEXT_LOWER" | grep -i "title:" | head -1 | sed 's/.*title:[[:space:]]*//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+              FOOTER=$(echo "$AI_TEXT_LOWER" | grep -i "footer:" | head -1 | sed 's/.*footer:[[:space:]]*//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
               
-              # Add the required ending
+              # Get DESC (everything between title and "> by server dev" or footer)
+              DESC=$(echo "$AI_TEXT_LOWER" | sed -n '/title:/,/> by server dev\|footer:/p' | grep -v "title:" | grep -v "footer:" | sed '/> by server dev/d' | tr '\n' ' ' | sed 's/desc:[[:space:]]*//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+              
+              # Add the required ending if DESC exists
               if [[ -n "$DESC" ]]; then
                 DESC="$DESC\\n> by server dev - <@399393175904714752>"
               fi
               
-              # Validate
+              # Validate all components exist
               if [[ -n "$TITLE" && -n "$DESC" && -n "$FOOTER" ]]; then
-                echo "✅ Parsing successful"
-                echo "Title: $TITLE"
-                echo "Footer: $FOOTER"
+                echo "✅ parsing successful"
+                echo "title: $TITLE"
+                echo "desc: $DESC"
+                echo "footer: $FOOTER"
                 USE_AI=true
               else
-                echo "❌ Parsing failed, using fallback"
+                echo "❌ parsing failed - missing components"
+                echo "title present: $([[ -n "$TITLE" ]] && echo "yes" || echo "no")"
+                echo "desc present: $([[ -n "$DESC" ]] && echo "yes" || echo "no")"
+                echo "footer present: $([[ -n "$FOOTER" ]] && echo "yes" || echo "no")"
                 USE_AI=false
               fi
             else
-              echo "❌ JSON parsing failed"
+              echo "❌ json parsing failed or empty response"
+              # Check if there's an error in the response
+              if [[ -f /tmp/gemini_response.json ]]; then
+                ERROR_MSG=$(jq -r '.error.message // "unknown error"' /tmp/gemini_response.json 2>/dev/null)
+                echo "error details: $ERROR_MSG"
+              fi
               USE_AI=false
             fi
           else
-            echo "❌ Gemini API call failed"
+            echo "❌ gemini api call failed"
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+              "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
+              -H "Content-Type: application/json" \
+              -d '{"contents":[{"parts":[{"text":"test"}]}]}' \
+              --connect-timeout 5 --max-time 10 2>/dev/null || echo "000")
+            echo "http status code: $HTTP_CODE"
             USE_AI=false
           fi
           
-          # Fallback messages if AI fails
+          # Fallback messages if AI fails (now in lowercase)
           if [[ "$USE_AI" != "true" ]]; then
-            echo "🎲 Using fallback greeting"
+            echo "🎲 using fallback greeting"
             INDEX=$((RANDOM % 3))
             
             case "$TYPE-$INDEX" in
               "morning-0")
                 TITLE="🌄 yoww gd morning bestie"
-                DESC="how's your dream? hope it's not NPC behavior dreams fr 😴 time to touch grass or touch rank periodt\\n> by server dev - <@399393175904714752>"
+                DESC="how's your dream? hope it's not npc behavior dreams fr 😴 time to touch grass or touch rank periodt\\n> by server dev - <@399393175904714752>"
                 FOOTER="main character energy"
                 ;;
               "morning-1")
@@ -148,7 +177,7 @@ jobs:
                 ;;
               "morning-2")
                 TITLE="☀️ rise n grind but make it chill"
-                DESC="gm squad! lowkey today feels like a W waiting to happen fr 😌 just don't AFK your own life kocak\\n> by server dev - <@399393175904714752>"
+                DESC="gm squad! lowkey today feels like a w waiting to happen fr 😌 just don't afk your own life kocak\\n> by server dev - <@399393175904714752>"
                 FOOTER="slay responsibly"
                 ;;
               "afternoon-0")
@@ -157,8 +186,8 @@ jobs:
                 FOOTER="feed the main character"
                 ;;
               "afternoon-1")
-                TITLE="🍔 midday energy check"
-                DESC="bruh if you're feeling like an NPC rn that's valid 😴 grab some food and respawn your energy periodt\\n> by server dev - <@399393175904714752>"
+                TITLE="🍛 midday energy check"
+                DESC="bruh if you're feeling like an npc rn that's valid 😴 grab some food and respawn your energy periodt\\n> by server dev - <@399393175904714752>"
                 FOOTER="recharge era"
                 ;;
               "afternoon-2")
@@ -189,7 +218,7 @@ jobs:
               "night-1")
                 TITLE="💤 it's giving sleepy girl era"
                 DESC="gn bestie! don't bring today's drama to tomorrow's energy fr 😪 reset and respawn tomorrow periodt\\n> by server dev - <@399393175904714752>"
-                FOOTER="dream of Ws"
+                FOOTER="dream of ws"
                 ;;
               "night-2")
                 TITLE="🌜 night night main character"
@@ -209,13 +238,17 @@ jobs:
           
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
           
-          # Send to Discord
-          curl -f -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+          # Send to Discord with better error handling
+          echo "📤 sending to discord..."
+          if curl -f -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
                -H "Content-Type: application/json" \
                --connect-timeout 10 --max-time 15 \
-               -d "{\"embeds\":[{\"title\":\"$TITLE\",\"description\":\"$DESC\",\"color\":$COLOR,\"thumbnail\":{\"url\":\"https://twemoji.maxcdn.com/v/latest/72x72/$THUMB.png\"},\"footer\":{\"text\":\"$FOOTER\",\"icon_url\":\"https://files.catbox.moe/npfh4e.jpg\"},\"timestamp\":\"$TIMESTAMP\"}]}"
-          
-          echo "✅ Sent $TYPE greeting (AI: ${USE_AI:-false}, Context: $CONTEXT)"
+               -d "{\"embeds\":[{\"title\":\"$TITLE\",\"description\":\"$DESC\",\"color\":$COLOR,\"thumbnail\":{\"url\":\"https://twemoji.maxcdn.com/v/latest/72x72/$THUMB.png\"},\"footer\":{\"text\":\"$FOOTER\",\"icon_url\":\"https://files.catbox.moe/npfh4e.jpg\"},\"timestamp\":\"$TIMESTAMP\"}]}" > /tmp/discord_response.txt 2>&1; then
+            echo "✅ sent $TYPE greeting (ai: ${USE_AI:-false}, context: $CONTEXT)"
+          else
+            echo "❌ discord webhook failed"
+            cat /tmp/discord_response.txt 2>/dev/null || echo "no response details available"
+          fi
           
           # Cleanup
-          rm -f /tmp/gemini_response.json /tmp/ai_content.txt
+          rm -f /tmp/gemini_response.json /tmp/ai_content.txt /tmp/discord_response.txt
