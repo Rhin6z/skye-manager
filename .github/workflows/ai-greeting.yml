@@ -80,37 +80,19 @@ jobs:
           PROMPT=${PROMPT//TYPE_PLACEHOLDER/$TYPE}
           PROMPT=${PROMPT//CONTEXT_PLACEHOLDER/$CONTEXT}
           
-          # Try Gemini API with proper error handling and debugging
-          GEMINI_RESPONSE=""
-          echo "🔄 trying gemini-1.5-flash api..."
+          # Try Gemini API with simpler approach
+          echo "🔄 trying gemini api..."
           
-          # Add debug info
-          echo "API endpoint: https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
-          echo "Prompt length: $(echo "$PROMPT" | wc -c)"
-          
-          # Try primary model first
-          HTTP_CODE=$(curl -w "%{http_code}" -f -s -X POST \
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d "{
-              \"contents\": [{
-                \"parts\": [{\"text\": \"$PROMPT\"}]
-              }],
-              \"generationConfig\": {
-                \"temperature\": 0.8,
-                \"maxOutputTokens\": 300,
-                \"topP\": 0.8,
-                \"topK\": 10
-              }
-            }" \
-            --connect-timeout 15 --max-time 30 -o /tmp/gemini_response.json 2>/tmp/curl_error.log)
-          
-          echo "Primary model HTTP response code: $HTTP_CODE"
-          
-          # If primary fails, try alternative model
-          if [[ "$HTTP_CODE" != "200" ]]; then
-            echo "🔄 trying alternative gemini-pro model..."
-            HTTP_CODE=$(curl -w "%{http_code}" -f -s -X POST \
+          # Check if API key exists
+          if [[ -z "${{ secrets.GEMINI_API_KEY }}" ]]; then
+            echo "❌ GEMINI_API_KEY secret is not set"
+            USE_AI=false
+          else
+            echo "✅ API key is present"
+            
+            # Try simpler model first (gemini-pro is more stable)
+            echo "🔄 trying gemini-pro model..."
+            if RESPONSE=$(curl -s -X POST \
               "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
               -H "Content-Type: application/json" \
               -d "{
@@ -122,89 +104,63 @@ jobs:
                   \"maxOutputTokens\": 300
                 }
               }" \
-              --connect-timeout 15 --max-time 30 -o /tmp/gemini_response.json 2>/tmp/curl_error.log)
-            echo "Alternative model HTTP response code: $HTTP_CODE"
-          fi
-          
-          if [[ "$HTTP_CODE" == "200" ]] && [[ -f /tmp/gemini_response.json ]]; then
-            echo "✅ gemini api call successful"
-            
-            # Show response for debugging
-            echo "Raw response size: $(cat /tmp/gemini_response.json | wc -c) bytes"
-            
-            # Check if response has error
-            if ERROR_MSG=$(jq -r '.error.message // empty' /tmp/gemini_response.json 2>/dev/null); then
-              if [[ -n "$ERROR_MSG" ]]; then
-                echo "❌ gemini api error: $ERROR_MSG"
+              --connect-timeout 15 --max-time 30 2>&1); then
+              
+              echo "✅ gemini api call successful"
+              echo "Response size: $(echo "$RESPONSE" | wc -c) chars"
+              
+              # Check for error in response
+              if echo "$RESPONSE" | grep -q '"error"'; then
+                echo "❌ gemini api error in response:"
+                echo "$RESPONSE" | head -5
                 USE_AI=false
               else
-                # Parse successful response
-                if AI_TEXT=$(jq -r '.candidates[0].content.parts[0].text' /tmp/gemini_response.json 2>/dev/null); then
-                  echo "✅ gemini api success"
-                  echo "Raw AI response:"
-                  echo "$AI_TEXT"
-                  echo "---"
-                  
-                  # Clean up and extract with more robust parsing
-                  CLEAN_TEXT=$(echo "$AI_TEXT" | tr -d '\r' | sed 's/\*\*//g' | sed 's/\*//g')
-                  
-                  # Extract TITLE (more flexible matching)
-                  TITLE=$(echo "$CLEAN_TEXT" | grep -i "^TITLE:" | head -1 | sed 's/^[Tt][Ii][Tt][Ll][Ee]:[[:space:]]*//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
-                  
-                  # Extract FOOTER (more flexible matching) 
-                  FOOTER=$(echo "$CLEAN_TEXT" | grep -i "^FOOTER:" | head -1 | sed 's/^[Ff][Oo][Oo][Tt][Ee][Rr]:[[:space:]]*//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
-                  
-                  # Extract DESC - get everything between DESC: and > by server dev, or just after DESC:
-                  DESC_RAW=$(echo "$CLEAN_TEXT" | sed -n '/^[Dd][Ee][Ss][Cc]:/,/^> by server dev/p' | grep -v "^TITLE:" | grep -v "^FOOTER:" | sed '/^> by server dev/d' | sed 's/^[Dd][Ee][Ss][Cc]:[[:space:]]*//' | tr '\n' ' ' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
-                  
-                  # If that doesn't work, try simpler extraction
-                  if [[ -z "$DESC_RAW" ]]; then
-                    DESC_RAW=$(echo "$CLEAN_TEXT" | grep -i "^DESC:" | head -1 | sed 's/^[Dd][Ee][Ss][Cc]:[[:space:]]*//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
-                  fi
-                  
-                  # Clean up DESC and add required ending
-                  if [[ -n "$DESC_RAW" ]]; then
-                    DESC="$DESC_RAW\\n> by server dev - <@399393175904714752>"
-                  fi
-                  
-                  echo "Extracted parts:"
-                  echo "TITLE: [$TITLE]"
-                  echo "DESC: [$DESC_RAW]"
-                  echo "FOOTER: [$FOOTER]"
-                  
-                  # Validate - more lenient validation
-                  if [[ -n "$TITLE" && -n "$DESC_RAW" ]]; then
-                    echo "✅ parsing successful"
-                    USE_AI=true
-                    # Set default footer if empty
-                    if [[ -z "$FOOTER" ]]; then
-                      FOOTER="vibes only no cap"
+                # Try to extract AI text
+                if AI_TEXT=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts[0].text' 2>/dev/null); then
+                  if [[ -n "$AI_TEXT" && "$AI_TEXT" != "null" ]]; then
+                    echo "✅ extracted AI response successfully"
+                    echo "AI text preview: $(echo "$AI_TEXT" | head -c 100)..."
+                    
+                    # Simple parsing - look for any content that looks like title/desc
+                    TITLE=$(echo "$AI_TEXT" | grep -i "title:" | head -1 | sed 's/.*[Tt][Ii][Tt][Ll][Ee]:[[:space:]]*//' | sed 's/^[[:space:]]*//')
+                    DESC_RAW=$(echo "$AI_TEXT" | grep -i "desc:" | head -1 | sed 's/.*[Dd][Ee][Ss][Cc]:[[:space:]]*//' | sed 's/^[[:space:]]*//')
+                    FOOTER=$(echo "$AI_TEXT" | grep -i "footer:" | head -1 | sed 's/.*[Ff][Oo][Oo][Tt][Ee][Rr]:[[:space:]]*//' | sed 's/^[[:space:]]*//')
+                    
+                    # If structured format not found, try to use AI text directly as description
+                    if [[ -z "$TITLE" || -z "$DESC_RAW" ]]; then
+                      echo "🔄 structured format not found, using AI text as description"
+                      TITLE="🌅 ai-generated greeting time"
+                      DESC_RAW="$AI_TEXT"
+                      FOOTER="ai vibes activated"
+                    fi
+                    
+                    # Clean and validate
+                    if [[ -n "$TITLE" && -n "$DESC_RAW" ]]; then
+                      DESC="$DESC_RAW\\n> by server dev - <@399393175904714752>"
+                      echo "✅ parsing successful"
+                      echo "TITLE: $TITLE"
+                      echo "DESC length: $(echo "$DESC_RAW" | wc -c) chars"
+                      echo "FOOTER: $FOOTER"
+                      USE_AI=true
+                    else
+                      echo "❌ parsing failed - empty results"
+                      USE_AI=false
                     fi
                   else
-                    echo "❌ parsing failed, using fallback"
-                    echo "Missing: $([ -z "$TITLE" ] && echo "TITLE ")$([ -z "$DESC_RAW" ] && echo "DESC ")"
+                    echo "❌ empty or null AI text"
                     USE_AI=false
                   fi
                 else
-                  echo "❌ failed to extract AI text from response"
+                  echo "❌ failed to parse JSON response"
+                  echo "Response sample: $(echo "$RESPONSE" | head -c 200)..."
                   USE_AI=false
                 fi
               fi
             else
-              echo "❌ json parsing failed or response empty"
+              echo "❌ gemini api call failed"
+              echo "Error: $RESPONSE"
               USE_AI=false
             fi
-          else
-            echo "❌ gemini api call failed with HTTP code: $HTTP_CODE"
-            if [[ -f /tmp/curl_error.log ]]; then
-              echo "Curl error log:"
-              cat /tmp/curl_error.log
-            fi
-            if [[ -f /tmp/gemini_response.json ]]; then
-              echo "Response content:"
-              cat /tmp/gemini_response.json
-            fi
-            USE_AI=false
           fi
           
           # Fallback messages with natural casual style like the good example  
