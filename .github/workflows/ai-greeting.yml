@@ -53,28 +53,28 @@ jobs:
           
           # Natural eng-indo slang prompt like the good example
           read -r -d '' PROMPT << 'EOF' || true
-          Buatin greeting Discord untuk TYPE_PLACEHOLDER hari CONTEXT_PLACEHOLDER yang natural kayak temen chat.
+Buatin greeting Discord untuk TYPE_PLACEHOLDER hari CONTEXT_PLACEHOLDER yang natural kayak temen chat.
 
-          Style wajib:
-          - Casual banget, jangan formal
-          - Mix English-Indonesian yang smooth, jangan dipaksa
-          - English slang: "what's poppin", "brodie", "fr", "lowkey", "no cap", "periodt", "bet"  
-          - Indo casual: "kek", "dikit", "kok", "banget", "anjir", "woy", "cuy", "gabut", "santuy"
-          - Gaming/internet: "mmr", "noob", "mabar", "gas", "netizen", "touching grass"
-          - Tone: santai, agak sarcastic, relatable
-          - Semua lowercase kecuali emoji
+Style wajib:
+- Casual banget, jangan formal
+- Mix English-Indonesian yang smooth, jangan dipaksa
+- English slang: what's poppin, brodie, fr, lowkey, no cap, periodt, bet
+- Indo casual: kek, dikit, kok, banget, anjir, woy, cuy, gabut, santuy
+- Gaming/internet: mmr, noob, mabar, gas, netizen, touching grass
+- Tone: santai, agak sarcastic, relatable
+- Semua lowercase kecuali emoji
 
-          Contoh bagus:
-          "🌃 jangan sok produktif 24/7, chill dulu kek
-          what's poppin brodie! golden hour moment—ketawain aja dikit, mmr turun ga sekejam kata netizen kok fr 😌"
+Contoh bagus:
+jangan sok produktif 24/7, chill dulu kek
+what's poppin brodie! golden hour moment ketawain aja dikit, mmr turun ga sekejam kata netizen kok fr
 
-          Format output:
-          TITLE: [casual title dengan emoji, lowercase]
-          DESC: [natural sentence yang flow banget, mix eng-indo smooth]
-          FOOTER: [footer pendek casual]
+Format output:
+TITLE: [casual title dengan emoji, lowercase]
+DESC: [natural sentence yang flow banget, mix eng-indo smooth]
+FOOTER: [footer pendek casual]
 
-          Bikin yang relatable dan ga cringe!
-          EOF
+Bikin yang relatable dan ga cringe!
+EOF
           
           # Replace placeholders
           PROMPT=${PROMPT//TYPE_PLACEHOLDER/$TYPE}
@@ -90,14 +90,17 @@ jobs:
           else
             echo "✅ API key is present"
             
-            # Try simpler model first (gemini-pro is more stable)
-            echo "🔄 trying gemini-pro model..."
+            # Escape JSON properly for prompt
+            ESCAPED_PROMPT=$(echo "$PROMPT" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | tr '\n' ' ')
+            
+            # Try gemini-2.5-flash-lite model
+            echo "🔄 trying gemini-2.5-flash-lite model..."
             if RESPONSE=$(curl -s -X POST \
-              "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
+              "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
               -H "Content-Type: application/json" \
               -d "{
                 \"contents\": [{
-                  \"parts\": [{\"text\": \"$PROMPT\"}]
+                  \"parts\": [{\"text\": \"$ESCAPED_PROMPT\"}]
                 }],
                 \"generationConfig\": {
                   \"temperature\": 0.8,
