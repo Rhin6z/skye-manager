@@ -82,19 +82,80 @@ jobs:
           GEMINI_RESPONSE=""
           echo "🔄 trying gemini-1.5-flash api..."
           
-          if curl -f -s -X POST \
+          # Debug: Check API key format
+          api_key_prefix=$(echo "${{ secrets.GEMINI_API_KEY }}" | cut -c1-10)
+          echo "🔧 API key prefix: ${api_key_prefix}..."
+          
+          # Test with simpler request first
+          simple_response=$(curl -w "%{http_code}" -s -X POST \
             "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
             -H "Content-Type: application/json" \
-            -d "{
-              \"contents\": [{
-                \"parts\": [{\"text\": \"$PROMPT\"}]
+            -d '{
+              "contents": [{
+                "parts": [{"text": "hi"}]
               }],
-              \"generationConfig\": {
-                \"temperature\": 0.8,
-                \"maxOutputTokens\": 200
+              "generationConfig": {
+                "temperature": 0.1,
+                "maxOutputTokens": 10
               }
-            }" \
-            --connect-timeout 10 --max-time 15 > /tmp/gemini_response.json 2>/dev/null; then
+            }' \
+            --connect-timeout 15 --max-time 20 2>&1)
+          
+          # Extract HTTP status code
+          http_code="${simple_response: -3}"
+          simple_body="${simple_response%???}"
+          
+          echo "🔧 Simple test HTTP Status: $http_code"
+          
+          if [[ "$http_code" == "200" ]]; then
+            echo "✅ Simple API test successful"
+            
+            # Now try the actual request
+            response=$(curl -w "%{http_code}" -s -X POST \
+              "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
+              -H "Content-Type: application/json" \
+              -d "{
+                \"contents\": [{
+                  \"parts\": [{\"text\": \"$PROMPT\"}]
+                }],
+                \"generationConfig\": {
+                  \"temperature\": 0.8,
+                  \"maxOutputTokens\": 200
+                }
+              }" \
+              --connect-timeout 15 --max-time 20 2>&1)
+            
+            # Extract HTTP status code and response body
+            main_http_code="${response: -3}"
+            main_response_body="${response%???}"
+            
+            echo "🔧 Main request HTTP Status: $main_http_code"
+            
+            if [[ "$main_http_code" == "200" ]]; then
+              echo "$main_response_body" > /tmp/gemini_response.json
+              api_success=true
+            else
+              echo "❌ Main API request failed with status $main_http_code"
+              echo "🔧 Error response: $main_response_body"
+              api_success=false
+            fi
+          else
+            echo "❌ Simple API test failed with status $http_code"
+            echo "🔧 Error response: $simple_body"
+            
+            # Check for common error patterns
+            if echo "$simple_body" | grep -q "API_KEY_INVALID"; then
+              echo "🚨 Invalid API Key detected!"
+            elif echo "$simple_body" | grep -q "PERMISSION_DENIED"; then
+              echo "🚨 Permission denied - check API key permissions!"
+            elif echo "$simple_body" | grep -q "QUOTA_EXCEEDED"; then
+              echo "🚨 Quota exceeded - rate limited!"
+            fi
+            
+            api_success=false
+          fi
+          
+          if [[ "$api_success" == "true" ]]; then
             
             # Parse response (simplified like your working code)
             if AI_TEXT=$(jq -r '.candidates[0].content.parts[0].text' /tmp/gemini_response.json 2>/dev/null); then
@@ -129,7 +190,70 @@ jobs:
             fi
           else
             echo "❌ gemini api call failed"
-            USE_AI=false
+            
+            # Try alternative model as backup
+            echo "🔄 trying gemini-pro as backup..."
+            backup_response=$(curl -w "%{http_code}" -s -X POST \
+              "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
+              -H "Content-Type: application/json" \
+              -d "{
+                \"contents\": [{
+                  \"parts\": [{\"text\": \"$PROMPT\"}]
+                }],
+                \"generationConfig\": {
+                  \"temperature\": 0.8,
+                  \"maxOutputTokens\": 200
+                }
+              }" \
+              --connect-timeout 15 --max-time 20 2>&1)
+            
+            backup_code="${backup_response: -3}"
+            backup_body="${backup_response%???}"
+            
+            if [[ "$backup_code" == "200" ]]; then
+              echo "✅ backup gemini-pro successful"
+              echo "$backup_body" > /tmp/gemini_response.json
+              api_success=true
+            else
+              echo "❌ backup model also failed with status $backup_code"
+              api_success=false
+            fi
+            
+            if [[ "$api_success" == "true" ]]; then
+              # Parse backup response
+              if AI_TEXT=$(jq -r '.candidates[0].content.parts[0].text' /tmp/gemini_response.json 2>/dev/null); then
+                echo "✅ backup gemini api success"
+                echo "$AI_TEXT" > /tmp/ai_content.txt
+                
+                # Extract parts with simple parsing
+                TITLE=$(echo "$AI_TEXT" | grep -i "TITLE:" | head -1 | sed 's/.*TITLE:[[:space:]]*//' | sed 's/^[[:space:]]*//')
+                FOOTER=$(echo "$AI_TEXT" | grep -i "FOOTER:" | head -1 | sed 's/.*FOOTER:[[:space:]]*//' | sed 's/^[[:space:]]*//')
+                
+                # Get DESC
+                DESC=$(echo "$AI_TEXT" | sed -n '/TITLE:/,/> by server dev/p' | grep -v "TITLE:" | grep -v "FOOTER:" | sed '/> by server dev/d' | tr '\n' ' ' | sed 's/DESC:[[:space:]]*//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+                
+                # Add the required ending
+                if [[ -n "$DESC" ]]; then
+                  DESC="$DESC\\n> by server dev - <@399393175904714752>"
+                fi
+                
+                # Validate
+                if [[ -n "$TITLE" && -n "$DESC" && -n "$FOOTER" ]]; then
+                  echo "✅ backup parsing successful"
+                  echo "title: $TITLE"
+                  echo "footer: $FOOTER"
+                  USE_AI=true
+                else
+                  echo "❌ backup parsing failed, using fallback"
+                  USE_AI=false
+                fi
+              else
+                echo "❌ backup json parsing failed"
+                USE_AI=false
+              fi
+            else
+              USE_AI=false
+            fi
           fi
           
           # Fallback messages with fresh eng-indo mix style
