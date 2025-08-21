@@ -102,6 +102,7 @@ jobs:
           - Keep it SHORT and conversational (max 2 lines, ≤18 words per line)
           - International Discord server vibe; avoid hyper-local references; readable for non-Indo members
           - Use exactly 1 emoji in TITLE only
+          - Make TITLE creative and expressive (3-5 words), not just basic time labels
           - No hyphens or dashes in DESC; use commas or semicolons if needed
           - For evening/night greetings, include casual next-day mentions when provided
           
@@ -122,6 +123,17 @@ jobs:
           thursday night energy lowkey besok jumat weekend loading brodiee
           saturday evening santuy besok minggu super chill dayumm
           evening squad deym besok sabtu nihhh coyyy weekend mode activated
+          
+          Creative title examples:
+          🌅 Rise and Grind Squad
+          🌅 Morning Power Up Session
+          ☀️ Midday Energy Check
+          ☀️ Afternoon Recharge Zone
+          🌆 Golden Hour Chronicles
+          🌆 Friday Night Incoming
+          🌙 Weekend Mode Activated
+          🌙 Midnight Gaming Sessions
+          🌜 Late Night Legends
           
           Format:
           TITLE: [casual title with emoji]
@@ -221,43 +233,43 @@ jobs:
           if [[ "$USE_AI" != "true" ]]; then
             case "$TYPE" in
               "morning")
-                TITLE="🌅 Morning Check"
+                TITLE="🌅 Rise and Grind Squad"
                 DESC_RAW="GM legends! Ready to grind today? Atau masih ngantuk dikit?"
                 FOOTER="coffee loading..."
                 ;;
               "afternoon")
-                TITLE="☀️ Afternoon Vibes"
+                TITLE="☀️ Midday Energy Check"
                 DESC_RAW="What's good crew! Time to touch grass atau lanjut mabar nih?"
                 FOOTER="recharge time"
                 ;;
               "evening")
                 if [[ "$DAY" == "5" ]]; then
-                  TITLE="🌆 Friday Evening"
+                  TITLE="🌆 Friday Night Incoming"
                   DESC_RAW="Evening vibes fr! Besok udah sabtu nihhh coyyy weekend mode activated"
                 elif [[ "$DAY" == "4" ]]; then
-                  TITLE="🌆 Thursday Evening"
+                  TITLE="🌆 Thursday Almost Done"
                   DESC_RAW="Almost weekend energy lowkey besok jumat weekend loading brodiee"
                 else
-                  TITLE="🌆 Evening Squad"
+                  TITLE="🌆 Golden Hour Vibes"
                   DESC_RAW="How we doing tonight? Golden hour hits different, santai dulu gih"
                 fi
                 FOOTER="chill mode on"
                 ;;
               "night")
                 if [[ "$DAY" == "5" ]]; then
-                  TITLE="🌙 Friday Night"
+                  TITLE="🌙 Weekend Mode Activated"
                   DESC_RAW="Late night squad deym besok weekend brooo time to celebrate"
                 elif [[ "$DAY" == "4" ]]; then
-                  TITLE="🌙 Thursday Night"
+                  TITLE="🌙 Almost Friday Night"
                   DESC_RAW="Thursday night energy besok jumat weekend loading cuyy almost there"
                 elif [[ "$DAY" == "6" ]]; then
-                  TITLE="🌙 Saturday Night"
+                  TITLE="🌙 Saturday Night Live"
                   DESC_RAW="Saturday night vibes besok minggu santuy banget dayumm perfect timing"
                 elif [[ "$CONTEXT" == "weekend" ]]; then
-                  TITLE="🌙 Late Night Gang"
+                  TITLE="🌙 Weekend Night Owls"
                   DESC_RAW="Weekend night energy! Still grinding or udah gabut mode?"
                 else
-                  TITLE="🌜 Night Shift"
+                  TITLE="🌜 Midnight Chronicles"
                   DESC_RAW="GN fam! Hope you had a good day, besok respawn lagi cuy"
                 fi
                 FOOTER="rest well"
