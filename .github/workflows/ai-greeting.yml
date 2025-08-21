@@ -46,13 +46,35 @@ jobs:
             CONTEXT="weekday"
           fi
           
-          # Check for weekend transitions on night greetings
+          # Check for weekend transitions and next day info
           WEEKEND_TRANSITION=""
-          if [[ "$TYPE" == "night" ]]; then
+          NEXT_DAY_INFO=""
+          if [[ "$TYPE" == "night" || "$TYPE" == "evening" ]]; then
             case $DAY in
-              5) WEEKEND_TRANSITION="weekend_starts" ;;  # Friday night -> Saturday
-              6) WEEKEND_TRANSITION="weekend_continues" ;; # Saturday night -> Sunday
-              7) WEEKEND_TRANSITION="weekend_ends" ;;    # Sunday night -> Monday
+              5) 
+                WEEKEND_TRANSITION="weekend_starts"
+                NEXT_DAY_INFO="besok udah sabtu nihhh coyyy / tomorrow's saturday brooo"
+                ;;
+              6) 
+                WEEKEND_TRANSITION="weekend_continues"
+                NEXT_DAY_INFO="besok minggu santuy banget / tomorrow's sunday super chill"
+                ;;
+              7) 
+                WEEKEND_TRANSITION="weekend_ends"
+                NEXT_DAY_INFO="besok senin balik grind / tomorrow's monday back to grind"
+                ;;
+              1)
+                NEXT_DAY_INFO="besok selasa masih semangat / tomorrow's tuesday still going strong"
+                ;;
+              2)
+                NEXT_DAY_INFO="besok rabu hump day / tomorrow's wednesday hump day"
+                ;;
+              3)
+                NEXT_DAY_INFO="besok kamis almost there / tomorrow's thursday almost there"
+                ;;
+              4)
+                NEXT_DAY_INFO="besok jumat weekend loading / tomorrow's friday weekend loading"
+                ;;
             esac
           fi
           
@@ -60,12 +82,16 @@ jobs:
           if [[ -n "$WEEKEND_TRANSITION" ]]; then
             echo "📅 Weekend transition detected: $WEEKEND_TRANSITION"
           fi
+          if [[ -n "$NEXT_DAY_INFO" ]]; then
+            echo "📅 Next day info: $NEXT_DAY_INFO"
+          fi
           
           # Create simple prompt without problematic characters
           cat > /tmp/prompt.txt << 'EOF'
           Create a casual Discord greeting for TIME_HERE on CONTEXT_HERE.
           
           WEEKEND_TRANSITION_INFO
+          NEXT_DAY_INFO_TEXT
           
           Requirements:
           - Start with English, end with Indonesian - must flow naturally (no hard cut)
@@ -76,7 +102,8 @@ jobs:
           - Keep it SHORT and conversational (max 2 lines, ≤18 words per line)
           - International Discord server vibe; avoid hyper-local references; readable for non-Indo members
           - Use exactly 1 emoji in TITLE only
-          - No hyphens/dashes in DESC; use commas or semicolons if needed
+          - No hyphens or dashes in DESC; use commas or semicolons if needed
+          - For evening/night greetings, include casual next-day mentions when provided
           
           Good examples:
           morning gang lowkey warm up then hop vc lanjut mabar santuy cuyy
@@ -91,6 +118,10 @@ jobs:
           weekend mode we outside dulu terus balik ngepush dikit dayumm
           hello gamers lowkey hang here or slide to lobby yang mau mabar gaskeun
           good afternoon crew tune in vc or lurk aja dulu gais
+          friday evening vibes dangg besok weekend cuyy time to celebrate
+          thursday night energy lowkey besok jumat weekend loading brodiee
+          saturday evening santuy besok minggu super chill dayumm
+          evening squad deym besok sabtu nihhh coyyy weekend mode activated
           
           Format:
           TITLE: [casual title with emoji]
@@ -103,6 +134,7 @@ jobs:
           # Replace placeholders
           sed -i "s/TIME_HERE/$TYPE/g" /tmp/prompt.txt
           sed -i "s/CONTEXT_HERE/$CONTEXT/g" /tmp/prompt.txt
+          sed -i "s/NEXT_DAY_INFO_TEXT/$NEXT_DAY_INFO/g" /tmp/prompt.txt
           
           # Try Gemini API
           echo "🔄 Calling Gemini API..."
@@ -199,20 +231,36 @@ jobs:
                 FOOTER="recharge time"
                 ;;
               "evening")
-                TITLE="🌆 Evening Squad"
-                DESC_RAW="How we doing tonight? Golden hour hits different, santai dulu gih"
+                if [[ "$DAY" == "5" ]]; then
+                  TITLE="🌆 Friday Evening"
+                  DESC_RAW="Evening vibes fr! Besok udah sabtu nihhh coyyy weekend mode activated"
+                elif [[ "$DAY" == "4" ]]; then
+                  TITLE="🌆 Thursday Evening"
+                  DESC_RAW="Almost weekend energy lowkey besok jumat weekend loading brodiee"
+                else
+                  TITLE="🌆 Evening Squad"
+                  DESC_RAW="How we doing tonight? Golden hour hits different, santai dulu gih"
+                fi
                 FOOTER="chill mode on"
                 ;;
               "night")
-                if [[ "$CONTEXT" == "weekend" ]]; then
+                if [[ "$DAY" == "5" ]]; then
+                  TITLE="🌙 Friday Night"
+                  DESC_RAW="Late night squad deym besok weekend brooo time to celebrate"
+                elif [[ "$DAY" == "4" ]]; then
+                  TITLE="🌙 Thursday Night"
+                  DESC_RAW="Thursday night energy besok jumat weekend loading cuyy almost there"
+                elif [[ "$DAY" == "6" ]]; then
+                  TITLE="🌙 Saturday Night"
+                  DESC_RAW="Saturday night vibes besok minggu santuy banget dayumm perfect timing"
+                elif [[ "$CONTEXT" == "weekend" ]]; then
                   TITLE="🌙 Late Night Gang"
                   DESC_RAW="Weekend night energy! Still grinding or udah gabut mode?"
-                  FOOTER="weekend vibes"
                 else
                   TITLE="🌜 Night Shift"
                   DESC_RAW="GN fam! Hope you had a good day, besok respawn lagi cuy"
-                  FOOTER="rest well"
                 fi
+                FOOTER="rest well"
                 ;;
             esac
           fi
@@ -276,10 +324,10 @@ jobs:
           
           echo "🎯 Selected sticker: $SELECTED_STICKER"
           
-          # Send sticker as image embed
+          # Send sticker as a simple image message (not in embed)
           curl -f -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
                -H "Content-Type: application/json" \
                --connect-timeout 10 --max-time 15 \
-               -d "{\"embeds\":[{\"image\":{\"url\":\"$SELECTED_STICKER\"}}]}"
+               -d "{\"content\":\"$SELECTED_STICKER\"}"
           
           echo "🎉 Random sticker sent!"
