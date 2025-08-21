@@ -1,0 +1,161 @@
+# Advanced version with more context and error handling
+
+- name: Advanced Gemini Greeting
+  run: |
+    set -e
+    
+    # Get current context
+    CURRENT_DATE=$(date '+%A, %B %d')
+    CURRENT_TIME=$(date '+%H:%M')
+    MONTH=$(date '+%B')
+    
+    # Determine type and context
+    if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+      TYPE="${{ github.event.inputs.greeting_type }}"
+    else
+      case "${{ github.event.schedule }}" in
+        "0 0 * * 1-5") TYPE="morning" ;;
+        "0 5 * * 1-5") TYPE="afternoon" ;;
+        "0 10 * * 1-5") TYPE="evening" ;;
+        "0 15 * * 1-5") TYPE="night" ;;
+      esac
+    fi
+    
+    DAY=$(date +%u)
+    if [[ $DAY -eq 6 || $DAY -eq 7 ]]; then
+      CONTEXT="weekend"
+    else
+      CONTEXT="weekday"
+    fi
+    
+    # Enhanced prompt with more context
+    ENHANCED_PROMPT="Context: ${CURRENT_DATE}, ${CURRENT_TIME} WIB, ${TYPE} time, ${CONTEXT}
+
+Buatkan Discord greeting yang:
+1. Natural Indonesian slang (anying, kocak, fr, woy, cuy, gas)
+2. Gaming references relevant (MMR, rank, AFK, NPC, meta, buff, nerf)
+3. Sesuai waktu dan konteks (${TYPE} + ${CONTEXT})
+4. Relatable untuk gamer Indonesia usia 18-25
+5. Tidak cringe atau try-hard
+
+Special instructions:
+- Jika morning: motivasi ringan, jangan toxic positivity
+- Jika afternoon: reminder break/makan
+- Jika evening: wind down vibe
+- Jika night: time to rest
+- Jika weekend: more relaxed tone
+
+Output format (EXACT):
+TITLE: [title dengan emoji yang tepat]
+DESC: [2-3 kalimat casual, akhiri dengan \\n> by server dev - <@399393175904714752>]
+FOOTER: [footer 3-5 kata]
+
+Hindari:
+- Kata-kata formal
+- Motivasi berlebihan  
+- Copy-paste feeling
+- Emoji berlebihan"
+
+    # Call Gemini with retry mechanism
+    MAX_RETRIES=3
+    RETRY_COUNT=0
+    
+    while [[ $RETRY_COUNT -lt $MAX_RETRIES ]]; do
+      GEMINI_RESPONSE=$(curl -s -X POST \
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
+        -H "Content-Type: application/json" \
+        -d "{
+          \"contents\": [
+            {
+              \"parts\": [
+                {\"text\": \"$ENHANCED_PROMPT\"}
+              ]
+            }
+          ],
+          \"generationConfig\": {
+            \"temperature\": 0.7,
+            \"maxOutputTokens\": 250,
+            \"topP\": 0.8,
+            \"topK\": 40
+          },
+          \"safetySettings\": [
+            {\"category\": \"HARM_CATEGORY_HARASSMENT\", \"threshold\": \"BLOCK_NONE\"},
+            {\"category\": \"HARM_CATEGORY_HATE_SPEECH\", \"threshold\": \"BLOCK_NONE\"},
+            {\"category\": \"HARM_CATEGORY_SEXUALLY_EXPLICIT\", \"threshold\": \"BLOCK_NONE\"},
+            {\"category\": \"HARM_CATEGORY_DANGEROUS_CONTENT\", \"threshold\": \"BLOCK_NONE\"}
+          ]
+        }" 2>/dev/null) || GEMINI_RESPONSE=""
+      
+      if [[ -n "$GEMINI_RESPONSE" ]] && echo "$GEMINI_RESPONSE" | jq -e '.candidates[0].content.parts[0].text' >/dev/null 2>&1; then
+        break
+      else
+        ((RETRY_COUNT++))
+        echo "⚠️ Retry $RETRY_COUNT/$MAX_RETRIES"
+        sleep 2
+      fi
+    done
+    
+    # Enhanced parsing
+    if [[ -n "$GEMINI_RESPONSE" ]] && echo "$GEMINI_RESPONSE" | jq -e '.candidates[0].content.parts[0].text' >/dev/null 2>&1; then
+      AI_CONTENT=$(echo "$GEMINI_RESPONSE" | jq -r '.candidates[0].content.parts[0].text')
+      echo "🤖 Raw AI content: $AI_CONTENT"
+      
+      # Multiple parsing strategies
+      TITLE=$(echo "$AI_CONTENT" | grep -i "TITLE:" | sed 's/.*TITLE: *//i' | head -1 | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+      DESC=$(echo "$AI_CONTENT" | grep -i "DESC:" | sed 's/.*DESC: *//i' | head -1 | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+      FOOTER=$(echo "$AI_CONTENT" | grep -i "FOOTER:" | sed 's/.*FOOTER: *//i' | head -1 | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+      
+      # Validate extracted content
+      if [[ -n "$TITLE" && -n "$DESC" && -n "$FOOTER" ]]; then
+        echo "✅ Gemini parsing successful"
+        echo "📝 Title: $TITLE"
+        echo "📝 Desc: ${DESC:0:50}..."
+        echo "📝 Footer: $FOOTER"
+        USE_AI=true
+      else
+        echo "❌ Gemini parsing failed"
+        USE_AI=false
+      fi
+    else
+      echo "❌ Gemini API failed after $MAX_RETRIES retries"
+      USE_AI=false
+    fi
+    
+    # Fallback with seasonal context
+    if [[ "$USE_AI" != "true" ]]; then
+      echo "🎲 Using contextual fallback"
+      
+      # Add some seasonal/monthly variety to fallbacks
+      SEASONAL_MODIFIER=""
+      case "$MONTH" in
+        "January"|"February") SEASONAL_MODIFIER="tahun baru energy" ;;
+        "August") SEASONAL_MODIFIER="agustusan spirit" ;;
+        "December") SEASONAL_MODIFIER="akhir tahun vibe" ;;
+        *) SEASONAL_MODIFIER="good vibes" ;;
+      esac
+      
+      # Your fallback arrays with seasonal touch...
+      if [[ "$TYPE" == "morning" ]]; then
+        TITLE="🌄 pagi woy, ${SEASONAL_MODIFIER}"
+        DESC="yo morning fam! new day new grind, no cap—jangan afk mulu anying.\\n> by server dev - <@399393175904714752>"
+        FOOTER="gas pelan tapi tahan lama"
+      fi
+      # Add other fallbacks...
+    fi
+    
+    # Rest of Discord sending logic (same as before)
+    case "$TYPE" in
+      "morning") COLOR=16766720; THUMB="1f305" ;;
+      "afternoon") COLOR=16763904; THUMB="2600" ;;
+      "evening") COLOR=16744448; THUMB="1f307" ;;
+      "night") COLOR=8947848; THUMB="1f319" ;;
+    esac
+    
+    TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
+    
+    curl -f -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+         -H "Content-Type: application/json" \
+         --connect-timeout 10 --max-time 15 \
+         -d "{\"embeds\":[{\"title\":\"$TITLE\",\"description\":\"$DESC\",\"color\":$COLOR,\"thumbnail\":{\"url\":\"https://twemoji.maxcdn.com/v/latest/72x72/$THUMB.png\"},\"footer\":{\"text\":\"$FOOTER\",\"icon_url\":\"https://files.catbox.moe/npfh4e.jpg\"},\"timestamp\":\"$TIMESTAMP\"}]}"
+    
+    echo "✅ Sent $TYPE greeting (AI: $USE_AI, Context: $CONTEXT, Date: $CURRENT_DATE)"
