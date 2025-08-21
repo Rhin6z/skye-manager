@@ -39,6 +39,11 @@ jobs:
             esac
           fi
           
+          # Get current day and time info for AI
+          CURRENT_DAY=$(date +%A)        # Full day name (Monday, Tuesday, etc.)
+          CURRENT_DATE=$(date +"%B %d, %Y")  # Full date (August 22, 2025)
+          CURRENT_TIME=$(date +"%H:%M")      # Current time (04:17)
+          
           DAY=$(date +%u)
           if [[ $DAY -eq 6 || $DAY -eq 7 ]]; then
             CONTEXT="weekend"
@@ -79,6 +84,8 @@ jobs:
           fi
           
           echo "🤖 Generating $TYPE greeting for $CONTEXT"
+          echo "📅 Current day: $CURRENT_DAY ($CURRENT_DATE)"
+          echo "🕐 Current time: $CURRENT_TIME"
           if [[ -n "$WEEKEND_TRANSITION" ]]; then
             echo "📅 Weekend transition detected: $WEEKEND_TRANSITION"
           fi
@@ -90,10 +97,14 @@ jobs:
           cat > /tmp/prompt.txt << 'EOF'
           Create a casual Discord greeting for TIME_HERE on CONTEXT_HERE.
           
+          CURRENT_DAY_INFO
+          CURRENT_DATE_INFO  
+          CURRENT_TIME_INFO
           WEEKEND_TRANSITION_INFO
           NEXT_DAY_INFO_TEXT
           
           Requirements:
+          - IMPORTANT: Use the ACTUAL current day provided above, not assumptions
           - Start with English, end with Indonesian - must flow naturally (no hard cut)
           - Tone: chill, conversational, not try-hard; PG-13; no hashtags; no @everyone
           - Mix slang (use 2–3 max): brodie, fr, lowkey, anjir, dikit, gabut, cuy
@@ -106,6 +117,7 @@ jobs:
           - No hyphens or dashes in DESC; use commas or semicolons if needed
           - For evening/night greetings, include casual next-day mentions when provided
           - Make messages feel like genuine friend check-ins, not robotic announcements
+          - Reference the correct day/time context provided above
           
           Good examples:
           morning gang lowkey warm up then hop vc lanjut mabar santuy cuyy
@@ -126,6 +138,8 @@ jobs:
           evening squad deym what a day, besok weekend udah mulai coyyy weekend mode fully activated now
           morning gang lowkey warm up session dulu then hop vc, lanjut mabar santuy cuyy coffee hits different today
           afternoon crew hope everyone doing good, just vibing here dulu kalo gabut we can queue together banngh
+          wednesday evening vibes brodie, almost hump day done terus besok kamis getting closer to weekend
+          tuesday morning energy gais, hope everyone slept well dulu terus ready for another good day cuyy
           
           Creative title examples:
           🌅 Morning Vibes Loading
@@ -150,6 +164,9 @@ jobs:
           sed -i "s/TIME_HERE/$TYPE/g" /tmp/prompt.txt
           sed -i "s/CONTEXT_HERE/$CONTEXT/g" /tmp/prompt.txt
           sed -i "s|NEXT_DAY_INFO_TEXT|$NEXT_DAY_INFO|g" /tmp/prompt.txt
+          sed -i "s/CURRENT_DAY_INFO/Current day: $CURRENT_DAY/g" /tmp/prompt.txt
+          sed -i "s/CURRENT_DATE_INFO/Current date: $CURRENT_DATE/g" /tmp/prompt.txt
+          sed -i "s/CURRENT_TIME_INFO/Current time: $CURRENT_TIME/g" /tmp/prompt.txt
           
           # Try Gemini API
           echo "🔄 Calling Gemini API..."
@@ -216,47 +233,76 @@ jobs:
             echo "--- End AI response ---"
             
             # Extract parts - more flexible parsing
-            TITLE=$(echo "$AI_TEXT" | grep -i "^TITLE:" | head -1 | sed 's/.*TITLE:[[:space:]]*//' || echo "")
-            DESC_RAW=$(echo "$AI_TEXT" | grep -i "^DESC:" | head -1 | sed 's/.*DESC:[[:space:]]*//' || echo "")
-            FOOTER=$(echo "$AI_TEXT" | grep -i "^FOOTER:" | head -1 | sed 's/.*FOOTER:[[:space:]]*//' || echo "")
+            TITLE=$(echo "$AI_TEXT" | grep -i "^TITLE:" | head -1 | sed 's/.*TITLE:[[:space:]]*//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//' || echo "")
+            DESC_RAW=$(echo "$AI_TEXT" | grep -i "^DESC:" | head -1 | sed 's/.*DESC:[[:space:]]*//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//' || echo "")
+            FOOTER=$(echo "$AI_TEXT" | grep -i "^FOOTER:" | head -1 | sed 's/.*FOOTER:[[:space:]]*//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//' || echo "")
             
-            # If no proper format found, try to extract from emoji patterns
-            if [[ -z "$TITLE" ]]; then
-              TITLE=$(echo "$AI_TEXT" | grep -o "🌙[^🌙]*" | head -1 | sed 's/^🌙[[:space:]]*/🌙 /' || echo "")
-            fi
-            if [[ -z "$TITLE" ]]; then
-              TITLE=$(echo "$AI_TEXT" | grep -o "🌅[^🌅]*" | head -1 | sed 's/^🌅[[:space:]]*/🌅 /' || echo "")
-            fi
-            if [[ -z "$TITLE" ]]; then
-              TITLE=$(echo "$AI_TEXT" | grep -o "🌆[^🌆]*" | head -1 | sed 's/^🌆[[:space:]]*/🌆 /' || echo "")
-            fi
-            if [[ -z "$TITLE" ]]; then
-              TITLE=$(echo "$AI_TEXT" | grep -o "☀️[^☀️]*" | head -1 | sed 's/^☀️[[:space:]]*/☀️ /' || echo "")
-            fi
-            
-            # Extract description from DESC line or after title
-            if [[ -z "$DESC_RAW" && -n "$TITLE" ]]; then
-              DESC_RAW=$(echo "$AI_TEXT" | sed -n "/$TITLE/,\$p" | tail -n +2 | head -1 | sed 's/^DESC:[[:space:]]*//' || echo "")
-            fi
-            
-            # Clean up title if it has extra formatting
+            # Clean up any remaining formatting issues
             if [[ -n "$TITLE" ]]; then
-              TITLE=$(echo "$TITLE" | sed 's/[[:space:]]*$//' | head -c 50)
+              # Remove any extra TITLE/DESC/FOOTER text that got mixed in
+              TITLE=$(echo "$TITLE" | sed 's/DESC:.*$//' | sed 's/FOOTER:.*$//' | head -c 50)
+            fi
+            
+            if [[ -n "$DESC_RAW" ]]; then
+              # Remove any extra FOOTER text that got mixed in
+              DESC_RAW=$(echo "$DESC_RAW" | sed 's/FOOTER:.*$//')
+            fi
+            
+            # If no proper format found, try manual extraction
+            if [[ -z "$TITLE" || -z "$DESC_RAW" ]]; then
+              echo "⚠️ Structured format not found, attempting manual parsing..."
+              
+              # Try to find title with emoji at start of line
+              TITLE=$(echo "$AI_TEXT" | grep -E "^[🌅🌆🌙🌜☀️]" | head -1 | sed 's/^[[:space:]]*//' || echo "")
+              
+              # Get the remaining text after title as description
+              if [[ -n "$TITLE" ]]; then
+                DESC_RAW=$(echo "$AI_TEXT" | grep -v -F "$TITLE" | grep -v "^FOOTER:" | head -1 | sed 's/^[[:space:]]*//' || echo "")
+              fi
+              
+              # If still nothing, use the whole response as description with a default title
+              if [[ -z "$TITLE" && -z "$DESC_RAW" ]]; then
+                TITLE="🤖 AI Vibes Activated"
+                DESC_RAW="$AI_TEXT"
+              fi
             fi
             
             if [[ -n "$TITLE" && -n "$DESC_RAW" ]]; then
               echo "✅ Using AI generated content"
+              echo "Parsed Title: $TITLE"
+              echo "Parsed Desc: $DESC_RAW"
+              echo "Parsed Footer: $FOOTER"
               USE_AI=true
             else
-              echo "🔄 AI format not recognized, using AI text as description"
-              TITLE="🤖 ai vibes activated"
-              DESC_RAW="$AI_TEXT"
-              FOOTER="generated with love"
-              USE_AI=true
+              echo "🔄 AI parsing failed, using fallback content"
+              echo "Failed to parse - Title: '$TITLE', Desc: '$DESC_RAW'"
+              USE_AI=false
             fi
           else
-            echo "🎲 Using fallback content"
+            echo "🎲 Using fallback content - no AI response"
             USE_AI=false
+          fi
+          
+          # Validate and clean final variables
+          if [[ "$USE_AI" == "true" ]]; then
+            # Ensure title has emoji and clean it up
+            if [[ ! "$TITLE" =~ ^[🌅🌆🌙🌜☀️] ]]; then
+              echo "⚠️ Title missing emoji, adding default"
+              case "$TYPE" in
+                "morning") TITLE="🌅 $TITLE" ;;
+                "afternoon") TITLE="☀️ $TITLE" ;;
+                "evening") TITLE="🌆 $TITLE" ;;
+                "night") TITLE="🌙 $TITLE" ;;
+              esac
+            fi
+            
+            # Clean up description - remove any stray TITLE/DESC/FOOTER text
+            DESC_RAW=$(echo "$DESC_RAW" | sed 's/^TITLE:.*$//' | sed 's/^DESC:[[:space:]]*//' | sed 's/FOOTER:.*$//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+            
+            # Set default footer if empty
+            if [[ -z "$FOOTER" ]]; then
+              FOOTER="ai vibes activated"
+            fi
           fi
           
           # Fallback messages
@@ -321,13 +367,18 @@ jobs:
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
           
           echo "📤 Sending to Discord..."
-          echo "Title: $TITLE"
-          echo "Footer: $FOOTER"
+          echo "Final Title: $TITLE"
+          echo "Final Desc: $DESC_RAW"
+          echo "Final Footer: $FOOTER"
           
-          # Clean variables for JSON (remove newlines and escape quotes)
-          TITLE_CLEAN=$(echo "$TITLE" | tr -d '\n\r' | sed 's/"/\\"/g')
-          DESC_CLEAN=$(echo "$DESC" | tr -d '\n\r' | sed 's/"/\\"/g')
-          FOOTER_CLEAN=$(echo "$FOOTER" | tr -d '\n\r' | sed 's/"/\\"/g')
+          # Clean variables for JSON (remove problematic characters)
+          TITLE_CLEAN=$(echo "$TITLE" | tr -d '\n\r' | sed 's/"/\\"/g' | sed 's/TITLE://g' | sed 's/DESC:.*$//' | sed 's/FOOTER:.*$//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+          DESC_CLEAN=$(echo "$DESC" | tr -d '\n\r' | sed 's/"/\\"/g' | sed 's/TITLE:.*$//' | sed 's/DESC://g' | sed 's/FOOTER:.*$//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+          FOOTER_CLEAN=$(echo "$FOOTER" | tr -d '\n\r' | sed 's/"/\\"/g' | sed 's/FOOTER://g' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+          
+          echo "Cleaned Title: $TITLE_CLEAN"
+          echo "Cleaned Desc: $DESC_CLEAN"
+          echo "Cleaned Footer: $FOOTER_CLEAN"
           
           # Send to Discord
           curl -f -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
