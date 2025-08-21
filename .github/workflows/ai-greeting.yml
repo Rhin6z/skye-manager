@@ -215,3 +215,43 @@ jobs:
           echo "✅ Sent $TYPE greeting (AI: ${USE_AI:-false}, Context: $CONTEXT)"
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+      - name: Send Random Sticker
+        run: |
+          echo "🎲 Selecting random sticker..."
+          
+          # Wait a bit before sending sticker (so it appears after greeting)
+          sleep 3
+          
+          # Array of sticker URLs from your server
+          # You need to replace these with actual sticker URLs from your Discord server
+          STICKERS=(
+            "https://cdn.discordapp.com/emojis/1404543938815197306.png"
+            "https://cdn.discordapp.com/emojis/1405277985237368943.png"
+            "https://cdn.discordapp.com/emojis/1405477154095104082.png"
+            "https://cdn.discordapp.com/emojis/1405487683526201404.png"
+            "https://cdn.discordapp.com/emojis/1405546781927936051.png"
+            "https://cdn.discordapp.com/emojis/1405855503858274397.png"
+            "https://cdn.discordapp.com/emojis/1405914196922597549.png"
+            "https://cdn.discordapp.com/emojis/1406065324758929509.png"
+            "https://cdn.discordapp.com/emojis/1406629592839491716.png"
+            "https://cdn.discordapp.com/emojis/1406668584335184003.png"
+            "https://cdn.discordapp.com/emojis/1407858067013369856.png"
+            "https://cdn.discordapp.com/emojis/1407858350334677204.png"
+            "https://cdn.discordapp.com/emojis/1407858765616779396.png"
+            "https://cdn.discordapp.com/emojis/1407859373396590735.png"
+          )
+          
+          # Pick random sticker
+          RANDOM_INDEX=$((RANDOM % ${#STICKERS[@]}))
+          SELECTED_STICKER=${STICKERS[$RANDOM_INDEX]}
+          
+          echo "🎯 Selected sticker: $SELECTED_STICKER"
+          
+          # Send sticker as image embed
+          curl -f -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+               -H "Content-Type: application/json" \
+               --connect-timeout 10 --max-time 15 \
+               -d "{\"embeds\":[{\"image\":{\"url\":\"$SELECTED_STICKER\"}}]}"
+          
+          echo "🎉 Random sticker sent!"
