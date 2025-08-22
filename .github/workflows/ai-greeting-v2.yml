@@ -157,20 +157,21 @@ jobs:
           Weather: WEATHER_INFO_PLACEHOLDER
           
           Requirements:
-          - Write like a real human friend texting gaming buddies
+          - Write like a 100% real human friend texting gaming buddies
+          - Mix Indonesian and English naturally (40% Indo, 60% English)
           - Use NATURAL language mixing - complete thoughts per language, not word-by-word mixing
           - Structure: English greeting/question + Indonesian follow-up/invitation
-          - Use trendy extended words: "yooooo", "wassuppppp", "heyyyy", "chillinnnnn"
-          - Gaming references: valorant, roblox, mobile legends/emel, voice chat/vc
-          - Indonesian slang: gabut, males, capek, seneng, skuy, anjay, mantul, mabar
+          - Use trendy extended words: "yooooo", "wassuppp", "heyyyy", "chillinnnnn"
+          - Gaming references: valorant, roblox, mobile legends/emel/ml, voice chat/vc
+          - Indonesian slang: gabut, malazz, cpekk, seneng, yokk, anjayy, gokill, kocakkk, cokk, coyh
           - Personal touches: actual activities, mood, plans
           - 2 sentences: first English (greeting/question), second Indonesian (invitation/activity)
           
           Examples:
-          yooooo what's gooddddd everyone, how's everyone doing today? gabut nih mau mabar valorant ranked atau ngobrol di vc aja skuy!
-          wassuppppp guys hope y'all are chillinnnnn this morning! udah sarapan belum? yuk main roblox sambil voice chat santai aja
-          heyyyy squad what's the vibeeeee tonight, still awake or what? males tidur nih, siapa mau 1v1 valorant atau ngobrol random di vc?
-          ayooo everyone how was your day, feeling good or nah? weekend vibes nih perfect buat mabar emel push rank bareng!
+          yooooo what's gooddddd everyone, how's everyone doing? gabut nih mau mabar valorant atau vc aja skuy!
+          wassuppppp guys hope y'all are chilling! udah sarapan belum? yuk main roblox sambil ngobrol
+          heyyyy squad what's the vibeeeee tonight? males tidur nih, siapa mau 1v1 valorant atau vc?
+          ayooo how was your day everyone? weekend vibes nih perfect buat mabar emel push rank!
           
           Write ONLY the greeting message - no titles, no formatting, just the casual text!
           EOF
@@ -286,30 +287,30 @@ jobs:
             case "${{ steps.context.outputs.TYPE }}" in
               "morning")
                 if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "monday_motivation" ]]; then
-                  DESC_RAW="wassuppppp beautiful people, how's everyone feeling this monday morning? fresh start nih yuk semangat mabar valorant ranked atau ngobrol di vc skuy${WEATHER_MENTION}!"
+                  DESC_RAW="wassuppppp everyone, how's monday treating y'all? fresh start nih yuk mabar valorant atau ngobrol di vc skuy${WEATHER_MENTION}!"
                 else
-                  DESC_RAW="yooooo good morning squad, hope y'all slept wellll! udah minum kopi belum? perfect time buat main roblox sambil voice chat santai${WEATHER_MENTION}"
+                  DESC_RAW="yooooo good morning squad, hope y'all slept well! udah minum kopi belum? yuk main roblox sambil vc${WEATHER_MENTION}"
                 fi
                 ;;
               "afternoon")
                 if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "hump_day" ]]; then
-                  DESC_RAW="heyyyy everyone how's your wednesday going, feeling the hump day vibes? udah setengah jalan weekend nih yuk celebrate dengan mabar emel push rank${WEATHER_MENTION}!"
+                  DESC_RAW="heyyyy how's your wednesday going? udah setengah jalan weekend nih yuk mabar emel push rank${WEATHER_MENTION}!"
                 else
-                  DESC_RAW="ayooo what's the vibeeeee this afternoon, everyone doing good? agak gabut nih siapa mau ngobrol di vc atau main valorant unrated bareng${WEATHER_MENTION}?"
+                  DESC_RAW="ayooo what's the vibeeeee this afternoon? agak gabut nih siapa mau valorant atau ngobrol di vc${WEATHER_MENTION}?"
                 fi
                 ;;
               "evening")
                 if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "weekend_countdown" ]]; then
-                  DESC_RAW="yooooo friday evening finallyyyy, can y'all feel the weekend energy? besok libur dah perfect time buat gaming marathon roblox atau valorant ranked skuy${WEATHER_MENTION}!"
+                  DESC_RAW="yooooo friday evening finally! besok libur dah perfect buat gaming marathon valorant atau roblox skuy${WEATHER_MENTION}!"
                 else
-                  DESC_RAW="wassup kings and queens how was your day, feeling chill or tired? golden hour vibes nih yuk santai main game sambil ngobrol di vc${WEATHER_MENTION}"
+                  DESC_RAW="wassup how was your day everyone? golden hour vibes nih yuk santai main game sambil vc${WEATHER_MENTION}"
                 fi
                 ;;
               "night")
                 if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "sunday_prep" ]]; then
-                  DESC_RAW="heyyyy night owls how's your sunday evening, ready for tomorrow or nah? weekend ending tapi masih sempat last gaming session bareng di vc${WEATHER_MENTION}!"
+                  DESC_RAW="heyyyy night owls how's sunday evening? weekend ending tapi masih sempat last gaming session di vc${WEATHER_MENTION}!"
                 else
-                  DESC_RAW="ayooo who's still awakeeee, can't sleep or just don't wanna end the day? perfect late night vibes buat cozy valorant atau ngobrol random di vc${WEATHER_MENTION}"
+                  DESC_RAW="ayooo who's still awake? perfect late night vibes buat cozy valorant atau ngobrol random di vc${WEATHER_MENTION}"
                 fi
                 ;;
             esac
