@@ -12,22 +12,12 @@ on:
     - cron: '0 15 * * 6,0'   # 10 PM WIB weekends (3 PM UTC)
   workflow_dispatch:
     inputs:
-      trigger_source:
-        description: 'Source of the trigger (openwrt/manual/test)'
-        required: false
-        default: 'manual'
-        type: string
-      scheduled_time:
-        description: 'Scheduled time from OpenWRT'
-        required: false
-        default: ''
-        type: string
       greeting_type:
         description: 'Select greeting type'
-        required: false
-        default: 'auto'
+        required: true
+        default: 'morning'
         type: choice
-        options: [auto, morning, afternoon, evening, night]
+        options: [morning, afternoon, evening, night]
       force_weather:
         description: 'Force weather check'
         required: false
@@ -45,15 +35,6 @@ jobs:
     timeout-minutes: 8
     
     steps:
-      - name: Log Trigger Source & Setup
-        run: |
-          echo "🔥 Workflow triggered by: ${{ github.event.inputs.trigger_source || 'github_schedule' }}"
-          echo "⏰ Trigger time (WIB): $(TZ='Asia/Jakarta' date)"
-          echo "📅 Scheduled time: ${{ github.event.inputs.scheduled_time || 'N/A' }}"
-          echo "🎯 Greeting type: ${{ github.event.inputs.greeting_type || 'auto' }}"
-          echo "TRIGGER_SOURCE=${{ github.event.inputs.trigger_source || 'github_schedule' }}" >> $GITHUB_ENV
-          echo "SCHEDULED_TIME=${{ github.event.inputs.scheduled_time || '' }}" >> $GITHUB_ENV
-          
       - name: Setup Enhanced Context
         id: context
         run: |
@@ -307,33 +288,32 @@ jobs:
           - Uniqueness seed: UNIQUENESS_PLACEHOLDER
           
           ENHANCED REQUIREMENTS:
-          - CRITICAL: You ARE a human friend, not an AI assistant
-          - Write as if you're personally experiencing the moment and sharing with friends
-          - Use personal thoughts/feelings: "I'm feeling...", "just woke up and...", "been thinking..."
-          - Reference your own activities: "just grabbed coffee", "looking outside", "planning to..."
-          - Natural human imperfections: occasional typos, incomplete thoughts, casual grammar
-          - Language mixing should feel like bilingual person naturally switching
-          - Avoid AI-like descriptions: don't announce weather/time like a reporter
-          - Personal context: mention what you're doing, feeling, planning
-          - Spontaneous thoughts: add random observations or mood descriptions
-          - Friend-to-friend tone: like texting your gaming buddies in group chat
-          - Weather integration: personal reactions "this rain makes me sleepy" not "weather is good"
-          - Time references: "ugh early morning" not "it's morning time"
-          - Real emotions: excitement, tiredness, weekend anticipation, work stress
-          - Gaming context: what you want to play, how you're feeling about games
-          - Length: Natural conversation length, not structured announcements
-          - NO PLACEHOLDERS: Use actual context values, never leave placeholders like WEATHER_xxx
+          - CRITICAL: Reference the ACTUAL current day/time from context above
+          - Language flow: Start with English then gradually blend Indonesian, natural transitions only
+          - Slang usage: Pick ONE language style per message, don't force mixing if unnatural
+          - English slang group: fr, lowkey, deym, dayumm (keep consistent within English parts)
+          - Indonesian slang group: anjir, dikit, santuy, cuy, gais, skuy (keep consistent within Indo parts)
+          - Transition words that work: "terus" (then), "dulu" (first), "abis itu" (after that)
+          - Gaming terms: Use sparingly and naturally - mmr, noob, mabar, queue, respawn
+          - Tone: genuine friend conversation, not trying-hard mixing languages
+          - Weather/season integration: Only when natural, don't force it
+          - International friendly: Readable for non-Indonesian speakers
+          - Length: 2-3 lines max, 25 words per line
+          - TITLE: Creative with emoji, avoid basic time labels
+          - DESC: No dashes, use natural punctuation
+          - Next-day mentions: Natural for evening/night only
+          - Make it feel like real friend texting, not corporate announcement
           
-          ENHANCED EXAMPLES (human-like, personal):
-          ugh friday morning but lowkey excited, besok weekend finally! been waiting for this
-          just grabbed coffee and looking outside, hujan lagi deh perfect excuse to stay in and game
-          afternoon guys hope y'all doing good, udah lunch? feeling lazy might hop on later
-          bruh still awake at this hour lol, besok bangun siang deh definitely sleeping in
-          wednesday already? time flies so fast, rasanya baru kemarin senin anjir
-          sunday vibes taking it slow today, tomorrow back to reality but today we chill
-          this rain makes me so sleepy fr, perfect weather for cozy gaming sessions
-          woke up and it's sunny! mood instantly better, siap productive hari ini cuy  
-          thursday night thinking about weekend plans, siapa mau mabar weekend nanti?
+          ENHANCED EXAMPLES (don't copy, improve upon):
+          friday evening energy lowkey excited for weekend, besok weekend udah mulai santuy banget cuy
+          good morning squad hope everyone slept well, siap grind hari ini atau masih butuh coffee dulu gais  
+          afternoon check how's the day going fr, udah makan siang belum terus lanjut mabar dikit yuk
+          late night vibes still grinding or time to rest, besok respawn lagi with full energy santuy
+          wednesday feeling that hump day energy, separuh jalan nih brodie tinggal dikit lagi weekend
+          sunday prep mode taking it easy today, tomorrow back to the grind tapi hari ini santai dulu
+          rainy evening perfect for indoor gaming, cozy vibes banget ini cuaca enak buat nongkrong di vc
+          sunny morning hits different today, semangat pagi dengan cuaca cerah gini mood langsung naik
+          thursday almost weekend preview time, besok jumat udah bisa ngerasain weekend loading cuy
           
           CREATIVE TITLE EXAMPLES:
           🌅 Monday Motivation Loading
@@ -514,48 +494,48 @@ jobs:
               "morning")
                 if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "monday_motivation" ]]; then
                   TITLE="🌅 Monday Fresh Start"
-                  DESC_RAW="ugh monday but honestly feeling kinda optimistic today$WEATHER_MENTION might actually be productive lol"
+                  DESC_RAW="Monday morning energy$WEATHER_MENTION time to crush this week! Semangat pagi dengan mindset baru cuy let's get it"
                 else
                   TITLE="🌅 Morning Squad Online"
-                  DESC_RAW="morning guys hope y'all slept better than me$WEATHER_MENTION lowkey need coffee but we move"
+                  DESC_RAW="Good morning legends hope everyone slept well$WEATHER_MENTION! Siap warm up dulu atau langsung action santuy"
                 fi
-                FOOTER="coffee dependency activated"
+                FOOTER="enhanced coffee time"
                 ;;
               "afternoon") 
                 if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "hump_day" ]]; then
                   TITLE="☀️ Hump Day Checkpoint"
-                  DESC_RAW="wednesday already wtf$WEATHER_MENTION feels like monday was yesterday but hey almost weekend"
+                  DESC_RAW="Wednesday afternoon check$WEATHER_MENTION halfway through the week! Momentum building terus lanjut grind dikit gais"
                 else
                   TITLE="☀️ Midday Recharge Zone"
-                  DESC_RAW="afternoon everyone how's it going$WEATHER_MENTION honestly kinda hungry might get food later"
+                  DESC_RAW="Afternoon crew hope lunch was good$WEATHER_MENTION! Time to recharge terus back to action santuy"
                 fi
-                FOOTER="lunch thoughts activated"
+                FOOTER="enhanced midday vibes"
                 ;;
               "evening")
                 if [[ "${{ steps.context.outputs.DAY_NUM }}" == "5" ]]; then
                   TITLE="🌆 Weekend Loading Tonight" 
-                  DESC_RAW="friday finally wtf took forever$WEATHER_MENTION weekend vibes incoming feel like celebrating already"
+                  DESC_RAW="Friday evening countdown$WEATHER_MENTION weekend mode activated! Besok weekend udah mulai time to celebrate cuy"
                 elif [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "weekend_countdown" ]]; then
                   TITLE="🌆 Friday Night Preview"
-                  DESC_RAW="friday evening energy different$WEATHER_MENTION besok weekend sudah time to unwind fr"
+                  DESC_RAW="Friday vibes incoming$WEATHER_MENTION weekend almost here! Besok weekend udah mulai brodie celebration mode"
                 else
                   TITLE="🌆 Golden Hour Online"
-                  DESC_RAW="evening guys how was today$WEATHER_MENTION honestly feeling pretty chill rn might just vibe"
+                  DESC_RAW="Evening check how was the day$WEATHER_MENTION? Golden hour hits different, santai dulu sebelum night activities"
                 fi
-                FOOTER="weekend countdown initiated"
+                FOOTER="enhanced evening feels"
                 ;;
               "night")
                 if [[ "${{ steps.context.outputs.WEEKEND_TRANSITION }}" == "weekend_starts" ]]; then
                   TITLE="🌙 Weekend Mode Activated"
-                  DESC_RAW="friday night hits different$WEATHER_MENTION weekend officially here time to actually relax for once"
+                  DESC_RAW="Friday night squad$WEATHER_MENTION weekend officially started! Besok weekend penuh celebration time fr"
                 elif [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "sunday_prep" ]]; then
                   TITLE="🌜 Sunday Wind Down"
-                  DESC_RAW="sunday night feels bittersweet$WEATHER_MENTION weekend ending but honestly was pretty good"
+                  DESC_RAW="Sunday night taking it easy$WEATHER_MENTION prep for the week atau masih gabut mode? Either way santuy"
                 else
                   TITLE="🌙 Night Owl Territory"
-                  DESC_RAW="still awake lol$WEATHER_MENTION either can't sleep or don't want to end the day yet relatable"
+                  DESC_RAW="Late night energy$WEATHER_MENTION still grinding or time to rest? Sweet dreams when ready gais"
                 fi
-                FOOTER="nocturnal thoughts active"
+                FOOTER="enhanced night vibes"
                 ;;
             esac
           fi
