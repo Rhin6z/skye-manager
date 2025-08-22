@@ -1,15 +1,14 @@
 name: BMKG Earthquake Monitor
 
 on:
-  workflow_dispatch: # Manual trigger
-  schedule:
-    # Check every 30 minutes for new earthquake data
-    - cron: '*/30 * * * *'
+  workflow_dispatch: # Manual trigger only
 
 env:
   GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
   DISCORD_WEBHOOK_BMKG: ${{ secrets.DISCORD_WEBHOOK_BMKG }}
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+permissions:
+  contents: write
 
 jobs:
   earthquake-monitor:
@@ -19,7 +18,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ github.token }}
 
     - name: Setup Python environment
       uses: actions/setup-python@v4
