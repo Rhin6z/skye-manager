@@ -649,18 +649,43 @@ jobs:
           echo "Footer: $FOOTER_CLEAN"
           echo "AI Used: ${{ steps.ai_generation.outputs.USE_AI }}"
           echo "Weather: ${{ steps.weather.outputs.WEATHER_AVAILABLE }}"
+          echo "Color: $COLOR"
+          echo "Thumb: $THUMB"
+          
+          # Validate variables before Python
+          if [[ -z "$COLOR" ]]; then
+            COLOR=16766720  # Default color
+          fi
+          if [[ -z "$THUMB" ]]; then
+            THUMB="1f305"   # Default thumbnail
+          fi
+          if [[ -z "$TIMESTAMP" ]]; then
+            TIMESTAMP=$(TZ='Asia/Jakarta' date -u +%Y-%m-%dT%H:%M:%S.000Z)
+          fi
+          
+          echo "Validated - Color: $COLOR, Thumb: $THUMB"
           
           # Create JSON using Python for better escaping
           TITLE_CLEAN="$TITLE_CLEAN" DESC_CLEAN="$DESC_CLEAN" FOOTER_CLEAN="$FOOTER_CLEAN" COLOR="$COLOR" THUMB="$THUMB" TIMESTAMP="$TIMESTAMP" python3 << 'PYTHON_EOF'
           import json
           import os
           
-          title = os.environ.get('TITLE_CLEAN', '')
-          desc = os.environ.get('DESC_CLEAN', '')
-          footer = os.environ.get('FOOTER_CLEAN', '')
-          color = int(os.environ.get('COLOR', '16766720'))
+          # Get environment variables with defaults
+          title = os.environ.get('TITLE_CLEAN', 'Default Title')
+          desc = os.environ.get('DESC_CLEAN', 'Default description')
+          footer = os.environ.get('FOOTER_CLEAN', 'enhanced ai vibes')
+          
+          # Handle color with validation
+          color_str = os.environ.get('COLOR', '16766720')
+          try:
+              color = int(color_str) if color_str.strip() else 16766720
+          except (ValueError, AttributeError):
+              color = 16766720
+              
           thumb = os.environ.get('THUMB', '1f305')
           timestamp = os.environ.get('TIMESTAMP', '')
+          
+          print(f"Debug: title='{title}', color={color}, thumb='{thumb}'")
           
           # Create Discord embed
           embed = {
@@ -680,10 +705,17 @@ jobs:
           payload = {"embeds": [embed]}
           
           # Write to file
-          with open('/tmp/discord_payload.json', 'w', encoding='utf-8') as f:
-              json.dump(payload, f, ensure_ascii=False)
-          
-          print("JSON payload created successfully")
+          try:
+              with open('/tmp/discord_payload.json', 'w', encoding='utf-8') as f:
+                  json.dump(payload, f, ensure_ascii=False)
+              print("JSON payload created successfully")
+          except Exception as e:
+              print(f"Error creating JSON: {e}")
+              # Create fallback JSON
+              simple_payload = {"content": f"{title}\n{desc}"}
+              with open('/tmp/discord_payload.json', 'w') as f:
+                  json.dump(simple_payload, f)
+              print("Fallback JSON created")
           PYTHON_EOF
           
           # Read payload length for logging
