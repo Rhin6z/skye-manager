@@ -257,8 +257,7 @@ jobs:
                     })
                 
                 payload = {
-                    'username': 'BMKG Earthquake Monitor',
-                    'avatar_url': 'https://em-content.zobj.net/source/apple/391/earth-globe-asia-australia_1f30f.png',
+                    'username': 'Skye Earthquake Monitor',
                     'embeds': [embed]
                 }
                 
