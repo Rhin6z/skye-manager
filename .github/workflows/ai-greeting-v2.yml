@@ -70,7 +70,22 @@ jobs:
           
           # Determine greeting type
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            TYPE="${{ github.event.inputs.greeting_type }}"
+            MANUAL_TYPE="${{ github.event.inputs.greeting_type }}"
+            if [[ "$MANUAL_TYPE" == "auto" ]]; then
+              # Auto-detect based on current time
+              HOUR=$(date +%H | sed 's/^0*//')
+              if [[ $HOUR -ge 5 && $HOUR -lt 12 ]]; then
+                TYPE="morning"
+              elif [[ $HOUR -ge 12 && $HOUR -lt 17 ]]; then
+                TYPE="afternoon" 
+              elif [[ $HOUR -ge 17 && $HOUR -lt 21 ]]; then
+                TYPE="evening"
+              else
+                TYPE="night"
+              fi
+            else
+              TYPE="$MANUAL_TYPE"
+            fi
           else
             case "${{ github.event.schedule }}" in
               "0 0 * * 1-5"|"0 0 * * 6,0") TYPE="morning" ;;
@@ -78,9 +93,7 @@ jobs:
               "0 10 * * 1-5"|"0 10 * * 6,0") TYPE="evening" ;;
               "0 15 * * 1-5"|"0 15 * * 6,0") TYPE="night" ;;
             esac
-          fi
-          
-          # Context detection
+          fi          # Context detection
           if [[ $DAY_NUM -eq 6 || $DAY_NUM -eq 7 ]]; then
             CONTEXT="weekend"
           else
