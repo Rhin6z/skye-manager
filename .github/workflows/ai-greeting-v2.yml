@@ -584,7 +584,7 @@ jobs:
           echo "📤 Sending enhanced Discord message..."
           
           # Prepare final content with dev attribution
-          FINAL_DESC="${{ steps.ai_generation.outputs.DESC_RAW }}\\n> enhanced by server dev - <@399393175904714752>"
+          FINAL_DESC="${{ steps.ai_generation.outputs.DESC_RAW }}"
           
           # Enhanced color scheme based on context and weather
           case "${{ steps.context.outputs.TYPE }}" in
@@ -672,8 +672,11 @@ jobs:
           
           # Get environment variables with defaults
           title = os.environ.get('TITLE_CLEAN', 'Default Title')
-          desc = os.environ.get('DESC_CLEAN', 'Default description')
+          desc_raw = os.environ.get('DESC_CLEAN', 'Default description')
           footer = os.environ.get('FOOTER_CLEAN', 'enhanced ai vibes')
+          
+          # Add proper attribution with newline
+          desc = f"{desc_raw}\n> enhanced by server dev guanteng - <@399393175904714752>"
           
           # Handle color with validation
           color_str = os.environ.get('COLOR', '16766720')
@@ -711,8 +714,9 @@ jobs:
               print("JSON payload created successfully")
           except Exception as e:
               print(f"Error creating JSON: {e}")
-              # Create fallback JSON
-              simple_payload = {"content": f"{title}\n{desc}"}
+              # Create fallback JSON with proper attribution
+              fallback_desc = f"{desc_raw}\n> enhanced by server dev guanteng - <@399393175904714752>"
+              simple_payload = {"content": f"{title}\n{fallback_desc}"}
               with open('/tmp/discord_payload.json', 'w') as f:
                   json.dump(simple_payload, f)
               print("Fallback JSON created")
