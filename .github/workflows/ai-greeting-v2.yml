@@ -1,4 +1,4 @@
-name: Clean AI Discord Greeting
+name: Fixed AI Discord Greeting
 
 on:
   schedule:
@@ -12,12 +12,22 @@ on:
     - cron: '0 15 * * 6,0'   # 10 PM WIB weekends
   workflow_dispatch:
     inputs:
+      trigger_source:
+        description: 'Source (openwrt/manual/test)'
+        required: false
+        default: 'manual'
+        type: string
       greeting_type:
-        description: 'Select greeting type'
+        description: 'Greeting type'
         required: false
         default: 'auto'
         type: choice
         options: [auto, morning, afternoon, evening, night]
+      force_weather:
+        description: 'Force weather check'
+        required: false
+        default: false
+        type: boolean
       test_mode:
         description: 'Test mode'
         required: false
@@ -27,13 +37,20 @@ on:
 jobs:
   send-greeting:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 6
     
     steps:
       - name: Setup Context
         id: context
         run: |
           export TZ='Asia/Jakarta'
+          
+          # Check if running from OpenWrt (no delay needed)
+          OPENWRT_MODE=false
+          if command -v opkg >/dev/null 2>&1 || [[ -f /etc/openwrt_release ]] || [[ "${{ github.event.inputs.trigger_source }}" == "openwrt" ]]; then
+            OPENWRT_MODE=true
+            echo "🏠 OpenWrt detected - optimized timing mode"
+          fi
           
           # Time info
           CURRENT_DAY=$(date +%A)
@@ -90,31 +107,63 @@ jobs:
           echo "CURRENT_TIME=$CURRENT_TIME" >> $GITHUB_OUTPUT
           echo "SPECIAL_CONTEXT=$SPECIAL_CONTEXT" >> $GITHUB_OUTPUT
           echo "DAY_NUM=$DAY_NUM" >> $GITHUB_OUTPUT
+          echo "OPENWRT_MODE=$OPENWRT_MODE" >> $GITHUB_OUTPUT
           
           echo "🎯 Context: $TYPE on $CURRENT_DAY ($SPECIAL_CONTEXT)"
+
+      - name: Get Weather (Optional)
+        id: weather
+        run: |
+          WEATHER_INFO=""
+          FETCH_WEATHER=false
+          
+          # Only fetch weather if forced or random 25% chance
+          if [[ "${{ github.event.inputs.force_weather }}" == "true" ]]; then
+            FETCH_WEATHER=true
+          elif [[ $((RANDOM % 4)) -eq 0 ]]; then
+            FETCH_WEATHER=true
+          fi
+          
+          if [[ "$FETCH_WEATHER" == "true" ]]; then
+            echo "🌤️ Fetching weather..."
+            WEATHER_RAW=$(curl -s "http://wttr.in/Jakarta?format=%t+%C" --connect-timeout 5 --max-time 10 || echo "")
+            
+            if [[ -n "$WEATHER_RAW" && "$WEATHER_RAW" != *"Unknown"* ]]; then
+              # Simple weather parsing
+              TEMP=$(echo "$WEATHER_RAW" | cut -d' ' -f1)
+              DESC=$(echo "$WEATHER_RAW" | cut -d' ' -f2-)
+              
+              if [[ -n "$TEMP" && "$TEMP" != "+Unknown" ]]; then
+                WEATHER_INFO=" with $TEMP $DESC"
+                echo "✅ Weather: $WEATHER_INFO"
+              fi
+            fi
+          fi
+          
+          echo "WEATHER_INFO=$WEATHER_INFO" >> $GITHUB_OUTPUT
 
       - name: Generate AI Greeting
         id: ai_generation
         run: |
           echo "🤖 Generating AI greeting..."
           
-          # Create prompt
+          # Create simplified prompt
           cat > /tmp/prompt.txt << 'EOF'
-          Create a natural Discord greeting for Indonesian gaming friends.
+          Create a casual Discord greeting for Indonesian gaming friends.
           
           Context: TYPE_PLACEHOLDER on CONTEXT_PLACEHOLDER
           Time: CURRENT_DAY_PLACEHOLDER (CURRENT_DATE_PLACEHOLDER) at CURRENT_TIME_PLACEHOLDER WIB
           Special: SPECIAL_CONTEXT_PLACEHOLDER
+          Weather: WEATHER_INFO_PLACEHOLDER
           
           Requirements:
-          - Write like a human friend texting gaming buddies
+          - Write like a real human friend texting gaming buddies
           - Mix Indonesian and English naturally (60% Indo, 40% English)
-          - Use trendy slang: "yooooo", "wassuppppp", "what's gooddddd", "heyyyy"
+          - Use trendy extended words: "yooooo", "wassuppppp", "heyyyy", "chillinnnnn"
           - Gaming references: valorant, roblox, mobile legends/emel
           - Indonesian slang: gabut, males, capek, seneng, skuy, anjay, mantul
-          - Extended words: "chillinnnnn", "laterrrr", "todayyyy", "boreddd"
           - Personal touches: "just woke up", "feeling lazy", "need coffee"
-          - Keep it 1-2 sentences, natural conversation style
+          - Keep it 1-2 natural sentences, like texting friends
           
           Examples:
           yooooo what's gooddddd everyone!! hope y'all are chillinnnnn today, might hop on valorant laterrrr
@@ -122,7 +171,7 @@ jobs:
           heyyyy guyssss what's the vibeeeee? gabut bgt might play some roblox or emel push rank anyone???
           woiiii just bangun tidur and feeling lazy deymm, perfect weather buat cozy gaming seharian
           
-          Write naturally - no formatting needed!
+          Write ONLY the greeting message - no titles, no formatting, just the casual text!
           EOF
           
           # Replace placeholders
@@ -132,8 +181,9 @@ jobs:
           sed -i "s/CURRENT_DATE_PLACEHOLDER/${{ steps.context.outputs.CURRENT_DATE }}/g" /tmp/prompt.txt
           sed -i "s/CURRENT_TIME_PLACEHOLDER/${{ steps.context.outputs.CURRENT_TIME }}/g" /tmp/prompt.txt
           sed -i "s/SPECIAL_CONTEXT_PLACEHOLDER/${{ steps.context.outputs.SPECIAL_CONTEXT }}/g" /tmp/prompt.txt
+          sed -i "s/WEATHER_INFO_PLACEHOLDER/${{ steps.weather.outputs.WEATHER_INFO }}/g" /tmp/prompt.txt
           
-          # Try AI generation
+          # Try AI generation with simplified approach
           AI_SUCCESS=false
           
           python3 << 'PYTHON_EOF'
@@ -141,6 +191,7 @@ jobs:
           import requests
           import os
           import sys
+          import re
           
           try:
               with open('/tmp/prompt.txt', 'r') as f:
@@ -156,7 +207,7 @@ jobs:
                   "contents": [{"parts": [{"text": prompt}]}],
                   "generationConfig": {
                       "temperature": 0.9,
-                      "maxOutputTokens": 200,
+                      "maxOutputTokens": 300,
                       "topP": 0.95
                   }
               }
@@ -166,11 +217,37 @@ jobs:
               if response.status_code == 200:
                   data = response.json()
                   if 'candidates' in data and len(data['candidates']) > 0:
-                      ai_text = data['candidates'][0]['content']['parts'][0]['text'].strip()
-                      with open('/tmp/ai_response.txt', 'w') as f:
-                          f.write(ai_text)
-                      print("✅ AI success")
-                      sys.exit(0)
+                      ai_text = data['candidates'][0]['content']['parts'][0]['text']
+                      
+                      # SIMPLIFIED PARSING - just clean the text
+                      clean_text = ai_text.strip()
+                      
+                      # Remove any markdown formatting
+                      clean_text = re.sub(r'\*\*([^*]+)\*\*', r'\1', clean_text)
+                      clean_text = re.sub(r'\*([^*]+)\*', r'\1', clean_text)
+                      clean_text = re.sub(r'`([^`]+)`', r'\1', clean_text)
+                      
+                      # Remove any structured format attempts
+                      lines = clean_text.split('\n')
+                      for line in lines:
+                          line = line.strip()
+                          # Skip format labels and empty lines
+                          if (line and not line.startswith(('TITLE:', 'DESC:', 'FOOTER:', 'Message:', '##', '#', '-', '*')) 
+                              and not line.lower().startswith(('greeting:', 'response:', 'output:'))
+                              and len(line) > 20):
+                              # Found our greeting
+                              with open('/tmp/ai_response.txt', 'w', encoding='utf-8') as f:
+                                  f.write(line)
+                              print("✅ AI success")
+                              sys.exit(0)
+                      
+                      # If no good line found, use first substantial line
+                      substantial_lines = [l.strip() for l in lines if len(l.strip()) > 20]
+                      if substantial_lines:
+                          with open('/tmp/ai_response.txt', 'w', encoding='utf-8') as f:
+                              f.write(substantial_lines[0])
+                          print("✅ AI success (fallback)")
+                          sys.exit(0)
               
               sys.exit(1)
               
@@ -179,77 +256,74 @@ jobs:
               sys.exit(1)
           PYTHON_EOF
           
+          # Check AI result
           if [[ $? -eq 0 && -s /tmp/ai_response.txt ]]; then
-            AI_SUCCESS=true
             AI_TEXT=$(cat /tmp/ai_response.txt)
             echo "🎯 AI generated: $AI_TEXT"
             
-            # Smart parsing
-            if [[ ${#AI_TEXT} -gt 20 && ${#AI_TEXT} -lt 300 ]]; then
-              # Good length, use as description
+            # Validate AI text
+            if [[ ${#AI_TEXT} -gt 25 && ${#AI_TEXT} -lt 400 ]]; then
               DESC_RAW="$AI_TEXT"
-              case "${{ steps.context.outputs.TYPE }}" in
-                "morning") TITLE="🌅 Morning Vibes" ;;
-                "afternoon") TITLE="☀️ Afternoon Check" ;;
-                "evening") TITLE="🌆 Evening Squad" ;;
-                "night") TITLE="🌙 Night Gaming" ;;
-              esac
-              FOOTER="chill gaming vibes"
               USE_AI=true
+              echo "✅ AI text validated and accepted"
             else
-              AI_SUCCESS=false
+              echo "⚠️ AI text length invalid: ${#AI_TEXT} chars"
+              USE_AI=false
             fi
+          else
+            echo "❌ AI generation failed"
+            USE_AI=false
           fi
           
-          # Fallback if AI fails
-          if [[ "$AI_SUCCESS" != "true" ]]; then
-            echo "🎲 Using fallback..."
-            USE_AI=false
+          # Enhanced fallback system
+          if [[ "$USE_AI" != "true" ]]; then
+            echo "🎲 Using enhanced fallback..."
+            
+            # Weather integration for fallback
+            WEATHER_MENTION="${{ steps.weather.outputs.WEATHER_INFO }}"
             
             case "${{ steps.context.outputs.TYPE }}" in
               "morning")
                 if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "monday_motivation" ]]; then
-                  TITLE="🌅 Monday Fresh Start"
-                  DESC_RAW="yooooo what's gooddddd beautiful people! monday lagi tapi honestly feeling optimistic maybe actually productive today (atau valorant ranked aja skuy)"
+                  DESC_RAW="yooooo what's gooddddd beautiful people! monday lagi tapi honestly feeling optimistic${WEATHER_MENTION} maybe actually productive today (atau valorant ranked aja skuy)"
                 else
-                  TITLE="🌅 Morning Squad Online"
-                  DESC_RAW="heyyyy gamerssss hope y'all slept wellll! butuh kopi dulu then maybe some roblox chillin or valorant unrated sambil ngobrol"
+                  DESC_RAW="heyyyy gamerssss hope y'all slept wellll! butuh kopi dulu${WEATHER_MENTION} then maybe some roblox chillin or valorant unrated sambil ngobrol"
                 fi
                 ;;
               "afternoon")
                 if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "hump_day" ]]; then
-                  TITLE="☀️ Hump Day Checkpoint"
-                  DESC_RAW="wassuppppp squad! wednesday already wtfff feels like monday was yesterday but weekend almost here dah time flies so fast anjay"
+                  DESC_RAW="wassuppppp squad! wednesday already wtfff${WEATHER_MENTION} feels like monday was yesterday but weekend almost here dah time flies so fast anjay"
                 else
-                  TITLE="☀️ Afternoon Recharge"
-                  DESC_RAW="ayooo what's the vibeeeee today everyone? honestly agak gabut need some gaming therapy fr siapa mau push rank emel laterrrr?"
+                  DESC_RAW="ayooo what's the vibeeeee today everyone? honestly agak gabut${WEATHER_MENTION} need some gaming therapy fr siapa mau push rank emel laterrrr?"
                 fi
                 ;;
               "evening")
                 if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "weekend_countdown" ]]; then
-                  TITLE="🌆 Friday Night Preview"
-                  DESC_RAW="yooooo friday evening finallyyyy! weekend vibes incoming besok libur dah time to grind valorant ranked or main roblox seharian skuy"
+                  DESC_RAW="yooooo friday evening finallyyyy! weekend vibes incoming${WEATHER_MENTION} besok libur dah time to grind valorant ranked or main roblox seharian skuy"
                 else
-                  TITLE="🌆 Golden Hour Squad"
-                  DESC_RAW="wassup kings and queensss how was todayyyy? feeling chill rn might just unrated val sambil ngobrol or 1v1 anyone???"
+                  DESC_RAW="wassup kings and queensss how was todayyyy? feeling chill rn${WEATHER_MENTION} might just unrated val sambil ngobrol or 1v1 anyone???"
                 fi
                 ;;
               "night")
                 if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "sunday_prep" ]]; then
-                  TITLE="🌜 Sunday Wind Down"
-                  DESC_RAW="heyyyy squad sunday night feels bittersweettt weekend ending tapi was pretty good sih last gaming session anyone before reality check besok?"
+                  DESC_RAW="heyyyy squad sunday night feels bittersweettt${WEATHER_MENTION} weekend ending tapi was pretty good sih last gaming session anyone before reality check besok?"
                 else
-                  TITLE="🌙 Night Owl Territory"
-                  DESC_RAW="ayooo who's still awakeeee??? either gabisa tidur or don't wanna end the day perfect time for some cozy valorant or roblox tower of hell"
+                  DESC_RAW="ayooo who's still awakeeee??? either gabisa tidur or don't wanna end the day${WEATHER_MENTION} perfect time for some cozy valorant or roblox tower of hell"
                 fi
                 ;;
             esac
-            FOOTER="nocturnal gaming sessions activate"
           fi
+          
+          # Generate title based on type
+          case "${{ steps.context.outputs.TYPE }}" in
+            "morning") TITLE="🌅 Morning Squad Energy" ;;
+            "afternoon") TITLE="☀️ Afternoon Check-in" ;;
+            "evening") TITLE="🌆 Evening Chill Mode" ;;
+            "night") TITLE="🌙 Night Owl Territory" ;;
+          esac
           
           echo "TITLE=$TITLE" >> $GITHUB_OUTPUT
           echo "DESC_RAW=$DESC_RAW" >> $GITHUB_OUTPUT
-          echo "FOOTER=$FOOTER" >> $GITHUB_OUTPUT
           echo "USE_AI=$USE_AI" >> $GITHUB_OUTPUT
           
         env:
@@ -268,19 +342,18 @@ jobs:
             "night") COLOR=8947848 ;;     # Dark blue
           esac
           
-          # Create JSON payload
+          # Get content
           TITLE="${{ steps.ai_generation.outputs.TITLE }}"
           DESC="${{ steps.ai_generation.outputs.DESC_RAW }}"
-          FOOTER="${{ steps.ai_generation.outputs.FOOTER }}"
           TIMESTAMP=$(TZ='Asia/Jakarta' date -u +%Y-%m-%dT%H:%M:%S.000Z)
           
+          # Create JSON with Python for proper escaping
           python3 << 'PYTHON_EOF'
           import json
           import os
           
           title = os.environ.get('TITLE', 'Gaming Squad')
           desc_raw = os.environ.get('DESC', 'What\'s good everyone!')
-          footer = os.environ.get('FOOTER', 'chill gaming vibes')
           color = int(os.environ.get('COLOR', '16766720'))
           timestamp = os.environ.get('TIMESTAMP', '')
           
@@ -295,7 +368,7 @@ jobs:
                   "url": "https://twemoji.maxcdn.com/v/latest/72x72/1f305.png"
               },
               "footer": {
-                  "text": footer,
+                  "text": "chill gaming vibes",
                   "icon_url": "https://files.catbox.moe/npfh4e.jpg"
               },
               "timestamp": timestamp
@@ -320,7 +393,6 @@ jobs:
         env:
           TITLE: ${{ steps.ai_generation.outputs.TITLE }}
           DESC: ${{ steps.ai_generation.outputs.DESC_RAW }}
-          FOOTER: ${{ steps.ai_generation.outputs.FOOTER }}
           COLOR: ${{ env.COLOR }}
           TIMESTAMP: ${{ env.TIMESTAMP }}
 
@@ -331,9 +403,10 @@ jobs:
           echo "================================"
           echo "Title: ${{ steps.ai_generation.outputs.TITLE }}"
           echo "Description: ${{ steps.ai_generation.outputs.DESC_RAW }}"
-          echo "Footer: ${{ steps.ai_generation.outputs.FOOTER }}"
           echo "AI Used: ${{ steps.ai_generation.outputs.USE_AI }}"
+          echo "Weather: ${{ steps.weather.outputs.WEATHER_INFO }}"
           echo "Context: ${{ steps.context.outputs.TYPE }} (${{ steps.context.outputs.SPECIAL_CONTEXT }})"
+          echo "OpenWrt Mode: ${{ steps.context.outputs.OPENWRT_MODE }}"
           echo "================================"
           echo "🧪 Test complete - no message sent"
 
@@ -341,24 +414,49 @@ jobs:
         if: ${{ github.event.inputs.test_mode != 'true' }}
         run: |
           echo "🎲 Sending random sticker..."
-          sleep 3
           
-          STICKERS=(
-            "https://media.discordapp.net/stickers/1404543938815197306.png"
-            "https://media.discordapp.net/stickers/1405277985237368943.png"
-            "https://media.discordapp.net/stickers/1405477154095104082.png"
-            "https://media.discordapp.net/stickers/1405487683526201404.png"
-            "https://media.discordapp.net/stickers/1405546781927936051.png"
-            "https://media.discordapp.net/stickers/1405855503858274397.png"
-            "https://media.discordapp.net/stickers/1405914196922597549.png"
-            "https://media.discordapp.net/stickers/1406065324758929509.png"
-            "https://media.discordapp.net/stickers/1406629592839491716.png"
-            "https://media.discordapp.net/stickers/1406668584335184003.png"
-            "https://media.discordapp.net/stickers/1407858067013369856.png"
-            "https://media.discordapp.net/stickers/1407858350334677204.png"
-            "https://media.discordapp.net/stickers/1407858765616779396.png"
-            "https://media.discordapp.net/stickers/1407859373396590735.png"
-          )
+          # Check if OpenWrt mode (no delay needed)
+          if [[ "${{ steps.context.outputs.OPENWRT_MODE }}" == "true" ]]; then
+            echo "🏠 OpenWrt mode - sending sticker immediately"
+            sleep 1
+          else
+            echo "⏰ Standard delay for sticker..."
+            sleep 3
+          fi
+          
+          # Context-aware stickers
+          case "${{ steps.context.outputs.TYPE }}" in
+            "morning")
+              STICKERS=(
+                "https://media.discordapp.net/stickers/1404543938815197306.png"
+                "https://media.discordapp.net/stickers/1405277985237368943.png"
+                "https://media.discordapp.net/stickers/1405477154095104082.png"
+              )
+              ;;
+            "afternoon")
+              STICKERS=(
+                "https://media.discordapp.net/stickers/1405487683526201404.png"
+                "https://media.discordapp.net/stickers/1405546781927936051.png"
+                "https://media.discordapp.net/stickers/1405855503858274397.png"
+              )
+              ;;
+            "evening")
+              STICKERS=(
+                "https://media.discordapp.net/stickers/1405914196922597549.png"
+                "https://media.discordapp.net/stickers/1406065324758929509.png"
+                "https://media.discordapp.net/stickers/1406629592839491716.png"
+              )
+              ;;
+            "night")
+              STICKERS=(
+                "https://media.discordapp.net/stickers/1406668584335184003.png"
+                "https://media.discordapp.net/stickers/1407858067013369856.png"
+                "https://media.discordapp.net/stickers/1407858350334677204.png"
+                "https://media.discordapp.net/stickers/1407858765616779396.png"
+                "https://media.discordapp.net/stickers/1407859373396590735.png"
+              )
+              ;;
+          esac
           
           RANDOM_INDEX=$((RANDOM % ${#STICKERS[@]}))
           SELECTED_STICKER=${STICKERS[$RANDOM_INDEX]}
@@ -368,3 +466,17 @@ jobs:
                -d "{\"content\":\"$SELECTED_STICKER\"}"
           
           echo "🎉 Sticker sent!"
+
+      - name: Execution Summary
+        run: |
+          echo "📊 EXECUTION SUMMARY"
+          echo "================================"
+          echo "🕐 Time: ${{ steps.context.outputs.CURRENT_TIME }} WIB (${{ steps.context.outputs.CURRENT_DAY }})"
+          echo "🎯 Type: ${{ steps.context.outputs.TYPE }} (${{ steps.context.outputs.CONTEXT }})"
+          echo "🌟 Special: ${{ steps.context.outputs.SPECIAL_CONTEXT }}"
+          echo "🌤️ Weather: ${{ steps.weather.outputs.WEATHER_INFO }}"
+          echo "🤖 AI Success: ${{ steps.ai_generation.outputs.USE_AI }}"
+          echo "🏠 OpenWrt Mode: ${{ steps.context.outputs.OPENWRT_MODE }}"
+          echo "🧪 Test Mode: ${{ github.event.inputs.test_mode }}"
+          echo "================================"
+          echo "✅ Fixed greeting workflow complete!"
