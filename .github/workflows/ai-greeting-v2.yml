@@ -12,12 +12,22 @@ on:
     - cron: '0 15 * * 6,0'   # 10 PM WIB weekends (3 PM UTC)
   workflow_dispatch:
     inputs:
+      trigger_source:
+        description: 'Source of the trigger (openwrt/manual/test)'
+        required: false
+        default: 'manual'
+        type: string
+      scheduled_time:
+        description: 'Scheduled time from OpenWRT'
+        required: false
+        default: ''
+        type: string
       greeting_type:
         description: 'Select greeting type'
-        required: true
-        default: 'morning'
+        required: false
+        default: 'auto'
         type: choice
-        options: [morning, afternoon, evening, night]
+        options: [auto, morning, afternoon, evening, night]
       force_weather:
         description: 'Force weather check'
         required: false
@@ -35,6 +45,15 @@ jobs:
     timeout-minutes: 8
     
     steps:
+      - name: Log Trigger Source & Setup
+        run: |
+          echo "🔥 Workflow triggered by: ${{ github.event.inputs.trigger_source || 'github_schedule' }}"
+          echo "⏰ Trigger time (WIB): $(TZ='Asia/Jakarta' date)"
+          echo "📅 Scheduled time: ${{ github.event.inputs.scheduled_time || 'N/A' }}"
+          echo "🎯 Greeting type: ${{ github.event.inputs.greeting_type || 'auto' }}"
+          echo "TRIGGER_SOURCE=${{ github.event.inputs.trigger_source || 'github_schedule' }}" >> $GITHUB_ENV
+          echo "SCHEDULED_TIME=${{ github.event.inputs.scheduled_time || '' }}" >> $GITHUB_ENV
+          
       - name: Setup Enhanced Context
         id: context
         run: |
