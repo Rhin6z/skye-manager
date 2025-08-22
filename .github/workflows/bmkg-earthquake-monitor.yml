@@ -80,38 +80,38 @@ jobs:
             try:
                 # Prepare earthquake information for AI
                 earthquake_info = f'''
-                Data Gempa Terbaru BMKG:
-                - Tanggal: {earthquake_data.get('Tanggal', 'N/A')}
-                - Jam: {earthquake_data.get('Jam', 'N/A')}
+                Latest BMKG Earthquake Data:
+                - Date: {earthquake_data.get('Tanggal', 'N/A')}
+                - Time: {earthquake_data.get('Jam', 'N/A')}
                 - Magnitude: {earthquake_data.get('Magnitude', 'N/A')}
-                - Kedalaman: {earthquake_data.get('Kedalaman', 'N/A')}
-                - Koordinat: {earthquake_data.get('Lintang', 'N/A')}, {earthquake_data.get('Bujur', 'N/A')}
-                - Wilayah: {earthquake_data.get('Wilayah', 'N/A')}
-                - Potensi: {earthquake_data.get('Potensi', 'N/A')}
-                - Dirasakan: {earthquake_data.get('Dirasakan', 'Tidak ada laporan')}
+                - Depth: {earthquake_data.get('Kedalaman', 'N/A')}
+                - Coordinates: {earthquake_data.get('Lintang', 'N/A')}, {earthquake_data.get('Bujur', 'N/A')}
+                - Region: {earthquake_data.get('Wilayah', 'N/A')}
+                - Potential: {earthquake_data.get('Potensi', 'N/A')}
+                - Felt: {earthquake_data.get('Dirasakan', 'No reports')}
                 '''
                 
                 # Generate AI response
                 prompt = f'''
-                Buatkan pesan informasi gempa bumi yang informatif dan mudah dipahami berdasarkan data BMKG berikut:
+                Create an informative and easy-to-understand earthquake information message based on the following BMKG data:
                 
                 {earthquake_info}
                 
-                Format pesan:
-                1. Buat judul yang menarik perhatian tapi tidak berlebihan
-                2. Jelaskan detail gempa dengan bahasa yang mudah dipahami
-                3. Sertakan informasi lokasi yang jelas
-                4. Tambahkan konteks apakah gempa ini perlu diwaspadai atau tidak
-                5. Gunakan bahasa Indonesia yang natural dan informatif
-                6. Jangan gunakan emoji berlebihan, cukup 1-2 emoji yang relevan
-                7. Maksimal 280 karakter untuk ringkasan utama
+                Message format requirements:
+                1. Create an attention-grabbing but not exaggerated title
+                2. Explain earthquake details in clear, understandable language
+                3. Include clear location information
+                4. Add context about whether this earthquake needs to be monitored or not
+                5. Use natural and informative English
+                6. Don't use excessive emojis, just 1-2 relevant ones
+                7. Maximum 280 characters for main summary
                 
-                Berikan dalam format JSON:
+                Provide response in JSON format:
                 {{
-                  \"title\": \"Judul singkat dan informatif\",
-                  \"message\": \"Pesan lengkap tentang gempa\",
-                  \"severity_emoji\": \"Emoji yang sesuai tingkat keparahan\",
-                  \"location_focus\": \"Area utama yang terdampak\"
+                  \"title\": \"Short and informative title\",
+                  \"message\": \"Complete earthquake message\",
+                  \"severity_emoji\": \"Appropriate severity emoji\",
+                  \"location_focus\": \"Main affected area\"
                 }}
                 '''
                 
@@ -159,7 +159,7 @@ jobs:
                         
                         # Fallback: use raw content
                         return {
-                            'title': 'Info Gempa BMKG',
+                            'title': 'BMKG Earthquake Info',
                             'message': content[:280],
                             'severity_emoji': '🌍',
                             'location_focus': earthquake_data.get('Wilayah', 'Indonesia')
@@ -208,15 +208,15 @@ jobs:
                     thumbnail_url = 'https://em-content.zobj.net/source/apple/391/green-circle_1f7e2.png'
                 
                 embed = {
-                    'title': f'{ai_message.get(\"severity_emoji\", \"🌍\")} {ai_message.get(\"title\", \"Info Gempa BMKG\")}',
-                    'description': ai_message.get('message', 'Data gempa terbaru dari BMKG'),
+                    'title': f'{ai_message.get(\"severity_emoji\", \"🌍\")} {ai_message.get(\"title\", \"BMKG Earthquake Info\")}',
+                    'description': ai_message.get('message', 'Latest earthquake data from BMKG'),
                     'color': color,
                     'thumbnail': {
                         'url': thumbnail_url
                     },
                     'fields': [
                         {
-                            'name': '📅 Waktu',
+                            'name': '📅 Time',
                             'value': f'{earthquake_data.get(\"Tanggal\", \"N/A\")} - {earthquake_data.get(\"Jam\", \"N/A\")}',
                             'inline': True
                         },
@@ -226,31 +226,31 @@ jobs:
                             'inline': True
                         },
                         {
-                            'name': '📏 Kedalaman',
+                            'name': '📏 Depth',
                             'value': earthquake_data.get('Kedalaman', 'N/A'),
                             'inline': True
                         },
                         {
-                            'name': '📍 Lokasi',
+                            'name': '📍 Location',
                             'value': earthquake_data.get('Wilayah', 'N/A'),
                             'inline': False
                         },
                         {
-                            'name': '⚠️ Potensi',
-                            'value': earthquake_data.get('Potensi', 'Tidak ada informasi'),
+                            'name': '⚠️ Potential',
+                            'value': earthquake_data.get('Potensi', 'No information'),
                             'inline': False
                         }
                     ],
                     'footer': {
                         'text': f'BMKG Indonesia • {datetime.now(timezone.utc).strftime(\"%Y-%m-%d %H:%M:%S UTC\")}',
-                        'icon_url': 'https://em-content.zobj.net/source/apple/391/earth-globe-asia-australia_1f30f.png'
+                        'icon_url': 'https://files.catbox.moe/npfh4e.jpg'
                     }
                 }
                 
-                # Add 'Dirasakan' field if available
+                # Add 'Felt' field if available
                 if earthquake_data.get('Dirasakan'):
                     embed['fields'].append({
-                        'name': '👥 Dirasakan',
+                        'name': '👥 Felt',
                         'value': earthquake_data.get('Dirasakan'),
                         'inline': False
                     })
