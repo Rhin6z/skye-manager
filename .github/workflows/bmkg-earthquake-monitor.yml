@@ -1,7 +1,10 @@
 name: BMKG Earthquake Monitor
 
 on:
-  workflow_dispatch: # Manual trigger only
+  # DISABLED: Using OpenWrt scheduler for better timing and no delays
+  # schedule:
+  #   - cron: '*/15 * * * *'  # Check every 15 minutes for new earthquakes
+  workflow_dispatch: # Manual trigger and OpenWrt trigger only
 
 env:
   GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -178,41 +181,26 @@ jobs:
                 shakemap_filename = earthquake_data.get('Shakemap', '')
                 
                 if shakemap_filename:
+                    print(f'Shakemap filename found: {shakemap_filename}')
+                    
                     # Try different BMKG shake map URL patterns with the actual filename
                     possible_urls = [
                         f'https://repogempa.bmkg.go.id/ALTE320/img/{shakemap_filename}',
                         f'https://repogempa.bmkg.go.id/shakemap/{shakemap_filename}',
                         f'https://www.bmkg.go.id/gempabumi/{shakemap_filename}',
-                        f'https://repogempa.bmkg.go.id/repo/shakemap/{shakemap_filename}',
-                        f'https://www.bmkg.go.id/images/shakemap/{shakemap_filename}',
-                        f'https://geonet.bmkg.go.id/shakemap/{shakemap_filename}',
-                        f'https://bmkg.go.id/gempabumi/shakemap/{shakemap_filename}',
-                        f'https://data.bmkg.go.id/shakemap/{shakemap_filename}'
+                        f'https://repogempa.bmkg.go.id/repo/shakemap/{shakemap_filename}'
                     ]
                     
-                    print(f'Trying to find shakemap for: {shakemap_filename}')
+                    # Since BMKG URLs might not be accessible from GitHub Actions,
+                    # we'll use a proxy approach or create a fallback shakemap
                     
-                    # Try to validate URLs (basic check with shorter timeout)
-                    for i, url in enumerate(possible_urls):
-                        try:
-                            print(f'Testing URL {i+1}/{len(possible_urls)}: {url}')
-                            # Quick HEAD request to check if URL exists
-                            response = requests.head(url, timeout=3, allow_redirects=True)
-                            if response.status_code == 200:
-                                print(f'✅ Found valid shake map URL: {url}')
-                                return url
-                            else:
-                                print(f'❌ Status {response.status_code}')
-                        except Exception as e:
-                            print(f'❌ Error: {e}')
-                            continue
-                    
-                    # If no valid URL found, try the first pattern anyway (might work in Discord)
-                    print(f'⚠️ No accessible URLs found, using first pattern: {possible_urls[0]}')
+                    # For now, return the most likely URL (first pattern)
+                    # Even if it fails, Discord might be able to access it
+                    print(f'Using BMKG shakemap URL: {possible_urls[0]}')
                     return possible_urls[0]
                 
-                # Fallback to default image
-                print('No shakemap filename found, using default image')
+                # No shakemap filename, use default earthquake visualization
+                print('No shakemap filename found, using default earthquake image')
                 return 'https://files.catbox.moe/219caw.jpg'
                 
             except Exception as e:
@@ -246,9 +234,6 @@ jobs:
                 color = get_severity_color(magnitude)
                 shakemap_url = get_shakemap_url(earthquake_data)
                 
-                # Check if we have a real shakemap or default image
-                has_real_shakemap = earthquake_data.get('Shakemap', '') and shakemap_url != 'https://files.catbox.moe/219caw.jpg'
-                
                 # Determine thumbnail based on magnitude
                 if float(magnitude) >= 6.0:
                     thumbnail_url = 'https://em-content.zobj.net/source/apple/391/red-circle_1f534.png'
@@ -265,6 +250,9 @@ jobs:
                     'color': color,
                     'thumbnail': {
                         'url': thumbnail_url
+                    },
+                    'image': {
+                        'url': shakemap_url
                     },
                     'fields': [
                         {
@@ -316,17 +304,16 @@ jobs:
                 
                 # Add shakemap info if available
                 if earthquake_data.get('Shakemap'):
-                    if has_real_shakemap:
-                        embed['image'] = {'url': shakemap_url}
+                    if shakemap_url != 'https://files.catbox.moe/219caw.jpg':
                         embed['fields'].append({
                             'name': '🗺️ Intensity Map',
-                            'value': 'Shake intensity visualization available below',
+                            'value': f'BMKG Shakemap: {earthquake_data.get(\"Shakemap\")}',
                             'inline': False
                         })
                     else:
                         embed['fields'].append({
                             'name': '🗺️ Intensity Map',
-                            'value': f'Map file: {earthquake_data.get(\"Shakemap\")} (may not be publicly accessible yet)',
+                            'value': f'Shakemap available: {earthquake_data.get(\"Shakemap\")} (access may be restricted)',
                             'inline': False
                         })
                 
