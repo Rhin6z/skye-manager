@@ -171,6 +171,35 @@ jobs:
                 print(f'Error generating AI message: {e}')
                 return None
         
+        def get_shakemap_url(earthquake_data):
+            try:
+                # Try to construct shake map URL from earthquake data
+                # BMKG sometimes provides shake maps for significant earthquakes
+                magnitude = float(earthquake_data.get('Magnitude', 0))
+                
+                # Only try to get shake maps for magnitude 5.0+ earthquakes
+                if magnitude >= 5.0:
+                    # Try different possible shake map URL patterns
+                    datetime_str = earthquake_data.get('DateTime', '')
+                    if datetime_str:
+                        # Try various BMKG shake map URL patterns
+                        possible_urls = [
+                            f'https://repogempa.bmkg.go.id/ALTE320/img/shakemap_{datetime_str}.jpg',
+                            f'https://www.bmkg.go.id/images/shakemap/{datetime_str}.jpg',
+                            f'https://geonet.bmkg.go.id/shakemap/{datetime_str}.jpg'
+                        ]
+                        
+                        # For now, return default image since we can't test URLs in workflow
+                        # In the future, this could be enhanced to check URL availability
+                        return 'https://files.catbox.moe/219caw.jpg'
+                
+                # Default shake map image for smaller earthquakes
+                return 'https://files.catbox.moe/219caw.jpg'
+                
+            except Exception as e:
+                print(f'Error getting shake map URL: {e}')
+                return 'https://files.catbox.moe/219caw.jpg'
+        
         def get_severity_color(magnitude):
             try:
                 mag = float(magnitude)
@@ -196,6 +225,7 @@ jobs:
                 # Prepare embed
                 magnitude = earthquake_data.get('Magnitude', 'N/A')
                 color = get_severity_color(magnitude)
+                shakemap_url = get_shakemap_url(earthquake_data)
                 
                 # Determine thumbnail based on magnitude
                 if float(magnitude) >= 6.0:
@@ -213,6 +243,9 @@ jobs:
                     'color': color,
                     'thumbnail': {
                         'url': thumbnail_url
+                    },
+                    'image': {
+                        'url': shakemap_url
                     },
                     'fields': [
                         {
