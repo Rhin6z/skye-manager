@@ -173,27 +173,36 @@ jobs:
         
         def get_shakemap_url(earthquake_data):
             try:
-                # Try to construct shake map URL from earthquake data
-                # BMKG sometimes provides shake maps for significant earthquakes
-                magnitude = float(earthquake_data.get('Magnitude', 0))
+                # Get shake map filename from earthquake data
+                shakemap_filename = earthquake_data.get('Shakemap', '')
                 
-                # Only try to get shake maps for magnitude 5.0+ earthquakes
-                if magnitude >= 5.0:
-                    # Try different possible shake map URL patterns
-                    datetime_str = earthquake_data.get('DateTime', '')
-                    if datetime_str:
-                        # Try various BMKG shake map URL patterns
-                        possible_urls = [
-                            f'https://repogempa.bmkg.go.id/ALTE320/img/shakemap_{datetime_str}.jpg',
-                            f'https://www.bmkg.go.id/images/shakemap/{datetime_str}.jpg',
-                            f'https://geonet.bmkg.go.id/shakemap/{datetime_str}.jpg'
-                        ]
-                        
-                        # For now, return default image since we can't test URLs in workflow
-                        # In the future, this could be enhanced to check URL availability
-                        return 'https://files.catbox.moe/219caw.jpg'
+                if shakemap_filename:
+                    # Try different BMKG shake map URL patterns with the actual filename
+                    possible_urls = [
+                        f'https://repogempa.bmkg.go.id/ALTE320/img/{shakemap_filename}',
+                        f'https://www.bmkg.go.id/images/shakemap/{shakemap_filename}',
+                        f'https://geonet.bmkg.go.id/shakemap/{shakemap_filename}',
+                        f'https://bmkg.go.id/gempabumi/shakemap/{shakemap_filename}',
+                        f'https://data.bmkg.go.id/shakemap/{shakemap_filename}'
+                    ]
+                    
+                    # Try to validate URLs (basic check)
+                    for url in possible_urls:
+                        try:
+                            # Quick HEAD request to check if URL exists
+                            response = requests.head(url, timeout=5)
+                            if response.status_code == 200:
+                                print(f'Found valid shake map URL: {url}')
+                                return url
+                        except:
+                            continue
+                    
+                    # If no valid URL found, try the first pattern anyway
+                    print(f'Using first pattern for shakemap: {possible_urls[0]}')
+                    return possible_urls[0]
                 
-                # Default shake map image for smaller earthquakes
+                # Fallback to default image
+                print('No shakemap filename found, using default image')
                 return 'https://files.catbox.moe/219caw.jpg'
                 
             except Exception as e:
@@ -285,6 +294,14 @@ jobs:
                     embed['fields'].append({
                         'name': '👥 Felt',
                         'value': earthquake_data.get('Dirasakan'),
+                        'inline': False
+                    })
+                
+                # Add shakemap info if available
+                if earthquake_data.get('Shakemap'):
+                    embed['fields'].append({
+                        'name': '🗺️ Shake Map',
+                        'value': f'Intensity map: {earthquake_data.get(\"Shakemap\")}',
                         'inline': False
                     })
                 
