@@ -308,7 +308,7 @@ jobs:
                 if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "weekend_countdown" ]]; then
                   DESC_RAW="yooooo friday evening finally! besok libur dah perfect buat gaming marathon valorant atau roblox skuy${WEATHER_MENTION}!"
                 else
-                  DESC_RAW="wassup how was your day everyone? golden hour vibes nih yuk santai main game sambil vc${WEATHER_MENTION}"
+                  DESC_RAW="wassup how was your day everyone? evening vibes nih yuk santai main game sambil vc${WEATHER_MENTION}"
                 fi
                 ;;
               "night")
@@ -326,37 +326,49 @@ jobs:
             "morning") 
               if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "monday_motivation" ]]; then
                 TITLE="☕ Monday Fresh Start"
+                THUMB="2615"
               elif [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
                 TITLE="🌅 Weekend Morning Chill"
+                THUMB="1f305"
               else
                 TITLE="☀️ Good Morning Gamers"
+                THUMB="2600"
               fi
               ;;
             "afternoon") 
               if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "hump_day" ]]; then
                 TITLE="🐪 Hump Day Check-in"
+                THUMB="1f42a"
               elif [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
                 TITLE="🌤️ Weekend Afternoon Vibes"
+                THUMB="1f324"
               else
                 TITLE="🍃 Midday Squad Update"
+                THUMB="1f343"
               fi
               ;;
             "evening") 
               if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "weekend_countdown" ]]; then
-                TITLE="� Friday Night Energy"
+                TITLE="🎉 Friday Evening Hype"
+                THUMB="1f389"
               elif [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
-                TITLE="�🌆 Weekend Golden Hour"
+                TITLE="🌆 Weekend Golden Hour"
+                THUMB="1f307"
               else
                 TITLE="🌇 Evening Chill Mode"
+                THUMB="1f307"
               fi
               ;;
             "night") 
               if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "sunday_prep" ]]; then
                 TITLE="🌙 Sunday Night Feels"
+                THUMB="1f319"
               elif [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
                 TITLE="✨ Weekend Night Owls"
+                THUMB="2728"
               else
                 TITLE="🦉 Late Night Squad"
+                THUMB="1f989"
               fi
               ;;
           esac
@@ -364,6 +376,7 @@ jobs:
           echo "TITLE=$TITLE" >> $GITHUB_OUTPUT
           echo "DESC_RAW=$DESC_RAW" >> $GITHUB_OUTPUT
           echo "USE_AI=$USE_AI" >> $GITHUB_OUTPUT
+          echo "THUMB=$THUMB" >> $GITHUB_OUTPUT
           
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -384,6 +397,7 @@ jobs:
           # Get content
           TITLE="${{ steps.ai_generation.outputs.TITLE }}"
           DESC="${{ steps.ai_generation.outputs.DESC_RAW }}"
+          THUMB="${{ steps.ai_generation.outputs.THUMB }}"
           TIMESTAMP=$(TZ='Asia/Jakarta' date -u +%Y-%m-%dT%H:%M:%S.000Z)
           
           # Create JSON with Python for proper escaping
@@ -395,6 +409,7 @@ jobs:
           desc_raw = os.environ.get('DESC', 'What\'s good everyone!')
           color = int(os.environ.get('COLOR', '16766720'))
           timestamp = os.environ.get('TIMESTAMP', '')
+          thumb = os.environ.get('THUMB', '1f305')
           
           # Add attribution
           desc = f"{desc_raw}\n> by server dev guanteng - <@399393175904714752>"
@@ -404,7 +419,7 @@ jobs:
               "description": desc,
               "color": color,
               "thumbnail": {
-                  "url": "https://twemoji.maxcdn.com/v/latest/72x72/1f305.png"
+                  "url": f"https://twemoji.maxcdn.com/v/latest/72x72/{thumb}.png"
               },
               "footer": {
                   "text": "chill gaming vibes",
@@ -434,6 +449,7 @@ jobs:
           DESC: ${{ steps.ai_generation.outputs.DESC_RAW }}
           COLOR: ${{ env.COLOR }}
           TIMESTAMP: ${{ env.TIMESTAMP }}
+          THUMB: ${{ steps.ai_generation.outputs.THUMB }}
 
       - name: Test Mode Output
         if: ${{ github.event.inputs.test_mode == 'true' }}
