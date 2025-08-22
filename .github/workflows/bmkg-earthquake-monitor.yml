@@ -98,18 +98,19 @@ jobs:
                 {earthquake_info}
                 
                 Message format requirements:
-                1. Create an attention-grabbing but not exaggerated title
-                2. Explain earthquake details in clear, understandable language
-                3. Include clear location information
-                4. Add context about whether this earthquake needs to be monitored or not
-                5. Use natural and informative English
+                1. Create an attention-grabbing but professional title
+                2. Explain earthquake details in clear, natural English
+                3. Include clear location information  
+                4. Add context about earthquake significance and monitoring status
+                5. Use natural, conversational English tone
                 6. Don't use excessive emojis, just 1-2 relevant ones
-                7. Maximum 280 characters for main summary
+                7. Maximum 300 characters for main summary
+                8. Focus on public safety and informational aspects
                 
                 Provide response in JSON format:
                 {{
-                  \"title\": \"Short and informative title\",
-                  \"message\": \"Complete earthquake message\",
+                  \"title\": \"Professional earthquake alert title\",
+                  \"message\": \"Clear, informative earthquake description with context\",
                   \"severity_emoji\": \"Appropriate severity emoji\",
                   \"location_focus\": \"Main affected area\"
                 }}
@@ -278,30 +279,37 @@ jobs:
                             'inline': False
                         },
                         {
-                            'name': '⚠️ Potential',
-                            'value': earthquake_data.get('Potensi', 'No information'),
+                            'name': '⚠️ Status',
+                            'value': 'Earthquake reported to public for monitoring' if earthquake_data.get('Potensi', '').lower().find('dirasakan') != -1 else earthquake_data.get('Potensi', 'No tsunami threat reported'),
                             'inline': False
                         }
                     ],
                     'footer': {
-                        'text': f'BMKG Indonesia • {datetime.now(timezone.utc).strftime(\"%Y-%m-%d %H:%M:%S UTC\")}',
+                        'text': f'BMKG Indonesia • Monitoring Active • {datetime.now(timezone.utc).strftime(\"%Y-%m-%d %H:%M:%S UTC\")}',
                         'icon_url': 'https://files.catbox.moe/npfh4e.jpg'
                     }
                 }
                 
                 # Add 'Felt' field if available
                 if earthquake_data.get('Dirasakan'):
+                    felt_info = earthquake_data.get('Dirasakan')
+                    # Convert MMI scale info to English if needed
+                    if 'II-III' in felt_info:
+                        felt_description = f'Light shaking (MMI II-III) reported in {felt_info.replace(\"II-III \", \"\")}'
+                    else:
+                        felt_description = f'Reported felt: {felt_info}'
+                    
                     embed['fields'].append({
-                        'name': '👥 Felt',
-                        'value': earthquake_data.get('Dirasakan'),
+                        'name': '👥 Public Reports',
+                        'value': felt_description,
                         'inline': False
                     })
                 
                 # Add shakemap info if available
                 if earthquake_data.get('Shakemap'):
                     embed['fields'].append({
-                        'name': '🗺️ Shake Map',
-                        'value': f'Intensity map: {earthquake_data.get(\"Shakemap\")}',
+                        'name': '🗺️ Intensity Map',
+                        'value': 'Shake intensity visualization available below',
                         'inline': False
                     })
                 
