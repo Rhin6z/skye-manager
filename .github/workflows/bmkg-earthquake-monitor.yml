@@ -43,7 +43,7 @@ jobs:
         import time
 
         # Configuration
-        BMKG_API_URL = 'https://api.siputzx.my.id/api/info/bmkg'
+        BMKG_API_URL = 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json'
         GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent'
         DISCORD_WEBHOOK_URL = os.getenv('DISCORD_WEBHOOK_BMKG')
         GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
@@ -183,21 +183,10 @@ jobs:
                 if shakemap_filename:
                     print(f'Shakemap filename found: {shakemap_filename}')
                     
-                    # Try different BMKG shake map URL patterns with the actual filename
-                    possible_urls = [
-                        f'https://repogempa.bmkg.go.id/ALTE320/img/{shakemap_filename}',
-                        f'https://repogempa.bmkg.go.id/shakemap/{shakemap_filename}',
-                        f'https://www.bmkg.go.id/gempabumi/{shakemap_filename}',
-                        f'https://repogempa.bmkg.go.id/repo/shakemap/{shakemap_filename}'
-                    ]
-                    
-                    # Since BMKG URLs might not be accessible from GitHub Actions,
-                    # we'll use a proxy approach or create a fallback shakemap
-                    
-                    # For now, return the most likely URL (first pattern)
-                    # Even if it fails, Discord might be able to access it
-                    print(f'Using BMKG shakemap URL: {possible_urls[0]}')
-                    return possible_urls[0]
+                    # Use correct BMKG shakemap URL pattern
+                    shakemap_url = f'https://static.bmkg.go.id/{shakemap_filename}'
+                    print(f'Using BMKG shakemap URL: {shakemap_url}')
+                    return shakemap_url
                 
                 # No shakemap filename, use default earthquake visualization
                 print('No shakemap filename found, using default earthquake image')
@@ -304,18 +293,12 @@ jobs:
                 
                 # Add shakemap info if available
                 if earthquake_data.get('Shakemap'):
-                    if shakemap_url != 'https://files.catbox.moe/219caw.jpg':
-                        embed['fields'].append({
-                            'name': '🗺️ Intensity Map',
-                            'value': f'BMKG Shakemap: {earthquake_data.get(\"Shakemap\")}',
-                            'inline': False
-                        })
-                    else:
-                        embed['fields'].append({
-                            'name': '🗺️ Intensity Map',
-                            'value': f'Shakemap available: {earthquake_data.get(\"Shakemap\")} (access may be restricted)',
-                            'inline': False
-                        })
+                    shakemap_url_check = f'https://static.bmkg.go.id/{earthquake_data.get(\"Shakemap\")}'
+                    embed['fields'].append({
+                        'name': '🗺️ Intensity Map',
+                        'value': f'BMKG Official Shakemap Available\\nFile: {earthquake_data.get(\"Shakemap\")}',
+                        'inline': False
+                    })
                 
                 payload = {
                     'username': 'Skye Earthquake Monitor',
@@ -336,15 +319,15 @@ jobs:
             
             # Fetch latest earthquake data
             bmkg_data = fetch_bmkg_data()
-            if not bmkg_data or not bmkg_data.get('status'):
+            if not bmkg_data or 'Infogempa' not in bmkg_data:
                 print('Failed to fetch BMKG data or invalid response')
                 sys.exit(1)
             
-            # Get latest earthquake from auto data
-            latest_earthquake = bmkg_data.get('data', {}).get('auto', {}).get('Infogempa', {}).get('gempa')
+            # Get latest earthquake from new API structure
+            latest_earthquake = bmkg_data.get('Infogempa', {}).get('gempa')
             
             if not latest_earthquake:
-                print('No earthquake data found in auto section')
+                print('No earthquake data found in response')
                 sys.exit(1)
             
             print(f'Latest earthquake: {latest_earthquake.get(\"DateTime\", \"Unknown\")} - Magnitude {latest_earthquake.get(\"Magnitude\", \"N/A\")}')
