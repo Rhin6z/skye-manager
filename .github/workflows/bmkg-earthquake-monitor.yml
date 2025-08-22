@@ -181,25 +181,34 @@ jobs:
                     # Try different BMKG shake map URL patterns with the actual filename
                     possible_urls = [
                         f'https://repogempa.bmkg.go.id/ALTE320/img/{shakemap_filename}',
+                        f'https://repogempa.bmkg.go.id/shakemap/{shakemap_filename}',
+                        f'https://www.bmkg.go.id/gempabumi/{shakemap_filename}',
+                        f'https://repogempa.bmkg.go.id/repo/shakemap/{shakemap_filename}',
                         f'https://www.bmkg.go.id/images/shakemap/{shakemap_filename}',
                         f'https://geonet.bmkg.go.id/shakemap/{shakemap_filename}',
                         f'https://bmkg.go.id/gempabumi/shakemap/{shakemap_filename}',
                         f'https://data.bmkg.go.id/shakemap/{shakemap_filename}'
                     ]
                     
-                    # Try to validate URLs (basic check)
-                    for url in possible_urls:
+                    print(f'Trying to find shakemap for: {shakemap_filename}')
+                    
+                    # Try to validate URLs (basic check with shorter timeout)
+                    for i, url in enumerate(possible_urls):
                         try:
+                            print(f'Testing URL {i+1}/{len(possible_urls)}: {url}')
                             # Quick HEAD request to check if URL exists
-                            response = requests.head(url, timeout=5)
+                            response = requests.head(url, timeout=3, allow_redirects=True)
                             if response.status_code == 200:
-                                print(f'Found valid shake map URL: {url}')
+                                print(f'✅ Found valid shake map URL: {url}')
                                 return url
-                        except:
+                            else:
+                                print(f'❌ Status {response.status_code}')
+                        except Exception as e:
+                            print(f'❌ Error: {e}')
                             continue
                     
-                    # If no valid URL found, try the first pattern anyway
-                    print(f'Using first pattern for shakemap: {possible_urls[0]}')
+                    # If no valid URL found, try the first pattern anyway (might work in Discord)
+                    print(f'⚠️ No accessible URLs found, using first pattern: {possible_urls[0]}')
                     return possible_urls[0]
                 
                 # Fallback to default image
@@ -237,6 +246,9 @@ jobs:
                 color = get_severity_color(magnitude)
                 shakemap_url = get_shakemap_url(earthquake_data)
                 
+                # Check if we have a real shakemap or default image
+                has_real_shakemap = earthquake_data.get('Shakemap', '') and shakemap_url != 'https://files.catbox.moe/219caw.jpg'
+                
                 # Determine thumbnail based on magnitude
                 if float(magnitude) >= 6.0:
                     thumbnail_url = 'https://em-content.zobj.net/source/apple/391/red-circle_1f534.png'
@@ -253,9 +265,6 @@ jobs:
                     'color': color,
                     'thumbnail': {
                         'url': thumbnail_url
-                    },
-                    'image': {
-                        'url': shakemap_url
                     },
                     'fields': [
                         {
@@ -307,11 +316,19 @@ jobs:
                 
                 # Add shakemap info if available
                 if earthquake_data.get('Shakemap'):
-                    embed['fields'].append({
-                        'name': '🗺️ Intensity Map',
-                        'value': 'Shake intensity visualization available below',
-                        'inline': False
-                    })
+                    if has_real_shakemap:
+                        embed['image'] = {'url': shakemap_url}
+                        embed['fields'].append({
+                            'name': '🗺️ Intensity Map',
+                            'value': 'Shake intensity visualization available below',
+                            'inline': False
+                        })
+                    else:
+                        embed['fields'].append({
+                            'name': '🗺️ Intensity Map',
+                            'value': f'Map file: {earthquake_data.get(\"Shakemap\")} (may not be publicly accessible yet)',
+                            'inline': False
+                        })
                 
                 payload = {
                     'username': 'Skye Earthquake Monitor',
