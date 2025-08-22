@@ -374,6 +374,9 @@ jobs:
           fi
           sed -i "s/WEATHER_CONTEXT_PLACEHOLDER/$WEATHER_CONTEXT/g" /tmp/enhanced_prompt.txt
           
+          # Additional cleanup to remove any remaining placeholders
+          sed -i 's/WEATHER_[a-zA-Z_]*//g' /tmp/enhanced_prompt.txt
+          
           echo "📝 Enhanced prompt created"
           cat /tmp/enhanced_prompt.txt | head -20
           echo "..."
@@ -447,6 +450,9 @@ jobs:
             AI_TEXT=$(cat /tmp/ai_response.txt)
             echo "🎯 AI response received (preview): $(echo "$AI_TEXT" | head -c 120)..."
             
+            # Clean AI response from any remaining placeholders first
+            AI_TEXT=$(echo "$AI_TEXT" | sed 's/WEATHER_[a-zA-Z_]*//g')
+            
             # Enhanced parsing with multiple attempts
             TITLE=""
             DESC_RAW=""
@@ -466,6 +472,11 @@ jobs:
             if [[ -z "$DESC_RAW" && -n "$TITLE" ]]; then
               DESC_RAW=$(echo "$AI_TEXT" | grep -v "^TITLE:" | grep -v "^FOOTER:" | grep -v -F "$TITLE" | head -1 | sed 's/^[[:space:]]*//')
             fi
+            
+            # Clean any remaining placeholders from parsed content
+            TITLE=$(echo "$TITLE" | sed 's/WEATHER_[a-zA-Z_]*//g' | sed 's/_[a-zA-Z_]*_//g')
+            DESC_RAW=$(echo "$DESC_RAW" | sed 's/WEATHER_[a-zA-Z_]*//g' | sed 's/_[a-zA-Z_]*_//g')
+            FOOTER=$(echo "$FOOTER" | sed 's/WEATHER_[a-zA-Z_]*//g' | sed 's/_[a-zA-Z_]*_//g')
             
             # Validation and cleanup
             if [[ -n "$TITLE" && -n "$DESC_RAW" ]]; then
@@ -613,15 +624,24 @@ jobs:
           
           TIMESTAMP=$(TZ='Asia/Jakarta' date -u +%Y-%m-%dT%H:%M:%S.000Z)
           
-          # Clean content for JSON
-          TITLE_CLEAN=$(echo "${{ steps.ai_generation.outputs.TITLE }}" | tr -d '\n\r' | sed 's/"/\\"/g' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
-          DESC_CLEAN=$(echo "$FINAL_DESC" | tr -d '\n\r' | sed 's/"/\\"/g' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//') 
-          FOOTER_CLEAN=$(echo "${{ steps.ai_generation.outputs.FOOTER }}" | tr -d '\n\r' | sed 's/"/\\"/g' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+          # Clean content for JSON - comprehensive approach
+          TITLE_RAW="${{ steps.ai_generation.outputs.TITLE }}"
+          DESC_RAW="$FINAL_DESC"
+          FOOTER_RAW="${{ steps.ai_generation.outputs.FOOTER }}"
           
-          # Additional cleaning for Discord special characters
-          TITLE_CLEAN=$(echo "$TITLE_CLEAN" | sed 's/\\/\\\\/g')
-          DESC_CLEAN=$(echo "$DESC_CLEAN" | sed 's/\\/\\\\/g')
-          FOOTER_CLEAN=$(echo "$FOOTER_CLEAN" | sed 's/\\/\\\\/g')
+          # Step 1: Remove any remaining placeholders
+          TITLE_RAW=$(echo "$TITLE_RAW" | sed 's/WEATHER_[a-zA-Z_]*//g' | sed 's/_[a-zA-Z_]*//g')
+          DESC_RAW=$(echo "$DESC_RAW" | sed 's/WEATHER_[a-zA-Z_]*//g' | sed 's/_[a-zA-Z_]*//g')
+          
+          # Step 2: Clean for JSON (escape quotes, backslashes, newlines)
+          TITLE_CLEAN=$(echo "$TITLE_RAW" | tr -d '\n\r' | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+          DESC_CLEAN=$(echo "$DESC_RAW" | tr '\n' ' ' | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+          FOOTER_CLEAN=$(echo "$FOOTER_RAW" | tr -d '\n\r' | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+          
+          # Step 3: Additional safety cleaning
+          TITLE_CLEAN=$(echo "$TITLE_CLEAN" | sed 's/[[:cntrl:]]//g')
+          DESC_CLEAN=$(echo "$DESC_CLEAN" | sed 's/[[:cntrl:]]//g')
+          FOOTER_CLEAN=$(echo "$FOOTER_CLEAN" | sed 's/[[:cntrl:]]//g')
           
           echo "Final enhanced content:"
           echo "Title: $TITLE_CLEAN"
@@ -630,16 +650,51 @@ jobs:
           echo "AI Used: ${{ steps.ai_generation.outputs.USE_AI }}"
           echo "Weather: ${{ steps.weather.outputs.WEATHER_AVAILABLE }}"
           
-          # Simple JSON string approach (safer for YAML)
-          JSON_PAYLOAD="{\"embeds\":[{\"title\":\"$TITLE_CLEAN\",\"description\":\"$DESC_CLEAN\",\"color\":$COLOR,\"thumbnail\":{\"url\":\"https://twemoji.maxcdn.com/v/latest/72x72/$THUMB.png\"},\"footer\":{\"text\":\"$FOOTER_CLEAN\",\"icon_url\":\"https://files.catbox.moe/npfh4e.jpg\"},\"timestamp\":\"$TIMESTAMP\"}]}"
+          # Create JSON using Python for better escaping
+          TITLE_CLEAN="$TITLE_CLEAN" DESC_CLEAN="$DESC_CLEAN" FOOTER_CLEAN="$FOOTER_CLEAN" COLOR="$COLOR" THUMB="$THUMB" TIMESTAMP="$TIMESTAMP" python3 << 'PYTHON_EOF'
+          import json
+          import os
           
-          echo "📋 JSON Payload length: ${#JSON_PAYLOAD}"
+          title = os.environ.get('TITLE_CLEAN', '')
+          desc = os.environ.get('DESC_CLEAN', '')
+          footer = os.environ.get('FOOTER_CLEAN', '')
+          color = int(os.environ.get('COLOR', '16766720'))
+          thumb = os.environ.get('THUMB', '1f305')
+          timestamp = os.environ.get('TIMESTAMP', '')
+          
+          # Create Discord embed
+          embed = {
+              "title": title,
+              "description": desc,
+              "color": color,
+              "thumbnail": {
+                  "url": f"https://twemoji.maxcdn.com/v/latest/72x72/{thumb}.png"
+              },
+              "footer": {
+                  "text": footer,
+                  "icon_url": "https://files.catbox.moe/npfh4e.jpg"
+              },
+              "timestamp": timestamp
+          }
+          
+          payload = {"embeds": [embed]}
+          
+          # Write to file
+          with open('/tmp/discord_payload.json', 'w', encoding='utf-8') as f:
+              json.dump(payload, f, ensure_ascii=False)
+          
+          print("JSON payload created successfully")
+          PYTHON_EOF
+          
+          # Read payload length for logging
+          JSON_LENGTH=$(wc -c < /tmp/discord_payload.json)
+          echo "📋 JSON Payload length: $JSON_LENGTH bytes"
           
           # Send to Discord with enhanced embed
           curl -f -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
                -H "Content-Type: application/json" \
                --connect-timeout 12 --max-time 20 \
-               -d "$JSON_PAYLOAD"
+               --data-binary @/tmp/discord_payload.json
           
           echo "✅ Enhanced greeting sent!"
           echo "🤖 AI: ${{ steps.ai_generation.outputs.USE_AI }} | Weather: ${{ steps.weather.outputs.WEATHER_AVAILABLE }} | Context: ${{ steps.context.outputs.SPECIAL_CONTEXT }}"
