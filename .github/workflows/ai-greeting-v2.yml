@@ -324,25 +324,28 @@ jobs:
           - Length: Natural conversation length, not structured announcements
           - NO PLACEHOLDERS: Use actual context values, never leave placeholders like WEATHER_xxx
           - CHILL VIBES: Use extended words like "damnnn", "deymm", "dayummm", "dangg", "bruhhh", "woiiii/weiii", "yahhh", "aduhhh/duhhh", "njirrr/bjirrr", "kocakkk"
+          - TRENDY ENGLISH GREETINGS: Start with modern slang + extended letters: "yooooo", "heyyyy", "wassuppppp", "what's gooddddd", "what's poppin", "what's the vibeeeee", "ayooo", "hiii", "what's the mooddd"
+          - SPAM-STYLE ENDINGS: Use repeated letters for emphasis: "chillinnnnn", "laterrrr", "todayyyy", "goinggg", "onlineee", "boreddd", "littt", "gamerssss", "epiccc"
           - GAMING SLANG: siapa mau ranked, mabar yuk, push rank, main bareng, 1v1 dulu, jangan feeding, carry dong
           - INDONESIAN SLANG: gabut, males, capek, kesel, seneng, bete, kzl, anjay, mantul, gaskeun, skuy
           
           ENHANCED EXAMPLES (chill human vibes):
+          yooooo what's gooddddd everyone!! hope y'all are chillinnnnn today, might hop on valorant laterrrr
           bruhhh friday morning finallyyyy! besok weekend dah time to grind valorant ranked skuy
+          heyyyy guyssss what's the vibeeeee? gabut bgt might play some roblox or emel push rank anyone???
           woiiii just bangun tidur and hujan lagi deymm, perfect excuse buat main roblox seharian
-          yahhh afternoon guys udah makan siang? gabut bgt might hop on emel later ada yang mau push rank?
+          yooo squad what's poppin todayyyy?? feeling lazy might hop on valorant unrated sambil ngobrol
+          yahhh afternoon guys udah makan siang? honestly lowkey boreddd need some gaming therapy fr
+          wassuppppp everyone how's it goinggg? weekend vibes almost here siapa mau mabar ml nanti?
+          hiii gais what's the mooddd today?? this weather making me sleepy perfect for cozy gaming
           damnnn masih begadang nih lol, besok bangun siang pasti but tonight valorant session with the squad
+          ayooo who's onlineee right nowww?? bored af need some company for 1v1 valorant or roblox tower of hell
           njirrr wednesday udah? waktu cepet bgt rasanya kemarin baru senin anjay
+          heyyyy beautiful peopleee hope your day is littt! feeling motivated maybe actually productive today
           aduhhh sunday vibes hit different, chill dulu hari ini besok reality check lagi wkwk
+          yooo kings and queensss what's the energy todayyyy? weekend mood activated time for gaming marathon
           deymm this hujan bikin ngantuk parah, perfect weather buat cozy gaming marathon
-          morning gais! bangun-bangun cerah mood langsung bagus siap produktif (atau main roblox hehe)
-          kocakkk thursday night udah, weekend plans loading... siapa mau mabar ml weekend nanti?
-          bruhhh monday lagi tapi honestly motivated hari ini, mungkin beneran produktif (atau ranked val aja)
-          weiii guys ada yang online? bosen parah butuh temen main, 1v1 valorant yuk
-          dayummm friday energy different bgt, weekend mode almost activated time to celebrate with some emel ranked
-          dangg capek seharian kerja, need some gaming therapy... valorant unrated sambil ngobrol santai
-          yahhh males bgt hari ini, cuaca mendung bikin mood turun... roblox aja deh yang santai
-          njirrr weekend berasa cepet bgt, besok senin lagi but today masih bisa enjoy gaming session
+          wassup my gamerssss ready for another epic dayyyy? coffee + valorant = perfect combo fr
           
           GAMING REFERENCES TO USE:
           - Valorant: ranked, unrated, spike rush, deathmatch, headshot only, agent baru, skin baru
@@ -558,46 +561,46 @@ jobs:
               "morning")
                 if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "monday_motivation" ]]; then
                   TITLE="🌅 Monday Fresh Start"
-                  DESC_RAW="yahhh monday lagi tapi honestly feeling optimistic today$WEATHER_MENTION mungkin beneran produktif (atau main valorant aja)"
+                  DESC_RAW="yooo what's gooddddd beautiful people! monday lagi tapi honestly feeling optimistic$WEATHER_MENTION maybe actually productive (atau valorant ranked aja)"
                 else
                   TITLE="🌅 Morning Squad Online"
-                  DESC_RAW="morning gais! hope kalian tidur nyenyak$WEATHER_MENTION butuh kopi dulu before anything, maybe roblox later skuy"
+                  DESC_RAW="heyyyy gamerssss hope y'all slept wellll! butuh kopi dulu$WEATHER_MENTION then maybe some roblox chillin skuy"
                 fi
                 FOOTER="coffee + gaming = perfect combo"
                 ;;
               "afternoon") 
                 if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "hump_day" ]]; then
                   TITLE="☀️ Hump Day Checkpoint"
-                  DESC_RAW="njirrr wednesday udah wtf$WEATHER_MENTION rasanya kemarin baru senin but hey weekend almost here dah"
+                  DESC_RAW="wassuppppp squad! wednesday already wtfff$WEATHER_MENTION feels like monday was yesterday but weekend almost here dah"
                 else
                   TITLE="☀️ Midday Recharge Zone"
-                  DESC_RAW="afternoon everyone gimana hari ini$WEATHER_MENTION honestly agak gabut, siapa mau push rank emel later?"
+                  DESC_RAW="ayooo what's the vibeeeee today everyone? honestly agak gabut$WEATHER_MENTION siapa mau push rank emel laterrrr?"
                 fi
                 FOOTER="lunch break = gaming break"
                 ;;
               "evening")
                 if [[ "${{ steps.context.outputs.DAY_NUM }}" == "5" ]]; then
                   TITLE="🌆 Weekend Loading Tonight" 
-                  DESC_RAW="bruhhh friday finallyyyy took forever$WEATHER_MENTION weekend vibes incoming, time to grind valorant ranked!"
+                  DESC_RAW="yooooo friday finallyyyy took foreverrrr! weekend vibes incoming$WEATHER_MENTION time to grind valorant ranked lesgooo!"
                 elif [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "weekend_countdown" ]]; then
                   TITLE="🌆 Friday Night Preview"
-                  DESC_RAW="kocakkk friday evening energy different$WEATHER_MENTION besok weekend dah, siapa mau mabar ml nanti?"
+                  DESC_RAW="hiii beautiful people! friday evening energy differenttt$WEATHER_MENTION besok weekend dah, siapa mau mabar ml tonight?"
                 else
                   TITLE="🌆 Golden Hour Online"
-                  DESC_RAW="evening gais gimana today nya$WEATHER_MENTION honestly feeling chill, might just unrated val sambil ngobrol"
+                  DESC_RAW="wassup kings and queensss how was todayyyy? feeling chill rn$WEATHER_MENTION might just unrated val sambil ngobrol"
                 fi
                 FOOTER="weekend gaming marathon loading"
                 ;;
               "night")
                 if [[ "${{ steps.context.outputs.WEEKEND_TRANSITION }}" == "weekend_starts" ]]; then
                   TITLE="🌙 Weekend Mode Activated"
-                  DESC_RAW="dayummm friday night hits different$WEATHER_MENTION weekend officially here, time to actually relax with some roblox"
+                  DESC_RAW="yooo what's poppin night owlsss! friday night hits different$WEATHER_MENTION weekend officially here, roblox time!"
                 elif [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "sunday_prep" ]]; then
                   TITLE="🌜 Sunday Wind Down"
-                  DESC_RAW="aduhhh sunday night feels bittersweet$WEATHER_MENTION weekend ending tapi honestly was pretty good sih, last gaming session?"
+                  DESC_RAW="heyyyy squad sunday night feels bittersweettt$WEATHER_MENTION weekend ending tapi was pretty good sih, last gaming session anyone?"
                 else
                   TITLE="🌙 Night Owl Territory"
-                  DESC_RAW="weiii masih begadang nih lol$WEATHER_MENTION either gabisa tidur or don't want to end the day, 1v1 valorant yuk?"
+                  DESC_RAW="ayooo who's still awakeeee??? either gabisa tidur or don't wanna end the day$WEATHER_MENTION 1v1 valorant yuk?"
                 fi
                 FOOTER="nocturnal gaming sessions activate"
                 ;;
