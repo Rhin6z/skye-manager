@@ -194,35 +194,36 @@ jobs:
         run: |
           echo "🤖 Generating AI greeting..."
           
-          # Create ultra natural human-like prompt
+          # Create ultra natural human-like prompt with 2-sentence structure
           cat > /tmp/prompt.txt << 'EOF'
-          You are typing a completely natural message to your Indonesian gaming friends on Discord. Act like you're literally just chilling and typing this on your phone right now.
+          You are typing a natural message to your Indonesian gaming friends on Discord. Write exactly 2 sentences with this structure:
           
           Context: TYPE_PLACEHOLDER on CONTEXT_PLACEHOLDER
           Time: CURRENT_DAY_PLACEHOLDER (CURRENT_DATE_PLACEHOLDER) at CURRENT_TIME_PLACEHOLDER WIB
           Special: SPECIAL_CONTEXT_PLACEHOLDER
           Weather: WEATHER_INFO_PLACEHOLDER
           
-          BE 100% NATURAL HUMAN:
-          - Type like you're actually messaging friends right now - typos, casual shortcuts, natural flow
-          - Mix Indonesian and English like real Jakarta kids do (random switching, not forced)
-          - Use whatever slang feels natural: "yoo", "wassup", "gabut", "males", "anjay", "kocak", "skuy", "cuy"
-          - Gaming references should feel spontaneous: "mabar", "valorant", "roblox", "ml", "vc", "push rank"
-          - Don't sound like AI - sound tired, excited, bored, whatever feels real for the time
-          - Include random human elements: food, mood, what you're doing, plans
-          - Write like you're genuinely asking friends to hang out
+          EXACT 2-SENTENCE STRUCTURE:
           
-          NATURAL VARIATIONS (pick whatever feels right):
-          - Share what you're doing + invite to game
-          - Ask about their vibe + suggest activity  
-          - Random observation + gaming invitation
-          - Weather comment (if any) + hangout idea
-          - Food/drink mention + gaming session
-          - Just straight up "anyone online?" energy
+          SENTENCE 1 (60% English - asking about mood/activity):
+          - Start with casual greeting: "yooo", "wassup", "heyyyy", "ayooo", "brooo"
+          - Ask creatively about what they're doing, mood, day, vibe, feeling
+          - Use extended words: "wassuppppp", "how's everyone doinggg", "what's the vibeeeee"
+          - Examples: "yooo what's everyone up to rn?", "wassuppp how's the day treating y'all?", "heyyyy what's the mood like tonight?"
           
-          NO STRUCTURE, NO TEMPLATES - just type naturally like you're actually texting friends right now!
+          SENTENCE 2 (English/Indo mix - gaming invitation):
+          - Invite to specific games: valorant, roblox, mobile legends/ml/emel, voice chat/vc
+          - Use natural Indonesian gaming slang: "mabar", "push rank", "main bareng", "yuk", "skuy"
+          - Include weather mention if provided
+          - Examples: "yuk mabar valorant sambil ngobrol", "siapa mau push rank emel?", "perfect time buat roblox session"
           
-          Write ONLY the message - exactly like you'd type it on Discord mobile!
+          BE 100% NATURAL:
+          - Type like you're actually texting friends on mobile
+          - Don't sound like AI - sound genuine, casual, spontaneous
+          - Mix languages naturally within each sentence
+          - Include random human elements: tiredness, excitement, boredom
+          
+          Write ONLY the 2 sentences - exactly like you'd type on Discord mobile!
           EOF
           
           # Replace placeholders
@@ -341,79 +342,79 @@ jobs:
                 if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "monday_motivation" ]]; then
                   MESSAGES=(
                     "brooooo monday lagi nih, how's everyone feeling? fresh start perfect buat grinding valorant sambil ngopi${WEATHER_MENTION}!"
-                    "yooooo wassup monday warriors! energy level gimana? yuk mabar roblox sambil motivasi-motivasian${WEATHER_MENTION}"
-                    "heyyyy squad monday vibes hitting different! siapa udah siap crushing this week? main emel yuk${WEATHER_MENTION}"
-                    "ayooo monday motivation time! feeling fresh atau masih ngantuk? perfect timing buat vc session${WEATHER_MENTION}"
-                    "woiii monday energy check! gimana mood kalian hari ini? yuk charge up dengan mabar${WEATHER_MENTION}"
+                    "yooooo wassup monday warriors, energy level gimana? yuk mabar roblox sambil motivasi-motivasian${WEATHER_MENTION}"
+                    "heyyyy squad monday vibes hitting different, siapa udah siap crushing this week? main emel yuk${WEATHER_MENTION}"
+                    "ayooo monday motivation time, feeling fresh atau masih ngantuk? perfect timing buat vc session${WEATHER_MENTION}"
+                    "woiii monday energy check, gimana mood kalian hari ini? yuk charge up dengan mabar${WEATHER_MENTION}"
                   )
                 else
                   MESSAGES=(
-                    "yooooo morning legends! udah minum kopi atau masih zombie mode? perfect time buat chill gaming${WEATHER_MENTION}"
-                    "wassuppp early birds! how's everyone's morning vibe? gabut nih yuk main something fun${WEATHER_MENTION}"
-                    "heyyyy morning squad! feeling energetic atau masih males bangun? roblox sounds good rn${WEATHER_MENTION}"
-                    "ayooo good morning gamers! sarapan apa hari ini? sambil nunggu yuk vc sebentar${WEATHER_MENTION}"
-                    "brooo morning check-in! gimana tidur semalam? fresh enough buat valorant session?${WEATHER_MENTION}"
-                    "woiii pagi-pagi udah online aja! early bird energy maksimal nih, main yuk${WEATHER_MENTION}"
+                    "yooooo morning legends, udah minum kopi atau masih zombie mode? perfect time buat chill gaming${WEATHER_MENTION}"
+                    "wassuppp early birds, how's everyone's morning vibe? gabut nih yuk main something fun${WEATHER_MENTION}"
+                    "heyyyy morning squad, feeling energetic atau masih males bangun? roblox sounds good rn${WEATHER_MENTION}"
+                    "ayooo good morning gamers, sarapan apa hari ini? sambil nunggu yuk vc sebentar${WEATHER_MENTION}"
+                    "brooo morning check-in, gimana tidur semalam? fresh enough buat valorant session${WEATHER_MENTION}?"
+                    "woiii pagi-pagi udah online aja, early bird energy maksimal nih! main yuk${WEATHER_MENTION}"
                   )
                 fi
                 ;;
               "afternoon")
                 if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "hump_day" ]]; then
                   MESSAGES=(
-                    "heyyyy wednesday warriors! udah setengah jalan weekend nih, gimana energy level? emel push rank yuk${WEATHER_MENTION}!"
-                    "yooooo hump day vibes! wednesday feeling heavy atau light? perfect distraction dengan gaming${WEATHER_MENTION}"
-                    "wassuppp midweek squad! wednesday mood check - siapa butuh break? valorant therapy session${WEATHER_MENTION}"
-                    "ayooo wednesday afternoon hits! halfway through the week, deserve some fun gaming time${WEATHER_MENTION}"
-                    "brooo wednesday energy! masih semangat atau udah capek? refresh dengan roblox yuk${WEATHER_MENTION}"
+                    "heyyyy wednesday warriors, udah setengah jalan weekend nih gimana energy level? emel push rank yuk${WEATHER_MENTION}!"
+                    "yooooo hump day vibes, wednesday feeling heavy atau light? perfect distraction dengan gaming${WEATHER_MENTION}"
+                    "wassuppp midweek squad, wednesday mood check siapa butuh break? valorant therapy session${WEATHER_MENTION}"
+                    "ayooo wednesday afternoon hits, halfway through the week! deserve some fun gaming time${WEATHER_MENTION}"
+                    "brooo wednesday energy, masih semangat atau udah capek? refresh dengan roblox yuk${WEATHER_MENTION}"
                   )
                 else
                   MESSAGES=(
-                    "yooooo afternoon legends! lunch break udah atau masih busy? quick gaming session sounds nice${WEATHER_MENTION}"
-                    "wassuppp midday squad! afternoon slump hitting atau masih energetic? main something chill${WEATHER_MENTION}"
-                    "heyyyy afternoon vibes! gimana hari kalian so far? break time dengan vc yuk${WEATHER_MENTION}"
-                    "ayooo afternoon check! udah makan siang belum? sambil nunggu yuk mabar sebentar${WEATHER_MENTION}"
-                    "brooo afternoon mood! productive day atau lagi gabut? perfect timing buat gaming${WEATHER_MENTION}"
-                    "woiii siang-siang gini enak banget main game! siapa free buat quick session?${WEATHER_MENTION}"
+                    "yooooo afternoon legends, lunch break udah atau masih busy? quick gaming session sounds nice${WEATHER_MENTION}"
+                    "wassuppp midday squad, afternoon slump hitting atau masih energetic? main something chill${WEATHER_MENTION}"
+                    "heyyyy afternoon vibes, gimana hari kalian so far? break time dengan vc yuk${WEATHER_MENTION}"
+                    "ayooo afternoon check, udah makan siang belum? sambil nunggu yuk mabar sebentar${WEATHER_MENTION}"
+                    "brooo afternoon mood, productive day atau lagi gabut? perfect timing buat gaming${WEATHER_MENTION}"
+                    "woiii siang-siang gini enak banget main game, siapa free buat quick session${WEATHER_MENTION}?"
                   )
                 fi
                 ;;
               "evening")
                 if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "weekend_countdown" ]]; then
                   MESSAGES=(
-                    "yooooo FRIDAY EVENING! weekend mode activated finally! besok libur perfect buat marathon gaming${WEATHER_MENTION}!"
-                    "wassuppp weekend warriors! friday feeling different nih, long gaming session incoming${WEATHER_MENTION}"
-                    "heyyyy TGIF squad! weekend countdown complete! celebrate dengan valorant party yuk${WEATHER_MENTION}"
-                    "ayooo friday night energy! weekend vibes kicking in hard, gaming time maksimal${WEATHER_MENTION}"
-                    "brooo weekend mode ON! friday evening hits different, main sampai malem yuk${WEATHER_MENTION}"
+                    "yooooo FRIDAY EVENING, weekend mode activated finally! besok libur perfect buat marathon gaming${WEATHER_MENTION}!"
+                    "wassuppp weekend warriors, friday feeling different nih! long gaming session incoming${WEATHER_MENTION}"
+                    "heyyyy TGIF squad, weekend countdown complete! celebrate dengan valorant party yuk${WEATHER_MENTION}"
+                    "ayooo friday night energy, weekend vibes kicking in hard! gaming time maksimal${WEATHER_MENTION}"
+                    "brooo weekend mode ON, friday evening hits different! main sampai malem yuk${WEATHER_MENTION}"
                   )
                 else
                   MESSAGES=(
-                    "yooooo evening squad! how was today treating y'all? winding down dengan gaming sounds perfect${WEATHER_MENTION}"
-                    "wassuppp golden hour gang! evening vibes hitting nice, siapa mau chill gaming?${WEATHER_MENTION}"
-                    "heyyyy evening legends! day almost done nih, relax time dengan vc session${WEATHER_MENTION}"
-                    "ayooo evening check-in! productive day atau challenging? gaming therapy time${WEATHER_MENTION}"
-                    "brooo evening mood! dinner udah atau lagi nyari makan? sambil main yuk${WEATHER_MENTION}"
-                    "woiii evening vibes enak banget! perfect time buat cozy gaming session${WEATHER_MENTION}"
+                    "yooooo evening squad, how was today treating y'all? winding down dengan gaming sounds perfect${WEATHER_MENTION}"
+                    "wassuppp golden hour gang, evening vibes hitting nice! siapa mau chill gaming${WEATHER_MENTION}?"
+                    "heyyyy evening legends, day almost done nih! relax time dengan vc session${WEATHER_MENTION}"
+                    "ayooo evening check-in, productive day atau challenging? gaming therapy time${WEATHER_MENTION}"
+                    "brooo evening mood, dinner udah atau lagi nyari makan? sambil main yuk${WEATHER_MENTION}"
+                    "woiii evening vibes enak banget, perfect time buat cozy gaming session${WEATHER_MENTION}!"
                   )
                 fi
                 ;;
               "night")
                 if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "sunday_prep" ]]; then
                   MESSAGES=(
-                    "heyyyy sunday night owls! weekend ending tapi masih sempat gaming session terakhir${WEATHER_MENTION}!"
-                    "yooooo sunday evening vibes! last chance weekend gaming before monday hits${WEATHER_MENTION}"
-                    "wassuppp sunday squad! weekend finale nih, siapa mau closing ceremony gaming?${WEATHER_MENTION}"
-                    "ayooo sunday night feels! tomorrow back to routine, enjoy last gaming freedom${WEATHER_MENTION}"
-                    "brooo sunday evening mood! weekend was good, cap it off dengan chill session${WEATHER_MENTION}"
+                    "heyyyy sunday night owls, weekend ending how's everyone feeling? masih sempat gaming session terakhir${WEATHER_MENTION}!"
+                    "yooooo sunday evening vibes, last chance weekend gaming before monday? make it count${WEATHER_MENTION}"
+                    "wassuppp sunday squad, weekend finale nih how was it? siapa mau closing ceremony gaming${WEATHER_MENTION}?"
+                    "ayooo sunday night feels, tomorrow back to routine ready? enjoy last gaming freedom${WEATHER_MENTION}"
+                    "brooo sunday evening mood, weekend was good right? cap it off dengan chill session${WEATHER_MENTION}"
                   )
                 else
                   MESSAGES=(
-                    "yooooo night owls! who's still vibing at this hour? perfect late night gaming energy${WEATHER_MENTION}"
-                    "wassuppp midnight squad! insomnia hitting atau just chilling? gaming therapy available${WEATHER_MENTION}"
-                    "heyyyy late night legends! can't sleep atau choice to stay up? valorant sounds good${WEATHER_MENTION}"
-                    "ayooo nocturnal gamers! night vibes different nih, cozy gaming session yuk${WEATHER_MENTION}"
-                    "brooo night time energy! peaceful gaming hours when everyone's sleeping${WEATHER_MENTION}"
-                    "woiii night squad assemble! best gaming hours when it's quiet and chill${WEATHER_MENTION}"
+                    "yooooo night owls, who's still vibing at this hour? perfect late night gaming energy${WEATHER_MENTION}"
+                    "wassuppp midnight squad, insomnia hitting atau just chilling? gaming therapy available${WEATHER_MENTION}"
+                    "heyyyy late night legends, can't sleep atau choice to stay up? valorant sounds good${WEATHER_MENTION}"
+                    "ayooo nocturnal gamers, night vibes different nih how we feeling? cozy gaming session yuk${WEATHER_MENTION}"
+                    "brooo night time energy, peaceful gaming hours when everyone's sleeping? perfect timing${WEATHER_MENTION}"
+                    "woiii night squad assemble, best gaming hours when it's quiet! who's down${WEATHER_MENTION}?"
                   )
                 fi
                 ;;
