@@ -312,19 +312,48 @@ jobs:
           - Use personal thoughts/feelings: "I'm feeling...", "just woke up and...", "been thinking..."
           - Reference your own activities: "just grabbed coffee", "looking outside", "planning to..."
           - Natural human imperfections: occasional typos, incomplete thoughts, casual grammar
-          - Language mixing should feel like bilingual person naturally switching (50% Indo 50% English)
+          - Language mixing should feel like bilingual person naturally switching (60% Indo 40% English)
           - Avoid AI-like descriptions: don't announce weather/time like a reporter
           - Personal context: mention what you're doing, feeling, planning
           - Spontaneous thoughts: add random observations or mood descriptions
           - Friend-to-friend tone: like texting your gaming buddies in group chat
           - Weather integration: personal reactions "this rain makes me sleepy" not "weather is good"
-          - Time references: "ugh early morning" not "it's morning time"
+          - Time references: "damnnn early morning" not "it's morning time"
           - Real emotions: excitement, tiredness, weekend anticipation, work stress
-          - Gaming context: what you want to play, how you're feeling about games
+          - Gaming context: valorant, roblox, mobile legends/emel/ml references
           - Length: Natural conversation length, not structured announcements
           - NO PLACEHOLDERS: Use actual context values, never leave placeholders like WEATHER_xxx
-          - AVOID REPETITIVE STARTS: Don't always use "ugh" - vary with "bruh", "woi", "eh", "damn", "yah", "aduh", "anjir", etc.
-          - MIX LANGUAGES NATURALLY: Use Indonesian slang mixed with English like real conversations
+          - CHILL VIBES: Use extended words like "damnnn", "deymm", "dayummm", "dangg", "bruhhh", "woiiii/weiii", "yahhh", "aduhhh/duhhh", "njirrr/bjirrr", "kocakkk"
+          - GAMING SLANG: siapa mau ranked, mabar yuk, push rank, main bareng, 1v1 dulu, jangan feeding, carry dong
+          - INDONESIAN SLANG: gabut, males, capek, kesel, seneng, bete, kzl, anjay, mantul, gaskeun, skuy
+          
+          ENHANCED EXAMPLES (chill human vibes):
+          bruhhh friday morning finallyyyy! besok weekend dah time to grind valorant ranked skuy
+          woiiii just bangun tidur and hujan lagi deymm, perfect excuse buat main roblox seharian
+          yahhh afternoon guys udah makan siang? gabut bgt might hop on emel later ada yang mau push rank?
+          damnnn masih begadang nih lol, besok bangun siang pasti but tonight valorant session with the squad
+          njirrr wednesday udah? waktu cepet bgt rasanya kemarin baru senin anjay
+          aduhhh sunday vibes hit different, chill dulu hari ini besok reality check lagi wkwk
+          deymm this hujan bikin ngantuk parah, perfect weather buat cozy gaming marathon
+          morning gais! bangun-bangun cerah mood langsung bagus siap produktif (atau main roblox hehe)
+          kocakkk thursday night udah, weekend plans loading... siapa mau mabar ml weekend nanti?
+          bruhhh monday lagi tapi honestly motivated hari ini, mungkin beneran produktif (atau ranked val aja)
+          weiii guys ada yang online? bosen parah butuh temen main, 1v1 valorant yuk
+          dayummm friday energy different bgt, weekend mode almost activated time to celebrate with some emel ranked
+          dangg capek seharian kerja, need some gaming therapy... valorant unrated sambil ngobrol santai
+          yahhh males bgt hari ini, cuaca mendung bikin mood turun... roblox aja deh yang santai
+          njirrr weekend berasa cepet bgt, besok senin lagi but today masih bisa enjoy gaming session
+          
+          GAMING REFERENCES TO USE:
+          - Valorant: ranked, unrated, spike rush, deathmatch, headshot only, agent baru, skin baru
+          - Mobile Legends: ranked, classic, brawl, push mythic, farming, gank, lord, turtle
+          - Roblox: adopt me, brookhaven, bloxburg, tower of hell, arsenal, phantom forces
+          
+          INDONESIAN EXPRESSIONS:
+          - Emotions: seneng, bete, kesel, gabut, males, capek, excited, chill
+          - Reactions: anjay, mantul, gaskeun, skuy, yuk, ayo, woi, eh
+          - Time: udah, belum, besok, kemarin, sekarang, nanti
+          - Activities: main, mabar, ngobrol, istirahat, kerja, sekolah
           
           ENHANCED EXAMPLES (human-like, varied starts):
           bruh friday morning finally! besok weekend sudah time to celebrate fr
@@ -499,7 +528,7 @@ jobs:
               
               # Default footer if empty
               if [[ -z "$FOOTER" ]]; then
-                FOOTER="enhanced ai vibes"
+                FOOTER="chill gaming vibes"
               fi
               
               echo "✅ AI content parsed successfully"
@@ -529,48 +558,48 @@ jobs:
               "morning")
                 if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "monday_motivation" ]]; then
                   TITLE="🌅 Monday Fresh Start"
-                  DESC_RAW="yah monday lagi but honestly feeling kinda optimistic today$WEATHER_MENTION might actually be productive cuy"
+                  DESC_RAW="yahhh monday lagi tapi honestly feeling optimistic today$WEATHER_MENTION mungkin beneran produktif (atau main valorant aja)"
                 else
                   TITLE="🌅 Morning Squad Online"
-                  DESC_RAW="pagi guys hope kalian slept better than me$WEATHER_MENTION butuh kopi but we move fr"
+                  DESC_RAW="morning gais! hope kalian tidur nyenyak$WEATHER_MENTION butuh kopi dulu before anything, maybe roblox later skuy"
                 fi
-                FOOTER="coffee dependency activated"
+                FOOTER="coffee + gaming = perfect combo"
                 ;;
               "afternoon") 
                 if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "hump_day" ]]; then
                   TITLE="☀️ Hump Day Checkpoint"
-                  DESC_RAW="eh wednesday already wtf$WEATHER_MENTION feels like monday was yesterday but hey almost weekend dah"
+                  DESC_RAW="njirrr wednesday udah wtf$WEATHER_MENTION rasanya kemarin baru senin but hey weekend almost here dah"
                 else
                   TITLE="☀️ Midday Recharge Zone"
-                  DESC_RAW="afternoon everyone gimana hari ini$WEATHER_MENTION honestly agak lapar might get food later anjir"
+                  DESC_RAW="afternoon everyone gimana hari ini$WEATHER_MENTION honestly agak gabut, siapa mau push rank emel later?"
                 fi
-                FOOTER="lunch thoughts activated"
+                FOOTER="lunch break = gaming break"
                 ;;
               "evening")
                 if [[ "${{ steps.context.outputs.DAY_NUM }}" == "5" ]]; then
                   TITLE="🌆 Weekend Loading Tonight" 
-                  DESC_RAW="bruh friday finally wtf took forever$WEATHER_MENTION weekend vibes incoming feel like celebrating already cuy"
+                  DESC_RAW="bruhhh friday finallyyyy took forever$WEATHER_MENTION weekend vibes incoming, time to grind valorant ranked!"
                 elif [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "weekend_countdown" ]]; then
                   TITLE="🌆 Friday Night Preview"
-                  DESC_RAW="woi friday evening energy different$WEATHER_MENTION besok weekend sudah time to unwind fr"
+                  DESC_RAW="kocakkk friday evening energy different$WEATHER_MENTION besok weekend dah, siapa mau mabar ml nanti?"
                 else
                   TITLE="🌆 Golden Hour Online"
-                  DESC_RAW="evening guys gimana today nya$WEATHER_MENTION honestly feeling pretty chill rn might just vibe aja"
+                  DESC_RAW="evening gais gimana today nya$WEATHER_MENTION honestly feeling chill, might just unrated val sambil ngobrol"
                 fi
-                FOOTER="weekend countdown initiated"
+                FOOTER="weekend gaming marathon loading"
                 ;;
               "night")
                 if [[ "${{ steps.context.outputs.WEEKEND_TRANSITION }}" == "weekend_starts" ]]; then
                   TITLE="🌙 Weekend Mode Activated"
-                  DESC_RAW="anjir friday night hits different$WEATHER_MENTION weekend officially here time to actually relax for once"
+                  DESC_RAW="dayummm friday night hits different$WEATHER_MENTION weekend officially here, time to actually relax with some roblox"
                 elif [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "sunday_prep" ]]; then
                   TITLE="🌜 Sunday Wind Down"
-                  DESC_RAW="aduh sunday night feels bittersweet$WEATHER_MENTION weekend ending but honestly was pretty good sih"
+                  DESC_RAW="aduhhh sunday night feels bittersweet$WEATHER_MENTION weekend ending tapi honestly was pretty good sih, last gaming session?"
                 else
                   TITLE="🌙 Night Owl Territory"
-                  DESC_RAW="woy still awake at this hour lol$WEATHER_MENTION either can't sleep or don't want to end the day yet relatable banget"
+                  DESC_RAW="weiii masih begadang nih lol$WEATHER_MENTION either gabisa tidur or don't want to end the day, 1v1 valorant yuk?"
                 fi
-                FOOTER="nocturnal thoughts active"
+                FOOTER="nocturnal gaming sessions activate"
                 ;;
             esac
           fi
@@ -677,7 +706,7 @@ jobs:
           # Get environment variables with defaults
           title = os.environ.get('TITLE_CLEAN', 'Default Title')
           desc_raw = os.environ.get('DESC_CLEAN', 'Default description')
-          footer = os.environ.get('FOOTER_CLEAN', 'enhanced ai vibes')
+          footer = os.environ.get('FOOTER_CLEAN', 'chill gaming vibes')
           
           # Add proper attribution with newline
           desc = f"{desc_raw}\n> by server dev guanteng - <@399393175904714752>"
