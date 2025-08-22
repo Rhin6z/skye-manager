@@ -615,8 +615,13 @@ jobs:
           
           # Clean content for JSON
           TITLE_CLEAN=$(echo "${{ steps.ai_generation.outputs.TITLE }}" | tr -d '\n\r' | sed 's/"/\\"/g' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
-          DESC_CLEAN=$(echo "$FINAL_DESC" | tr -d '\n\r' | sed 's/"/\\"/g' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+          DESC_CLEAN=$(echo "$FINAL_DESC" | tr -d '\n\r' | sed 's/"/\\"/g' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//') 
           FOOTER_CLEAN=$(echo "${{ steps.ai_generation.outputs.FOOTER }}" | tr -d '\n\r' | sed 's/"/\\"/g' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+          
+          # Additional cleaning for Discord special characters
+          TITLE_CLEAN=$(echo "$TITLE_CLEAN" | sed 's/\\/\\\\/g')
+          DESC_CLEAN=$(echo "$DESC_CLEAN" | sed 's/\\/\\\\/g')
+          FOOTER_CLEAN=$(echo "$FOOTER_CLEAN" | sed 's/\\/\\\\/g')
           
           echo "Final enhanced content:"
           echo "Title: $TITLE_CLEAN"
@@ -625,11 +630,16 @@ jobs:
           echo "AI Used: ${{ steps.ai_generation.outputs.USE_AI }}"
           echo "Weather: ${{ steps.weather.outputs.WEATHER_AVAILABLE }}"
           
+          # Simple JSON string approach (safer for YAML)
+          JSON_PAYLOAD="{\"embeds\":[{\"title\":\"$TITLE_CLEAN\",\"description\":\"$DESC_CLEAN\",\"color\":$COLOR,\"thumbnail\":{\"url\":\"https://twemoji.maxcdn.com/v/latest/72x72/$THUMB.png\"},\"footer\":{\"text\":\"$FOOTER_CLEAN\",\"icon_url\":\"https://files.catbox.moe/npfh4e.jpg\"},\"timestamp\":\"$TIMESTAMP\"}]}"
+          
+          echo "📋 JSON Payload length: ${#JSON_PAYLOAD}"
+          
           # Send to Discord with enhanced embed
           curl -f -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
                -H "Content-Type: application/json" \
                --connect-timeout 12 --max-time 20 \
-               -d '{"embeds":[{"title":"'"$TITLE_CLEAN"'","description":"'"$DESC_CLEAN"'","color":'"$COLOR"',"thumbnail":{"url":"https://twemoji.maxcdn.com/v/latest/72x72/'"$THUMB"'.png"},"footer":{"text":"'"$FOOTER_CLEAN"'","icon_url":"https://files.catbox.moe/npfh4e.jpg"},"timestamp":"'"$TIMESTAMP"'"}]}'
+               -d "$JSON_PAYLOAD"
           
           echo "✅ Enhanced greeting sent!"
           echo "🤖 AI: ${{ steps.ai_generation.outputs.USE_AI }} | Weather: ${{ steps.weather.outputs.WEATHER_AVAILABLE }} | Context: ${{ steps.context.outputs.SPECIAL_CONTEXT }}"
