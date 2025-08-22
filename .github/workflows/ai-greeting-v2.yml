@@ -396,11 +396,16 @@ jobs:
           🌜 Sunday Prep Vibes
           
           FORMAT:
-          TITLE: [creative title with emoji]
-          DESC: [natural English-Indonesian flow, 1-2 lines max, no dashes]
-          FOOTER: [short footer phrase]
+          Write naturally like you're posting in a Discord group chat. No need for strict formatting.
+          Just write a natural, trendy greeting that fits the time and context.
           
-          Keep it natural and engaging!
+          EXAMPLES:
+          yooooo what's gooddddd everyone!! hope y'all are chillinnnnn today, might hop on valorant laterrrr
+          bruhhh friday morning finallyyyy! besok weekend dah time to grind valorant ranked skuy
+          heyyyy guyssss what's the vibeeeee? gabut bgt might play some roblox or emel push rank anyone???
+          woiiii just bangun tidur and hujan lagi deymm, perfect excuse buat main roblox seharian
+          
+          Keep it natural and engaging - write 1-2 sentences max!
           EOF
           
           # Replace all placeholders with actual values
@@ -502,22 +507,84 @@ jobs:
             # Clean AI response from any remaining placeholders first
             AI_TEXT=$(echo "$AI_TEXT" | sed 's/WEATHER_[a-zA-Z_]*//g')
             
-            # Enhanced parsing with multiple attempts
+            # Enhanced parsing with multiple methods for natural AI responses
             TITLE=""
             DESC_RAW=""
             FOOTER=""
             
-            # Method 1: Standard format parsing
+            # Method 1: Standard format parsing (TITLE:, DESC:, FOOTER:)
             TITLE=$(echo "$AI_TEXT" | grep -i "^TITLE:" | head -1 | sed 's/.*TITLE:[[:space:]]*//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
             DESC_RAW=$(echo "$AI_TEXT" | grep -i "^DESC:" | head -1 | sed 's/.*DESC:[[:space:]]*//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
             FOOTER=$(echo "$AI_TEXT" | grep -i "^FOOTER:" | head -1 | sed 's/.*FOOTER:[[:space:]]*//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
             
-            # Method 2: Fallback emoji-based parsing
+            # Method 2: Smart natural parsing for unstructured AI responses
+            if [[ -z "$TITLE" && -z "$DESC_RAW" ]]; then
+              echo "🔄 Using smart natural parsing..."
+              
+              # Split AI response into lines, skip empty ones
+              AI_LINES=$(echo "$AI_TEXT" | sed '/^[[:space:]]*$/d' | head -5)
+              FIRST_LINE=$(echo "$AI_LINES" | head -1 | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+              
+              # Check if first line looks like a greeting (short, has trendy words)
+              if [[ ${#FIRST_LINE} -lt 80 && "$FIRST_LINE" =~ (yooo|heyy|wassup|what.*good|what.*vibe|ayoo|hiii) ]]; then
+                # First line is probably the main greeting, use as DESC
+                DESC_RAW="$FIRST_LINE"
+                
+                # Generate contextual title based on time
+                case "${{ steps.context.outputs.TYPE }}" in
+                  "morning") TITLE="🌅 Morning Squad Energy" ;;
+                  "afternoon") TITLE="☀️ Afternoon Vibes" ;;
+                  "evening") TITLE="🌆 Evening Chill Mode" ;;
+                  "night") TITLE="🌙 Night Owl Territory" ;;
+                  *) TITLE="🎮 Gaming Squad Online" ;;
+                esac
+                
+                # Look for additional content in next lines
+                SECOND_LINE=$(echo "$AI_LINES" | sed -n '2p' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+                if [[ -n "$SECOND_LINE" && ${#SECOND_LINE} -gt 20 ]]; then
+                  DESC_RAW="$DESC_RAW $SECOND_LINE"
+                fi
+                
+              else
+                # First line might be longer content, try to extract greeting
+                if [[ ${#FIRST_LINE} -gt 100 ]]; then
+                  # Long first line, try to split it
+                  GREETING_PART=$(echo "$FIRST_LINE" | sed 's/[.!?].*//' | head -c 120)
+                  if [[ -n "$GREETING_PART" ]]; then
+                    DESC_RAW="$GREETING_PART"
+                    case "${{ steps.context.outputs.TYPE }}" in
+                      "morning") TITLE="🌅 Morning Feels" ;;
+                      "afternoon") TITLE="☀️ Afternoon Check-in" ;;
+                      "evening") TITLE="🌆 Evening Mood" ;;
+                      "night") TITLE="🌙 Late Night Vibes" ;;
+                      *) TITLE="🎮 Squad Update" ;;
+                    esac
+                  fi
+                else
+                  # Use entire first line as description
+                  DESC_RAW="$FIRST_LINE"
+                  case "${{ steps.context.outputs.TYPE }}" in
+                    "morning") TITLE="🌅 Good Morning Energy" ;;
+                    "afternoon") TITLE="☀️ Afternoon Squad" ;;
+                    "evening") TITLE="🌆 Evening Check" ;;
+                    "night") TITLE="🌙 Night Gaming" ;;
+                    *) TITLE="🎮 What's Good" ;;
+                  esac
+                fi
+              fi
+              
+              # Default footer for natural responses
+              if [[ -z "$FOOTER" ]]; then
+                FOOTER="chill gaming vibes"
+              fi
+            fi
+            
+            # Method 3: Emoji-based parsing (fallback)
             if [[ -z "$TITLE" ]]; then
               TITLE=$(echo "$AI_TEXT" | grep -E "^[🌅🌆🌙🌜☀️]" | head -1 | sed 's/^[[:space:]]*//')
             fi
             
-            # Method 3: Take first reasonable line as description
+            # Method 4: Last resort - use any non-empty line
             if [[ -z "$DESC_RAW" && -n "$TITLE" ]]; then
               DESC_RAW=$(echo "$AI_TEXT" | grep -v "^TITLE:" | grep -v "^FOOTER:" | grep -v -F "$TITLE" | head -1 | sed 's/^[[:space:]]*//')
             fi
