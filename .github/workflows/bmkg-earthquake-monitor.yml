@@ -296,7 +296,7 @@ jobs:
                     shakemap_url_check = f'https://static.bmkg.go.id/{earthquake_data.get(\"Shakemap\")}'
                     embed['fields'].append({
                         'name': '🗺️ Intensity Map',
-                        'value': f'BMKG Official Shakemap Available\\nFile: {earthquake_data.get(\"Shakemap\")}',
+                        'value': f'BMKG Official Shakemap Available\\n{earthquake_data.get(\"Shakemap\")}',
                         'inline': False
                     })
                 
