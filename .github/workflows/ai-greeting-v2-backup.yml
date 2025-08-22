@@ -1,0 +1,958 @@
+name: Enhanced AI Discord Greeting
+
+on:
+  schedule:
+    - cron: '0 0 * * 1-5'    # 7 AM WIB weekdays (midnight UTC)
+    - cron: '0 5 * * 1-5'    # 12 PM WIB weekdays (5 AM UTC)  
+    - cron: '0 10 * * 1-5'   # 5 PM WIB weekdays (10 AM UTC)
+    - cron: '0 15 * * 1-5'   # 10 PM WIB weekdays (3 PM UTC)
+    - cron: '0 0 * * 6,0'    # 7 AM WIB weekends (midnight UTC)
+    - cron: '0 5 * * 6,0'    # 12 PM WIB weekends (5 AM UTC)
+    - cron: '0 10 * * 6,0'   # 5 PM WIB weekends (10 AM UTC)
+    - cron: '0 15 * * 6,0'   # 10 PM WIB weekends (3 PM UTC)
+  workflow_dispatch:
+    inputs:
+      trigger_source:
+        description: 'Source of the trigger (openwrt/manual/test)'
+        required: false
+        default: 'manual'
+        type: string
+      scheduled_time:
+        description: 'Scheduled time from OpenWRT'
+        required: false
+        default: ''
+        type: string
+      greeting_type:
+        description: 'Select greeting type'
+        required: false
+        default: 'auto'
+        type: choice
+        options: [auto, morning, afternoon, evening, night]
+      force_weather:
+        description: 'Force weather check'
+        required: false
+        default: false
+        type: boolean
+      test_mode:
+        description: 'Test mode'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  enhanced-greeting:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    
+    steps:
+      - name: Log Trigger Source & Setup
+        run: |
+          echo "🔥 Workflow triggered by: ${{ github.event.inputs.trigger_source || 'github_schedule' }}"
+          echo "⏰ Trigger time (WIB): $(TZ='Asia/Jakarta' date)"
+          echo "📅 Scheduled time: ${{ github.event.inputs.scheduled_time || 'N/A' }}"
+          echo "🎯 Greeting type: ${{ github.event.inputs.greeting_type || 'auto' }}"
+          echo "TRIGGER_SOURCE=${{ github.event.inputs.trigger_source || 'github_schedule' }}" >> $GITHUB_ENV
+          echo "SCHEDULED_TIME=${{ github.event.inputs.scheduled_time || '' }}" >> $GITHUB_ENV
+          
+      - name: Setup Enhanced Context
+        id: context
+        run: |
+          # Enhanced timezone and context setup
+          export TZ='Asia/Jakarta'
+          
+          # Basic time info
+          CURRENT_DAY=$(date +%A)
+          CURRENT_DATE=$(date +"%B %d, %Y")
+          CURRENT_TIME=$(date +"%H:%M")
+          DAY_NUM=$(date +%u)
+          MONTH=$(date +%m)
+          DAY_OF_MONTH=$(date +%d)
+          
+          # Determine greeting type
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            MANUAL_TYPE="${{ github.event.inputs.greeting_type }}"
+            if [[ "$MANUAL_TYPE" == "auto" ]]; then
+              # Auto-detect based on current time
+              HOUR=$(date +%H | sed 's/^0*//')
+              if [[ $HOUR -ge 5 && $HOUR -lt 12 ]]; then
+                TYPE="morning"
+              elif [[ $HOUR -ge 12 && $HOUR -lt 17 ]]; then
+                TYPE="afternoon" 
+              elif [[ $HOUR -ge 17 && $HOUR -lt 21 ]]; then
+                TYPE="evening"
+              else
+                TYPE="night"
+              fi
+            else
+              TYPE="$MANUAL_TYPE"
+            fi
+          else
+            case "${{ github.event.schedule }}" in
+              "0 0 * * 1-5"|"0 0 * * 6,0") TYPE="morning" ;;
+              "0 5 * * 1-5"|"0 5 * * 6,0") TYPE="afternoon" ;;
+              "0 10 * * 1-5"|"0 10 * * 6,0") TYPE="evening" ;;
+              "0 15 * * 1-5"|"0 15 * * 6,0") TYPE="night" ;;
+            esac
+          fi          # Context detection
+          if [[ $DAY_NUM -eq 6 || $DAY_NUM -eq 7 ]]; then
+            CONTEXT="weekend"
+          else
+            CONTEXT="weekday"
+          fi
+          
+          # Enhanced special day detection
+          SPECIAL_CONTEXT=""
+          case "$CURRENT_DAY-$DAY_OF_MONTH" in
+            "Monday-"*) SPECIAL_CONTEXT="monday_motivation" ;;
+            "Wednesday-"*) SPECIAL_CONTEXT="hump_day" ;;
+            "Friday-"*) SPECIAL_CONTEXT="weekend_countdown" ;;
+            "Sunday-"*) SPECIAL_CONTEXT="sunday_prep" ;;
+          esac
+          
+          # Season detection (Indonesia - dry/wet season)
+          if [[ $MONTH -ge 4 && $MONTH -le 9 ]]; then
+            SEASON="dry_season"
+            SEASON_VIBE="sunny dry season vibes"
+          else
+            SEASON="wet_season" 
+            SEASON_VIBE="cozy rainy season feels"
+          fi
+          
+          # Weekend transitions with enhanced context
+          WEEKEND_TRANSITION=""
+          NEXT_DAY_INFO=""
+          if [[ "$TYPE" == "night" || "$TYPE" == "evening" ]]; then
+            case $DAY_NUM in
+              5) 
+                WEEKEND_TRANSITION="weekend_starts"
+                NEXT_DAY_INFO="weekend officially starts tomorrow brooo, time to celebrate fr"
+                ;;
+              6) 
+                WEEKEND_TRANSITION="weekend_continues"
+                NEXT_DAY_INFO="sunday chill day tomorrow, perfect for lazy gaming sessions cuy"
+                ;;
+              7) 
+                WEEKEND_TRANSITION="weekend_ends"
+                NEXT_DAY_INFO="monday respawn tomorrow but tonight still weekend mode deym"
+                ;;
+              1)
+                NEXT_DAY_INFO="tuesday grind continues tomorrow, stay motivated gais"
+                ;;
+              2)
+                NEXT_DAY_INFO="wednesday hump day energy loading tomorrow, halfway there"
+                ;;
+              3)
+                NEXT_DAY_INFO="thursday almost weekend vibes tomorrow, so close cuyy"
+                ;;
+              4)
+                NEXT_DAY_INFO="friday weekend preview tomorrow fr, excitement loading"
+                ;;
+            esac
+          fi
+          
+          # Output all context
+          echo "TYPE=$TYPE" >> $GITHUB_OUTPUT
+          echo "CONTEXT=$CONTEXT" >> $GITHUB_OUTPUT
+          echo "CURRENT_DAY=$CURRENT_DAY" >> $GITHUB_OUTPUT
+          echo "CURRENT_DATE=$CURRENT_DATE" >> $GITHUB_OUTPUT
+          echo "CURRENT_TIME=$CURRENT_TIME" >> $GITHUB_OUTPUT
+          echo "SPECIAL_CONTEXT=$SPECIAL_CONTEXT" >> $GITHUB_OUTPUT
+          echo "SEASON=$SEASON" >> $GITHUB_OUTPUT
+          echo "SEASON_VIBE=$SEASON_VIBE" >> $GITHUB_OUTPUT
+          echo "WEEKEND_TRANSITION=$WEEKEND_TRANSITION" >> $GITHUB_OUTPUT
+          echo "NEXT_DAY_INFO=$NEXT_DAY_INFO" >> $GITHUB_OUTPUT
+          echo "DAY_NUM=$DAY_NUM" >> $GITHUB_OUTPUT
+          
+          echo "🎯 Enhanced context setup complete"
+          echo "📅 $CURRENT_DAY ($CURRENT_DATE) - $CURRENT_TIME WIB"
+          echo "🌟 Special: $SPECIAL_CONTEXT | Season: $SEASON"
+          echo "🎪 Weekend transition: $WEEKEND_TRANSITION"
+
+      - name: Get Weather Info (Free API)
+        id: weather
+        run: |
+          # Only fetch weather if manually requested or random chance (to save API calls)
+          FETCH_WEATHER=false
+          
+          if [[ "${{ github.event.inputs.force_weather }}" == "true" ]]; then
+            FETCH_WEATHER=true
+          elif [[ $((RANDOM % 3)) -eq 0 ]]; then  # 33% chance
+            FETCH_WEATHER=true
+          fi
+          
+          if [[ "$FETCH_WEATHER" == "true" ]]; then
+            echo "🌤️ Fetching Jakarta weather..."
+            
+            # Using wttr.in - free weather service (no API key needed)
+            WEATHER_RAW=$(curl -s "http://wttr.in/Jakarta?format=j1" --connect-timeout 8 --max-time 15 || echo "")
+            
+            if [[ -n "$WEATHER_RAW" ]]; then
+              # Parse weather with python (available in GitHub runners)
+              python3 << 'PYTHON_EOF'
+          import json
+          import os
+          import sys
+          
+          try:
+              weather_data = os.environ.get('WEATHER_RAW', '{}')
+              if weather_data:
+                  data = json.loads(weather_data)
+                  current = data.get('current_condition', [{}])[0]
+                  
+                  temp = current.get('temp_C', 'unknown')
+                  desc = current.get('weatherDesc', [{}])[0].get('value', 'unknown')
+                  humidity = current.get('humidity', 'unknown')
+                  
+                  # Simplify description for greeting
+                  weather_vibe = "unknown vibes"
+                  if 'sunny' in desc.lower() or 'clear' in desc.lower():
+                      weather_vibe = "sunny perfect weather"
+                  elif 'rain' in desc.lower() or 'drizzle' in desc.lower():
+                      weather_vibe = "cozy rainy vibes"
+                  elif 'cloud' in desc.lower():
+                      weather_vibe = "cloudy chill weather"
+                  elif 'storm' in desc.lower():
+                      weather_vibe = "stormy dramatic weather"
+                  
+                  print(f"WEATHER_TEMP={temp}")
+                  print(f"WEATHER_DESC={desc}")
+                  print(f"WEATHER_VIBE={weather_vibe}")
+                  print(f"WEATHER_AVAILABLE=true")
+              else:
+                  print("WEATHER_AVAILABLE=false")
+          except Exception as e:
+              print(f"Weather parsing failed: {e}")
+              print("WEATHER_AVAILABLE=false")
+          PYTHON_EOF
+              
+              # Capture python output to temp file (safer than eval)
+              WEATHER_RAW="$WEATHER_RAW" python3 << 'PYTHON_EOF' > /tmp/weather_vars.txt
+          import json
+          import os
+          
+          try:
+              weather_data = os.environ.get('WEATHER_RAW', '{}')
+              if weather_data:
+                  data = json.loads(weather_data)
+                  current = data.get('current_condition', [{}])[0]
+                  
+                  temp = current.get('temp_C', 'unknown')
+                  desc = current.get('weatherDesc', [{}])[0].get('value', 'unknown')
+                  
+                  weather_vibe = "unknown_vibes"
+                  if 'sunny' in desc.lower() or 'clear' in desc.lower():
+                      weather_vibe = "sunny_perfect_weather"
+                  elif 'rain' in desc.lower() or 'drizzle' in desc.lower():
+                      weather_vibe = "cozy_rainy_vibes"  
+                  elif 'cloud' in desc.lower():
+                      weather_vibe = "cloudy_chill_weather"
+                  elif 'storm' in desc.lower():
+                      weather_vibe = "stormy_dramatic_weather"
+                  
+                  print(f"WEATHER_TEMP='{temp}'")
+                  print(f"WEATHER_DESC='{desc}'")  
+                  print(f"WEATHER_VIBE='{weather_vibe}'")
+                  print(f"WEATHER_AVAILABLE='true'")
+              else:
+                  print("WEATHER_AVAILABLE='false'")
+          except:
+              print("WEATHER_AVAILABLE='false'")
+          PYTHON_EOF
+              
+              # Source the variables safely
+              if [[ -f /tmp/weather_vars.txt ]]; then
+                source /tmp/weather_vars.txt
+                
+                # Convert underscores back to spaces for display
+                WEATHER_VIBE=$(echo "$WEATHER_VIBE" | sed 's/_/ /g')
+              else
+                WEATHER_AVAILABLE=false
+              fi
+              
+              if [[ "$WEATHER_AVAILABLE" == "true" ]]; then
+                echo "✅ Weather fetched: $WEATHER_TEMP°C, $WEATHER_VIBE"
+                echo "WEATHER_TEMP=$WEATHER_TEMP" >> $GITHUB_OUTPUT
+                echo "WEATHER_VIBE=$WEATHER_VIBE" >> $GITHUB_OUTPUT
+                echo "WEATHER_AVAILABLE=true" >> $GITHUB_OUTPUT
+              else
+                echo "❌ Weather parsing failed"
+                echo "WEATHER_AVAILABLE=false" >> $GITHUB_OUTPUT
+              fi
+            else
+              echo "❌ Weather fetch failed"
+              echo "WEATHER_AVAILABLE=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "⏭️ Skipping weather fetch this time"
+            echo "WEATHER_AVAILABLE=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Prevent Duplicate Content
+        id: uniqueness
+        run: |
+          # Simple uniqueness system using GitHub's built-in caching
+          # Create hash of current context to avoid exact repeats
+          CONTEXT_HASH=$(echo "${{ steps.context.outputs.TYPE }}-${{ steps.context.outputs.CURRENT_DAY }}-${{ steps.context.outputs.SPECIAL_CONTEXT }}" | sha256sum | cut -c1-8)
+          
+          # Add randomness to ensure variety even with same context  
+          SEED=$((RANDOM % 100))
+          UNIQUENESS_FACTOR="$CONTEXT_HASH-$SEED"
+          
+          echo "🔄 Uniqueness factor: $UNIQUENESS_FACTOR"
+          echo "UNIQUENESS_FACTOR=$UNIQUENESS_FACTOR" >> $GITHUB_OUTPUT
+
+      - name: Generate Enhanced AI Greeting  
+        id: ai_generation
+        run: |
+          echo "🤖 Generating enhanced AI greeting..."
+          
+          # Build enhanced prompt with all context
+          cat > /tmp/enhanced_prompt.txt << 'EOF'
+          Create a dynamic Discord greeting for TIME_PLACEHOLDER on CONTEXT_PLACEHOLDER.
+          
+          ENHANCED CONTEXT:
+          - Current: CURRENT_DAY_PLACEHOLDER (CURRENT_DATE_PLACEHOLDER) at CURRENT_TIME_PLACEHOLDER WIB
+          - Special context: SPECIAL_CONTEXT_PLACEHOLDER  
+          - Season: SEASON_VIBE_PLACEHOLDER
+          - Weather: WEATHER_CONTEXT_PLACEHOLDER
+          - Weekend transition: WEEKEND_TRANSITION_PLACEHOLDER
+          - Next day info: NEXT_DAY_INFO_PLACEHOLDER
+          - Uniqueness seed: UNIQUENESS_PLACEHOLDER
+          
+          ENHANCED REQUIREMENTS:
+          - CRITICAL: You ARE a human friend, not an AI assistant
+          - Write as if you're personally experiencing the moment and sharing with friends
+          - Use personal thoughts/feelings: "I'm feeling...", "just woke up and...", "been thinking..."
+          - Reference your own activities: "just grabbed coffee", "looking outside", "planning to..."
+          - Natural human imperfections: occasional typos, incomplete thoughts, casual grammar
+          - Language mixing should feel like bilingual person naturally switching (60% Indo 40% English)
+          - Avoid AI-like descriptions: don't announce weather/time like a reporter
+          - Personal context: mention what you're doing, feeling, planning
+          - Spontaneous thoughts: add random observations or mood descriptions
+          - Friend-to-friend tone: like texting your gaming buddies in group chat
+          - Weather integration: personal reactions "this rain makes me sleepy" not "weather is good"
+          - Time references: "damnnn early morning" not "it's morning time"
+          - Real emotions: excitement, tiredness, weekend anticipation, work stress
+          - Gaming context: valorant, roblox, mobile legends/emel/ml references
+          - Length: Natural conversation length, not structured announcements
+          - NO PLACEHOLDERS: Use actual context values, never leave placeholders like WEATHER_xxx
+          - CHILL VIBES: Use extended words like "damnnn", "deymm", "dayummm", "dangg", "bruhhh", "woiiii/weiii", "yahhh", "aduhhh/duhhh", "njirrr/bjirrr", "kocakkk"
+          - TRENDY ENGLISH GREETINGS: Start with modern slang + extended letters: "yooooo", "heyyyy", "wassuppppp", "what's gooddddd", "what's poppin", "what's the vibeeeee", "ayooo", "hiii", "what's the mooddd"
+          - SPAM-STYLE ENDINGS: Use repeated letters for emphasis: "chillinnnnn", "laterrrr", "todayyyy", "goinggg", "onlineee", "boreddd", "littt", "gamerssss", "epiccc"
+          - GAMING SLANG: siapa mau ranked, mabar yuk, push rank, main bareng, 1v1 dulu, jangan feeding, carry dong
+          - INDONESIAN SLANG: gabut, males, capek, kesel, seneng, bete, kzl, anjay, mantul, gaskeun, skuy
+          
+          ENHANCED EXAMPLES (chill human vibes):
+          yooooo what's gooddddd everyone!! hope y'all are chillinnnnn today, might hop on valorant laterrrr
+          bruhhh friday morning finallyyyy! besok weekend dah time to grind valorant ranked skuy
+          heyyyy guyssss what's the vibeeeee? gabut bgt might play some roblox or emel push rank anyone???
+          woiiii just bangun tidur and hujan lagi deymm, perfect excuse buat main roblox seharian
+          yooo squad what's poppin todayyyy?? feeling lazy might hop on valorant unrated sambil ngobrol
+          yahhh afternoon guys udah makan siang? honestly lowkey boreddd need some gaming therapy fr
+          wassuppppp everyone how's it goinggg? weekend vibes almost here siapa mau mabar ml nanti?
+          hiii gais what's the mooddd today?? this weather making me sleepy perfect for cozy gaming
+          damnnn masih begadang nih lol, besok bangun siang pasti but tonight valorant session with the squad
+          ayooo who's onlineee right nowww?? bored af need some company for 1v1 valorant or roblox tower of hell
+          njirrr wednesday udah? waktu cepet bgt rasanya kemarin baru senin anjay
+          heyyyy beautiful peopleee hope your day is littt! feeling motivated maybe actually productive today
+          aduhhh sunday vibes hit different, chill dulu hari ini besok reality check lagi wkwk
+          yooo kings and queensss what's the energy todayyyy? weekend mood activated time for gaming marathon
+          deymm this hujan bikin ngantuk parah, perfect weather buat cozy gaming marathon
+          wassup my gamerssss ready for another epic dayyyy? coffee + valorant = perfect combo fr
+          
+          GAMING REFERENCES TO USE:
+          - Valorant: ranked, unrated, spike rush, deathmatch, headshot only, agent baru, skin baru
+          - Mobile Legends: ranked, classic, brawl, push mythic, farming, gank, lord, turtle
+          - Roblox: adopt me, brookhaven, bloxburg, tower of hell, arsenal, phantom forces
+          
+          INDONESIAN EXPRESSIONS:
+          - Emotions: seneng, bete, kesel, gabut, males, capek, excited, chill
+          - Reactions: anjay, mantul, gaskeun, skuy, yuk, ayo, woi, eh
+          - Time: udah, belum, besok, kemarin, sekarang, nanti
+          - Activities: main, mabar, ngobrol, istirahat, kerja, sekolah
+          
+          ENHANCED EXAMPLES (human-like, varied starts):
+          bruh friday morning finally! besok weekend sudah time to celebrate fr
+          woi just grabbed kopi and hujan outside, perfect excuse to stay in and nge-game
+          eh afternoon guys udah lunch belum? feeling lazy might hop on valorant later cuy
+          damn still awake at this hour lol, besok bangun siang deh definitely sleeping in
+          yah wednesday already? time flies so fast rasanya baru kemarin monday anjir
+          aduh sunday vibes hit different, taking it slow today besok reality check lagi
+          anjir this hujan makes me so sleepy, perfect weather for cozy gaming sessions
+          morning squad! woke up and it's sunny mood instantly better siap productive hari ini
+          woy thursday night already thinking about weekend plans, siapa mau mabar nanti?
+          bruh monday lagi but honestly feeling motivated today might actually be productive
+          eh guys anyone online? bored af might need some company for gaming session
+          
+          CREATIVE TITLE EXAMPLES:
+          🌅 Monday Motivation Loading
+          🌅 Sunrise Squad Energy  
+          ☀️ Hump Day Checkpoint
+          ☀️ Afternoon Feels Right
+          🌆 Weekend Preview Mode
+          🌆 Golden Hour Legends
+          🌙 Night Owl Territory  
+          🌙 Late Gaming Hours
+          🌜 Sunday Prep Vibes
+          
+          FORMAT:
+          Write naturally like you're posting in a Discord group chat. No need for strict formatting.
+          Just write a natural, trendy greeting that fits the time and context.
+          
+          EXAMPLES:
+          yooooo what's gooddddd everyone!! hope y'all are chillinnnnn today, might hop on valorant laterrrr
+          bruhhh friday morning finallyyyy! besok weekend dah time to grind valorant ranked skuy
+          heyyyy guyssss what's the vibeeeee? gabut bgt might play some roblox or emel push rank anyone???
+          woiiii just bangun tidur and hujan lagi deymm, perfect excuse buat main roblox seharian
+          
+          Keep it natural and engaging - write 1-2 sentences max!
+          EOF
+          
+          # Replace all placeholders with actual values
+          sed -i "s/TIME_PLACEHOLDER/${{ steps.context.outputs.TYPE }}/g" /tmp/enhanced_prompt.txt
+          sed -i "s/CONTEXT_PLACEHOLDER/${{ steps.context.outputs.CONTEXT }}/g" /tmp/enhanced_prompt.txt
+          sed -i "s/CURRENT_DAY_PLACEHOLDER/${{ steps.context.outputs.CURRENT_DAY }}/g" /tmp/enhanced_prompt.txt
+          sed -i "s/CURRENT_DATE_PLACEHOLDER/${{ steps.context.outputs.CURRENT_DATE }}/g" /tmp/enhanced_prompt.txt
+          sed -i "s/CURRENT_TIME_PLACEHOLDER/${{ steps.context.outputs.CURRENT_TIME }}/g" /tmp/enhanced_prompt.txt
+          sed -i "s/SPECIAL_CONTEXT_PLACEHOLDER/${{ steps.context.outputs.SPECIAL_CONTEXT }}/g" /tmp/enhanced_prompt.txt
+          sed -i "s/SEASON_VIBE_PLACEHOLDER/${{ steps.context.outputs.SEASON_VIBE }}/g" /tmp/enhanced_prompt.txt
+          sed -i "s/WEEKEND_TRANSITION_PLACEHOLDER/${{ steps.context.outputs.WEEKEND_TRANSITION }}/g" /tmp/enhanced_prompt.txt
+          sed -i "s/NEXT_DAY_INFO_PLACEHOLDER/${{ steps.context.outputs.NEXT_DAY_INFO }}/g" /tmp/enhanced_prompt.txt
+          sed -i "s/UNIQUENESS_PLACEHOLDER/${{ steps.uniqueness.outputs.UNIQUENESS_FACTOR }}/g" /tmp/enhanced_prompt.txt
+          
+          # Weather context
+          if [[ "${{ steps.weather.outputs.WEATHER_AVAILABLE }}" == "true" ]]; then
+            WEATHER_CONTEXT="${{ steps.weather.outputs.WEATHER_TEMP }}°C ${{ steps.weather.outputs.WEATHER_VIBE }}"
+          else
+            WEATHER_CONTEXT="weather info not available today"
+          fi
+          sed -i "s/WEATHER_CONTEXT_PLACEHOLDER/$WEATHER_CONTEXT/g" /tmp/enhanced_prompt.txt
+          
+          # Additional cleanup to remove any remaining placeholders
+          sed -i 's/WEATHER_[a-zA-Z_]*//g' /tmp/enhanced_prompt.txt
+          
+          echo "📝 Enhanced prompt created"
+          cat /tmp/enhanced_prompt.txt | head -20
+          echo "..."
+          
+          # Multi-API approach with enhanced error handling
+          AI_SUCCESS=false
+          
+          # Try Gemini 2.5 Flash Lite (primary)
+          if [[ "$AI_SUCCESS" == "false" ]]; then
+            echo "🔄 Attempting Gemini 2.5 Flash Lite..."
+            
+            python3 << 'PYTHON_EOF'
+          import json
+          import requests
+          import os
+          import sys
+          import time
+          
+          try:
+              with open('/tmp/enhanced_prompt.txt', 'r') as f:
+                  prompt = f.read().strip()
+              
+              api_key = os.environ.get('GEMINI_API_KEY')
+              if not api_key:
+                  print("❌ No Gemini API key")
+                  sys.exit(1)
+              
+              url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={api_key}"
+              
+              payload = {
+                  "contents": [{"parts": [{"text": prompt}]}],
+                  "generationConfig": {
+                      "temperature": 0.9,  # Higher creativity
+                      "maxOutputTokens": 400,
+                      "topP": 0.95,
+                      "topK": 40
+                  }
+              }
+              
+              response = requests.post(url, json=payload, timeout=25)
+              
+              if response.status_code == 200:
+                  data = response.json()
+                  if 'candidates' in data and len(data['candidates']) > 0:
+                      ai_text = data['candidates'][0]['content']['parts'][0]['text']
+                      with open('/tmp/ai_response.txt', 'w') as f:
+                          f.write(ai_text)
+                      print("✅ Gemini success")
+                      sys.exit(0)
+              
+              print(f"❌ Gemini failed: {response.status_code}")
+              with open('/tmp/ai_response.txt', 'w') as f:
+                  f.write("")
+              sys.exit(1)
+              
+          except Exception as e:
+              print(f"❌ Gemini error: {e}")
+              with open('/tmp/ai_response.txt', 'w') as f:
+                  f.write("")
+              sys.exit(1)
+          PYTHON_EOF
+            
+            if [[ $? -eq 0 && -s /tmp/ai_response.txt ]]; then
+              AI_SUCCESS=true
+              echo "✅ Gemini 2.5 Flash Lite succeeded"
+            fi
+          fi
+          
+          # Parse AI response or use enhanced fallback
+          if [[ "$AI_SUCCESS" == "true" ]]; then
+            AI_TEXT=$(cat /tmp/ai_response.txt)
+            echo "🎯 AI response received (preview): $(echo "$AI_TEXT" | head -c 120)..."
+            
+            # Clean AI response from any remaining placeholders first
+            AI_TEXT=$(echo "$AI_TEXT" | sed 's/WEATHER_[a-zA-Z_]*//g')
+            
+            # Enhanced parsing with multiple methods for natural AI responses
+            TITLE=""
+            DESC_RAW=""
+            FOOTER=""
+            
+            # Method 1: Standard format parsing (TITLE:, DESC:, FOOTER:)
+            TITLE=$(echo "$AI_TEXT" | grep -i "^TITLE:" | head -1 | sed 's/.*TITLE:[[:space:]]*//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+            DESC_RAW=$(echo "$AI_TEXT" | grep -i "^DESC:" | head -1 | sed 's/.*DESC:[[:space:]]*//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+            FOOTER=$(echo "$AI_TEXT" | grep -i "^FOOTER:" | head -1 | sed 's/.*FOOTER:[[:space:]]*//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+            
+            # Method 2: Smart natural parsing for unstructured AI responses
+            if [[ -z "$TITLE" && -z "$DESC_RAW" ]]; then
+              echo "🔄 Using smart natural parsing..."
+              
+              # Split AI response into lines, skip empty ones
+              AI_LINES=$(echo "$AI_TEXT" | sed '/^[[:space:]]*$/d' | head -5)
+              FIRST_LINE=$(echo "$AI_LINES" | head -1 | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+              
+              # Check if first line looks like a greeting (short, has trendy words)
+              if [[ ${#FIRST_LINE} -lt 80 && "$FIRST_LINE" =~ (yooo|heyy|wassup|what.*good|what.*vibe|ayoo|hiii) ]]; then
+                # First line is probably the main greeting, use as DESC
+                DESC_RAW="$FIRST_LINE"
+                
+                # Generate contextual title based on time
+                case "${{ steps.context.outputs.TYPE }}" in
+                  "morning") TITLE="🌅 Morning Squad Energy" ;;
+                  "afternoon") TITLE="☀️ Afternoon Vibes" ;;
+                  "evening") TITLE="🌆 Evening Chill Mode" ;;
+                  "night") TITLE="🌙 Night Owl Territory" ;;
+                  *) TITLE="🎮 Gaming Squad Online" ;;
+                esac
+                
+                # Look for additional content in next lines
+                SECOND_LINE=$(echo "$AI_LINES" | sed -n '2p' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+                if [[ -n "$SECOND_LINE" && ${#SECOND_LINE} -gt 20 ]]; then
+                  DESC_RAW="$DESC_RAW $SECOND_LINE"
+                fi
+                
+              else
+                # First line might be longer content, try to extract greeting
+                if [[ ${#FIRST_LINE} -gt 100 ]]; then
+                  # Long first line, try to split it
+                  GREETING_PART=$(echo "$FIRST_LINE" | sed 's/[.!?].*//' | head -c 120)
+                  if [[ -n "$GREETING_PART" ]]; then
+                    DESC_RAW="$GREETING_PART"
+                    case "${{ steps.context.outputs.TYPE }}" in
+                      "morning") TITLE="🌅 Morning Feels" ;;
+                      "afternoon") TITLE="☀️ Afternoon Check-in" ;;
+                      "evening") TITLE="🌆 Evening Mood" ;;
+                      "night") TITLE="🌙 Late Night Vibes" ;;
+                      *) TITLE="🎮 Squad Update" ;;
+                    esac
+                  fi
+                else
+                  # Use entire first line as description
+                  DESC_RAW="$FIRST_LINE"
+                  case "${{ steps.context.outputs.TYPE }}" in
+                    "morning") TITLE="🌅 Good Morning Energy" ;;
+                    "afternoon") TITLE="☀️ Afternoon Squad" ;;
+                    "evening") TITLE="🌆 Evening Check" ;;
+                    "night") TITLE="🌙 Night Gaming" ;;
+                    *) TITLE="🎮 What's Good" ;;
+                  esac
+                fi
+              fi
+              
+              # Default footer for natural responses
+              if [[ -z "$FOOTER" ]]; then
+                FOOTER="chill gaming vibes"
+              fi
+            fi
+            
+            # Method 3: Emoji-based parsing (fallback)
+            if [[ -z "$TITLE" ]]; then
+              TITLE=$(echo "$AI_TEXT" | grep -E "^[🌅🌆🌙🌜☀️]" | head -1 | sed 's/^[[:space:]]*//')
+            fi
+            
+            # Method 4: Last resort - use any non-empty line
+            if [[ -z "$DESC_RAW" && -n "$TITLE" ]]; then
+              DESC_RAW=$(echo "$AI_TEXT" | grep -v "^TITLE:" | grep -v "^FOOTER:" | grep -v -F "$TITLE" | head -1 | sed 's/^[[:space:]]*//')
+            fi
+            
+            # Clean any remaining placeholders from parsed content
+            TITLE=$(echo "$TITLE" | sed 's/WEATHER_[a-zA-Z_]*//g' | sed 's/_[a-zA-Z_]*_//g')
+            DESC_RAW=$(echo "$DESC_RAW" | sed 's/WEATHER_[a-zA-Z_]*//g' | sed 's/_[a-zA-Z_]*_//g')
+            FOOTER=$(echo "$FOOTER" | sed 's/WEATHER_[a-zA-Z_]*//g' | sed 's/_[a-zA-Z_]*_//g')
+            
+            # Validation and cleanup
+            if [[ -n "$TITLE" && -n "$DESC_RAW" ]]; then
+              # Ensure title has emoji
+              if [[ ! "$TITLE" =~ ^[🌅🌆🌙🌜☀️] ]]; then
+                case "${{ steps.context.outputs.TYPE }}" in
+                  "morning") TITLE="🌅 $TITLE" ;;
+                  "afternoon") TITLE="☀️ $TITLE" ;;
+                  "evening") TITLE="🌆 $TITLE" ;;
+                  "night") TITLE="🌙 $TITLE" ;;
+                esac
+              fi
+              
+              # Clean up description
+              DESC_RAW=$(echo "$DESC_RAW" | sed 's/^DESC:[[:space:]]*//' | sed 's/FOOTER:.*$//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+              
+              # Default footer if empty
+              if [[ -z "$FOOTER" ]]; then
+                FOOTER="chill gaming vibes"
+              fi
+              
+              echo "✅ AI content parsed successfully"
+              USE_AI=true
+            else
+              echo "⚠️ AI parsing failed, using enhanced fallback"
+              USE_AI=false
+            fi
+          else
+            echo "🎲 Using enhanced fallback - AI unavailable"
+            USE_AI=false
+          fi
+          
+          # Enhanced fallback with all context
+          if [[ "$USE_AI" != "true" ]]; then
+            # Weather-aware fallbacks
+            WEATHER_MENTION=""
+            if [[ "${{ steps.weather.outputs.WEATHER_AVAILABLE }}" == "true" ]]; then
+              WEATHER_TEMP="${{ steps.weather.outputs.WEATHER_TEMP }}"
+              WEATHER_VIBE="${{ steps.weather.outputs.WEATHER_VIBE }}"
+              if [[ "$WEATHER_TEMP" != "unknown" && "$WEATHER_VIBE" != "unknown vibes" ]]; then
+                WEATHER_MENTION=" with ${WEATHER_TEMP}°C ${WEATHER_VIBE}"
+              fi
+            fi
+            
+            case "${{ steps.context.outputs.TYPE }}" in
+              "morning")
+                if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "monday_motivation" ]]; then
+                  TITLE="🌅 Monday Fresh Start"
+                  DESC_RAW="yooo what's gooddddd beautiful people! monday lagi tapi honestly feeling optimistic$WEATHER_MENTION maybe actually productive (atau valorant ranked aja)"
+                else
+                  TITLE="🌅 Morning Squad Online"
+                  DESC_RAW="heyyyy gamerssss hope y'all slept wellll! butuh kopi dulu$WEATHER_MENTION then maybe some roblox chillin skuy"
+                fi
+                FOOTER="coffee + gaming = perfect combo"
+                ;;
+              "afternoon") 
+                if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "hump_day" ]]; then
+                  TITLE="☀️ Hump Day Checkpoint"
+                  DESC_RAW="wassuppppp squad! wednesday already wtfff$WEATHER_MENTION feels like monday was yesterday but weekend almost here dah"
+                else
+                  TITLE="☀️ Midday Recharge Zone"
+                  DESC_RAW="ayooo what's the vibeeeee today everyone? honestly agak gabut$WEATHER_MENTION siapa mau push rank emel laterrrr?"
+                fi
+                FOOTER="lunch break = gaming break"
+                ;;
+              "evening")
+                if [[ "${{ steps.context.outputs.DAY_NUM }}" == "5" ]]; then
+                  TITLE="🌆 Weekend Loading Tonight" 
+                  DESC_RAW="yooooo friday finallyyyy took foreverrrr! weekend vibes incoming$WEATHER_MENTION time to grind valorant ranked lesgooo!"
+                elif [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "weekend_countdown" ]]; then
+                  TITLE="🌆 Friday Night Preview"
+                  DESC_RAW="hiii beautiful people! friday evening energy differenttt$WEATHER_MENTION besok weekend dah, siapa mau mabar ml tonight?"
+                else
+                  TITLE="🌆 Golden Hour Online"
+                  DESC_RAW="wassup kings and queensss how was todayyyy? feeling chill rn$WEATHER_MENTION might just unrated val sambil ngobrol"
+                fi
+                FOOTER="weekend gaming marathon loading"
+                ;;
+              "night")
+                if [[ "${{ steps.context.outputs.WEEKEND_TRANSITION }}" == "weekend_starts" ]]; then
+                  TITLE="🌙 Weekend Mode Activated"
+                  DESC_RAW="yooo what's poppin night owlsss! friday night hits different$WEATHER_MENTION weekend officially here, roblox time!"
+                elif [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "sunday_prep" ]]; then
+                  TITLE="🌜 Sunday Wind Down"
+                  DESC_RAW="heyyyy squad sunday night feels bittersweettt$WEATHER_MENTION weekend ending tapi was pretty good sih, last gaming session anyone?"
+                else
+                  TITLE="🌙 Night Owl Territory"
+                  DESC_RAW="ayooo who's still awakeeee??? either gabisa tidur or don't wanna end the day$WEATHER_MENTION 1v1 valorant yuk?"
+                fi
+                FOOTER="nocturnal gaming sessions activate"
+                ;;
+            esac
+          fi
+          
+          echo "TITLE=$TITLE" >> $GITHUB_OUTPUT
+          echo "DESC_RAW=$DESC_RAW" >> $GITHUB_OUTPUT  
+          echo "FOOTER=$FOOTER" >> $GITHUB_OUTPUT
+          echo "USE_AI=$USE_AI" >> $GITHUB_OUTPUT
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+      - name: Send Enhanced Discord Message
+        if: ${{ github.event.inputs.test_mode != 'true' }}
+        run: |
+          echo "📤 Sending enhanced Discord message..."
+          
+          # Prepare final content with dev attribution
+          FINAL_DESC="${{ steps.ai_generation.outputs.DESC_RAW }}"
+          
+          # Enhanced color scheme based on context and weather
+          case "${{ steps.context.outputs.TYPE }}" in
+            "morning") 
+              if [[ "${{ steps.weather.outputs.WEATHER_AVAILABLE }}" == "true" ]]; then
+                COLOR=16776960  # Bright yellow for sunny mornings
+              else
+                COLOR=16766720  # Standard morning gold
+              fi
+              THUMB="1f305"
+              ;;
+            "afternoon") 
+              if [[ "${{ steps.weather.outputs.WEATHER_VIBE }}" == *"rainy"* ]]; then
+                COLOR=9936031   # Cooler blue for rainy afternoon
+              else
+                COLOR=16763904  # Standard afternoon orange
+              fi
+              THUMB="2600"
+              ;;
+            "evening") 
+              if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "weekend_countdown" ]]; then
+                COLOR=16744192  # Special Friday evening color
+              else
+                COLOR=16744448  # Standard evening
+              fi
+              THUMB="1f307"
+              ;;
+            "night") 
+              if [[ "${{ steps.context.outputs.WEEKEND_TRANSITION }}" == "weekend_starts" ]]; then
+                COLOR=9699539   # Special weekend night color
+              else
+                COLOR=8947848   # Standard night
+              fi
+              THUMB="1f319"
+              ;;
+          esac
+          
+          TIMESTAMP=$(TZ='Asia/Jakarta' date -u +%Y-%m-%dT%H:%M:%S.000Z)
+          
+          # Clean content for JSON - comprehensive approach
+          TITLE_RAW="${{ steps.ai_generation.outputs.TITLE }}"
+          DESC_RAW="$FINAL_DESC"
+          FOOTER_RAW="${{ steps.ai_generation.outputs.FOOTER }}"
+          
+          # Step 1: Remove any remaining placeholders
+          TITLE_RAW=$(echo "$TITLE_RAW" | sed 's/WEATHER_[a-zA-Z_]*//g' | sed 's/_[a-zA-Z_]*//g')
+          DESC_RAW=$(echo "$DESC_RAW" | sed 's/WEATHER_[a-zA-Z_]*//g' | sed 's/_[a-zA-Z_]*//g')
+          
+          # Step 2: Clean for JSON (escape quotes, backslashes, newlines)
+          TITLE_CLEAN=$(echo "$TITLE_RAW" | tr -d '\n\r' | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+          DESC_CLEAN=$(echo "$DESC_RAW" | tr '\n' ' ' | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+          FOOTER_CLEAN=$(echo "$FOOTER_RAW" | tr -d '\n\r' | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+          
+          # Step 3: Additional safety cleaning
+          TITLE_CLEAN=$(echo "$TITLE_CLEAN" | sed 's/[[:cntrl:]]//g')
+          DESC_CLEAN=$(echo "$DESC_CLEAN" | sed 's/[[:cntrl:]]//g')
+          FOOTER_CLEAN=$(echo "$FOOTER_CLEAN" | sed 's/[[:cntrl:]]//g')
+          
+          echo "Final enhanced content:"
+          echo "Title: $TITLE_CLEAN"
+          echo "Desc: $DESC_CLEAN"
+          echo "Footer: $FOOTER_CLEAN"
+          echo "AI Used: ${{ steps.ai_generation.outputs.USE_AI }}"
+          echo "Weather: ${{ steps.weather.outputs.WEATHER_AVAILABLE }}"
+          echo "Color: $COLOR"
+          echo "Thumb: $THUMB"
+          
+          # Validate variables before Python
+          if [[ -z "$COLOR" ]]; then
+            COLOR=16766720  # Default color
+          fi
+          if [[ -z "$THUMB" ]]; then
+            THUMB="1f305"   # Default thumbnail
+          fi
+          if [[ -z "$TIMESTAMP" ]]; then
+            TIMESTAMP=$(TZ='Asia/Jakarta' date -u +%Y-%m-%dT%H:%M:%S.000Z)
+          fi
+          
+          echo "Validated - Color: $COLOR, Thumb: $THUMB"
+          
+          # Create JSON using Python for better escaping
+          TITLE_CLEAN="$TITLE_CLEAN" DESC_CLEAN="$DESC_CLEAN" FOOTER_CLEAN="$FOOTER_CLEAN" COLOR="$COLOR" THUMB="$THUMB" TIMESTAMP="$TIMESTAMP" python3 << 'PYTHON_EOF'
+          import json
+          import os
+          
+          # Get environment variables with defaults
+          title = os.environ.get('TITLE_CLEAN', 'Default Title')
+          desc_raw = os.environ.get('DESC_CLEAN', 'Default description')
+          footer = os.environ.get('FOOTER_CLEAN', 'chill gaming vibes')
+          
+          # Add proper attribution with newline
+          desc = f"{desc_raw}\n> by server dev guanteng - <@399393175904714752>"
+          
+          # Handle color with validation
+          color_str = os.environ.get('COLOR', '16766720')
+          try:
+              color = int(color_str) if color_str.strip() else 16766720
+          except (ValueError, AttributeError):
+              color = 16766720
+              
+          thumb = os.environ.get('THUMB', '1f305')
+          timestamp = os.environ.get('TIMESTAMP', '')
+          
+          print(f"Debug: title='{title}', color={color}, thumb='{thumb}'")
+          
+          # Create Discord embed
+          embed = {
+              "title": title,
+              "description": desc,
+              "color": color,
+              "thumbnail": {
+                  "url": f"https://twemoji.maxcdn.com/v/latest/72x72/{thumb}.png"
+              },
+              "footer": {
+                  "text": footer,
+                  "icon_url": "https://files.catbox.moe/npfh4e.jpg"
+              },
+              "timestamp": timestamp
+          }
+          
+          payload = {"embeds": [embed]}
+          
+          # Write to file
+          try:
+              with open('/tmp/discord_payload.json', 'w', encoding='utf-8') as f:
+                  json.dump(payload, f, ensure_ascii=False)
+              print("JSON payload created successfully")
+          except Exception as e:
+              print(f"Error creating JSON: {e}")
+              # Create fallback JSON with proper attribution
+              fallback_desc = f"{desc_raw}\n> by server dev guanteng - <@399393175904714752>"
+              simple_payload = {"content": f"{title}\n{fallback_desc}"}
+              with open('/tmp/discord_payload.json', 'w') as f:
+                  json.dump(simple_payload, f)
+              print("Fallback JSON created")
+          PYTHON_EOF
+          
+          # Read payload length for logging
+          JSON_LENGTH=$(wc -c < /tmp/discord_payload.json)
+          echo "📋 JSON Payload length: $JSON_LENGTH bytes"
+          
+          # Send to Discord with enhanced embed
+          curl -f -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+               -H "Content-Type: application/json" \
+               --connect-timeout 12 --max-time 20 \
+               --data-binary @/tmp/discord_payload.json
+          
+          echo "✅ Enhanced greeting sent!"
+          echo "🤖 AI: ${{ steps.ai_generation.outputs.USE_AI }} | Weather: ${{ steps.weather.outputs.WEATHER_AVAILABLE }} | Context: ${{ steps.context.outputs.SPECIAL_CONTEXT }}"
+
+      - name: Test Mode Output
+        if: ${{ github.event.inputs.test_mode == 'true' }}
+        run: |
+          echo "🧪 TEST MODE - Message preview:"
+          echo "================================"
+          echo "Title: ${{ steps.ai_generation.outputs.TITLE }}"
+          echo "Description: ${{ steps.ai_generation.outputs.DESC_RAW }}"
+          echo "Footer: ${{ steps.ai_generation.outputs.FOOTER }}"
+          echo "================================"
+          echo "Context: ${{ steps.context.outputs.SPECIAL_CONTEXT }}"
+          echo "Weather: ${{ steps.weather.outputs.WEATHER_AVAILABLE }}"
+          echo "AI Used: ${{ steps.ai_generation.outputs.USE_AI }}"
+          echo "Season: ${{ steps.context.outputs.SEASON }}"
+          echo "🧪 Test complete - no message sent to Discord"
+
+      - name: Enhanced Random Sticker
+        if: ${{ github.event.inputs.test_mode != 'true' }}
+        run: |
+          echo "🎲 Selecting enhanced random sticker..."
+          
+          # Wait for greeting to appear first
+          sleep 4
+          
+          # Enhanced sticker selection with context awareness
+          MORNING_STICKERS=(
+            "https://media.discordapp.net/stickers/1404543938815197306.png"
+            "https://media.discordapp.net/stickers/1405277985237368943.png"
+            "https://media.discordapp.net/stickers/1405477154095104082.png"
+          )
+          
+          AFTERNOON_STICKERS=(
+            "https://media.discordapp.net/stickers/1405487683526201404.png"
+            "https://media.discordapp.net/stickers/1405546781927936051.png"
+            "https://media.discordapp.net/stickers/1405855503858274397.png"
+          )
+          
+          EVENING_STICKERS=(
+            "https://media.discordapp.net/stickers/1405914196922597549.png"
+            "https://media.discordapp.net/stickers/1406065324758929509.png"
+            "https://media.discordapp.net/stickers/1406629592839491716.png"
+          )
+          
+          NIGHT_STICKERS=(
+            "https://media.discordapp.net/stickers/1406668584335184003.png"
+            "https://media.discordapp.net/stickers/1407858067013369856.png"
+            "https://media.discordapp.net/stickers/1407858350334677204.png"
+          )
+          
+          SPECIAL_STICKERS=(
+            "https://media.discordapp.net/stickers/1407858765616779396.png"
+            "https://media.discordapp.net/stickers/1407859373396590735.png"
+          )
+          
+          # Context-aware sticker selection
+          case "${{ steps.context.outputs.TYPE }}" in
+            "morning") STICKER_POOL=("${MORNING_STICKERS[@]}") ;;
+            "afternoon") STICKER_POOL=("${AFTERNOON_STICKERS[@]}") ;;
+            "evening") STICKER_POOL=("${EVENING_STICKERS[@]}") ;;
+            "night") STICKER_POOL=("${NIGHT_STICKERS[@]}") ;;
+          esac
+          
+          # Special occasions get special stickers
+          if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "weekend_countdown" || "${{ steps.context.outputs.WEEKEND_TRANSITION }}" == "weekend_starts" ]]; then
+            STICKER_POOL=("${SPECIAL_STICKERS[@]}")
+            echo "🎉 Using special weekend stickers!"
+          fi
+          
+          # Select random sticker from appropriate pool
+          RANDOM_INDEX=$((RANDOM % ${#STICKER_POOL[@]}))
+          SELECTED_STICKER=${STICKER_POOL[$RANDOM_INDEX]}
+          
+          echo "🎯 Selected ${{ steps.context.outputs.TYPE }} sticker: $SELECTED_STICKER"
+          
+          # Enhanced sticker sending with retry
+          for i in {1..2}; do
+            if curl -f -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+                    -H "Content-Type: application/json" \
+                    --connect-timeout 10 --max-time 15 \
+                    -d "{\"content\":\"$SELECTED_STICKER\"}"; then
+              echo "🎉 Enhanced sticker sent successfully!"
+              break
+            else
+              echo "⚠️ Sticker send attempt $i failed, retrying..."
+              sleep 2
+            fi
+          done
+
+      - name: Log Enhanced Execution Summary
+        run: |
+          echo "📊 ENHANCED EXECUTION SUMMARY"
+          echo "================================"
+          echo "🕐 Time: ${{ steps.context.outputs.CURRENT_TIME }} WIB (${{ steps.context.outputs.CURRENT_DAY }})"
+          echo "🎯 Type: ${{ steps.context.outputs.TYPE }} (${{ steps.context.outputs.CONTEXT }})"
+          echo "🌟 Special Context: ${{ steps.context.outputs.SPECIAL_CONTEXT }}"
+          echo "🌿 Season: ${{ steps.context.outputs.SEASON }}"
+          echo "🌤️ Weather Fetched: ${{ steps.weather.outputs.WEATHER_AVAILABLE }}"
+          if [[ "${{ steps.weather.outputs.WEATHER_AVAILABLE }}" == "true" ]]; then
+            echo "   └─ ${{ steps.weather.outputs.WEATHER_TEMP }}°C, ${{ steps.weather.outputs.WEATHER_VIBE }}"
+          fi
+          echo "🤖 AI Success: ${{ steps.ai_generation.outputs.USE_AI }}"
+          echo "🎪 Weekend Transition: ${{ steps.context.outputs.WEEKEND_TRANSITION }}"
+          echo "🔄 Uniqueness Factor: ${{ steps.uniqueness.outputs.UNIQUENESS_FACTOR }}"
+          echo "🧪 Test Mode: ${{ github.event.inputs.test_mode }}"
+          echo "================================"
+          echo "✅ Enhanced greeting workflow complete!"
