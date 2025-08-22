@@ -524,21 +524,17 @@ jobs:
           thumb = os.environ.get('THUMB', '1f305')
           context = os.environ.get('CONTEXT', 'weekday')
           
-          # Weekend Skye role tagging with creative invitations
-          weekend_invites = [
-              "yoooo <@&1374047008829997157> weekend vibes! siapa mau mabar valorant atau roblox? voice chat yuk!",
-              "wassuppp <@&1374047008829997157> weekend squad! perfect time buat gaming marathon - emel push rank atau vc chill?",
-              "heyyyy <@&1374047008829997157> weekend legends! gabut nih yuk main valorant, roblox, atau ml - voice chat asik!",
-              "ayooo <@&1374047008829997157> weekend gaming time! siapa ready buat mabar? valorant ace atau roblox fun?",
-              "brooo <@&1374047008829997157> weekend mode activated! gaming session yuk - ml rank push atau valorant chill?",
-              "woiii <@&1374047008829997157> weekend vibes different! main bareng yuk - voice chat sambil gaming!"
-          ]
-          
-          # Add weekend role tagging if it's weekend
+          # For weekend, add Skye role tag naturally in the same message
           if context == 'weekend':
-              import random
-              weekend_invite = random.choice(weekend_invites)
-              desc = f"{desc_raw}\n\n{weekend_invite}"
+              # Add role tag naturally to the existing message
+              desc = desc_raw.replace('siapa mau', '<@&1374047008829997157> siapa mau')
+              if '<@&1374047008829997157>' not in desc:
+                  # If pattern not found, add at the beginning of second sentence
+                  sentences = desc_raw.split('? ', 1)
+                  if len(sentences) == 2:
+                      desc = f"{sentences[0]}? <@&1374047008829997157> {sentences[1]}"
+                  else:
+                      desc = f"<@&1374047008829997157> {desc_raw}"
           else:
               desc = desc_raw
           
