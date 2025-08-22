@@ -312,7 +312,7 @@ jobs:
           - Use personal thoughts/feelings: "I'm feeling...", "just woke up and...", "been thinking..."
           - Reference your own activities: "just grabbed coffee", "looking outside", "planning to..."
           - Natural human imperfections: occasional typos, incomplete thoughts, casual grammar
-          - Language mixing should feel like bilingual person naturally switching
+          - Language mixing should feel like bilingual person naturally switching (50% Indo 50% English)
           - Avoid AI-like descriptions: don't announce weather/time like a reporter
           - Personal context: mention what you're doing, feeling, planning
           - Spontaneous thoughts: add random observations or mood descriptions
@@ -323,17 +323,21 @@ jobs:
           - Gaming context: what you want to play, how you're feeling about games
           - Length: Natural conversation length, not structured announcements
           - NO PLACEHOLDERS: Use actual context values, never leave placeholders like WEATHER_xxx
+          - AVOID REPETITIVE STARTS: Don't always use "ugh" - vary with "bruh", "woi", "eh", "damn", "yah", "aduh", "anjir", etc.
+          - MIX LANGUAGES NATURALLY: Use Indonesian slang mixed with English like real conversations
           
-          ENHANCED EXAMPLES (human-like, personal):
-          ugh friday morning but lowkey excited, besok weekend finally! been waiting for this
-          just grabbed coffee and looking outside, hujan lagi deh perfect excuse to stay in and game
-          afternoon guys hope y'all doing good, udah lunch? feeling lazy might hop on later
-          bruh still awake at this hour lol, besok bangun siang deh definitely sleeping in
-          wednesday already? time flies so fast, rasanya baru kemarin senin anjir
-          sunday vibes taking it slow today, tomorrow back to reality but today we chill
-          this rain makes me so sleepy fr, perfect weather for cozy gaming sessions
-          woke up and it's sunny! mood instantly better, siap productive hari ini cuy  
-          thursday night thinking about weekend plans, siapa mau mabar weekend nanti?
+          ENHANCED EXAMPLES (human-like, varied starts):
+          bruh friday morning finally! besok weekend sudah time to celebrate fr
+          woi just grabbed kopi and hujan outside, perfect excuse to stay in and nge-game
+          eh afternoon guys udah lunch belum? feeling lazy might hop on valorant later cuy
+          damn still awake at this hour lol, besok bangun siang deh definitely sleeping in
+          yah wednesday already? time flies so fast rasanya baru kemarin monday anjir
+          aduh sunday vibes hit different, taking it slow today besok reality check lagi
+          anjir this hujan makes me so sleepy, perfect weather for cozy gaming sessions
+          morning squad! woke up and it's sunny mood instantly better siap productive hari ini
+          woy thursday night already thinking about weekend plans, siapa mau mabar nanti?
+          bruh monday lagi but honestly feeling motivated today might actually be productive
+          eh guys anyone online? bored af might need some company for gaming session
           
           CREATIVE TITLE EXAMPLES:
           🌅 Monday Motivation Loading
@@ -525,46 +529,46 @@ jobs:
               "morning")
                 if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "monday_motivation" ]]; then
                   TITLE="🌅 Monday Fresh Start"
-                  DESC_RAW="ugh monday but honestly feeling kinda optimistic today$WEATHER_MENTION might actually be productive lol"
+                  DESC_RAW="yah monday lagi but honestly feeling kinda optimistic today$WEATHER_MENTION might actually be productive cuy"
                 else
                   TITLE="🌅 Morning Squad Online"
-                  DESC_RAW="morning guys hope y'all slept better than me$WEATHER_MENTION lowkey need coffee but we move"
+                  DESC_RAW="pagi guys hope kalian slept better than me$WEATHER_MENTION butuh kopi but we move fr"
                 fi
                 FOOTER="coffee dependency activated"
                 ;;
               "afternoon") 
                 if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "hump_day" ]]; then
                   TITLE="☀️ Hump Day Checkpoint"
-                  DESC_RAW="wednesday already wtf$WEATHER_MENTION feels like monday was yesterday but hey almost weekend"
+                  DESC_RAW="eh wednesday already wtf$WEATHER_MENTION feels like monday was yesterday but hey almost weekend dah"
                 else
                   TITLE="☀️ Midday Recharge Zone"
-                  DESC_RAW="afternoon everyone how's it going$WEATHER_MENTION honestly kinda hungry might get food later"
+                  DESC_RAW="afternoon everyone gimana hari ini$WEATHER_MENTION honestly agak lapar might get food later anjir"
                 fi
                 FOOTER="lunch thoughts activated"
                 ;;
               "evening")
                 if [[ "${{ steps.context.outputs.DAY_NUM }}" == "5" ]]; then
                   TITLE="🌆 Weekend Loading Tonight" 
-                  DESC_RAW="friday finally wtf took forever$WEATHER_MENTION weekend vibes incoming feel like celebrating already"
+                  DESC_RAW="bruh friday finally wtf took forever$WEATHER_MENTION weekend vibes incoming feel like celebrating already cuy"
                 elif [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "weekend_countdown" ]]; then
                   TITLE="🌆 Friday Night Preview"
-                  DESC_RAW="friday evening energy different$WEATHER_MENTION besok weekend sudah time to unwind fr"
+                  DESC_RAW="woi friday evening energy different$WEATHER_MENTION besok weekend sudah time to unwind fr"
                 else
                   TITLE="🌆 Golden Hour Online"
-                  DESC_RAW="evening guys how was today$WEATHER_MENTION honestly feeling pretty chill rn might just vibe"
+                  DESC_RAW="evening guys gimana today nya$WEATHER_MENTION honestly feeling pretty chill rn might just vibe aja"
                 fi
                 FOOTER="weekend countdown initiated"
                 ;;
               "night")
                 if [[ "${{ steps.context.outputs.WEEKEND_TRANSITION }}" == "weekend_starts" ]]; then
                   TITLE="🌙 Weekend Mode Activated"
-                  DESC_RAW="friday night hits different$WEATHER_MENTION weekend officially here time to actually relax for once"
+                  DESC_RAW="anjir friday night hits different$WEATHER_MENTION weekend officially here time to actually relax for once"
                 elif [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "sunday_prep" ]]; then
                   TITLE="🌜 Sunday Wind Down"
-                  DESC_RAW="sunday night feels bittersweet$WEATHER_MENTION weekend ending but honestly was pretty good"
+                  DESC_RAW="aduh sunday night feels bittersweet$WEATHER_MENTION weekend ending but honestly was pretty good sih"
                 else
                   TITLE="🌙 Night Owl Territory"
-                  DESC_RAW="still awake lol$WEATHER_MENTION either can't sleep or don't want to end the day yet relatable"
+                  DESC_RAW="woy still awake at this hour lol$WEATHER_MENTION either can't sleep or don't want to end the day yet relatable banget"
                 fi
                 FOOTER="nocturnal thoughts active"
                 ;;
@@ -676,7 +680,7 @@ jobs:
           footer = os.environ.get('FOOTER_CLEAN', 'enhanced ai vibes')
           
           # Add proper attribution with newline
-          desc = f"{desc_raw}\n> enhanced by server dev guanteng - <@399393175904714752>"
+          desc = f"{desc_raw}\n> by server dev guanteng - <@399393175904714752>"
           
           # Handle color with validation
           color_str = os.environ.get('COLOR', '16766720')
@@ -715,7 +719,7 @@ jobs:
           except Exception as e:
               print(f"Error creating JSON: {e}")
               # Create fallback JSON with proper attribution
-              fallback_desc = f"{desc_raw}\n> enhanced by server dev guanteng - <@399393175904714752>"
+              fallback_desc = f"{desc_raw}\n> by server dev guanteng - <@399393175904714752>"
               simple_payload = {"content": f"{title}\n{fallback_desc}"}
               with open('/tmp/discord_payload.json', 'w') as f:
                   json.dump(simple_payload, f)
