@@ -1,0 +1,330 @@
+name: BMKG Earthquake Monitor
+
+on:
+  workflow_dispatch: # Manual trigger
+  schedule:
+    # Check every 30 minutes for new earthquake data
+    - cron: '*/30 * * * *'
+
+env:
+  GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+  DISCORD_WEBHOOK_BMKG: ${{ secrets.DISCORD_WEBHOOK_BMKG }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  earthquake-monitor:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Setup Python environment
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        pip install requests
+
+    - name: Fetch and process earthquake data
+      run: |
+        python -c "
+        import requests
+        import json
+        import os
+        import sys
+        from datetime import datetime, timezone
+        import time
+
+        # Configuration
+        BMKG_API_URL = 'https://api.siputzx.my.id/api/info/bmkg'
+        GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent'
+        DISCORD_WEBHOOK_URL = os.getenv('DISCORD_WEBHOOK_BMKG')
+        GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+        
+        # File to store last sent earthquake data
+        LAST_EARTHQUAKE_FILE = 'last_earthquake.json'
+        
+        def fetch_bmkg_data():
+            try:
+                headers = {'accept': '*/*'}
+                response = requests.get(BMKG_API_URL, headers=headers, timeout=30)
+                response.raise_for_status()
+                return response.json()
+            except Exception as e:
+                print(f'Error fetching BMKG data: {e}')
+                return None
+        
+        def load_last_earthquake():
+            try:
+                if os.path.exists(LAST_EARTHQUAKE_FILE):
+                    with open(LAST_EARTHQUAKE_FILE, 'r') as f:
+                        return json.load(f)
+                return None
+            except Exception as e:
+                print(f'Error loading last earthquake data: {e}')
+                return None
+        
+        def save_last_earthquake(earthquake_data):
+            try:
+                with open(LAST_EARTHQUAKE_FILE, 'w') as f:
+                    json.dump(earthquake_data, f, indent=2)
+                print(f'Saved last earthquake: {earthquake_data.get(\"DateTime\", \"Unknown\")}')
+            except Exception as e:
+                print(f'Error saving last earthquake data: {e}')
+        
+        def generate_earthquake_message(earthquake_data):
+            try:
+                # Prepare earthquake information for AI
+                earthquake_info = f'''
+                Data Gempa Terbaru BMKG:
+                - Tanggal: {earthquake_data.get('Tanggal', 'N/A')}
+                - Jam: {earthquake_data.get('Jam', 'N/A')}
+                - Magnitude: {earthquake_data.get('Magnitude', 'N/A')}
+                - Kedalaman: {earthquake_data.get('Kedalaman', 'N/A')}
+                - Koordinat: {earthquake_data.get('Lintang', 'N/A')}, {earthquake_data.get('Bujur', 'N/A')}
+                - Wilayah: {earthquake_data.get('Wilayah', 'N/A')}
+                - Potensi: {earthquake_data.get('Potensi', 'N/A')}
+                - Dirasakan: {earthquake_data.get('Dirasakan', 'Tidak ada laporan')}
+                '''
+                
+                # Generate AI response
+                prompt = f'''
+                Buatkan pesan informasi gempa bumi yang informatif dan mudah dipahami berdasarkan data BMKG berikut:
+                
+                {earthquake_info}
+                
+                Format pesan:
+                1. Buat judul yang menarik perhatian tapi tidak berlebihan
+                2. Jelaskan detail gempa dengan bahasa yang mudah dipahami
+                3. Sertakan informasi lokasi yang jelas
+                4. Tambahkan konteks apakah gempa ini perlu diwaspadai atau tidak
+                5. Gunakan bahasa Indonesia yang natural dan informatif
+                6. Jangan gunakan emoji berlebihan, cukup 1-2 emoji yang relevan
+                7. Maksimal 280 karakter untuk ringkasan utama
+                
+                Berikan dalam format JSON:
+                {{
+                  \"title\": \"Judul singkat dan informatif\",
+                  \"message\": \"Pesan lengkap tentang gempa\",
+                  \"severity_emoji\": \"Emoji yang sesuai tingkat keparahan\",
+                  \"location_focus\": \"Area utama yang terdampak\"
+                }}
+                '''
+                
+                headers = {
+                    'Content-Type': 'application/json',
+                }
+                
+                data = {
+                    'contents': [{
+                        'parts': [{
+                            'text': prompt
+                        }]
+                    }],
+                    'generationConfig': {
+                        'temperature': 0.7,
+                        'topK': 40,
+                        'topP': 0.95,
+                        'maxOutputTokens': 1000,
+                    }
+                }
+                
+                response = requests.post(
+                    f'{GEMINI_API_URL}?key={GEMINI_API_KEY}',
+                    headers=headers,
+                    json=data,
+                    timeout=30
+                )
+                
+                if response.status_code == 200:
+                    result = response.json()
+                    if 'candidates' in result and len(result['candidates']) > 0:
+                        content = result['candidates'][0]['content']['parts'][0]['text']
+                        
+                        # Extract JSON from response
+                        try:
+                            # Find JSON content
+                            start_idx = content.find('{')
+                            end_idx = content.rfind('}') + 1
+                            if start_idx != -1 and end_idx > start_idx:
+                                json_content = content[start_idx:end_idx]
+                                ai_response = json.loads(json_content)
+                                return ai_response
+                        except json.JSONDecodeError:
+                            pass
+                        
+                        # Fallback: use raw content
+                        return {
+                            'title': 'Info Gempa BMKG',
+                            'message': content[:280],
+                            'severity_emoji': '🌍',
+                            'location_focus': earthquake_data.get('Wilayah', 'Indonesia')
+                        }
+                else:
+                    print(f'AI API Error: {response.status_code} - {response.text}')
+                    return None
+            except Exception as e:
+                print(f'Error generating AI message: {e}')
+                return None
+        
+        def get_severity_color(magnitude):
+            try:
+                mag = float(magnitude)
+                if mag >= 7.0:
+                    return 0xFF0000  # Red - Very dangerous
+                elif mag >= 6.0:
+                    return 0xFF6600  # Orange - Dangerous  
+                elif mag >= 5.0:
+                    return 0xFFCC00  # Yellow - Moderate
+                elif mag >= 4.0:
+                    return 0x00CCFF  # Light blue - Minor
+                else:
+                    return 0x00FF00  # Green - Very minor
+            except:
+                return 0x808080  # Gray - Unknown
+        
+        def send_discord_notification(earthquake_data, ai_message):
+            try:
+                if not DISCORD_WEBHOOK_URL:
+                    print('Discord webhook URL not configured')
+                    return False
+                
+                # Prepare embed
+                magnitude = earthquake_data.get('Magnitude', 'N/A')
+                color = get_severity_color(magnitude)
+                
+                # Determine thumbnail based on magnitude
+                if float(magnitude) >= 6.0:
+                    thumbnail_url = 'https://em-content.zobj.net/source/apple/391/red-circle_1f534.png'
+                elif float(magnitude) >= 5.0:
+                    thumbnail_url = 'https://em-content.zobj.net/source/apple/391/orange-circle_1f7e0.png'
+                elif float(magnitude) >= 4.0:
+                    thumbnail_url = 'https://em-content.zobj.net/source/apple/391/yellow-circle_1f7e1.png'
+                else:
+                    thumbnail_url = 'https://em-content.zobj.net/source/apple/391/green-circle_1f7e2.png'
+                
+                embed = {
+                    'title': f'{ai_message.get(\"severity_emoji\", \"🌍\")} {ai_message.get(\"title\", \"Info Gempa BMKG\")}',
+                    'description': ai_message.get('message', 'Data gempa terbaru dari BMKG'),
+                    'color': color,
+                    'thumbnail': {
+                        'url': thumbnail_url
+                    },
+                    'fields': [
+                        {
+                            'name': '📅 Waktu',
+                            'value': f'{earthquake_data.get(\"Tanggal\", \"N/A\")} - {earthquake_data.get(\"Jam\", \"N/A\")}',
+                            'inline': True
+                        },
+                        {
+                            'name': '📊 Magnitude',
+                            'value': f'{magnitude} SR',
+                            'inline': True
+                        },
+                        {
+                            'name': '📏 Kedalaman',
+                            'value': earthquake_data.get('Kedalaman', 'N/A'),
+                            'inline': True
+                        },
+                        {
+                            'name': '📍 Lokasi',
+                            'value': earthquake_data.get('Wilayah', 'N/A'),
+                            'inline': False
+                        },
+                        {
+                            'name': '⚠️ Potensi',
+                            'value': earthquake_data.get('Potensi', 'Tidak ada informasi'),
+                            'inline': False
+                        }
+                    ],
+                    'footer': {
+                        'text': f'BMKG Indonesia • {datetime.now(timezone.utc).strftime(\"%Y-%m-%d %H:%M:%S UTC\")}',
+                        'icon_url': 'https://em-content.zobj.net/source/apple/391/earth-globe-asia-australia_1f30f.png'
+                    }
+                }
+                
+                # Add 'Dirasakan' field if available
+                if earthquake_data.get('Dirasakan'):
+                    embed['fields'].append({
+                        'name': '👥 Dirasakan',
+                        'value': earthquake_data.get('Dirasakan'),
+                        'inline': False
+                    })
+                
+                payload = {
+                    'username': 'BMKG Earthquake Monitor',
+                    'avatar_url': 'https://em-content.zobj.net/source/apple/391/earth-globe-asia-australia_1f30f.png',
+                    'embeds': [embed]
+                }
+                
+                response = requests.post(DISCORD_WEBHOOK_URL, json=payload, timeout=30)
+                response.raise_for_status()
+                print(f'Discord notification sent successfully')
+                return True
+                
+            except Exception as e:
+                print(f'Error sending Discord notification: {e}')
+                return False
+        
+        def main():
+            print('Starting BMKG earthquake monitor...')
+            
+            # Fetch latest earthquake data
+            bmkg_data = fetch_bmkg_data()
+            if not bmkg_data or not bmkg_data.get('status'):
+                print('Failed to fetch BMKG data or invalid response')
+                sys.exit(1)
+            
+            # Get latest earthquake from auto data
+            latest_earthquake = bmkg_data.get('data', {}).get('auto', {}).get('Infogempa', {}).get('gempa')
+            
+            if not latest_earthquake:
+                print('No earthquake data found in auto section')
+                sys.exit(1)
+            
+            print(f'Latest earthquake: {latest_earthquake.get(\"DateTime\", \"Unknown\")} - Magnitude {latest_earthquake.get(\"Magnitude\", \"N/A\")}')
+            
+            # Load last sent earthquake
+            last_earthquake = load_last_earthquake()
+            
+            # Check if this is a new earthquake
+            if last_earthquake and last_earthquake.get('DateTime') == latest_earthquake.get('DateTime'):
+                print('No new earthquake data - skipping notification')
+                sys.exit(0)
+            
+            # Generate AI message
+            print('Generating AI message for earthquake...')
+            ai_message = generate_earthquake_message(latest_earthquake)
+            
+            if not ai_message:
+                print('Failed to generate AI message')
+                sys.exit(1)
+            
+            # Send Discord notification
+            print('Sending Discord notification...')
+            if send_discord_notification(latest_earthquake, ai_message):
+                # Save this earthquake as the last sent
+                save_last_earthquake(latest_earthquake)
+                print('Earthquake notification completed successfully')
+            else:
+                print('Failed to send Discord notification')
+                sys.exit(1)
+        
+        if __name__ == '__main__':
+            main()
+        "
+
+    - name: Commit last earthquake data if changed
+      run: |
+        if [ -f "last_earthquake.json" ]; then
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add last_earthquake.json
+          git diff --staged --quiet || git commit -m "Update last earthquake data [skip ci]"
+          git push
+        fi
