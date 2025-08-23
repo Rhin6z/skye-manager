@@ -181,41 +181,15 @@ jobs:
           echo "WEATHER_INFO=$WEATHER_INFO" >> $GITHUB_OUTPUT
           echo "WEATHER_EMOJI=$WEATHER_EMOJI" >> $GITHUB_OUTPUT
 
-      - name: Generate AI Greeting
-        id: ai_generation
+      - name: Create AI Generator Scripts
         run: |
-          echo "🤖 Generating AI greeting..."
-          
-          # Create special context prompt addition if applicable
-          SPECIAL_PROMPT=""
-          if [[ -n "${{ steps.context.outputs.SPECIAL_CONTEXT }}" ]]; then
-            case "${{ steps.context.outputs.SPECIAL_CONTEXT }}" in
-              "monday_motivation")
-                SPECIAL_PROMPT="Include motivation for the week ahead or Monday energy vibes"
-                ;;
-              "hump_day")
-                SPECIAL_PROMPT="Mention mid-week energy or halfway to weekend vibes"
-                ;;
-              "weekend_countdown")
-                SPECIAL_PROMPT="Celebrate approaching weekend or Friday feeling"
-                ;;
-              "sunday_prep")
-                SPECIAL_PROMPT="Reference preparing for the week ahead or enjoying the last of weekend"
-                ;;
-            esac
-          fi
-          
-          # Get weather emoji for appropriate matching
-          WEATHER_EMOJI="${{ steps.weather.outputs.WEATHER_EMOJI }}"
-          
           # Create prompt file
-          cat > /tmp/prompt.txt << 'EOF'
-          **CONTEXT FOR THIS MESSAGE:**
+          echo "**CONTEXT FOR THIS MESSAGE:**
           - Time: ${{ steps.context.outputs.TYPE }}
           - Day: ${{ steps.context.outputs.CURRENT_DAY }} (${{ steps.context.outputs.CONTEXT }})
           - Weather: ${{ steps.weather.outputs.WEATHER_INFO }}
           
-          **ROLE:** You are a hype admin for Indonesian gaming Discord server "Skye". Write a daily greeting.
+          **ROLE:** You are a hype admin for Indonesian gaming Discord server \"Skye\". Write a daily greeting.
           
           **CRITICAL FORMAT REQUIREMENT - MUST FOLLOW EXACTLY:**
           Write exactly TWO complete sentences separated by a space:
@@ -248,80 +222,117 @@ jobs:
           - ALWAYS write both sentences
           - Total length under 200 characters
           
-          Write the greeting now:
-          EOF
-          
-          # Create Python script file
-          cat > /tmp/ai_generator.py << 'EOF'
-          import json
-          import requests
-          import os
-          import sys
-          import re
-          
-          try:
-              with open('/tmp/prompt.txt', 'r') as f:
-                  prompt = f.read().strip()
-              
-              api_key = os.environ.get('GEMINI_API_KEY')
-              if not api_key:
-                  print("❌ No API key")
-                  sys.exit(1)
-              
-              url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={api_key}"
-              
-              payload = {
-                  "contents": [{"parts": [{"text": prompt}]}],
-                  "generationConfig": {
-                      "temperature": 0.4,
-                      "maxOutputTokens": 200,
-                      "topP": 0.95
-                  }
-              }
-              
-              response = requests.post(url, json=payload, timeout=20)
-              
-              if response.status_code == 200:
-                  data = response.json()
-                  if 'candidates' in data and len(data['candidates']) > 0:
-                      ai_text = data['candidates'][0]['content']['parts'][0]['text'].strip()
-                      
-                      # Clean formatting
-                      clean_text = re.sub(r'\*\*([^*]+)\*\*', r'\1', ai_text)
-                      clean_text = re.sub(r'`([^`]+)`', r'\1', clean_text)
-                      clean_text = re.sub(r'\n+', ' ', clean_text)
-                      clean_text = ' '.join(clean_text.split())
-                      
-                      # Find actual greeting (not metadata)
-                      lines = [line.strip() for line in ai_text.split('\n') if line.strip()]
-                      best_line = ""
-                      
-                      for line in lines:
-                          if (len(line) > 50 and 
-                              not line.startswith(('**', '#', '-', '*', 'Context:', 'Weather:', 'Time:', 'Day:')) and
-                              not line.lower().startswith(('greeting:', 'message:', 'response:', 'output:', 'here'))) :
-                              if ('?' in line and 
-                                  any(word in line.lower() for word in ['yuk', 'gas', 'ayo', 'pada', 'siapa', 'hayuk', 'gaskeun', 'mabar']) and
-                                  any(word in line.lower() for word in ['yooo', 'wassup', 'heyyy', 'sup', 'oi', 'ayok', 'yo', 'oiii', 'hello'])):
-                                  best_line = line
-                                  break
-                      
-                      if not best_line and clean_text:
-                          best_line = clean_text
-                      
-                      if best_line and len(best_line) > 50:
-                          with open('/tmp/ai_response.txt', 'w', encoding='utf-8') as f:
-                              f.write(best_line)
-                          print("✅ AI generation successful")
-                          sys.exit(0)
-              
-              print("❌ AI generation failed - invalid response")
-              sys.exit(1)
-              
-          except Exception as e:
-              print(f"❌ AI generation failed: {e}")
-              sys.exit(1)
-          EOF
+          Write the greeting now:" > /tmp/prompt.txt
+
+          # Create Python script for AI generation
+          echo 'import json
+import requests
+import os
+import sys
+import re
+
+try:
+    with open("/tmp/prompt.txt", "r") as f:
+        prompt = f.read().strip()
+    
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        print("❌ No API key")
+        sys.exit(1)
+    
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={api_key}"
+    
+    payload = {
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {
+            "temperature": 0.4,
+            "maxOutputTokens": 200,
+            "topP": 0.95
+        }
+    }
+    
+    response = requests.post(url, json=payload, timeout=20)
+    
+    if response.status_code == 200:
+        data = response.json()
+        if "candidates" in data and len(data["candidates"]) > 0:
+            ai_text = data["candidates"][0]["content"]["parts"][0]["text"].strip()
+            
+            # Clean formatting
+            clean_text = re.sub(r"\*\*([^*]+)\*\*", r"\1", ai_text)
+            clean_text = re.sub(r"`([^`]+)`", r"\1", clean_text)
+            clean_text = re.sub(r"\n+", " ", clean_text)
+            clean_text = " ".join(clean_text.split())
+            
+            # Find actual greeting
+            lines = [line.strip() for line in ai_text.split("\n") if line.strip()]
+            best_line = ""
+            
+            for line in lines:
+                if (len(line) > 50 and 
+                    not line.startswith(("**", "#", "-", "*", "Context:", "Weather:", "Time:", "Day:")) and
+                    not line.lower().startswith(("greeting:", "message:", "response:", "output:", "here"))) :
+                    if ("?" in line):
+                        best_line = line
+                        break
+            
+            if not best_line and clean_text:
+                best_line = clean_text
+            
+            if best_line and len(best_line) > 50:
+                with open("/tmp/ai_response.txt", "w", encoding="utf-8") as f:
+                    f.write(best_line)
+                print("✅ AI generation successful")
+                sys.exit(0)
+    
+    print("❌ AI generation failed - invalid response")
+    sys.exit(1)
+    
+except Exception as e:
+    print(f"❌ AI generation failed: {e}")
+    sys.exit(1)' > /tmp/ai_generator.py
+
+          # Create Python script for Discord message
+          echo 'import json
+import os
+
+title = os.environ.get("TITLE", "Skye Squad")
+desc_raw = os.environ.get("DESC", "what\'s good everyone!")
+color = int(os.environ.get("COLOR", "16766720"))
+timestamp = os.environ.get("TIMESTAMP", "")
+thumb = os.environ.get("THUMB", "1f305")
+
+# Convert description to lowercase
+desc = desc_raw.lower()
+
+# Add signature
+desc += "\n> by server dev guanteng - <@399393175904714752>"
+
+embed = {
+    "title": title,
+    "description": desc,
+    "color": color,
+    "thumbnail": {
+        "url": f"https://twemoji.maxcdn.com/v/latest/72x72/{thumb}.png"
+    },
+    "footer": {
+        "text": "chill gaming vibes",
+        "icon_url": "https://files.catbox.moe/npfh4e.jpg"
+    },
+    "timestamp": timestamp
+}
+
+payload = {"embeds": [embed]}
+
+with open("/tmp/discord_payload.json", "w", encoding="utf-8") as f:
+    json.dump(payload, f, ensure_ascii=False)
+
+print("✅ Payload created")' > /tmp/discord_script.py
+
+      - name: Generate AI Greeting
+        id: ai_generation
+        run: |
+          echo "🤖 Generating AI greeting..."
           
           # Execute the Python script
           python3 /tmp/ai_generator.py
@@ -447,72 +458,56 @@ jobs:
             WEATHER_EMOJI="${{ steps.weather.outputs.WEATHER_EMOJI }}"
             declare -a MESSAGES
             
-            case "${{ steps.context.outputs.TYPE }}" in
-              "morning")
+            # Create fallback message array appropriate for context
+            if [[ "${{ steps.context.outputs.TYPE }}" == "morning" ]]; then
+              if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
                 MESSAGES=(
                   "yoooow morning squad, coffee hitting different or controller calling your name already? yuuuk <@&1374047008829997157> ngopi sambil warm up aim dulu, ${WEATHER_MENTION} perfect buat fokus grinding! ${WEATHER_EMOJI}"
                   "wassuuuup early birds, energy level udah full atau masih butuh caffeine boost? gaskeun <@&1374047008829997157> sarapan sambil daily quest ringan, ${WEATHER_MENTION} bikin mood enak buat main! 🎮"
-                  "heyyyyyy morning legends, dreams about ranked or nightmares about losing streak? ayooook <@&1374047008829997157> stretching dulu terus langsung gaming, ${WEATHER_MENTION} cocok banget! ${WEATHER_EMOJI}"
-                  "oiiiii morning crew, ready to conquer today atau masih half asleep mode? gas polll <@&1374047008829997157> planning strategy sambil ngopi, ${WEATHER_MENTION} enak nih! 🎮"
                 )
-                if [[ "${{ steps.context.outputs.CONTEXT }}" != "weekend" ]]; then
-                  MESSAGES=(
-                    "yoooow morning squad, coffee hitting different or controller calling your name already? yuuuk ngopi sambil warm up aim dulu, ${WEATHER_MENTION} perfect buat fokus grinding! ${WEATHER_EMOJI}"
-                    "wassuuuup early birds, energy level udah full atau masih butuh caffeine boost? gaskeun sarapan sambil daily quest ringan, ${WEATHER_MENTION} bikin mood enak buat main! 🎮"
-                    "heyyyyyy morning legends, dreams about ranked or nightmares about losing streak? ayooook stretching dulu terus langsung gaming, ${WEATHER_MENTION} cocok banget! ${WEATHER_EMOJI}"
-                    "oiiiii morning crew, ready to conquer today atau masih half asleep mode? gas polll planning strategy sambil ngopi, ${WEATHER_MENTION} enak nih! 🎮"
-                  )
-                fi
-                ;;
-              "afternoon")
+              else
+                MESSAGES=(
+                  "yoooow morning squad, coffee hitting different or controller calling your name already? yuuuk ngopi sambil warm up aim dulu, ${WEATHER_MENTION} perfect buat fokus grinding! ${WEATHER_EMOJI}"
+                  "wassuuuup early birds, energy level udah full atau masih butuh caffeine boost? gaskeun sarapan sambil daily quest ringan, ${WEATHER_MENTION} bikin mood enak buat main! 🎮"
+                )
+              fi
+            elif [[ "${{ steps.context.outputs.TYPE }}" == "afternoon" ]]; then
+              if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
                 MESSAGES=(
                   "yoooow afternoon vibes, lunch coma hitting atau energy masih tinggi banget? yuuuk <@&1374047008829997157> quick match ml sambil digest, ${WEATHER_MENTION} pas buat santai gaming! ${WEATHER_EMOJI}"
                   "wassuuuup midday squad, productivity tinggi atau udah mulai burnout? pada mauuu gak <@&1374047008829997157> aram party sambil ngobrol, ${WEATHER_MENTION} bikin pengen ngadem! ${WEATHER_EMOJI}"
-                  "heyyyyyy afternoon crew, grind mode on atau break time calling? gaskeun <@&1374047008829997157> push rank valo sambil makan siang, ${WEATHER_MENTION} enak banget! 🎮"
-                  "suuuup afternoon legends, motivation still high atau udah weekend mode? siapaaaa yang mau <@&1374047008829997157> roblox party sambil chill, ${WEATHER_MENTION} perfect timing! 🎮"
                 )
-                if [[ "${{ steps.context.outputs.CONTEXT }}" != "weekend" ]]; then
-                  MESSAGES=(
-                    "yoooow afternoon vibes, lunch coma hitting atau energy masih tinggi banget? yuuuk quick match ml sambil digest, ${WEATHER_MENTION} pas buat santai gaming! ${WEATHER_EMOJI}"
-                    "wassuuuup midday squad, productivity tinggi atau udah mulai burnout? pada mauuu gak aram party sambil ngobrol, ${WEATHER_MENTION} bikin pengen ngadem! ${WEATHER_EMOJI}"
-                    "heyyyyyy afternoon crew, grind mode on atau break time calling? gaskeun push rank valo sambil makan siang, ${WEATHER_MENTION} enak banget! 🎮"
-                    "suuuup afternoon legends, motivation still high atau udah weekend mode? siapaaaa yang mau roblox party sambil chill, ${WEATHER_MENTION} perfect timing! 🎮"
-                  )
-                fi
-                ;;
-              "evening")
+              else
+                MESSAGES=(
+                  "yoooow afternoon vibes, lunch coma hitting atau energy masih tinggi banget? yuuuk quick match ml sambil digest, ${WEATHER_MENTION} pas buat santai gaming! ${WEATHER_EMOJI}"
+                  "wassuuuup midday squad, productivity tinggi atau udah mulai burnout? pada mauuu gak aram party sambil ngobrol, ${WEATHER_MENTION} bikin pengen ngadem! ${WEATHER_EMOJI}"
+                )
+              fi
+            elif [[ "${{ steps.context.outputs.TYPE }}" == "evening" ]]; then
+              if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
                 MESSAGES=(
                   "yoooow evening squad, day was productive atau disaster yang indah? gas polll <@&1374047008829997157> dinner sambil voice chat, ${WEATHER_MENTION} bikin mood relaxing! ${WEATHER_EMOJI}"
                   "wassuuuup golden hour gang, winding down atau masih full energy? yuuuk <@&1374047008829997157> mabar ml sambil sunset vibes, ${WEATHER_MENTION} aesthetic banget! 🎮"
-                  "heyyyyyy evening crew, tired dari seharian atau ready for night session? hayuuuk <@&1374047008829997157> push rank sambil makan malam, ${WEATHER_MENTION} pas! ${WEATHER_EMOJI}"
-                  "ayooooo evening legends, chores done atau masih ada PR hidup? pada mauuu gak <@&1374047008829997157> gaming marathon prep, ${WEATHER_MENTION} cocok buat focus! 🎮"
                 )
-                if [[ "${{ steps.context.outputs.CONTEXT }}" != "weekend" ]]; then
-                  MESSAGES=(
-                    "yoooow evening squad, day was productive atau disaster yang indah? gas polll dinner sambil voice chat, ${WEATHER_MENTION} bikin mood relaxing! ${WEATHER_EMOJI}"
-                    "wassuuuup golden hour gang, winding down atau masih full energy? yuuuk mabar ml sambil sunset vibes, ${WEATHER_MENTION} aesthetic banget! 🎮"
-                    "heyyyyyy evening crew, tired dari seharian atau ready for night session? hayuuuk push rank sambil makan malam, ${WEATHER_MENTION} pas! ${WEATHER_EMOJI}"
-                    "ayooooo evening legends, chores done atau masih ada PR hidup? pada mauuu gak gaming marathon prep, ${WEATHER_MENTION} cocok buat focus! 🎮"
-                  )
-                fi
-                ;;
-              "night")
+              else
+                MESSAGES=(
+                  "yoooow evening squad, day was productive atau disaster yang indah? gas polll dinner sambil voice chat, ${WEATHER_MENTION} bikin mood relaxing! ${WEATHER_EMOJI}"
+                  "wassuuuup golden hour gang, winding down atau masih full energy? yuuuk mabar ml sambil sunset vibes, ${WEATHER_MENTION} aesthetic banget! 🎮"
+                )
+              fi
+            else
+              if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
                 MESSAGES=(
                   "yoooow night owls, insomnia squad atau pilihan begadang for fun? yuuuk <@&1374047008829997157> marathon gaming sambil vibing, ${WEATHER_MENTION} enak buat late night session! ${WEATHER_EMOJI}"
                   "wassuuuup midnight legends, peaceful hours atau chaos di ranked? siapaaaa yang mau <@&1374047008829997157> grind sampai pagi sambil ngobrol, ${WEATHER_MENTION} bikin betah! 🎮"
-                  "heyyyyyy nocturnal gamers, night hits different atau sama aja? gaskeun <@&1374047008829997157> push rank ml sampai subuh, ${WEATHER_MENTION} perfect buat focus! ${WEATHER_EMOJI}"
-                  "suuuup late night squad, bocil udah tidur semua nih freedom time! hayuuuk <@&1374047008829997157> party games sambil ketawa, ${WEATHER_MENTION} cocok buat chill! 🎮"
                 )
-                if [[ "${{ steps.context.outputs.CONTEXT }}" != "weekend" ]]; then
-                  MESSAGES=(
-                    "yoooow night owls, insomnia squad atau pilihan begadang for fun? yuuuk marathon gaming sambil vibing, ${WEATHER_MENTION} enak buat late night session! ${WEATHER_EMOJI}"
-                    "wassuuuup midnight legends, peaceful hours atau chaos di ranked? siapaaaa yang mau grind sampai pagi sambil ngobrol, ${WEATHER_MENTION} bikin betah! 🎮"
-                    "heyyyyyy nocturnal gamers, night hits different atau sama aja? gaskeun push rank ml sampai subuh, ${WEATHER_MENTION} perfect buat focus! ${WEATHER_EMOJI}"
-                    "suuuup late night squad, bocil udah tidur semua nih freedom time! hayuuuk party games sambil ketawa, ${WEATHER_MENTION} cocok buat chill! 🎮"
-                  )
-                fi
-                ;;
-            esac
+              else
+                MESSAGES=(
+                  "yoooow night owls, insomnia squad atau pilihan begadang for fun? yuuuk marathon gaming sambil vibing, ${WEATHER_MENTION} enak buat late night session! ${WEATHER_EMOJI}"
+                  "wassuuuup midnight legends, peaceful hours atau chaos di ranked? siapaaaa yang mau grind sampai pagi sambil ngobrol, ${WEATHER_MENTION} bikin betah! 🎮"
+                )
+              fi
+            fi
             
             # Add special context messages with day-specific references
             if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "monday_motivation" ]]; then
@@ -544,41 +539,41 @@ jobs:
           case "${{ steps.context.outputs.TYPE }}" in
             "morning") 
               if [[ "${{ steps.weather.outputs.WEATHER_INFO }}" == *"hujan"* ]]; then
-                TITLES=("☔ Rainy Morning Vibes" "🌧️ Cozy Morning Gaming" "☕ Coffee & Rain Sounds" "🌧️ Fresh Morning Grind" "⛈️ Rainy Day Gaming")
-                THUMBS=("2614" "1f327" "2615" "1f327" "26c8")
+                TITLES=("☔ Rainy Morning Vibes" "🌧️ Cozy Morning Gaming" "☕ Coffee & Rain Sounds")
+                THUMBS=("2614" "1f327" "2615")
               elif [[ "${{ steps.weather.outputs.WEATHER_INFO }}" == *"panas"* ]]; then
-                TITLES=("🔥 Hot Morning Grind" "☀️ Sunny Morning Energy" "☕ Coffee & Sunshine" "🌞 Fresh Morning Heat" "⭐ Hot Day Ahead")
-                THUMBS=("1f525" "2600" "2615" "1f31e" "2b50")
+                TITLES=("🔥 Hot Morning Grind" "☀️ Sunny Morning Energy" "☕ Coffee & Sunshine")
+                THUMBS=("1f525" "2600" "2615")
               else
-                TITLES=("☀️ Morning Skye Squad" "🌅 Early Bird Energy" "☕ Coffee & Gaming Time" "🌞 Fresh Morning Vibes" "⭐ New Day New Games")
-                THUMBS=("2600" "1f305" "2615" "1f31e" "2b50")
+                TITLES=("☀️ Morning Skye Squad" "🌅 Early Bird Energy" "☕ Coffee & Gaming Time")
+                THUMBS=("2600" "1f305" "2615")
               fi
               ;;
             "afternoon") 
               if [[ "${{ steps.weather.outputs.WEATHER_INFO }}" == *"hujan"* ]]; then
-                TITLES=("🌧️ Rainy Afternoon Chill" "☔ Midday Rain Gaming" "🌦️ Lunch & Rain Vibes" "🎯 Rainy Focus Time" "💼 Indoor Gaming Break")
-                THUMBS=("1f327" "2614" "1f326" "1f3af" "1f4bc")
+                TITLES=("🌧️ Rainy Afternoon Chill" "☔ Midday Rain Gaming" "🌦️ Lunch & Rain Vibes")
+                THUMBS=("1f327" "2614" "1f326")
               else
-                TITLES=("🍃 Afternoon Chill Mode" "🌤️ Midday Squad Check" "☀️ Lunch Break Gaming" "🎯 Afternoon Focus Time" "💼 Productive Break")
-                THUMBS=("1f343" "1f324" "2600" "1f3af" "1f4bc")
+                TITLES=("🍃 Afternoon Chill Mode" "🌤️ Midday Squad Check" "☀️ Lunch Break Gaming")
+                THUMBS=("1f343" "1f324" "2600")
               fi
               ;;
             "evening") 
               if [[ "${{ steps.weather.outputs.WEATHER_INFO }}" == *"hujan"* ]]; then
-                TITLES=("🌧️ Rainy Evening Chill" "🌆 Sunset Rain Gaming" "✨ Cozy Evening Vibes" "☔ Rainy Gaming Time" "🎯 Evening Storm Mode")
-                THUMBS=("1f327" "1f306" "2728" "2614" "1f3af")
+                TITLES=("🌧️ Rainy Evening Chill" "🌆 Sunset Rain Gaming" "✨ Cozy Evening Vibes")
+                THUMBS=("1f327" "1f306" "2728")
               else
-                TITLES=("🌇 Evening Chill Squad" "🌆 Golden Hour Gaming" "✨ Evening Wind-Down" "🌅 Sunset Gaming Time" "🎯 Evening Focus Mode")
-                THUMBS=("1f307" "1f306" "2728" "1f305" "1f3af")
+                TITLES=("🌇 Evening Chill Squad" "🌆 Golden Hour Gaming" "✨ Evening Wind-Down")
+                THUMBS=("1f307" "1f306" "2728")
               fi
               ;;
             "night") 
               if [[ "${{ steps.weather.outputs.WEATHER_INFO }}" == *"hujan"* ]]; then
-                TITLES=("🌧️ Rainy Night Gaming" "🌙 Midnight Rain Club" "⭐ Stormy Night Session" "✨ Rain & Games Combo" "🌟 Rainy Night Energy")
-                THUMBS=("1f327" "1f319" "2b50" "2728" "1f31f")
+                TITLES=("🌧️ Rainy Night Gaming" "🌙 Midnight Rain Club" "⭐ Stormy Night Session")
+                THUMBS=("1f327" "1f319" "2b50")
               else
-                TITLES=("🦉 Late Night Squad" "🌙 Midnight Gaming Club" "⭐ Night Owl Assembly" "✨ Nocturnal Gamers" "🌟 Late Night Energy")
-                THUMBS=("1f989" "1f319" "2b50" "2728" "1f31f")
+                TITLES=("🦉 Late Night Squad" "🌙 Midnight Gaming Club" "⭐ Night Owl Assembly")
+                THUMBS=("1f989" "1f319" "2b50")
               fi
               ;;
           esac
@@ -611,45 +606,6 @@ jobs:
           DESC="${{ steps.ai_generation.outputs.DESC_RAW }}"
           THUMB="${{ steps.ai_generation.outputs.THUMB }}"
           TIMESTAMP=$(TZ='Asia/Jakarta' date -u +%Y-%m-%dT%H:%M:%S.000Z)
-          
-          # Create Python script for Discord payload
-          cat > /tmp/discord_script.py << 'EOF'
-          import json
-          import os
-          
-          title = os.environ.get('TITLE', 'Skye Squad')
-          desc_raw = os.environ.get('DESC', 'what\'s good everyone!')
-          color = int(os.environ.get('COLOR', '16766720'))
-          timestamp = os.environ.get('TIMESTAMP', '')
-          thumb = os.environ.get('THUMB', '1f305')
-          
-          # Convert description to lowercase
-          desc = desc_raw.lower()
-          
-          # Add signature
-          desc += "\n> by server dev guanteng - <@399393175904714752>"
-          
-          embed = {
-              "title": title,
-              "description": desc,
-              "color": color,
-              "thumbnail": {
-                  "url": f"https://twemoji.maxcdn.com/v/latest/72x72/{thumb}.png"
-              },
-              "footer": {
-                  "text": "chill gaming vibes",
-                  "icon_url": "https://files.catbox.moe/npfh4e.jpg"
-              },
-              "timestamp": timestamp
-          }
-          
-          payload = {"embeds": [embed]}
-          
-          with open('/tmp/discord_payload.json', 'w', encoding='utf-8') as f:
-              json.dump(payload, f, ensure_ascii=False)
-          
-          print("✅ Payload created")
-          EOF
           
           # Run Python script with environment variables
           TITLE="$TITLE" DESC="$DESC" COLOR="$COLOR" TIMESTAMP="$TIMESTAMP" THUMB="$THUMB" python3 /tmp/discord_script.py
@@ -695,35 +651,30 @@ jobs:
             sleep 3
           fi
           
+          # Simplified sticker selection - fewer options to reduce expression size
           case "${{ steps.context.outputs.TYPE }}" in
             "morning")
               STICKERS=(
                 "https://media.discordapp.net/stickers/1404543938815197306.png"
                 "https://media.discordapp.net/stickers/1405277985237368943.png"
-                "https://media.discordapp.net/stickers/1405477154095104082.png"
               )
               ;;
             "afternoon")
               STICKERS=(
                 "https://media.discordapp.net/stickers/1405487683526201404.png"
                 "https://media.discordapp.net/stickers/1405546781927936051.png"
-                "https://media.discordapp.net/stickers/1405855503858274397.png"
               )
               ;;
             "evening")
               STICKERS=(
                 "https://media.discordapp.net/stickers/1405914196922597549.png"
                 "https://media.discordapp.net/stickers/1406065324758929509.png"
-                "https://media.discordapp.net/stickers/1406629592839491716.png"
               )
               ;;
             "night")
               STICKERS=(
                 "https://media.discordapp.net/stickers/1406668584335184003.png"
                 "https://media.discordapp.net/stickers/1407858067013369856.png"
-                "https://media.discordapp.net/stickers/1407858350334677204.png"
-                "https://media.discordapp.net/stickers/1407858765616779396.png"
-                "https://media.discordapp.net/stickers/1407859373396590735.png"
               )
               ;;
           esac
