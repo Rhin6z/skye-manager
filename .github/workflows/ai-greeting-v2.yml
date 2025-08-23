@@ -166,54 +166,36 @@ jobs:
           echo "🤖 Generating AI greeting..."
           
           cat > /tmp/prompt.txt << 'EOF'
-          You are writing a casual Discord message to your Indonesian gaming friends in the Skye community. Write EXACTLY 2 sentences in all lowercase.
+          You are writing a casual Discord message to your Indonesian gaming friends in the Skye community. Write in all lowercase with 2 parts.
 
           Current Context: TYPE_PLACEHOLDER on CONTEXT_PLACEHOLDER day
           Weather: WEATHER_INFO_PLACEHOLDER
           
-          **STRICT FORMAT - EXACTLY 2 SENTENCES:**
+          **WRITE ONE CASUAL MESSAGE WITH 2 PARTS:**
           
-          **SENTENCE 1 (100% ENGLISH CASUAL GREETING/ASKING):**
-          - Must be FULL ENGLISH ONLY - no Indonesian words
-          - Casual greeting + ask about their current state/mood/activity
-          - Use casual terms: "yooo", "wassup", "heyyyy", "sup", "ayooo"
-          - Ask about: mood, energy, what they're doing, how they're feeling, day going, vibe
-          - Examples: 
-            * "yooo wassup everyone, how's the vibe tonight?"
-            * "heyyyy squad, what's everyone up to right now?"
-            * "sup legends, how's everyone feeling today?"
-            * "ayooo morning crew, energy level check how we doing?"
+          **PART 1 - ENGLISH GREETING/QUESTION:**
+          - Use casual English: "yooo", "wassup", "heyyyy", "sup", "ayooo"
+          - Ask about mood, energy, activity, or how they're doing
           
-          **SENTENCE 2 (INDONESIAN-ENGLISH MIX ACTIVITY INVITATION):**
-          - Start with Indonesian invitation: "yuk", "siapa mau", "gas", "ayo"
-          - Include activity appropriate for time
-          - Include weather mention: WEATHER_INFO_PLACEHOLDER
-          - For weekend: include "<@&1374047008829997157>" role tag naturally
-          - For weekday: no role tags
+          **PART 2 - INDONESIAN-ENGLISH ACTIVITY INVITATION:**
+          - Start with: "yuk", "siapa mau", "gas", "ayo"  
+          - Include gaming/activity for the time
+          - Mention weather naturally: WEATHER_INFO_PLACEHOLDER
+          - For weekend context: include "<@&1374047008829997157>" role tag
+          - For weekday context: no role tags needed
           
-          **TIME-BASED ACTIVITIES FOR SENTENCE 2:**
+          **EXAMPLE PATTERNS:**
+          - "yooo wassup everyone, how's the vibe? yuk mabar valo sambil voice chat, cuaca enak nih"
+          - "heyyyy squad what's everyone up to? siapa mau <@&1374047008829997157> begadang gaming marathon, cuaca sejuk"
+          - "sup legends how we feeling tonight? gas push rank ml bareng sambil ngobrol, cuaca hujan enak"
           
-          **MORNING:** "yuk jogging bareng terus sarapan", "siapa mau olahraga pagi sambil ngopi", "gas stretching dulu terus main roblox santai"
-          
-          **AFTERNOON:** "yuk makan siang bareng terus nongkrong", "siapa mau ke mall sambil main ml", "gas lunch time terus gaming session"
-          
-          **EVENING:** "yuk dinner bareng terus mabar valo", "siapa mau nongkrong malem sambil push rank", "gas makan terus voice chat"
-          
-          **NIGHT:** "yuk begadang mabar sampai pagi", "siapa mau marathon valo sambil ngobrol", "gas push rank ml terus voice chat"
-          
-          **WEEKEND ROLE TAG (only if CONTEXT_PLACEHOLDER is weekend):**
-          - Include "<@&1374047008829997157>" naturally in sentence 2
-          - Examples: "yuk <@&1374047008829997157> mabar bareng", "siapa mau <@&1374047008829997157> voice chat"
-          
-          **CRITICAL REQUIREMENTS:**
+          **REQUIREMENTS:**
           - ALL LOWERCASE
-          - EXACTLY 2 SENTENCES 
-          - SENTENCE 1 = 100% ENGLISH ONLY
-          - SENTENCE 2 = INDONESIAN-ENGLISH MIX
+          - NATURAL CONVERSATIONAL FLOW
           - INCLUDE WEATHER NATURALLY
-          - BE CREATIVE, NOT TEMPLATE
-          - MINIMUM 80 characters total
-          - MAXIMUM 250 characters total
+          - BE CREATIVE AND CASUAL
+          - MINIMUM 70 characters
+          - MAXIMUM 280 characters
           
           Write the message now:
           EOF
@@ -292,19 +274,21 @@ jobs:
             
             # Enhanced validation for 2-sentence structure
             SENTENCE_COUNT=$(echo "$AI_TEXT" | grep -o '[.!?]' | wc -l)
-            HAS_ACTIVITY=$(echo "$AI_TEXT" | grep -iE "(roblox|ml|mobile legends|emel|mabar|main|gaming|game|yuk|siapa mau|bareng|nongkrong|jalan|sarapan|makan|dinner|begadang|gas|ayo)")
-            HAS_QUESTION=$(echo "$AI_TEXT" | grep -E "[?]")
+            HAS_ACTIVITY=$(echo "$AI_TEXT" | grep -iE "(roblox|ml|mobile legends|emel|mabar|main|gaming|game|yuk|siapa mau|bareng|nongkrong|jalan|sarapan|makan|dinner|begadang|gas|ayo|valo|voice chat)")
             
-            # Check for proper 2-sentence structure with period or question mark
-            HAS_TWO_SENTENCES=$(echo "$AI_TEXT" | grep -E '\w+[.!?]\s+\w+' | wc -l)
+            # Check for English words in first part (basic check)
+            HAS_ENGLISH=$(echo "$AI_TEXT" | grep -iE "(yooo|wassup|heyyyy|sup|ayooo|hey|yo|what|how|everyone|squad|crew|gang|legends|morning|afternoon|evening|night)")
             
-            # Check minimum length and proper structure
-            if [[ ${#AI_TEXT} -gt 60 && ${#AI_TEXT} -lt 350 && $SENTENCE_COUNT -ge 2 && $HAS_TWO_SENTENCES -ge 1 && -n "$HAS_ACTIVITY" ]]; then
+            # More flexible sentence detection - look for natural sentence patterns
+            HAS_STRUCTURE=$(echo "$AI_TEXT" | grep -E '(yooo|wassup|heyyyy|sup|ayooo).*(yuk|siapa mau|gas|ayo)')
+            
+            # Check minimum length and basic structure requirements
+            if [[ ${#AI_TEXT} -gt 50 && ${#AI_TEXT} -lt 350 && -n "$HAS_ACTIVITY" && -n "$HAS_ENGLISH" && -n "$HAS_STRUCTURE" ]]; then
               DESC_RAW="$AI_TEXT"
               USE_AI=true
-              echo "✅ AI validated: ${#AI_TEXT} chars, ${SENTENCE_COUNT} sentences, proper structure"
+              echo "✅ AI validated: ${#AI_TEXT} chars, proper structure detected"
             else
-              echo "⚠️ AI validation failed: ${#AI_TEXT} chars, sentences: ${SENTENCE_COUNT}, structure: ${HAS_TWO_SENTENCES}, activity: ${HAS_ACTIVITY:-missing}"
+              echo "⚠️ AI validation failed: ${#AI_TEXT} chars, activity: ${HAS_ACTIVITY:-missing}, english: ${HAS_ENGLISH:-missing}, structure: ${HAS_STRUCTURE:-missing}"
               echo "   Raw text: $AI_TEXT"
               USE_AI=false
             fi
