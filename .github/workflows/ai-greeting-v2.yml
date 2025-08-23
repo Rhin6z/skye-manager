@@ -166,39 +166,30 @@ jobs:
           echo "🤖 Generating AI greeting..."
           
           cat > /tmp/prompt.txt << 'EOF'
-          Write a casual Discord message for Indonesian gamers in Skye community. Must have EXACTLY this structure:
+          **role:** you are a hype admin for the indonesian gaming discord server "skye". your task is to write a daily greeting that feels authentic and engages the adult community.
 
-          Context: TYPE_PLACEHOLDER on CONTEXT_PLACEHOLDER day  
-          Weather: WEATHER_INFO_PLACEHOLDER
-          
-          **MANDATORY FORMAT - EXACTLY 2 SENTENCES:**
-          
-          **SENTENCE 1:** Full English casual greeting + question about their current state
-          - Must start with: "yooo" / "wassup" / "heyyyy" / "sup" / "ayooo"  
-          - Ask about: how they're feeling, what's up, energy level, mood, vibe
-          - Examples: "yooo wassup everyone, how's the energy tonight?" / "heyyyy squad, what's everyone up to right now?"
-          
-          **SENTENCE 2:** Indonesian invitation + activity + weather mention + role tag (if weekend)
-          - Must start with: "yuk" / "siapa mau" / "gas" / "ayo"
-          - Include gaming activity for TYPE_PLACEHOLDER time
-          - Include: WEATHER_INFO_PLACEHOLDER
-          - If CONTEXT_PLACEHOLDER = weekend: add "<@&1374047008829997157>"
-          - If CONTEXT_PLACEHOLDER = weekday: no role tag
-          
-          **PERFECT EXAMPLES:**
-          - "yooo wassup legends, how's everyone feeling tonight? yuk <@&1374047008829997157> begadang mabar valo sambil voice chat, WEATHER_INFO_PLACEHOLDER enak nih"
-          - "heyyyy squad, what's the vibe right now? siapa mau push rank ml bareng sambil ngobrol, WEATHER_INFO_PLACEHOLDER"
-          - "sup everyone, how's the energy today? gas nongkrong terus gaming session, WEATHER_INFO_PLACEHOLDER"
-          
-          **CRITICAL RULES:**
-          - ALL LOWERCASE
-          - EXACTLY 2 SENTENCES with period/question mark separation
-          - SENTENCE 1 = 100% ENGLISH ONLY
-          - SENTENCE 2 = INDONESIAN + ACTIVITY + WEATHER + ROLE TAG
-          - MINIMUM 80 characters total
-          - MAXIMUM 250 characters total
-          
-          Write the message following this exact format:
+          **core structure:**
+          1.  **first sentence (english):** a casual, creative greeting. start with a hype opener like "yoooo", "wasuiiip", "heyyy", "sup", "ayokkk", or "oi". ask a unique question about their current vibe or activity. be specific to the time of day.
+              *   **good:** "yoooo night crew, what game is currently consuming your soul?"
+              *   **bad:** "hello, how are you?"
+
+          2.  **second sentence (indonesian):** a seamless, one-sentence invitation.
+              *   **start with:** "yuk", "gas", "ayo", "pada mau", or "siapa mau".
+              *   **activity:** suggest a specific activity perfect for the `{time}` (e.g., morning, afternoon, night, weekend). go beyond gaming: suggest "nongkrong di vc", "jalan sore", "olahraga ringan", "ngopi dulu", or "main game seru" like valo/ml/roblox.
+              *   **weather:** weave the `{weather}` naturally into the reason (e.g., "...enak nih cuacanya {weather} jadi pas banget buat...").
+              *   **role tag:** only if it's a `{weekend}`, naturally include the `<@&1374047008829997157>` tag inside the sentence. on weekdays, omit the tag completely. the sentence structure should otherwise be identical.
+
+          **tonality & rules:**
+          *   **vibe:** casual, friendly, and slightly hype. a little bit of friendly, "wajar" toxicity is allowed (e.g., "toxic bentar", "colong win").
+          *   **language:** sentence 1: 100% english. sentence 2: ~80% indonesian. you can mix in english game names (valo, ml, roblox) or gamer slang (grind, push, vc).
+          *   **formatting:** all lowercase. use 1-2 emojis max if they fit (e.g., ☕, 🎮, 🌧️).
+          *   **creativity:** the message must not sound like a formula. be creative with the questions and activities every time.
+
+          **output format:**
+          context: {time} on a {weekday/weekend}
+          weather: {weather}
+
+          [your generated message here]
           EOF
           
           sed -i "s/TYPE_PLACEHOLDER/${{ steps.context.outputs.TYPE }}/g" /tmp/prompt.txt
