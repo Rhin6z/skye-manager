@@ -98,12 +98,14 @@ jobs:
           
           # Special context
           SPECIAL_CONTEXT=""
-              case "$CURRENT_DAY" in
-                "Monday") SPECIAL_CONTEXT="monday_motivation" ;;
-                "Wednesday") SPECIAL_CONTEXT="hump_day" ;;
-                "Friday") SPECIAL_CONTEXT="weekend_countdown" ;;
-                "Sunday") SPECIAL_CONTEXT="sunday_prep" ;;
-              esac          echo "TYPE=$TYPE" >> $GITHUB_OUTPUT
+          case "$CURRENT_DAY" in
+            "Monday") SPECIAL_CONTEXT="monday_motivation" ;;
+            "Wednesday") SPECIAL_CONTEXT="hump_day" ;;
+            "Friday") SPECIAL_CONTEXT="weekend_countdown" ;;
+            "Sunday") SPECIAL_CONTEXT="sunday_prep" ;;
+          esac
+          
+          echo "TYPE=$TYPE" >> $GITHUB_OUTPUT
           echo "CONTEXT=$CONTEXT" >> $GITHUB_OUTPUT
           echo "CURRENT_DAY=$CURRENT_DAY" >> $GITHUB_OUTPUT
           echo "CURRENT_DATE=$CURRENT_DATE" >> $GITHUB_OUTPUT
