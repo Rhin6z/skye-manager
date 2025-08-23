@@ -321,34 +321,28 @@ jobs:
             # Strict validation for proper 2-sentence English-Indonesian structure
             SENTENCE_COUNT=$(echo "$AI_TEXT" | grep -o '[.!?]' | wc -l)
             
-            # Check for English greeting at the start
-            HAS_ENGLISH_START=$(echo "$AI_TEXT" | grep -iE "^(yooo|wassup|heyyyy|sup|ayooo)")
+            # Check for English greeting at the start (lebih fleksibel)
+            HAS_ENGLISH_START=$(echo "$AI_TEXT" | grep -iE "^(yooo|wassup|heyyyy|sup|ayooo|heyyy|oi|yo|aight|okay)" || echo "$AI_TEXT" | grep -iE "(coffee|controller|quest|crew|squad|warriors)")
             
             # Check for Indonesian invitation words  
-            HAS_INDONESIAN=$(echo "$AI_TEXT" | grep -iE "(yuk|siapa mau|gas|ayo)")
+            HAS_INDONESIAN=$(echo "$AI_TEXT" | grep -iE "(yuk|siapa mau|gas|ayo|pada mau)")
             
-            # Check for gaming activities
-            HAS_ACTIVITY=$(echo "$AI_TEXT" | grep -iE "(mabar|valo|valorant|ml|mobile legends|roblox|gaming|game|voice chat|push rank|nongkrong|begadang)")
+            # Check for gaming activities (lebih luas)
+            HAS_ACTIVITY=$(echo "$AI_TEXT" | grep -iE "(mabar|valo|valorant|ml|mobile legends|roblox|gaming|game|voice chat|push rank|nongkrong|begadang|ngopi|warm up|aim|daily|quest|custom|party)")
             
             # Check for weather mention
-            HAS_WEATHER=$(echo "$AI_TEXT" | grep -iE "(cuaca|${WEATHER_MENTION//cuaca /})")
+            HAS_WEATHER=$(echo "$AI_TEXT" | grep -iE "(cuaca|hujan|gerimis|cerah|panas|dingin|sejuk|berawan|mendung)")
             
-            # Check for proper sentence separation (. or ? followed by space and word)
-            HAS_SENTENCE_BREAK=$(echo "$AI_TEXT" | grep -E '[.?]\s+[a-z]')
-            
-            # Strict validation - must have all components
-            if [[ ${#AI_TEXT} -gt 70 && ${#AI_TEXT} -lt 280 && $SENTENCE_COUNT -ge 2 && -n "$HAS_ENGLISH_START" && -n "$HAS_INDONESIAN" && -n "$HAS_ACTIVITY" && -n "$HAS_WEATHER" && -n "$HAS_SENTENCE_BREAK" ]]; then
+            # Relaksasi validation - fokus ke konten quality daripada strict format
+            if [[ ${#AI_TEXT} -gt 50 && ${#AI_TEXT} -lt 300 && -n "$HAS_INDONESIAN" && -n "$HAS_ACTIVITY" && -n "$HAS_WEATHER" ]]; then
               DESC_RAW="$AI_TEXT"
               USE_AI=true
-              echo "✅ AI validated: ${#AI_TEXT} chars, proper English-Indonesian structure"
+              echo "✅ AI validated: ${#AI_TEXT} chars, Indonesian gaming content with weather"
             else
               echo "⚠️ AI validation failed: ${#AI_TEXT} chars"
-              echo "   English start: ${HAS_ENGLISH_START:-missing}"
               echo "   Indonesian: ${HAS_INDONESIAN:-missing}" 
               echo "   Activity: ${HAS_ACTIVITY:-missing}"
               echo "   Weather: ${HAS_WEATHER:-missing}"
-              echo "   Sentence break: ${HAS_SENTENCE_BREAK:-missing}"
-              echo "   Sentence count: $SENTENCE_COUNT"
               echo "   Raw text: $AI_TEXT"
               USE_AI=false
             fi
