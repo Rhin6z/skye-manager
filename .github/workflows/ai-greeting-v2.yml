@@ -186,6 +186,28 @@ jobs:
         run: |
           echo "🤖 Generating AI greeting..."
           
+          # Create special context prompt addition if applicable
+          SPECIAL_PROMPT=""
+          if [[ -n "${{ steps.context.outputs.SPECIAL_CONTEXT }}" ]]; then
+            case "${{ steps.context.outputs.SPECIAL_CONTEXT }}" in
+              "monday_motivation")
+                SPECIAL_PROMPT="Include motivation for the week ahead or Monday energy vibes"
+                ;;
+              "hump_day")
+                SPECIAL_PROMPT="Mention mid-week energy or halfway to weekend vibes"
+                ;;
+              "weekend_countdown")
+                SPECIAL_PROMPT="Celebrate approaching weekend or Friday feeling"
+                ;;
+              "sunday_prep")
+                SPECIAL_PROMPT="Reference preparing for the week ahead or enjoying the last of weekend"
+                ;;
+            esac
+          fi
+          
+          # Get weather emoji for appropriate matching
+          WEATHER_EMOJI="${{ steps.weather.outputs.WEATHER_EMOJI }}"
+          
           # Create prompt file
           cat > /tmp/prompt.txt << 'EOF'
           **CONTEXT FOR THIS MESSAGE:**
@@ -224,6 +246,7 @@ jobs:
           - Weather must match activity suggestions
           - Must be creative, avoid templates
           - ALWAYS write both sentences
+          - Total length under 200 characters
           
           Write the greeting now:
           EOF
@@ -278,7 +301,7 @@ jobs:
                               not line.startswith(('**', '#', '-', '*', 'Context:', 'Weather:', 'Time:', 'Day:')) and
                               not line.lower().startswith(('greeting:', 'message:', 'response:', 'output:', 'here'))) :
                               if ('?' in line and 
-                                  any(word in line.lower() for word in ['yuk', 'gas', 'ayo', 'pada', 'siapa', 'hayuk', 'gaskeun']) and
+                                  any(word in line.lower() for word in ['yuk', 'gas', 'ayo', 'pada', 'siapa', 'hayuk', 'gaskeun', 'mabar']) and
                                   any(word in line.lower() for word in ['yooo', 'wassup', 'heyyy', 'sup', 'oi', 'ayok', 'yo', 'oiii', 'hello'])):
                                   best_line = line
                                   break
@@ -307,12 +330,21 @@ jobs:
             AI_TEXT=$(cat /tmp/ai_response.txt)
             echo "🎯 AI generated: $AI_TEXT"
             
+            # Improved validation with better pattern matching
+            HAS_ENGLISH_PART=$(echo "$AI_TEXT" | grep -E "\?" || echo "")
+            HAS_INDONESIAN_PART=$(echo "$AI_TEXT" | grep -iE "(yu+k|gas|ayo+k*|pada|hayu+k|gaskeun|mabar|santuy|ngepush|main bareng)" || echo "")
+            HAS_WEATHER=$(echo "$AI_TEXT" | grep -iE "(cuaca|hujan|gerimis|cerah|panas|dingin|sejuk|berawan|mendung|rainy|sunny|hot|cold|weather|rain)" || echo "")
+            HAS_QUESTION=$(echo "$AI_TEXT" | grep -E "\?" || echo "")
+            
+            # Check for tag existence
+            HAS_TAG=$(echo "$AI_TEXT" | grep -E "<@&[0-9]+>" || echo "")
+            
             # Try to automatically fix single-sentence responses by adding a second part
-            if [[ ! "$AI_TEXT" =~ "yuk" && ! "$AI_TEXT" =~ "gas" && ! "$AI_TEXT" =~ "ayo" ]]; then
+            if [[ -z "$HAS_INDONESIAN_PART" ]]; then
               echo "⚠️ Missing Indonesian part, attempting to fix..."
               
               # Create appropriate second sentence based on context
-              if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
+              if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" && -z "$HAS_TAG" ]]; then
                 SECOND_PART=""
                 case "${{ steps.context.outputs.TYPE }}" in
                   "morning")
@@ -328,7 +360,7 @@ jobs:
                     SECOND_PART="hayuuuk <@&1374047008829997157> push rank marathon sampe pagi, ${{ steps.weather.outputs.WEATHER_INFO }} enak buat grinding! ${{ steps.weather.outputs.WEATHER_EMOJI }}"
                     ;;
                 esac
-              else
+              elif [[ "${{ steps.context.outputs.CONTEXT }}" != "weekend" && -z "$HAS_TAG" ]]; then
                 SECOND_PART=""
                 case "${{ steps.context.outputs.TYPE }}" in
                   "morning")
@@ -344,37 +376,63 @@ jobs:
                     SECOND_PART="hayuuuk push rank marathon sampe pagi, ${{ steps.weather.outputs.WEATHER_INFO }} enak buat grinding! ${{ steps.weather.outputs.WEATHER_EMOJI }}"
                     ;;
                 esac
+              else
+                # Already has a tag, don't add another one
+                SECOND_PART=""
               fi
               
               # Add second part if the AI only generated the first part
-              if [[ "$AI_TEXT" =~ \? ]]; then
+              if [[ "$AI_TEXT" =~ \? && -n "$SECOND_PART" ]]; then
                 AI_TEXT="$AI_TEXT $SECOND_PART"
                 echo "✅ Fixed by adding second part: $AI_TEXT"
               fi
             fi
             
-            # Validation
-            SENTENCE_COUNT=$(echo "$AI_TEXT" | grep -o '[.!?]' | wc -l)
-            HAS_ENGLISH_START=$(echo "$AI_TEXT" | grep -iE "^(yo+|wa+s+u+p|he+y+|su+p|oi+|ayo+)" || echo "")
-            HAS_INDONESIAN=$(echo "$AI_TEXT" | grep -iE "(yuk|yuuk|siapa|gas|ayo|pada|hayuk|gaskeun)" || echo "")
-            HAS_WEATHER=$(echo "$AI_TEXT" | grep -iE "(cuaca|hujan|gerimis|cerah|panas|dingin|sejuk|berawan|mendung|rainy|sunny|hot|cold|weather|rain)" || echo "")
-            HAS_QUESTION=$(echo "$AI_TEXT" | grep -E "\?" || echo "")
+            # Enforce character limit to prevent overly long messages
+            if [[ ${#AI_TEXT} -gt 230 ]]; then
+              echo "⚠️ Message too long (${#AI_TEXT} chars), trimming..."
+              # First check if there's a tag
+              if [[ "$AI_TEXT" =~ "<@&" ]]; then
+                # Find tag position
+                TAG_START=$(echo "$AI_TEXT" | grep -b -o "<@&" | head -1 | cut -d':' -f1)
+                TAG_END=$(echo "$AI_TEXT" | cut -c$((TAG_START+1))- | grep -b -o ">" | head -1 | cut -d':' -f1)
+                TAG_END=$((TAG_START + TAG_END + 1))
+                
+                # Keep the tag intact during trimming
+                if [[ $TAG_START -lt 220 ]]; then
+                  # Tag starts before cut point
+                  if [[ $TAG_END -gt 220 ]]; then
+                    # Tag would be cut, adjust cut point
+                    PREFIX=$(echo "$AI_TEXT" | cut -c1-$TAG_END)
+                    PREFIX="${PREFIX}..."
+                  else
+                    # Tag is safe, normal cut
+                    PREFIX=$(echo "$AI_TEXT" | cut -c1-220)
+                    PREFIX="${PREFIX}..."
+                  fi
+                else
+                  # Tag is after cut point, just do normal trim
+                  PREFIX=$(echo "$AI_TEXT" | cut -c1-220)
+                  PREFIX="${PREFIX}..."
+                fi
+                AI_TEXT="$PREFIX"
+              else
+                # No tag, simple trim
+                AI_TEXT=$(echo "$AI_TEXT" | cut -c1-220)
+                AI_TEXT="${AI_TEXT}..."
+              fi
+            fi
             
-            # Two sentence structure check - look for pattern: English question? Indonesian sentence
-            TWO_SENTENCE_STRUCTURE=$(echo "$AI_TEXT" | grep -E "\?.*[a-z]" || echo "")
-            
-            if [[ ${#AI_TEXT} -gt 60 && $SENTENCE_COUNT -ge 1 && -n "$HAS_ENGLISH_START" && -n "$HAS_INDONESIAN" && -n "$HAS_WEATHER" && -n "$HAS_QUESTION" && -n "$TWO_SENTENCE_STRUCTURE" ]]; then
+            # Final validation after fixes
+            if [[ -n "$HAS_ENGLISH_PART" && -n "$HAS_QUESTION" && (${#AI_TEXT} -gt 60) ]]; then
               DESC_RAW="$AI_TEXT"
               USE_AI=true
               echo "✅ AI validated: ${#AI_TEXT} chars"
             else
               echo "⚠️ AI validation failed"
-              echo "   Length: ${#AI_TEXT} chars"
-              echo "   English start: ${HAS_ENGLISH_START:-missing}"
-              echo "   Indonesian: ${HAS_INDONESIAN:-missing}" 
-              echo "   Weather: ${HAS_WEATHER:-missing}"
+              echo "   English part: ${HAS_ENGLISH_PART:-missing}"
               echo "   Question: ${HAS_QUESTION:-missing}"
-              echo "   Two-sentence structure: ${TWO_SENTENCE_STRUCTURE:-missing}"
+              echo "   Length: ${#AI_TEXT} chars"
               USE_AI=false
             fi
           else
