@@ -191,16 +191,16 @@ jobs:
           if [[ -n "${{ steps.context.outputs.SPECIAL_CONTEXT }}" ]]; then
             case "${{ steps.context.outputs.SPECIAL_CONTEXT }}" in
               "monday_motivation")
-                SPECIAL_PROMPT="- Include motivation for the week ahead or Monday energy vibes"
+                SPECIAL_PROMPT="Include motivation for the week ahead or Monday energy vibes"
                 ;;
               "hump_day")
-                SPECIAL_PROMPT="- Mention mid-week energy or halfway to weekend vibes"
+                SPECIAL_PROMPT="Mention mid-week energy or halfway to weekend vibes"
                 ;;
               "weekend_countdown")
-                SPECIAL_PROMPT="- Celebrate approaching weekend or Friday feeling"
+                SPECIAL_PROMPT="Celebrate approaching weekend or Friday feeling"
                 ;;
               "sunday_prep")
-                SPECIAL_PROMPT="- Reference preparing for the week ahead or enjoying the last of weekend"
+                SPECIAL_PROMPT="Reference preparing for the week ahead or enjoying the last of weekend"
                 ;;
             esac
           fi
@@ -208,181 +208,183 @@ jobs:
           # Get weather emoji for appropriate matching
           WEATHER_EMOJI="${{ steps.weather.outputs.WEATHER_EMOJI }}"
           
+          # Create a much simpler, more structured prompt
           cat > /tmp/prompt.txt << EOF
-          **CONTEXT FOR THIS MESSAGE:**
-          - Time: ${{ steps.context.outputs.TYPE }}
-          - Day: ${{ steps.context.outputs.CURRENT_DAY }} (${{ steps.context.outputs.CONTEXT }})
-          - Weather: ${{ steps.weather.outputs.WEATHER_INFO }}
-          $SPECIAL_PROMPT
+          You're a hype admin for an Indonesian gaming Discord server called "Skye".
           
-          **ROLE:** You are a hype admin for Indonesian gaming Discord server "Skye". Write a daily greeting.
+          Generate a greeting with EXACTLY these two parts, separated by a space:
           
-          **CRITICAL FORMAT REQUIREMENT - MUST FOLLOW EXACTLY:**
-          You MUST write TWO separate sentences with a space between them. This is REQUIRED:
+          PART 1: English greeting that starts with "yoooow" or "wassuuup" or "heyyyyyy" or "suuuup" or "oiiiii" or "ayooooo" or "yoohoooo", asks a question about gaming/activities on ${{ steps.context.outputs.CURRENT_DAY }} (${{ steps.context.outputs.TYPE }}), and ends with a question mark.
           
-          SENTENCE 1 (English only):
-          - Start with hype opener: yoooow, wassuuup, heyyyyyy, suuuup, oiiiii, ayooooo, yoohoooo
-          - Ask engaging question about current vibe/activity matching the time and DAY OF WEEK
-          - Use CORRECT day of week (${{ steps.context.outputs.CURRENT_DAY }})
-          - End with question mark
-          - 10-18 words total
+          PART 2: Indonesian invitation that starts with "yuuuk" or "gaskeun" or "gas polll" or "ayooook" or "hayuuuk" or "pada mauuu gak" or "siapaaaa yang mau", suggests a gaming activity appropriate for ${{ steps.context.outputs.TYPE }} and ${{ steps.weather.outputs.WEATHER_INFO }}, mentions the weather ("cuaca") directly, and ends with $WEATHER_EMOJI or 🎮.
           
-          SENTENCE 2 (Indonesian with English game terms):
-          - Start with invitation: yuuuk, gaskeun, gas polll, ayooook, hayuuuk, pada mauuu gak, siapaaaa yang mau
-          - Suggest activity fitting time + weather
-          - Include weather as reason naturally using words like "cuaca/hujan/panas/etc"
-          - If weekend, include <@&1374047008829997157> tag naturally
-          - No tag on weekdays
-          - End with matching emoji: $WEATHER_EMOJI or 🎮
+          ${SPECIAL_PROMPT}
           
-          **TIME-SPECIFIC SUGGESTIONS:**
-          - Morning: coffee/breakfast vibes, warm-up games, daily quests, aim practice
-          - Afternoon: lunch breaks, quick matches, mid-day grinding
-          - Evening: after-work/school gaming, dinner and gaming, ranked push
-          - Night: late night grinding, tournament practice, chill sessions
+          If it's a weekend (${{ steps.context.outputs.CONTEXT }} == "weekend"), include this tag in part 2: <@&1374047008829997157>
           
-          **WEATHER-SPECIFIC SUGGESTIONS:**
-          - Rain: cozy indoor gaming, focus time, ranked grinding with rain sounds
-          - Hot: AC gaming, chill mode, staying cool with games
-          - Cold: warming up with intense matches, cozy gaming sessions
-          - Clear: energetic gaming, perfect focus conditions
+          Keep everything lowercase. Make it sound like a real hyped-up gamer.
           
-          **EXAMPLES OF CORRECT FORMAT:**
-          yoooow morning squad, coffee or controller which quest are you tackling this wednesday? ayooook ngopi dulu sambil warm up aim, cuaca cerah bikin fokus jadi perfect buat daily quest 🎮
+          DO NOT OMIT PART 2. You MUST write both parts.
           
-          heyyyyyy afternoon crew, post lunch energy hitting different or still food coma mode? gaskeun quick match ml sambil ngadem, cuaca panas bikin mager jadi mending ranked push di AC ☕
+          EXAMPLES:
+          yoooow morning squad, coffee or controller which quest are you tackling this wednesday? yuuuk ngopi dulu sambil warm up aim, cuaca cerah bikin fokus jadi perfect buat daily quest 🎮
           
-          **WRONG FORMAT (DO NOT DO THIS):**
-          ayooooo what's everyone's mood this rainy sunday morning?
-          
-          **RULES:**
-          - All lowercase 
-          - Max 2 emojis
-          - No dashes/hyphens
-          - Weather must match activity suggestions
-          - Must be creative, avoid templates
-          - ALWAYS use correct day name from context
-          - MUST have TWO sentences: first English, second Indonesian
-          
-          Write the greeting now:
+          heyyyyyy afternoon crew, post lunch energy hitting different or still food coma mode? gaskeun quick match ml sambil ngadem, cuaca panas bikin mager jadi mending ranked push di AC 🔥
           EOF
           
-          python3 << 'PYTHON_EOF'
-          import json
-          import requests
-          import os
-          import sys
-          import re
+          # Make 3 attempts to get a valid response
+          MAX_ATTEMPTS=3
+          ATTEMPT=1
+          USE_AI=false
           
-          try:
-              with open('/tmp/prompt.txt', 'r') as f:
-                  prompt = f.read().strip()
-              
-              api_key = os.environ.get('GEMINI_API_KEY')
-              if not api_key:
-                  print("❌ No API key")
-                  sys.exit(1)
-              
-              url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={api_key}"
-              
-              payload = {
-                  "contents": [{"parts": [{"text": prompt}]}],
-                  "generationConfig": {
-                      "temperature": 0.8,
-                      "maxOutputTokens": 150,
-                      "topP": 0.9
-                  }
-              }
-              
-              response = requests.post(url, json=payload, timeout=20)
-              
-              if response.status_code == 200:
-                  data = response.json()
-                  if 'candidates' in data and len(data['candidates']) > 0:
-                      ai_text = data['candidates'][0]['content']['parts'][0]['text'].strip()
-                      
-                      # Clean formatting
-                      clean_text = re.sub(r'\*\*([^*]+)\*\*', r'\1', ai_text)
-                      clean_text = re.sub(r'`([^`]+)`', r'\1', clean_text)
-                      clean_text = re.sub(r'\n+', ' ', clean_text)
-                      clean_text = ' '.join(clean_text.split())
-                      
-                      # Find actual greeting (not metadata)
-                      lines = [line.strip() for line in ai_text.split('\n') if line.strip()]
-                      best_line = ""
-                      
-                      for line in lines:
-                          if (len(line) > 50 and 
-                              not line.startswith(('**', '#', '-', '*', 'Context:', 'Weather:', 'Time:', 'Day:')) and
-                              not line.lower().startswith(('greeting:', 'message:', 'response:', 'output:', 'here'))) :
-                              if ('?' in line):
-                                  best_line = line
-                                  break
-                      
-                      if not best_line and clean_text:
-                          best_line = clean_text
-                      
-                      if best_line and len(best_line) > 50:
-                          with open('/tmp/ai_response.txt', 'w', encoding='utf-8') as f:
-                              f.write(best_line)
-                          print("✅ AI generation successful")
-                          sys.exit(0)
-              
-              print("❌ AI generation failed - invalid response")
-              sys.exit(1)
-              
-          except Exception as e:
-              print(f"❌ AI generation failed: {e}")
-              sys.exit(1)
-          PYTHON_EOF
-          
-          if [[ $? -eq 0 && -s /tmp/ai_response.txt ]]; then
-            AI_TEXT=$(cat /tmp/ai_response.txt)
-            echo "🎯 AI generated: $AI_TEXT"
+          while [[ $ATTEMPT -le $MAX_ATTEMPTS && "$USE_AI" != "true" ]]; do
+            echo "🔄 AI generation attempt $ATTEMPT of $MAX_ATTEMPTS"
             
-            # Improved validation with more flexible patterns
-            SENTENCE_COUNT=$(echo "$AI_TEXT" | grep -o '[.!?]' | wc -l)
-            HAS_ENGLISH_START=$(echo "$AI_TEXT" | grep -iE "^(yo+|wa+s+u+p|he+y+|su+p|oi+|ayo+|hello)" || echo "")
-            HAS_INDONESIAN=$(echo "$AI_TEXT" | grep -iE "(yuk|yuuk|siapa|gas|ayo|pada|hayuk|gaskeun)" || echo "")
-            HAS_WEATHER=$(echo "$AI_TEXT" | grep -iE "(cuaca|hujan|gerimis|cerah|panas|dingin|sejuk|berawan|mendung|rainy|sunny|hot|cold|weather|rain)" || echo "")
-            HAS_QUESTION=$(echo "$AI_TEXT" | grep -E "\?" || echo "")
+            python3 << 'PYTHON_EOF'
+            import json
+            import requests
+            import os
+            import sys
+            import re
             
-            # Count actual sentences based on content
-            PARTS=$(echo "$AI_TEXT" | grep -E "[a-zA-Z0-9]+ [a-zA-Z0-9]+" | wc -l)
+            try:
+                with open('/tmp/prompt.txt', 'r') as f:
+                    prompt = f.read().strip()
+                
+                api_key = os.environ.get('GEMINI_API_KEY')
+                if not api_key:
+                    print("❌ No API key")
+                    sys.exit(1)
+                
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={api_key}"
+                
+                payload = {
+                    "contents": [{"parts": [{"text": prompt}]}],
+                    "generationConfig": {
+                        "temperature": 0.4,  # Lower temperature for more deterministic output
+                        "maxOutputTokens": 200,
+                        "topP": 0.95,
+                        "topK": 40
+                    }
+                }
+                
+                response = requests.post(url, json=payload, timeout=20)
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    if 'candidates' in data and len(data['candidates']) > 0:
+                        ai_text = data['candidates'][0]['content']['parts'][0]['text'].strip()
+                        
+                        # Clean formatting and remove any line breaks
+                        clean_text = re.sub(r'\*\*([^*]+)\*\*', r'\1', ai_text)
+                        clean_text = re.sub(r'`([^`]+)`', r'\1', clean_text)
+                        clean_text = re.sub(r'\n+', ' ', clean_text)
+                        clean_text = ' '.join(clean_text.split())
+                        
+                        # Extract only the actual greeting (not explanations)
+                        lines = [line.strip() for line in ai_text.split('\n') if line.strip()]
+                        best_line = ""
+                        
+                        for line in lines:
+                            if ('?' in line and 
+                                (line.startswith('yooo') or 
+                                 line.startswith('wassup') or 
+                                 line.startswith('heyyy') or 
+                                 line.startswith('sup') or 
+                                 line.startswith('oi') or 
+                                 line.startswith('ayo') or
+                                 line.startswith('hello'))):
+                                best_line = line
+                                break
+                        
+                        if not best_line:
+                            best_line = clean_text
+                        
+                        with open('/tmp/ai_response.txt', 'w', encoding='utf-8') as f:
+                            f.write(best_line)
+                        print("✅ AI generation successful")
+                        sys.exit(0)
+                
+                print("❌ AI generation failed - invalid response")
+                sys.exit(1)
+                
+            except Exception as e:
+                print(f"❌ AI generation failed: {e}")
+                sys.exit(1)
+            PYTHON_EOF
             
-            # Day validation with improved pattern matching
-            DAY_VALIDATION=$(echo "$AI_TEXT" | grep -iE "(monday|tuesday|wednesday|thursday|friday|saturday|sunday|senin|selasa|rabu|kamis|jumat|sabtu|minggu)" || echo "")
-            DAY_CORRECT=true
-            if [[ -n "$DAY_VALIDATION" ]]; then
-              CURRENT_DAY_LOWER=$(echo "${{ steps.context.outputs.CURRENT_DAY }}" | tr '[:upper:]' '[:lower:]')
-              if [[ ! "$DAY_VALIDATION" =~ "$CURRENT_DAY_LOWER" ]]; then
-                echo "⚠️ Day inconsistency detected in AI response!"
-                DAY_CORRECT=false
+            if [[ $? -eq 0 && -s /tmp/ai_response.txt ]]; then
+              AI_TEXT=$(cat /tmp/ai_response.txt)
+              echo "🎯 AI generated: $AI_TEXT"
+              
+              # Try to automatically fix single-sentence responses by adding a second part
+              if [[ ! "$AI_TEXT" =~ "yuk" && ! "$AI_TEXT" =~ "gas" && ! "$AI_TEXT" =~ "ayo" ]]; then
+                echo "⚠️ Missing Indonesian part, attempting to fix..."
+                
+                # Create appropriate second sentence based on context
+                if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
+                  SECOND_PART=""
+                  case "${{ steps.context.outputs.TYPE }}" in
+                    "morning")
+                      SECOND_PART="yuuuk <@&1374047008829997157> ngopi sambil warm up aim dulu, ${{ steps.weather.outputs.WEATHER_INFO }} perfect buat fokus grinding! ${{ steps.weather.outputs.WEATHER_EMOJI }}"
+                      ;;
+                    "afternoon")
+                      SECOND_PART="gaskeun <@&1374047008829997157> quick match sambil santai, ${{ steps.weather.outputs.WEATHER_INFO }} pas buat chill gaming! ${{ steps.weather.outputs.WEATHER_EMOJI }}"
+                      ;;
+                    "evening")
+                      SECOND_PART="gas polll <@&1374047008829997157> mabar sambil makan malam, ${{ steps.weather.outputs.WEATHER_INFO }} bikin mood relaxing! ${{ steps.weather.outputs.WEATHER_EMOJI }}"
+                      ;;
+                    "night")
+                      SECOND_PART="hayuuuk <@&1374047008829997157> push rank marathon sampe pagi, ${{ steps.weather.outputs.WEATHER_INFO }} enak buat grinding! ${{ steps.weather.outputs.WEATHER_EMOJI }}"
+                      ;;
+                  esac
+                else
+                  SECOND_PART=""
+                  case "${{ steps.context.outputs.TYPE }}" in
+                    "morning")
+                      SECOND_PART="yuuuk ngopi sambil warm up aim dulu, ${{ steps.weather.outputs.WEATHER_INFO }} perfect buat fokus grinding! ${{ steps.weather.outputs.WEATHER_EMOJI }}"
+                      ;;
+                    "afternoon")
+                      SECOND_PART="gaskeun quick match sambil santai, ${{ steps.weather.outputs.WEATHER_INFO }} pas buat chill gaming! ${{ steps.weather.outputs.WEATHER_EMOJI }}"
+                      ;;
+                    "evening")
+                      SECOND_PART="gas polll mabar sambil makan malam, ${{ steps.weather.outputs.WEATHER_INFO }} bikin mood relaxing! ${{ steps.weather.outputs.WEATHER_EMOJI }}"
+                      ;;
+                    "night")
+                      SECOND_PART="hayuuuk push rank marathon sampe pagi, ${{ steps.weather.outputs.WEATHER_INFO }} enak buat grinding! ${{ steps.weather.outputs.WEATHER_EMOJI }}"
+                      ;;
+                  esac
+                fi
+                
+                # Add second part if the AI only generated the first part
+                if [[ "$AI_TEXT" =~ \? ]]; then
+                  AI_TEXT="$AI_TEXT $SECOND_PART"
+                  echo "✅ Fixed by adding second part: $AI_TEXT"
+                fi
               fi
-            fi
-            
-            # Two sentence structure check - look for pattern: English question? Indonesian sentence
-            TWO_SENTENCE_STRUCTURE=$(echo "$AI_TEXT" | grep -E "\?.*[a-z]" || echo "")
-            
-            if [[ ${#AI_TEXT} -gt 60 && ${#AI_TEXT} -lt 350 && $SENTENCE_COUNT -ge 1 && -n "$HAS_ENGLISH_START" && -n "$HAS_INDONESIAN" && -n "$HAS_WEATHER" && -n "$HAS_QUESTION" && "$DAY_CORRECT" == "true" && -n "$TWO_SENTENCE_STRUCTURE" ]]; then
-              DESC_RAW="$AI_TEXT"
-              USE_AI=true
-              echo "✅ AI validated: ${#AI_TEXT} chars"
+              
+              # Simplified validation focusing on key elements
+              HAS_ENGLISH_PART=$(echo "$AI_TEXT" | grep -E "\?" || echo "")
+              HAS_INDONESIAN_PART=$(echo "$AI_TEXT" | grep -E "(yuk|gas|ayo|hayuk|siapa)" || echo "")
+              HAS_WEATHER=$(echo "$AI_TEXT" | grep -E "(cuaca|hujan|cerah|panas|dingin|sejuk|berawan)" || echo "")
+              
+              if [[ -n "$HAS_ENGLISH_PART" && -n "$HAS_INDONESIAN_PART" && -n "$HAS_WEATHER" && ${#AI_TEXT} -gt 60 ]]; then
+                DESC_RAW="$AI_TEXT"
+                USE_AI=true
+                echo "✅ AI validation passed"
+              else
+                echo "⚠️ AI validation failed"
+                echo "   English part: ${HAS_ENGLISH_PART:-missing}"
+                echo "   Indonesian part: ${HAS_INDONESIAN_PART:-missing}" 
+                echo "   Weather: ${HAS_WEATHER:-missing}"
+                echo "   Length: ${#AI_TEXT} chars"
+              fi
             else
-              echo "⚠️ AI validation failed"
-              echo "   Length: ${#AI_TEXT} chars"
-              echo "   English start: ${HAS_ENGLISH_START:-missing}"
-              echo "   Indonesian: ${HAS_INDONESIAN:-missing}" 
-              echo "   Weather: ${HAS_WEATHER:-missing}"
-              echo "   Question: ${HAS_QUESTION:-missing}"
-              echo "   Day correct: ${DAY_CORRECT}"
-              echo "   Two-sentence structure: ${TWO_SENTENCE_STRUCTURE:-missing}"
-              USE_AI=false
+              echo "❌ AI generation attempt failed"
             fi
-          else
-            echo "❌ AI generation failed, using fallback"
-            USE_AI=false
-          fi
+            
+            ATTEMPT=$((ATTEMPT + 1))
+          done
           
           if [[ "$USE_AI" != "true" ]]; then
             echo "🎲 Using fallback system..."
