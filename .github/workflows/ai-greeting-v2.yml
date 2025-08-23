@@ -106,7 +106,7 @@ jobs:
           WEATHER_INFO=""
           echo "🌤️ Fetching BMKG weather for Yogyakarta..."
           
-          BMKG_RAW=$(curl -s "https://api.bmkg.go.id/publik/prakiraan-cuaca?adm4=3401010" --connect-timeout 8 --max-time 15 || echo "")
+          BMKG_RAW=$(curl -s "https://api.bmkg.go.id/publik/prakiraan-cuaca?adm4=34.04.07.2001" --connect-timeout 8 --max-time 15 || echo "")
             
           if [[ -n "$BMKG_RAW" && "$BMKG_RAW" != *"error"* && "$BMKG_RAW" != *"Error"* ]]; then
             echo "✅ BMKG API response received"
@@ -155,7 +155,7 @@ jobs:
             fi
           else
             echo "❌ BMKG API failed, using fallback"
-            WEATHER_INFO="nice weather"
+            WEATHER_INFO="cuaca enak"
           fi
           
           echo "WEATHER_INFO=$WEATHER_INFO" >> $GITHUB_OUTPUT
@@ -166,43 +166,76 @@ jobs:
           echo "🤖 Generating AI greeting..."
           
           cat > /tmp/prompt.txt << 'EOF'
-          You're messaging your Indonesian gaming friends in the Skye Discord community. Generate exactly 2 sentences following this natural pattern:
+          You are writing a casual message to your Indonesian gaming friends in the Skye Discord community. Write exactly 2 sentences in ALL LOWERCASE with natural, creative, and non-template language.
 
-          Context: TYPE_PLACEHOLDER on CONTEXT_PLACEHOLDER day
+          Current Context: TYPE_PLACEHOLDER on CONTEXT_PLACEHOLDER day
           Weather: WEATHER_INFO_PLACEHOLDER
+          
+          **CRITICAL REQUIREMENTS:**
+          
+          1. **ALL TEXT MUST BE LOWERCASE** - no capitals anywhere
+          2. **NO TEMPLATE LANGUAGE** - sound like a real person, not a bot
+          3. **BE CREATIVE** - vary your expressions, don't repeat patterns
+          4. **NATURAL FLOW** - like texting close friends
+          5. **INCLUDE WEATHER** mention somewhere naturally
           
           **SENTENCE STRUCTURE:**
           
-          1. **Opening (English casual)**: Start with natural greeting like "yooo", "wassup", "heyyyy" + ask about their current mood/activity in casual English slang
+          **Sentence 1 (English casual greeting + mood/activity check):**
+          - Start casual: "yooo", "wassup", "heyyyy", "ayooo", "sup"
+          - Ask about current state: mood, energy, what they're doing
+          - Use extended words: "wassuppppp", "doinggg", "vibeeeee"
+          - Examples: "yooo what's everyone up to rn?", "wassuppp how y'all feeling?", "heyyyy what's the vibe tonight?"
           
-          2. **Activity Invitation (Indonesian-English mix)**: Suggest time-appropriate activities using Indonesian slang ("yuk", "siapa mau", "bareng") + include weather mention
+          **Sentence 2 (Indo-English mix activity invitation with WEEKEND ROLE TAG):**
           
-          **TIME-BASED ACTIVITY SUGGESTIONS:**
+          FOR WEEKEND CONTEXT_PLACEHOLDER: ALWAYS include "<@&1374047008829997157>" (Skye Member role tag) naturally in the sentence
+          FOR WEEKDAY: NO role tags, just regular invitation
           
-          **Morning (5-12)**: Light activities + casual gaming
-          - Exercise/breakfast combos: "yuk jalan pagi", "sarapan bareng"
-          - Light gaming: "main roblox sebentar", "casual ml"
+          **TIME-SPECIFIC ACTIVITIES:**
           
-          **Afternoon (12-17)**: Social + moderate gaming  
-          - Lunch/hangout: "makan siang bareng", "nongkrong"
-          - Social gaming: "main ml bareng", "gaming session"
+          **MORNING (5-12):** Light activities, exercise, breakfast
+          - Exercise: "yuk jogging bareng", "olahraga pagi", "stretching dulu"
+          - Breakfast: "sarapan bareng", "ngopi dulu", "makan pagi"
+          - Light gaming: "main roblox santai", "casual ml"
+          - Social: "jalan-jalan pagi", "ke warung", "nongkrong"
           
-          **Evening (17-21)**: Dinner + prime gaming
-          - Dinner activities: "dinner bareng", "makan malem"
-          - Prime gaming: "mabar roblox", "push rank ml"
+          **AFTERNOON (12-17):** Social, lunch, moderate activities
+          - Lunch: "makan siang bareng", "lunch time", "ke warteg"
+          - Social: "nongkrong", "hangout", "ke mall"
+          - Gaming: "main ml bareng", "roblox session", "gaming time"
+          - Activities: "jalan-jalan", "keliling", "eksplor"
           
-          **Night (21-5)**: Late night + hardcore gaming
-          - Late activities: "begadang", "midnight session"
-          - Intensive gaming: "push rank sampai pagi", "marathon ml"
+          **EVENING (17-21):** Dinner, prime gaming, social
+          - Dinner: "dinner bareng", "makan malem", "ke resto"
+          - Gaming: "mabar roblox", "push rank ml", "valo session"
+          - Social: "nongkrong malem", "voice chat", "cerita-cerita"
           
-          **TONE GUIDELINES:**
-          - Use extended words for excitement: "wassuppppp", "doinggg", "vibeeeee"
-          - Mix Indonesian slang naturally: "yuk", "siapa mau", "bareng", "terus", "sambil"
-          - Always include weather: WEATHER_INFO_PLACEHOLDER
-          - Keep it conversational like texting close friends
-          - Include question marks for engagement
+          **NIGHT (21-5):** Late night gaming, voice chat, chill
+          - Gaming: "begadang mabar", "push rank sampai pagi", "marathon valo"
+          - Social: "voice chat", "ngobrol", "cerita horror"
+          - Activities: "midnight snack", "nonton bareng"
           
-          Generate ONLY the 2-sentence message - natural, engaging, and community-focused!
+          **TONE VARIATIONS (be creative, mix these):**
+          - Friendly: "yuk", "siapa mau", "bareng", "sama-sama"
+          - Slightly toxic (mild): "males banget", "bocil dimana", "noob semua"
+          - Encouraging: "gas", "skuy", "ayo", "semangat"
+          - Casual: "santai aja", "chill", "slow", "enjoy"
+          
+          **WEEKEND ROLE TAGGING EXAMPLES:**
+          - "yuk <@&1374047008829997157> mabar roblox"
+          - "siapa mau voice chat <@&1374047008829997157>"
+          - "<@&1374047008829997157> gas main valo bareng"
+          - "ayo <@&1374047008829997157> nongkrong sambil gaming"
+          
+          **CREATIVE LANGUAGE REQUIREMENTS:**
+          - Mix Indonesian slang naturally: "yuk", "gas", "skuy", "males", "santai"
+          - Use current gaming terms: "mabar", "push rank", "carry", "noob", "pro"
+          - Add personality: jokes, mild roasting, encouragement
+          - Include activities beyond gaming when appropriate
+          - Make it sound spontaneous, not scripted
+          
+          Write ONLY the 2 lowercase sentences - creative, natural, engaging!
           EOF
           
           sed -i "s/TYPE_PLACEHOLDER/${{ steps.context.outputs.TYPE }}/g" /tmp/prompt.txt
@@ -303,35 +336,67 @@ jobs:
             case "${{ steps.context.outputs.TYPE }}" in
               "morning")
                 MESSAGES=(
-                  "yooooo morning legends, how's everyone feeling today? yuk jalan pagi bareng terus sarapan sambil ngobrol, ${WEATHER_MENTION} nih!"
-                  "wassuppp early birds, energy level gimana pagi ini? siapa mau olahraga ringan terus main roblox sebentar, ${WEATHER_MENTION}?"
-                  "heyyyy morning squad, udah minum kopi atau masih zombie mode? perfect time buat workout terus gaming session, ${WEATHER_MENTION}"
-                  "skuy good morning gamers, feeling fresh atau masih ngantuk? yuk sarapan bareng sambil planning hari ini, ${WEATHER_MENTION}!"
+                  "yooooo morning squad, udah bangun atau masih merem terus? yuk <@&1374047008829997157> olahraga pagi terus sarapan sambil ngobrol, ${WEATHER_MENTION} enak nih!"
+                  "wassuppp early birds, energy level gimana pagi ini? siapa mau jogging bareng <@&1374047008829997157> terus main roblox santai, ${WEATHER_MENTION}?"
+                  "heyyyy morning legends, udah minum kopi atau masih zombie mode? gas <@&1374047008829997157> stretching dulu terus gaming session, ${WEATHER_MENTION}"
+                  "ayooo good morning gamers, fresh atau masih ngantuk parah? yuk <@&1374047008829997157> jalan-jalan pagi sambil planning hari ini, ${WEATHER_MENTION}!"
                 )
+                if [[ "${{ steps.context.outputs.CONTEXT }}" != "weekend" ]]; then
+                  MESSAGES=(
+                    "yooooo morning squad, udah bangun atau masih merem terus? yuk olahraga pagi terus sarapan sambil ngobrol, ${WEATHER_MENTION} enak nih!"
+                    "wassuppp early birds, energy level gimana pagi ini? siapa mau jogging bareng terus main roblox santai, ${WEATHER_MENTION}?"
+                    "heyyyy morning legends, udah minum kopi atau masih zombie mode? gas stretching dulu terus gaming session, ${WEATHER_MENTION}"
+                    "ayooo good morning gamers, fresh atau masih ngantuk parah? yuk jalan-jalan pagi sambil planning hari ini, ${WEATHER_MENTION}!"
+                  )
+                fi
                 ;;
               "afternoon")
                 MESSAGES=(
-                  "yooooo afternoon legends, how's the day treating everyone? yuk makan siang bareng terus main ml sebentar, ${WEATHER_MENTION} nih!"
-                  "wassuppp midday squad, productive day atau lagi gabut? siapa mau nongkrong sambil chill gaming, ${WEATHER_MENTION}?"
-                  "heyyyy afternoon vibes, gimana progress hari ini? break time lunch terus mabar roblox yuk, ${WEATHER_MENTION}"
-                  "skuy afternoon check, udah makan siang belum? perfect timing buat hangout + gaming session, ${WEATHER_MENTION}!"
+                  "yooooo afternoon vibes, productive day atau males total? yuk <@&1374047008829997157> makan siang bareng terus mabar ml, ${WEATHER_MENTION} nih!"
+                  "wassuppp midday squad, gimana progress hari ini? siapa mau nongkrong <@&1374047008829997157> sambil chill gaming, ${WEATHER_MENTION}?"
+                  "heyyyy afternoon legends, udah lunch atau masih sibuk? gas <@&1374047008829997157> ke mall terus main roblox, ${WEATHER_MENTION}"
+                  "sup afternoon crew, capek atau masih semangat? ayo <@&1374047008829997157> hangout sambil push rank, ${WEATHER_MENTION}!"
                 )
+                if [[ "${{ steps.context.outputs.CONTEXT }}" != "weekend" ]]; then
+                  MESSAGES=(
+                    "yooooo afternoon vibes, productive day atau males total? yuk makan siang bareng terus mabar ml, ${WEATHER_MENTION} nih!"
+                    "wassuppp midday squad, gimana progress hari ini? siapa mau nongkrong sambil chill gaming, ${WEATHER_MENTION}?"
+                    "heyyyy afternoon legends, udah lunch atau masih sibuk? gas ke warteg terus main roblox, ${WEATHER_MENTION}"
+                    "sup afternoon crew, capek atau masih semangat? ayo santai sambil push rank, ${WEATHER_MENTION}!"
+                  )
+                fi
                 ;;
               "evening")
                 MESSAGES=(
-                  "yooooo evening squad, how was today overall? winding down dengan dinner bareng terus main roblox, ${WEATHER_MENTION} nih!"
-                  "wassuppp golden hour gang, evening vibes hitting nice right? siapa mau nongkrong terus chill gaming, ${WEATHER_MENTION}?"
-                  "heyyyy evening legends, productive day atau challenging? perfect time buat hangout sambil ml therapy, ${WEATHER_MENTION}"
-                  "skuy evening mood check, dinner udah atau masih nyari makan? yuk bareng-bareng terus gaming santai, ${WEATHER_MENTION}!"
+                  "yooooo evening squad, how was today overall? winding down <@&1374047008829997157> dinner bareng terus voice chat, ${WEATHER_MENTION} nih!"
+                  "wassuppp golden hour gang, tired atau masih energetic? siapa mau <@&1374047008829997157> nongkrong terus mabar valo, ${WEATHER_MENTION}?"
+                  "heyyyy evening legends, day was good atau challenging? perfect time <@&1374047008829997157> makan malem sambil gaming, ${WEATHER_MENTION}"
+                  "sup evening mood, dinner udah atau masih nyari makan? yuk <@&1374047008829997157> ke resto terus push rank ml, ${WEATHER_MENTION}!"
                 )
+                if [[ "${{ steps.context.outputs.CONTEXT }}" != "weekend" ]]; then
+                  MESSAGES=(
+                    "yooooo evening squad, how was today overall? winding down dinner bareng terus main roblox, ${WEATHER_MENTION} nih!"
+                    "wassuppp golden hour gang, tired atau masih energetic? siapa mau nongkrong terus mabar valo, ${WEATHER_MENTION}?"
+                    "heyyyy evening legends, day was good atau challenging? perfect time makan malem sambil gaming, ${WEATHER_MENTION}"
+                    "sup evening mood, dinner udah atau masih nyari makan? yuk santai terus push rank ml, ${WEATHER_MENTION}!"
+                  )
+                fi
                 ;;
               "night")
                 MESSAGES=(
-                  "yooooo night owls, who's still vibing at this hour? perfect late night energy buat mabar roblox, ${WEATHER_MENTION} nih!"
-                  "wassuppp midnight squad, can't sleep atau choice to stay up? siapa mau push rank ml sampai pagi, ${WEATHER_MENTION}?"
-                  "heyyyy nocturnal gamers, night vibes different nih how we feeling? cozy gaming session sounds good, ${WEATHER_MENTION}"
-                  "skuy late night legends, peaceful gaming hours when everyone's sleeping! who's down buat begadang, ${WEATHER_MENTION}?"
+                  "yooooo night owls, masih melek atau udah ngantuk? perfect time <@&1374047008829997157> begadang voice chat sambil mabar, ${WEATHER_MENTION} nih!"
+                  "wassuppp midnight squad, insomnia atau pilihan stay up? siapa mau <@&1374047008829997157> marathon valo sampai pagi, ${WEATHER_MENTION}?"
+                  "heyyyy nocturnal gamers, vibes malam beda ya? gas <@&1374047008829997157> push rank ml sambil ngobrol, ${WEATHER_MENTION}"
+                  "sup late night legends, peaceful hours nih bocil udah tidur! ayo <@&1374047008829997157> nonton bareng sambil gaming, ${WEATHER_MENTION}?"
                 )
+                if [[ "${{ steps.context.outputs.CONTEXT }}" != "weekend" ]]; then
+                  MESSAGES=(
+                    "yooooo night owls, masih melek atau udah ngantuk? perfect time begadang mabar roblox, ${WEATHER_MENTION} nih!"
+                    "wassuppp midnight squad, insomnia atau pilihan stay up? siapa mau marathon valo sampai pagi, ${WEATHER_MENTION}?"
+                    "heyyyy nocturnal gamers, vibes malam beda ya? gas push rank ml sambil ngobrol, ${WEATHER_MENTION}"
+                    "sup late night legends, peaceful hours nih bocil udah tidur! ayo chill gaming sambil voice chat, ${WEATHER_MENTION}?"
+                  )
+                fi
                 ;;
             esac
             
@@ -395,22 +460,17 @@ jobs:
           import os
           
           title = os.environ.get('TITLE', 'Skye Squad')
-          desc_raw = os.environ.get('DESC', 'What\'s good everyone!')
+          desc_raw = os.environ.get('DESC', 'what\'s good everyone!')
           color = int(os.environ.get('COLOR', '16766720'))
           timestamp = os.environ.get('TIMESTAMP', '')
           thumb = os.environ.get('THUMB', '1f305')
           context = os.environ.get('CONTEXT', 'weekday')
           
-          if context == 'weekend':
-              desc = desc_raw.replace('siapa mau', '<@&1374047008829997157> siapa mau')
-              if '<@&1374047008829997157>' not in desc:
-                  sentences = desc_raw.split('? ', 1)
-                  if len(sentences) == 2:
-                      desc = f"{sentences[0]}? <@&1374047008829997157> {sentences[1]}"
-                  else:
-                      desc = f"<@&1374047008829997157> {desc_raw}"
-          else:
-              desc = desc_raw
+          # Convert description to lowercase
+          desc = desc_raw.lower()
+          
+          # Weekend role tagging is handled in AI prompt and fallback messages
+          # No additional processing needed here since it's already included
           
           desc += "\n> by server dev guanteng - <@399393175904714752>"
           
