@@ -400,4 +400,224 @@ jobs:
                   "yooooo evening squad, how was today overall gimana? winding down <@&1374047008829997157> dinner bareng terus voice chat, ${WEATHER_MENTION} nih!"
                   "wassuppp golden hour gang, tired atau masih energetic banget? siapa mau <@&1374047008829997157> nongkrong terus mabar valo, ${WEATHER_MENTION}?"
                   "heyyyy evening legends, day was good atau challenging abis? perfect time <@&1374047008829997157> makan malem sambil gaming, ${WEATHER_MENTION}"
-                  "sup evening mood check, dinner udah atau masih nyari makan? yuk <@&1374
+                  "sup evening mood check, dinner udah atau masih nyari makan? yuk <@&1374047008829997157> ke resto terus push rank ml, ${WEATHER_MENTION}!"
+                )
+                if [[ "${{ steps.context.outputs.CONTEXT }}" != "weekend" ]]; then
+                  MESSAGES=(
+                    "yooooo evening squad, how was today overall gimana? winding down dinner bareng terus main roblox, ${WEATHER_MENTION} nih!"
+                    "wassuppp golden hour gang, tired atau masih energetic banget? siapa mau nongkrong terus mabar valo, ${WEATHER_MENTION}?"
+                    "heyyyy evening legends, day was good atau challenging abis? perfect time makan malem sambil gaming, ${WEATHER_MENTION}"
+                    "sup evening mood check, dinner udah atau masih nyari makan? yuk santai terus push rank ml, ${WEATHER_MENTION}!"
+                  )
+                fi
+                ;;
+              "night")
+                MESSAGES=(
+                  "yooooo night owls, who's still up and vibing at this hour? perfect time <@&1374047008829997157> begadang voice chat sambil mabar, ${WEATHER_MENTION} nih!"
+                  "wassuppp midnight squad, insomnia hitting atau pilihan stay up? siapa mau <@&1374047008829997157> marathon valo sampai pagi, ${WEATHER_MENTION}?"
+                  "heyyyy nocturnal gamers, night vibes different ya gimana? gas <@&1374047008829997157> push rank ml sambil ngobrol, ${WEATHER_MENTION}"
+                  "sup late night legends, peaceful hours nih bocil udah tidur semua! ayo <@&1374047008829997157> nonton bareng sambil gaming, ${WEATHER_MENTION}?"
+                )
+                if [[ "${{ steps.context.outputs.CONTEXT }}" != "weekend" ]]; then
+                  MESSAGES=(
+                    "yooooo night owls, who's still up and vibing at this hour? perfect time begadang mabar roblox, ${WEATHER_MENTION} nih!"
+                    "wassuppp midnight squad, insomnia hitting atau pilihan stay up? siapa mau marathon valo sampai pagi, ${WEATHER_MENTION}?"
+                    "heyyyy nocturnal gamers, night vibes different ya gimana? gas push rank ml sambil ngobrol, ${WEATHER_MENTION}"
+                    "sup late night legends, peaceful hours nih bocil udah tidur semua! ayo chill gaming sambil voice chat, ${WEATHER_MENTION}?"
+                  )
+                fi
+                ;;
+            esac
+            
+            RANDOM_INDEX=$((RANDOM % ${#MESSAGES[@]}))
+            DESC_RAW="${MESSAGES[$RANDOM_INDEX]}"
+          fi
+          
+          declare -a TITLES
+          declare -a THUMBS
+          
+          case "${{ steps.context.outputs.TYPE }}" in
+            "morning") 
+              TITLES=("☀️ Morning Skye Squad" "🌅 Early Bird Energy" "☕ Coffee & Gaming Time" "🌞 Fresh Morning Vibes" "⭐ New Day New Games")
+              THUMBS=("2600" "1f305" "2615" "1f31e" "2b50")
+              ;;
+            "afternoon") 
+              TITLES=("🍃 Afternoon Chill Mode" "🌤️ Midday Squad Check" "☀️ Lunch Break Gaming" "🎯 Afternoon Focus Time" "💼 Productive Break")
+              THUMBS=("1f343" "1f324" "2600" "1f3af" "1f4bc")
+              ;;
+            "evening") 
+              TITLES=("🌇 Evening Chill Squad" "🌆 Golden Hour Gaming" "✨ Evening Wind-Down" "🌅 Sunset Gaming Time" "🎯 Evening Focus Mode")
+              THUMBS=("1f307" "1f307" "2728" "1f305" "1f3af")
+              ;;
+            "night") 
+              TITLES=("🦉 Late Night Squad" "🌙 Midnight Gaming Club" "⭐ Night Owl Assembly" "✨ Nocturnal Gamers" "🌟 Late Night Energy")
+              THUMBS=("1f989" "1f319" "2b50" "2728" "1f31f")
+              ;;
+          esac
+          
+          RANDOM_INDEX=$((RANDOM % ${#TITLES[@]}))
+          TITLE="${TITLES[$RANDOM_INDEX]}"
+          THUMB="${THUMBS[$RANDOM_INDEX]}"
+          
+          echo "TITLE=$TITLE" >> $GITHUB_OUTPUT
+          echo "DESC_RAW=$DESC_RAW" >> $GITHUB_OUTPUT
+          echo "USE_AI=$USE_AI" >> $GITHUB_OUTPUT
+          echo "THUMB=$THUMB" >> $GITHUB_OUTPUT
+          
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+      - name: Send Discord Message
+        if: ${{ github.event.inputs.test_mode != 'true' }}
+        run: |
+          echo "📤 Sending Discord message..."
+          
+          case "${{ steps.context.outputs.TYPE }}" in
+            "morning") COLOR=16766720 ;;
+            "afternoon") COLOR=16763904 ;;
+            "evening") COLOR=16744448 ;;
+            "night") COLOR=8947848 ;;
+          esac
+          
+          TITLE="${{ steps.ai_generation.outputs.TITLE }}"
+          DESC="${{ steps.ai_generation.outputs.DESC_RAW }}"
+          THUMB="${{ steps.ai_generation.outputs.THUMB }}"
+          TIMESTAMP=$(TZ='Asia/Jakarta' date -u +%Y-%m-%dT%H:%M:%S.000Z)
+          
+          python3 << 'PYTHON_EOF'
+          import json
+          import os
+          
+          title = os.environ.get('TITLE', 'Skye Squad')
+          desc_raw = os.environ.get('DESC', 'what\'s good everyone!')
+          color = int(os.environ.get('COLOR', '16766720'))
+          timestamp = os.environ.get('TIMESTAMP', '')
+          thumb = os.environ.get('THUMB', '1f305')
+          context = os.environ.get('CONTEXT', 'weekday')
+          
+          # Convert description to lowercase
+          desc = desc_raw.lower()
+          
+          # Weekend role tagging is handled in AI prompt and fallback messages
+          # No additional processing needed here since it's already included
+          
+          desc += "\n> by server dev guanteng - <@399393175904714752>"
+          
+          embed = {
+              "title": title,
+              "description": desc,
+              "color": color,
+              "thumbnail": {
+                  "url": f"https://twemoji.maxcdn.com/v/latest/72x72/{thumb}.png"
+              },
+              "footer": {
+                  "text": "chill gaming vibes",
+                  "icon_url": "https://files.catbox.moe/npfh4e.jpg"
+              },
+              "timestamp": timestamp
+          }
+          
+          payload = {"embeds": [embed]}
+          
+          with open('/tmp/discord_payload.json', 'w', encoding='utf-8') as f:
+              json.dump(payload, f, ensure_ascii=False)
+          
+          print("✅ Payload created")
+          PYTHON_EOF
+          
+          curl -f -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+               -H "Content-Type: application/json" \
+               --data-binary @/tmp/discord_payload.json
+          
+          echo "✅ Message sent!"
+          echo "🤖 AI Used: ${{ steps.ai_generation.outputs.USE_AI }}"
+          
+        env:
+          TITLE: ${{ steps.ai_generation.outputs.TITLE }}
+          DESC: ${{ steps.ai_generation.outputs.DESC_RAW }}
+          COLOR: ${{ env.COLOR }}
+          TIMESTAMP: ${{ env.TIMESTAMP }}
+          THUMB: ${{ steps.ai_generation.outputs.THUMB }}
+          CONTEXT: ${{ steps.context.outputs.CONTEXT }}
+
+      - name: Test Mode Output
+        if: ${{ github.event.inputs.test_mode == 'true' }}
+        run: |
+          echo "🧪 TEST MODE - Message preview:"
+          echo "================================"
+          echo "Title: ${{ steps.ai_generation.outputs.TITLE }}"
+          echo "Description: ${{ steps.ai_generation.outputs.DESC_RAW }}"
+          echo "AI Used: ${{ steps.ai_generation.outputs.USE_AI }}"
+          echo "Weather: ${{ steps.weather.outputs.WEATHER_INFO }}"
+          echo "Context: ${{ steps.context.outputs.TYPE }} (${{ steps.context.outputs.SPECIAL_CONTEXT }})"
+          echo "OpenWrt Mode: ${{ steps.context.outputs.OPENWRT_MODE }}"
+          echo "================================"
+          echo "🧪 Test complete - no message sent"
+
+      - name: Send Random Sticker
+        if: ${{ github.event.inputs.test_mode != 'true' }}
+        run: |
+          echo "🎲 Sending random sticker..."
+          
+          if [[ "${{ steps.context.outputs.OPENWRT_MODE }}" == "true" ]]; then
+            echo "🏠 OpenWrt mode - sending sticker immediately"
+            sleep 1
+          else
+            echo "⏰ Standard delay for sticker..."
+            sleep 3
+          fi
+          
+          case "${{ steps.context.outputs.TYPE }}" in
+            "morning")
+              STICKERS=(
+                "https://media.discordapp.net/stickers/1404543938815197306.png"
+                "https://media.discordapp.net/stickers/1405277985237368943.png"
+                "https://media.discordapp.net/stickers/1405477154095104082.png"
+              )
+              ;;
+            "afternoon")
+              STICKERS=(
+                "https://media.discordapp.net/stickers/1405487683526201404.png"
+                "https://media.discordapp.net/stickers/1405546781927936051.png"
+                "https://media.discordapp.net/stickers/1405855503858274397.png"
+              )
+              ;;
+            "evening")
+              STICKERS=(
+                "https://media.discordapp.net/stickers/1405914196922597549.png"
+                "https://media.discordapp.net/stickers/1406065324758929509.png"
+                "https://media.discordapp.net/stickers/1406629592839491716.png"
+              )
+              ;;
+            "night")
+              STICKERS=(
+                "https://media.discordapp.net/stickers/1406668584335184003.png"
+                "https://media.discordapp.net/stickers/1407858067013369856.png"
+                "https://media.discordapp.net/stickers/1407858350334677204.png"
+                "https://media.discordapp.net/stickers/1407858765616779396.png"
+                "https://media.discordapp.net/stickers/1407859373396590735.png"
+              )
+              ;;
+          esac
+          
+          RANDOM_INDEX=$((RANDOM % ${#STICKERS[@]}))
+          SELECTED_STICKER=${STICKERS[$RANDOM_INDEX]}
+          
+          curl -f -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+               -H "Content-Type: application/json" \
+               -d "{\"content\":\"$SELECTED_STICKER\"}"
+          
+          echo "🎉 Sticker sent!"
+
+      - name: Execution Summary
+        run: |
+          echo "📊 EXECUTION SUMMARY"
+          echo "================================"
+          echo "🕐 Time: ${{ steps.context.outputs.CURRENT_TIME }} WIB (${{ steps.context.outputs.CURRENT_DAY }})"
+          echo "🎯 Type: ${{ steps.context.outputs.TYPE }} (${{ steps.context.outputs.CONTEXT }})"
+          echo "🌤️ Weather: ${{ steps.weather.outputs.WEATHER_INFO }}"
+          echo "🤖 AI Success: ${{ steps.ai_generation.outputs.USE_AI }}"
+          echo "🏠 OpenWrt Mode: ${{ steps.context.outputs.OPENWRT_MODE }}"
+          echo "🧪 Test Mode: ${{ github.event.inputs.test_mode }}"
+          echo "================================"
+          echo "✅ Skye community greeting complete!"
