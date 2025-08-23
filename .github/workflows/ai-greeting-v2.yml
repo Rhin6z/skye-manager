@@ -173,80 +173,38 @@ jobs:
           * day type: ${{ steps.context.outputs.CONTEXT }}
           * weather: ${{ steps.weather.outputs.WEATHER_INFO }}
 
-          **inputs required**
-          * {time} must be one of morning afternoon evening night
-          * {weekday_or_weekend} must be weekday or weekend
-          * {weather} short indonesian description like cerah mendung ringan gerimis panas terik
+          **CRITICAL FORMAT REQUIREMENT - FOLLOW EXACTLY:**
+          You MUST write exactly TWO sentences:
+          1. FIRST sentence: 100% English - start with hype opener, ask question
+          2. SECOND sentence: 80% Indonesian with some English game terms - start with invitation word
 
           **hard rules**
-          1. write exactly two sentences total
+          1. write exactly two sentences total separated by space
           2. sentence one is one hundred percent english
           3. sentence two is about eighty percent indonesian you may mix game names or gamer slang in english
           4. all lowercase only max two emojis if they fit
           5. mild friendly toxicity allowed but keep it chill
-          6. if {weekday_or_weekend} is weekend include the role tag <@&1374047008829997157> inside sentence two naturally on weekday do not include any tag the sentence structure must stay identical
-          7. weave {weather} naturally as a reason in sentence two
+          6. if day type is weekend include the role tag <@&1374047008829997157> inside sentence two naturally on weekday do not include any tag the sentence structure must stay identical
+          7. weave weather naturally as a reason in sentence two
           8. never use any dash characters in the generated message this includes minus hyphen and long dash
           9. keep it creative and avoid repeating patterns
 
-          **structure**
-          sentence one in english do all of these
-          * start with a hype opener choose one yoooo wasuiiip heyyy sup oi ayokkk yo team aight okay okay heads up
-          * ask a specific question about their current vibe or activity that matches {time}
+          **sentence one structure in english:**
+          * start with a hype opener: yoooo wasuiiip heyyy sup oi ayokkk yo team aight okay heads up
+          * ask a specific question about their current vibe or activity that matches time
           * keep it punchy around ten to eighteen words
+          * end with question mark
 
-          time specific ideas for sentence one pick one idea and vary daily
-          * morning coffee or controller which quest are you speedrunning before work grabs you
-          * afternoon post lunch queue or nap what is your quick match while digesting
-          * evening chores done who is queueing a chill stack for the golden hour
-          * night night crew which comp is farming your sanity till reset
+          **sentence two structure in indonesian:**
+          * start with invitation word: yuk gas ayo pada mau siapa mau
+          * suggest an activity that fits time
+          * weave weather as the reason
+          * if weekend insert role tag naturally inside this sentence
 
-          sentence two in indonesian about eighty percent do all of these
-          * start with one of yuk gas ayo pada mau siapa mau
-          * suggest an activity that fits {time}
-            morning contoh ngopi dulu plus warm up aim lima belas menit daily quest tipis stretching ringan lalu deathmatch dua ronde
-            afternoon contoh quick match lima belas sampai dua puluh menit roblox party santai aram tiga ronde
-            evening contoh jalan sore tipis lanjut valo custom push rank santuy mabar ml role rapi biar tidak ribut
-            night contoh vc sambil grind weekly scrim best of 3 co op roblox atau party games buat ketawa
-          * weave {weather} as the reason contoh cuaca {weather} jadi pas buat
-          * if weekend insert <@&1374047008829997157> naturally inside this sentence
+          **YOU MUST OUTPUT BOTH SENTENCES - DO NOT OUTPUT ONLY ONE SENTENCE**
 
-          **formatting guardrails**
-          * do casual friendly slightly hype
-          * do not write hello how are you or any generic greeting
-          * do not spam emojis or punctuation
-
-          **output format required**
-          context: {time} on a {weekday_or_weekend}
-          weather: {weather}
-
-          [your generated message here]
-
-          **examples**
-
-          context: morning on a weekday
-          weather: cerah
-
-          heyyy morning squad, coffee or controller which quest are you speedrunning before life aggro hits?
-          yuk ngopi dulu sambil warm up aim lima belas menit, cuaca cerah bikin fokus jadi ayo colong daily 🎮
-
-          context: afternoon on a weekday
-          weather: panas terik
-
-          sup noon warriors, anyone queueuing a quick match while the food coma timer ticks?
-          ayo quick match lima belas sampai dua puluh menit, panas terik mending ngadem aram tiga ronde atau roblox party
-
-          context: evening on a weekend
-          weather: mendung ringan
-
-          yoooo evening crew, who is logging in for a chill stack after errands are done?
-          gas jalan sore tipis lalu lanjut valo custom, mendung ringan bikin adem jadi <@&1374047008829997157> masuk vc satu bentar toxic dikit boleh
-
-          context: night on a weekday
-          weather: gerimis
-
-          oi night shift, which comp is eating your elo till the reset hits?
-          pada mau grind weekly sambil vc, gerimis pas banget buat mabar ml role rapi target tiga win sebelum tidur ☕
+          **correct example format:**
+          heyyy morning squad, coffee or controller which quest are you speedrunning before life aggro hits? yuk ngopi dulu sambil warm up aim lima belas menit, cuaca cerah bikin fokus jadi ayo colong daily 🎮
           EOF
           
           AI_SUCCESS=false
@@ -321,28 +279,34 @@ jobs:
             # Strict validation for proper 2-sentence English-Indonesian structure
             SENTENCE_COUNT=$(echo "$AI_TEXT" | grep -o '[.!?]' | wc -l)
             
-            # Check for English greeting at the start (lebih fleksibel)
-            HAS_ENGLISH_START=$(echo "$AI_TEXT" | grep -iE "^(yooo|wassup|heyyyy|sup|ayooo|heyyy|oi|yo|aight|okay)" || echo "$AI_TEXT" | grep -iE "(coffee|controller|quest|crew|squad|warriors)")
+            # Check for English greeting at the start
+            HAS_ENGLISH_START=$(echo "$AI_TEXT" | grep -iE "^(yooo|wassup|heyyyy|sup|ayooo|heyyy|oi|yo|aight|okay)")
             
             # Check for Indonesian invitation words  
             HAS_INDONESIAN=$(echo "$AI_TEXT" | grep -iE "(yuk|siapa mau|gas|ayo|pada mau)")
             
-            # Check for gaming activities (lebih luas)
-            HAS_ACTIVITY=$(echo "$AI_TEXT" | grep -iE "(mabar|valo|valorant|ml|mobile legends|roblox|gaming|game|voice chat|push rank|nongkrong|begadang|ngopi|warm up|aim|daily|quest|custom|party)")
+            # Check for gaming activities
+            HAS_ACTIVITY=$(echo "$AI_TEXT" | grep -iE "(mabar|valo|valorant|ml|mobile legends|roblox|gaming|game|voice chat|push rank|nongkrong|begadang)")
             
             # Check for weather mention
             HAS_WEATHER=$(echo "$AI_TEXT" | grep -iE "(cuaca|hujan|gerimis|cerah|panas|dingin|sejuk|berawan|mendung)")
             
-            # Relaksasi validation - fokus ke konten quality daripada strict format
-            if [[ ${#AI_TEXT} -gt 50 && ${#AI_TEXT} -lt 300 && -n "$HAS_INDONESIAN" && -n "$HAS_ACTIVITY" && -n "$HAS_WEATHER" ]]; then
+            # Check for proper sentence separation (. or ? followed by space and word)
+            HAS_SENTENCE_BREAK=$(echo "$AI_TEXT" | grep -E '[.?]\s+[a-z]')
+            
+            # Strict validation - must have all components
+            if [[ ${#AI_TEXT} -gt 70 && ${#AI_TEXT} -lt 280 && $SENTENCE_COUNT -ge 2 && -n "$HAS_ENGLISH_START" && -n "$HAS_INDONESIAN" && -n "$HAS_ACTIVITY" && -n "$HAS_WEATHER" && -n "$HAS_SENTENCE_BREAK" ]]; then
               DESC_RAW="$AI_TEXT"
               USE_AI=true
-              echo "✅ AI validated: ${#AI_TEXT} chars, Indonesian gaming content with weather"
+              echo "✅ AI validated: ${#AI_TEXT} chars, proper English-Indonesian structure"
             else
               echo "⚠️ AI validation failed: ${#AI_TEXT} chars"
+              echo "   English start: ${HAS_ENGLISH_START:-missing}"
               echo "   Indonesian: ${HAS_INDONESIAN:-missing}" 
               echo "   Activity: ${HAS_ACTIVITY:-missing}"
               echo "   Weather: ${HAS_WEATHER:-missing}"
+              echo "   Sentence break: ${HAS_SENTENCE_BREAK:-missing}"
+              echo "   Sentence count: $SENTENCE_COUNT"
               echo "   Raw text: $AI_TEXT"
               USE_AI=false
             fi
