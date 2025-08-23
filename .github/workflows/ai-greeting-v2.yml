@@ -168,6 +168,11 @@ jobs:
           cat > /tmp/prompt.txt << 'EOF'
           **role:** you are a hype admin for the indonesian gaming discord server "skye". your task is to write a daily greeting that feels authentic and engages the adult community.
 
+          **context for this message:**
+          * time: ${{ steps.context.outputs.TYPE }}
+          * day type: ${{ steps.context.outputs.CONTEXT }}
+          * weather: ${{ steps.weather.outputs.WEATHER_INFO }}
+
           **inputs required**
           * {time} must be one of morning afternoon evening night
           * {weekday_or_weekend} must be weekday or weekend
@@ -243,10 +248,6 @@ jobs:
           oi night shift, which comp is eating your elo till the reset hits?
           pada mau grind weekly sambil vc, gerimis pas banget buat mabar ml role rapi target tiga win sebelum tidur ☕
           EOF
-          
-          sed -i "s/TYPE_PLACEHOLDER/${{ steps.context.outputs.TYPE }}/g" /tmp/prompt.txt
-          sed -i "s/CONTEXT_PLACEHOLDER/${{ steps.context.outputs.CONTEXT }}/g" /tmp/prompt.txt
-          sed -i "s/WEATHER_INFO_PLACEHOLDER/${{ steps.weather.outputs.WEATHER_INFO }}/g" /tmp/prompt.txt
           
           AI_SUCCESS=false
           
