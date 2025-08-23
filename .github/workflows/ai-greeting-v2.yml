@@ -1,16 +1,6 @@
-name: Fixed AI Discord Greeting
+name: Skye Community AI Greeting
 
 on:
-  # DISABLED: Using OpenWrt scheduler instead to avoid delays
-  # schedule:
-  #   - cron: '0 0 * * 1-5'    # 7 AM WIB weekdays
-  #   - cron: '0 5 * * 1-5'    # 12 PM WIB weekdays  
-  #   - cron: '0 10 * * 1-5'   # 5 PM WIB weekdays
-  #   - cron: '0 15 * * 1-5'   # 10 PM WIB weekdays
-  #   - cron: '0 0 * * 6,0'    # 7 AM WIB weekends
-  #   - cron: '0 5 * * 6,0'    # 12 PM WIB weekends
-  #   - cron: '0 10 * * 6,0'   # 5 PM WIB weekends
-  #   - cron: '0 15 * * 6,0'   # 10 PM WIB weekends
   workflow_dispatch:
     inputs:
       trigger_source:
@@ -46,21 +36,18 @@ jobs:
         run: |
           export TZ='Asia/Jakarta'
           
-          # Check if running from OpenWrt (no delay needed)
           OPENWRT_MODE=false
           if command -v opkg >/dev/null 2>&1 || [[ -f /etc/openwrt_release ]] || [[ "${{ github.event.inputs.trigger_source }}" == "openwrt" ]]; then
             OPENWRT_MODE=true
             echo "🏠 OpenWrt detected - optimized timing mode"
           fi
           
-          # Time info
           CURRENT_DAY=$(date +%A)
           CURRENT_DATE=$(date +"%B %d, %Y")
           CURRENT_TIME=$(date +"%H:%M")
           HOUR=$(date +%H | sed 's/^0*//')
           DAY_NUM=$(date +%u)
           
-          # Determine type
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             MANUAL_TYPE="${{ github.event.inputs.greeting_type }}"
             if [[ "$MANUAL_TYPE" == "auto" ]]; then
@@ -77,7 +64,6 @@ jobs:
               TYPE="$MANUAL_TYPE"
             fi
           else
-            # Fallback to auto-detect based on time (should not happen with OpenWrt trigger)
             if [[ $HOUR -ge 5 && $HOUR -lt 12 ]]; then
               TYPE="morning"
             elif [[ $HOUR -ge 12 && $HOUR -lt 17 ]]; then
@@ -89,14 +75,12 @@ jobs:
             fi
           fi
           
-          # Context
           if [[ $DAY_NUM -eq 6 || $DAY_NUM -eq 7 ]]; then
             CONTEXT="weekend"
           else
             CONTEXT="weekday"
           fi
           
-          # Special context
           SPECIAL_CONTEXT=""
           case "$CURRENT_DAY" in
             "Monday") SPECIAL_CONTEXT="monday_motivation" ;;
@@ -120,65 +104,59 @@ jobs:
         id: weather
         run: |
           WEATHER_INFO=""
-          
-          # ALWAYS fetch weather (no more random chance)
           echo "🌤️ Fetching BMKG weather for Yogyakarta..."
           
-          # Yogyakarta kode wilayah: 3401010 (Yogyakarta Kota)
           BMKG_RAW=$(curl -s "https://api.bmkg.go.id/publik/prakiraan-cuaca?adm4=3401010" --connect-timeout 8 --max-time 15 || echo "")
             
-            if [[ -n "$BMKG_RAW" && "$BMKG_RAW" != *"error"* && "$BMKG_RAW" != *"Error"* ]]; then
-              echo "✅ BMKG API response received"
+          if [[ -n "$BMKG_RAW" && "$BMKG_RAW" != *"error"* && "$BMKG_RAW" != *"Error"* ]]; then
+            echo "✅ BMKG API response received"
+            
+            TEMP=$(echo "$BMKG_RAW" | grep -o '"t":"[^"]*"' | head -1 | cut -d'"' -f4 || echo "")
+            DESC=$(echo "$BMKG_RAW" | grep -o '"weather_desc":"[^"]*"' | head -1 | cut -d'"' -f4 || echo "")
+            
+            if [[ -n "$TEMP" || -n "$DESC" ]]; then
+              echo "🌡️ Raw: $TEMP°C | $DESC"
               
-              # Extract temperature dan weather desc dengan jq atau grep
-              TEMP=$(echo "$BMKG_RAW" | grep -o '"t":"[^"]*"' | head -1 | cut -d'"' -f4 || echo "")
-              DESC=$(echo "$BMKG_RAW" | grep -o '"weather_desc":"[^"]*"' | head -1 | cut -d'"' -f4 || echo "")
-              
-              if [[ -n "$TEMP" || -n "$DESC" ]]; then
-                echo "🌡️ Raw: $TEMP°C | $DESC"
+              WEATHER_CASUAL=""
+              if [[ -n "$DESC" ]]; then
+                DESC_LOWER=$(echo "$DESC" | tr '[:upper:]' '[:lower:]')
                 
-                # Convert weather description to casual Indonesian
-                WEATHER_CASUAL=""
-                if [[ -n "$DESC" ]]; then
-                  DESC_LOWER=$(echo "$DESC" | tr '[:upper:]' '[:lower:]')
-                  
-                  if [[ "$DESC_LOWER" == *"hujan"* || "$DESC_LOWER" == *"rain"* ]]; then
-                    WEATHER_CASUAL="hujan"
-                  elif [[ "$DESC_LOWER" == *"gerimis"* || "$DESC_LOWER" == *"drizzle"* ]]; then
-                    WEATHER_CASUAL="gerimis"
-                  elif [[ "$DESC_LOWER" == *"panas"* || "$DESC_LOWER" == *"hot"* || "$DESC_LOWER" == *"terik"* ]]; then
-                    WEATHER_CASUAL="panas"
-                  elif [[ "$DESC_LOWER" == *"dingin"* || "$DESC_LOWER" == *"cold"* ]]; then
-                    WEATHER_CASUAL="dingin"
-                  elif [[ "$DESC_LOWER" == *"sejuk"* || "$DESC_LOWER" == *"cool"* || "$DESC_LOWER" == *"adem"* ]]; then
-                    WEATHER_CASUAL="sejuk"
-                  elif [[ "$DESC_LOWER" == *"berawan"* || "$DESC_LOWER" == *"cloudy"* ]]; then
-                    WEATHER_CASUAL="berawan"
-                  elif [[ "$DESC_LOWER" == *"cerah"* || "$DESC_LOWER" == *"sunny"* || "$DESC_LOWER" == *"clear"* ]]; then
-                    WEATHER_CASUAL="cerah"
-                  else
-                    WEATHER_CASUAL="enak"
-                  fi
+                if [[ "$DESC_LOWER" == *"hujan"* || "$DESC_LOWER" == *"rain"* ]]; then
+                  WEATHER_CASUAL="hujan"
+                elif [[ "$DESC_LOWER" == *"gerimis"* || "$DESC_LOWER" == *"drizzle"* ]]; then
+                  WEATHER_CASUAL="gerimis"
+                elif [[ "$DESC_LOWER" == *"panas"* || "$DESC_LOWER" == *"hot"* || "$DESC_LOWER" == *"terik"* ]]; then
+                  WEATHER_CASUAL="panas"
+                elif [[ "$DESC_LOWER" == *"dingin"* || "$DESC_LOWER" == *"cold"* ]]; then
+                  WEATHER_CASUAL="dingin"
+                elif [[ "$DESC_LOWER" == *"sejuk"* || "$DESC_LOWER" == *"cool"* || "$DESC_LOWER" == *"adem"* ]]; then
+                  WEATHER_CASUAL="sejuk"
+                elif [[ "$DESC_LOWER" == *"berawan"* || "$DESC_LOWER" == *"cloudy"* ]]; then
+                  WEATHER_CASUAL="berawan"
+                elif [[ "$DESC_LOWER" == *"cerah"* || "$DESC_LOWER" == *"sunny"* || "$DESC_LOWER" == *"clear"* ]]; then
+                  WEATHER_CASUAL="cerah"
+                else
+                  WEATHER_CASUAL="enak"
                 fi
-                
-                # Format final weather info - INDOOR GAMING CONTEXT
-                if [[ -n "$TEMP" && -n "$WEATHER_CASUAL" ]]; then
-                  WEATHER_INFO="cuaca ${WEATHER_CASUAL} ${TEMP}°c"
-                elif [[ -n "$WEATHER_CASUAL" ]]; then
-                  WEATHER_INFO="cuaca ${WEATHER_CASUAL}"
-                elif [[ -n "$TEMP" ]]; then
-                  WEATHER_INFO="${TEMP}°c"
-                fi
-                
-                echo "✅ BMKG Weather: $WEATHER_INFO"
-              else
-                echo "⚠️ Could not extract weather data from BMKG response"
-                WEATHER_INFO="cuaca enak"  # Default fallback
               fi
+              
+              if [[ -n "$TEMP" && -n "$WEATHER_CASUAL" ]]; then
+                WEATHER_INFO="cuaca ${WEATHER_CASUAL} ${TEMP}°c"
+              elif [[ -n "$WEATHER_CASUAL" ]]; then
+                WEATHER_INFO="cuaca ${WEATHER_CASUAL}"
+              elif [[ -n "$TEMP" ]]; then
+                WEATHER_INFO="${TEMP}°c"
+              fi
+              
+              echo "✅ BMKG Weather: $WEATHER_INFO"
             else
-              echo "❌ BMKG API failed, using fallback"
-              WEATHER_INFO="nice weather"  # Always provide weather info
+              echo "⚠️ Could not extract weather data from BMKG response"
+              WEATHER_INFO="cuaca enak"
             fi
+          else
+            echo "❌ BMKG API failed, using fallback"
+            WEATHER_INFO="nice weather"
+          fi
           
           echo "WEATHER_INFO=$WEATHER_INFO" >> $GITHUB_OUTPUT
 
@@ -187,58 +165,50 @@ jobs:
         run: |
           echo "🤖 Generating AI greeting..."
           
-          # Create ultra natural human-like prompt with 2-sentence structure
           cat > /tmp/prompt.txt << 'EOF'
-          You are typing a natural message to your Indonesian gaming friends on Discord. Write exactly 2 sentences with this structure:
-          
-          Context: TYPE_PLACEHOLDER on CONTEXT_PLACEHOLDER
+          You're messaging your Indonesian gaming friends in the Skye Discord community. Generate exactly 2 sentences following this natural pattern:
+
+          Context: TYPE_PLACEHOLDER on CONTEXT_PLACEHOLDER day
           Weather: WEATHER_INFO_PLACEHOLDER
           
-          EXACT 2-SENTENCE STRUCTURE:
+          **SENTENCE STRUCTURE:**
           
-          SENTENCE 1 (100% English slang - asking about mood/activity):
-          - Start with casual English greeting: "yooo", "wassup", "heyyyy", "ayooo", "brooo"
-          - Ask in ENGLISH about: what they're doing, mood, day, vibe, feeling
-          - Use extended English words: "wassuppppp", "how's everyone doinggg", "what's the vibeeeee"
-          - FULL ENGLISH examples: "yooo what's everyone up to rn?", "wassuppp how's the day treating y'all?", "heyyyy what's the mood like tonight?"
+          1. **Opening (English casual)**: Start with natural greeting like "yooo", "wassup", "heyyyy" + ask about their current mood/activity in casual English slang
           
-          SENTENCE 2 (Indo-English mix - varied activity invitation based on context):
+          2. **Activity Invitation (Indonesian-English mix)**: Suggest time-appropriate activities using Indonesian slang ("yuk", "siapa mau", "bareng") + include weather mention
           
-          For MORNING (5-12): Mix of exercise, breakfast, light activities + some gaming
-          - "yuk jalan pagi bareng cuaca WEATHER_INFO_PLACEHOLDER enak!", "siapa mau sarapan sambil main roblox?"
+          **TIME-BASED ACTIVITY SUGGESTIONS:**
           
-          For AFTERNOON (12-17): Mix of lunch, chill activities + gaming  
-          - "yuk makan siang bareng terus main ml?", "siapa mau nongkrong sambil gaming cuaca WEATHER_INFO_PLACEHOLDER?"
+          **Morning (5-12)**: Light activities + casual gaming
+          - Exercise/breakfast combos: "yuk jalan pagi", "sarapan bareng"
+          - Light gaming: "main roblox sebentar", "casual ml"
           
-          For EVENING (17-21): Mix of dinner, hangout, gaming
-          - "yuk dinner bareng terus mabar roblox?", "siapa mau nongki sambil push rank ml cuaca WEATHER_INFO_PLACEHOLDER?"
+          **Afternoon (12-17)**: Social + moderate gaming  
+          - Lunch/hangout: "makan siang bareng", "nongkrong"
+          - Social gaming: "main ml bareng", "gaming session"
           
-          For NIGHT (21-5): Mostly gaming, late night activities
-          - "yuk begadang mabar roblox cuaca WEATHER_INFO_PLACEHOLDER!", "siapa mau push rank ml sampai pagi?"
+          **Evening (17-21)**: Dinner + prime gaming
+          - Dinner activities: "dinner bareng", "makan malem"
+          - Prime gaming: "mabar roblox", "push rank ml"
           
-          For WEEKEND: More relaxed, varied social activities
-          - "yuk nongkrong bareng main game?", "siapa mau jalan-jalan terus gaming sesi cuaca WEATHER_INFO_PLACEHOLDER?"
+          **Night (21-5)**: Late night + hardcore gaming
+          - Late activities: "begadang", "midnight session"
+          - Intensive gaming: "push rank sampai pagi", "marathon ml"
           
-          ALWAYS include weather: WEATHER_INFO_PLACEHOLDER
-          Use Indonesian slang: "yuk", "siapa mau", "bareng", "terus", "sambil"
+          **TONE GUIDELINES:**
+          - Use extended words for excitement: "wassuppppp", "doinggg", "vibeeeee"
+          - Mix Indonesian slang naturally: "yuk", "siapa mau", "bareng", "terus", "sambil"
+          - Always include weather: WEATHER_INFO_PLACEHOLDER
+          - Keep it conversational like texting close friends
+          - Include question marks for engagement
           
-          Write ONLY the 2 sentences - natural like texting friends! Both sentences required!
+          Generate ONLY the 2-sentence message - natural, engaging, and community-focused!
           EOF
           
-          # Replace placeholders
           sed -i "s/TYPE_PLACEHOLDER/${{ steps.context.outputs.TYPE }}/g" /tmp/prompt.txt
           sed -i "s/CONTEXT_PLACEHOLDER/${{ steps.context.outputs.CONTEXT }}/g" /tmp/prompt.txt
-          sed -i "s/CURRENT_DAY_PLACEHOLDER/${{ steps.context.outputs.CURRENT_DAY }}/g" /tmp/prompt.txt
-          sed -i "s/CURRENT_DATE_PLACEHOLDER/${{ steps.context.outputs.CURRENT_DATE }}/g" /tmp/prompt.txt
-          sed -i "s/CURRENT_TIME_PLACEHOLDER/${{ steps.context.outputs.CURRENT_TIME }}/g" /tmp/prompt.txt
-          sed -i "s/SPECIAL_CONTEXT_PLACEHOLDER/${{ steps.context.outputs.SPECIAL_CONTEXT }}/g" /tmp/prompt.txt
           sed -i "s/WEATHER_INFO_PLACEHOLDER/${{ steps.weather.outputs.WEATHER_INFO }}/g" /tmp/prompt.txt
           
-          # Handle empty SPECIAL_CONTEXT (remove extra underscores and fix formatting)
-          sed -i 's/SPECIAL_[a-zA-Z_]*//g' /tmp/prompt.txt
-          sed -i 's/Special: *$//g' /tmp/prompt.txt
-          
-          # Try AI generation with simplified approach
           AI_SUCCESS=false
           
           python3 << 'PYTHON_EOF'
@@ -261,234 +231,136 @@ jobs:
               payload = {
                   "contents": [{"parts": [{"text": prompt}]}],
                   "generationConfig": {
-                      "temperature": 0.9,
-                      "maxOutputTokens": 300,
-                      "topP": 0.95
+                      "temperature": 0.85,
+                      "maxOutputTokens": 200,
+                      "topP": 0.9
                   }
               }
               
-              response = requests.post(url, json=payload, timeout=20)
+              response = requests.post(url, json=payload, timeout=25)
               
               if response.status_code == 200:
                   data = response.json()
                   if 'candidates' in data and len(data['candidates']) > 0:
-                      ai_text = data['candidates'][0]['content']['parts'][0]['text']
+                      ai_text = data['candidates'][0]['content']['parts'][0]['text'].strip()
                       
-                      # SIMPLIFIED PARSING - just clean the text
-                      clean_text = ai_text.strip()
-                      
-                      # Remove any markdown formatting
-                      clean_text = re.sub(r'\*\*([^*]+)\*\*', r'\1', clean_text)
+                      # Clean and extract the message
+                      clean_text = re.sub(r'\*\*([^*]+)\*\*', r'\1', ai_text)
                       clean_text = re.sub(r'\*([^*]+)\*', r'\1', clean_text)
                       clean_text = re.sub(r'`([^`]+)`', r'\1', clean_text)
                       
-                      # Remove any structured format attempts
-                      lines = clean_text.split('\n')
-                      for line in lines:
-                          line = line.strip()
-                          # Skip format labels and empty lines
-                          if (line and not line.startswith(('TITLE:', 'DESC:', 'FOOTER:', 'Message:', '##', '#', '-', '*')) 
-                              and not line.lower().startswith(('greeting:', 'response:', 'output:'))
-                              and len(line) > 20):
-                              # Found our greeting
-                              with open('/tmp/ai_response.txt', 'w', encoding='utf-8') as f:
-                                  f.write(line)
-                              print("✅ AI success")
-                              sys.exit(0)
+                      # Find the best line (longest substantial content)
+                      lines = [line.strip() for line in clean_text.split('\n') if line.strip()]
+                      best_line = ""
                       
-                      # If no good line found, use first substantial line
-                      substantial_lines = [l.strip() for l in lines if len(l.strip()) > 20]
-                      if substantial_lines:
+                      for line in lines:
+                          if (len(line) > 30 and 
+                              not line.startswith(('**', '#', '-', '*', 'Context:', 'Weather:', 'SENTENCE', 'TIME-BASED')) and
+                              not line.lower().startswith(('greeting:', 'message:', 'response:', 'output:'))):
+                              if len(line) > len(best_line):
+                                  best_line = line
+                      
+                      if best_line:
                           with open('/tmp/ai_response.txt', 'w', encoding='utf-8') as f:
-                              f.write(substantial_lines[0])
-                          print("✅ AI success (fallback)")
+                              f.write(best_line)
+                          print("✅ AI generation successful")
                           sys.exit(0)
               
               sys.exit(1)
               
           except Exception as e:
-              print(f"❌ AI error: {e}")
+              print(f"❌ AI generation failed: {e}")
               sys.exit(1)
           PYTHON_EOF
           
-          # Check AI result
           if [[ $? -eq 0 && -s /tmp/ai_response.txt ]]; then
             AI_TEXT=$(cat /tmp/ai_response.txt)
             echo "🎯 AI generated: $AI_TEXT"
             
-            # Validate AI text - MUST have 2 sentences and gaming content
             SENTENCE_COUNT=$(echo "$AI_TEXT" | grep -o '[.!?]' | wc -l)
-            HAS_GAMING=$(echo "$AI_TEXT" | grep -iE "(roblox|mobile legends|ml|emel|mabar|push rank|main bareng|gaming|game|yuk|siapa mau|main|bareng|terus|sambil|nongkrong|jalan|sarapan|makan|dinner|begadang)")
+            HAS_ACTIVITY=$(echo "$AI_TEXT" | grep -iE "(roblox|ml|mobile legends|emel|mabar|main|gaming|game|yuk|siapa mau|bareng|nongkrong|jalan|sarapan|makan|dinner|begadang)")
             HAS_QUESTION=$(echo "$AI_TEXT" | grep -E "[?]")
             
-            if [[ ${#AI_TEXT} -gt 50 && ${#AI_TEXT} -lt 350 && $SENTENCE_COUNT -ge 2 && -n "$HAS_GAMING" && -n "$HAS_QUESTION" ]]; then
+            if [[ ${#AI_TEXT} -gt 40 && ${#AI_TEXT} -lt 300 && $SENTENCE_COUNT -ge 2 && -n "$HAS_ACTIVITY" && -n "$HAS_QUESTION" ]]; then
               DESC_RAW="$AI_TEXT"
               USE_AI=true
-              echo "✅ AI text validated: ${#AI_TEXT} chars, ${SENTENCE_COUNT} sentences, has gaming + question"
+              echo "✅ AI validated: ${#AI_TEXT} chars, ${SENTENCE_COUNT} sentences"
             else
-              echo "⚠️ AI text validation failed: ${#AI_TEXT} chars, sentences: ${SENTENCE_COUNT}, gaming: ${HAS_GAMING:-missing}, question: ${HAS_QUESTION:-missing}"
-              echo "   Raw text: $AI_TEXT"
+              echo "⚠️ AI validation failed, using fallback"
               USE_AI=false
             fi
           else
-            echo "❌ AI generation failed"
+            echo "❌ AI generation failed, using fallback"
             USE_AI=false
           fi
           
-          # Enhanced creative fallback system with extreme variety
           if [[ "$USE_AI" != "true" ]]; then
-            echo "🎲 Using ultra creative fallback..."
+            echo "🎲 Using enhanced fallback system..."
             
-            # Weather integration
             WEATHER_MENTION="${{ steps.weather.outputs.WEATHER_INFO }}"
-            
-            # Create massive variety of messages
             declare -a MESSAGES
             
             case "${{ steps.context.outputs.TYPE }}" in
               "morning")
-                if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "monday_motivation" ]]; then
-                  MESSAGES=(
-                    "brooooo monday lagi nih, how's everyone feeling? fresh start perfect buat grinding roblox sambil ngopi, ${WEATHER_MENTION}!"
-                    "yooooo wassup monday warriors, energy level gimana? yuk mabar ml sambil motivasi-motivasian, ${WEATHER_MENTION} nih"
-                    "heyyyy squad monday vibes hitting different, siapa udah siap crushing this week? main emel push rank yuk, ${WEATHER_MENTION}"
-                    "skuy monday motivation time, feeling fresh atau masih ngantuk? perfect timing buat roblox session, ${WEATHER_MENTION}"
-                    "woiii monday energy check, gimana mood kalian hari ini? yuk charge up dengan mabar ml, ${WEATHER_MENTION}"
-                  )
-                else
-                  MESSAGES=(
-                    "yooooo morning legends, udah minum kopi atau masih zombie mode? yuk jalan pagi bareng terus main roblox, ${WEATHER_MENTION}"
-                    "wassuppp early birds, how's everyone's morning vibe? siapa mau sarapan sambil ngobrolin plan hari ini, ${WEATHER_MENTION}"
-                    "heyyyy morning squad, feeling energetic atau masih males bangun? perfect time buat workout ringan terus gaming, ${WEATHER_MENTION}"
-                    "skuy good morning gamers, sarapan apa hari ini? sambil planning mau ngapain siang nanti, ${WEATHER_MENTION}"
-                    "brooo morning check-in, gimana tidur semalam? fresh enough buat jalan-jalan or just chill main game, ${WEATHER_MENTION} nih"
-                    "woiii pagi-pagi udah online aja, early bird energy maksimal nih! yuk olahraga ringan terus main roblox, ${WEATHER_MENTION}"
-                  )
-                fi
+                MESSAGES=(
+                  "yooooo morning legends, how's everyone feeling today? yuk jalan pagi bareng terus sarapan sambil ngobrol, ${WEATHER_MENTION} nih!"
+                  "wassuppp early birds, energy level gimana pagi ini? siapa mau olahraga ringan terus main roblox sebentar, ${WEATHER_MENTION}?"
+                  "heyyyy morning squad, udah minum kopi atau masih zombie mode? perfect time buat workout terus gaming session, ${WEATHER_MENTION}"
+                  "skuy good morning gamers, feeling fresh atau masih ngantuk? yuk sarapan bareng sambil planning hari ini, ${WEATHER_MENTION}!"
+                )
                 ;;
               "afternoon")
-                if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "hump_day" ]]; then
-                  MESSAGES=(
-                    "heyyyy wednesday warriors, udah setengah jalan weekend nih gimana energy level? emel push rank yuk, ${WEATHER_MENTION}!"
-                    "yooooo hump day vibes, wednesday feeling heavy atau light? perfect distraction dengan roblox, ${WEATHER_MENTION}"
-                    "wassuppp midweek squad, wednesday mood check siapa butuh break? ml therapy session, ${WEATHER_MENTION}"
-                    "skuy wednesday afternoon hits, halfway through the week! deserve some fun roblox time, ${WEATHER_MENTION}"
-                    "brooo wednesday energy, masih semangat atau udah capek? refresh dengan emel yuk, ${WEATHER_MENTION} nih"
-                  )
-                else
-                  MESSAGES=(
-                    "yooooo afternoon legends, lunch break udah atau masih busy? yuk makan bareng terus main roblox sebentar, ${WEATHER_MENTION}"
-                    "wassuppp midday squad, afternoon slump hitting atau masih energetic? siapa mau nongkrong sambil gaming, ${WEATHER_MENTION}"
-                    "heyyyy afternoon vibes, gimana hari kalian so far? break time makan siang terus main emel, ${WEATHER_MENTION}"
-                    "skuy afternoon check, udah makan siang belum? yuk bareng-bareng terus gaming session ringan, ${WEATHER_MENTION}"
-                    "brooo afternoon mood, productive day atau lagi gabut? perfect timing buat lunch & chill gaming, ${WEATHER_MENTION} nih"
-                    "woiii siang-siang gini enak banget nongkrong, siapa free buat hangout + main roblox? ${WEATHER_MENTION}"
-                  )
-                fi
+                MESSAGES=(
+                  "yooooo afternoon legends, how's the day treating everyone? yuk makan siang bareng terus main ml sebentar, ${WEATHER_MENTION} nih!"
+                  "wassuppp midday squad, productive day atau lagi gabut? siapa mau nongkrong sambil chill gaming, ${WEATHER_MENTION}?"
+                  "heyyyy afternoon vibes, gimana progress hari ini? break time lunch terus mabar roblox yuk, ${WEATHER_MENTION}"
+                  "skuy afternoon check, udah makan siang belum? perfect timing buat hangout + gaming session, ${WEATHER_MENTION}!"
+                )
                 ;;
               "evening")
-                if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "weekend_countdown" ]]; then
-                  MESSAGES=(
-                    "yooooo FRIDAY EVENING, weekend mode activated finally! besok libur perfect buat marathon roblox, ${WEATHER_MENTION}!"
-                    "wassuppp weekend warriors, friday feeling different nih! long ml session incoming, ${WEATHER_MENTION}"
-                    "heyyyy TGIF squad, weekend countdown complete! celebrate dengan emel party yuk, ${WEATHER_MENTION}"
-                    "skuy friday night energy, weekend vibes kicking in hard! roblox time maksimal, ${WEATHER_MENTION}"
-                    "brooo weekend mode ON, friday evening hits different! main ml sampai malem yuk, ${WEATHER_MENTION} nih"
-                  )
-                else
-                  MESSAGES=(
-                    "yooooo evening squad, how was today treating y'all? winding down dinner bareng terus main roblox, ${WEATHER_MENTION}"
-                    "wassuppp golden hour gang, evening vibes hitting nice! siapa mau nongkrong terus chill gaming, ${WEATHER_MENTION}?"
-                    "heyyyy evening legends, day almost done nih! dinner time terus relaxing emel session, ${WEATHER_MENTION}"
-                    "skuy evening check-in, productive day atau challenging? perfect time buat hangout & gaming therapy, ${WEATHER_MENTION}"
-                    "brooo evening mood, dinner udah atau lagi nyari makan? yuk bareng-bareng terus main ml santai, ${WEATHER_MENTION} nih"
-                    "woiii evening vibes enak banget, perfect time buat dinner hangout + cozy roblox! ${WEATHER_MENTION}"
-                  )
-                fi
+                MESSAGES=(
+                  "yooooo evening squad, how was today overall? winding down dengan dinner bareng terus main roblox, ${WEATHER_MENTION} nih!"
+                  "wassuppp golden hour gang, evening vibes hitting nice right? siapa mau nongkrong terus chill gaming, ${WEATHER_MENTION}?"
+                  "heyyyy evening legends, productive day atau challenging? perfect time buat hangout sambil ml therapy, ${WEATHER_MENTION}"
+                  "skuy evening mood check, dinner udah atau masih nyari makan? yuk bareng-bareng terus gaming santai, ${WEATHER_MENTION}!"
+                )
                 ;;
               "night")
-                if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "sunday_prep" ]]; then
-                  MESSAGES=(
-                    "heyyyy sunday night owls, weekend ending how's everyone feeling? masih sempat roblox session terakhir, ${WEATHER_MENTION}!"
-                    "yooooo sunday evening vibes, last chance weekend gaming before monday? make it count dengan ml, ${WEATHER_MENTION}"
-                    "wassuppp sunday squad, weekend finale nih how was it? siapa mau closing ceremony emel, ${WEATHER_MENTION}"
-                    "skuy sunday night feels, tomorrow back to routine ready? enjoy last roblox freedom, ${WEATHER_MENTION}"
-                    "brooo sunday evening mood, weekend was good right? cap it off dengan chill ml session, ${WEATHER_MENTION} nih"
-                  )
-                else
-                  MESSAGES=(
-                    "yooooo night owls, who's still vibing at this hour? perfect late night roblox energy, ${WEATHER_MENTION}"
-                    "wassuppp midnight squad, insomnia hitting atau just chilling? ml therapy available, ${WEATHER_MENTION}"
-                    "heyyyy late night legends, can't sleep atau choice to stay up? emel sounds good, ${WEATHER_MENTION}"
-                    "skuy nocturnal gamers, night vibes different nih how we feeling? cozy roblox session yuk, ${WEATHER_MENTION}"
-                    "brooo night time energy, peaceful gaming hours when everyone's sleeping? perfect ml timing, ${WEATHER_MENTION} nih"
-                    "woiii night squad assemble, best roblox hours when it's quiet! who's down? ${WEATHER_MENTION}"
-                  )
-                fi
+                MESSAGES=(
+                  "yooooo night owls, who's still vibing at this hour? perfect late night energy buat mabar roblox, ${WEATHER_MENTION} nih!"
+                  "wassuppp midnight squad, can't sleep atau choice to stay up? siapa mau push rank ml sampai pagi, ${WEATHER_MENTION}?"
+                  "heyyyy nocturnal gamers, night vibes different nih how we feeling? cozy gaming session sounds good, ${WEATHER_MENTION}"
+                  "skuy late night legends, peaceful gaming hours when everyone's sleeping! who's down buat begadang, ${WEATHER_MENTION}?"
+                )
                 ;;
             esac
             
-            # Pick random message from array
             RANDOM_INDEX=$((RANDOM % ${#MESSAGES[@]}))
             DESC_RAW="${MESSAGES[$RANDOM_INDEX]}"
           fi
           
-          # Generate ultra creative titles with more variety
           declare -a TITLES
           declare -a THUMBS
           
           case "${{ steps.context.outputs.TYPE }}" in
             "morning") 
-              if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "monday_motivation" ]]; then
-                TITLES=("☕ Monday Fresh Energy" "🌅 New Week Warriors" "💪 Monday Motivation Mode" "🔥 Fresh Start Squad" "⚡ Monday Power-Up")
-                THUMBS=("2615" "1f305" "1f4aa" "1f525" "26a1")
-              elif [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
-                TITLES=("🌅 Weekend Morning Chill" "☀️ Saturday/Sunday Vibes" "🏖️ Weekend Lazy Mode" "🎮 Weekend Gaming Start" "🌤️ Relaxed Weekend Morning")
-                THUMBS=("1f305" "2600" "1f3d6" "1f3ae" "1f324")
-              else
-                TITLES=("☀️ Good Morning Legends" "🌅 Early Bird Squad" "☕ Coffee & Gaming Time" "🌞 Morning Energy Check" "⭐ Fresh Morning Vibes")
-                THUMBS=("2600" "1f305" "2615" "1f31e" "2b50")
-              fi
+              TITLES=("☀️ Morning Skye Squad" "🌅 Early Bird Energy" "☕ Coffee & Gaming Time" "🌞 Fresh Morning Vibes" "⭐ New Day New Games")
+              THUMBS=("2600" "1f305" "2615" "1f31e" "2b50")
               ;;
             "afternoon") 
-              if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "hump_day" ]]; then
-                TITLES=("🐪 Wednesday Warriors" "⚡ Hump Day Energy" "🎯 Midweek Check-in" "🔄 Wednesday Vibes" "💫 Halfway Heroes")
-                THUMBS=("1f42a" "26a1" "1f3af" "1f504" "1f4ab")
-              elif [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
-                TITLES=("🌤️ Weekend Afternoon Gold" "🎮 Weekend Gaming Peak" "🍃 Chill Weekend Vibes" "🌆 Weekend Golden Hour" "☀️ Perfect Weekend Time")
-                THUMBS=("1f324" "1f3ae" "1f343" "1f307" "2600")
-              else
-                TITLES=("🍃 Midday Squad Check" "🌤️ Afternoon Chill Mode" "☀️ Lunch Break Gaming" "🎯 Afternoon Focus Time" "💼 Midday Break Squad")
-                THUMBS=("1f343" "1f324" "2600" "1f3af" "1f4bc")
-              fi
+              TITLES=("� Afternoon Chill Mode" "�️ Midday Squad Check" "☀️ Lunch Break Gaming" "🎯 Afternoon Focus Time" "💼 Productive Break")
+              THUMBS=("1f343" "1f324" "2600" "1f3af" "1f4bc")
               ;;
             "evening") 
-              if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "weekend_countdown" ]]; then
-                TITLES=("🎉 Friday Evening HYPE!" "🍾 Weekend Countdown!" "🔥 TGIF Gaming Time" "🎊 Friday Night Energy" "🌟 Weekend Mode ON")
-                THUMBS=("1f389" "1f37e" "1f525" "1f38a" "1f31f")
-              elif [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
-                TITLES=("🌆 Weekend Golden Hour" "✨ Weekend Evening Magic" "🎮 Weekend Prime Time" "🌅 Weekend Sunset Vibes" "🎯 Weekend Gaming Peak")
-                THUMBS=("1f307" "2728" "1f3ae" "1f305" "1f3af")
-              else
-                TITLES=("🌇 Evening Chill Squad" "🌆 Golden Hour Gaming" "✨ Evening Wind-Down" "🌅 Sunset Gaming Time" "🎯 Evening Focus Mode")
-                THUMBS=("1f307" "1f307" "2728" "1f305" "1f3af")
-              fi
+              TITLES=("🌇 Evening Chill Squad" "🌆 Golden Hour Gaming" "✨ Evening Wind-Down" "🌅 Sunset Gaming Time" "🎯 Evening Focus Mode")
+              THUMBS=("1f307" "1f307" "2728" "1f305" "1f3af")
               ;;
             "night") 
-              if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "sunday_prep" ]]; then
-                TITLES=("🌙 Sunday Night Feels" "✨ Weekend Finale" "🌟 Sunday Evening Chill" "🦉 Sunday Night Owls" "💫 Weekend Closing")
-                THUMBS=("1f319" "2728" "1f31f" "1f989" "1f4ab")
-              elif [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
-                TITLES=("✨ Weekend Night Legends" "🦉 Weekend Night Owls" "🌙 Weekend Midnight Squad" "⭐ Weekend Night Vibes" "🌟 Late Weekend Gaming")
-                THUMBS=("2728" "1f989" "1f319" "2b50" "1f31f")
-              else
-                TITLES=("🦉 Late Night Squad" "🌙 Midnight Gaming Club" "⭐ Night Owl Assembly" "✨ Nocturnal Gamers" "🌟 Late Night Energy")
-                THUMBS=("1f989" "1f319" "2b50" "2728" "1f31f")
-              fi
+              TITLES=("🦉 Late Night Squad" "🌙 Midnight Gaming Club" "⭐ Night Owl Assembly" "✨ Nocturnal Gamers" "🌟 Late Night Energy")
+              THUMBS=("1f989" "1f319" "2b50" "2728" "1f31f")
               ;;
           esac
           
-          # Pick random title and thumb
           RANDOM_INDEX=$((RANDOM % ${#TITLES[@]}))
           TITLE="${TITLES[$RANDOM_INDEX]}"
           THUMB="${THUMBS[$RANDOM_INDEX]}"
@@ -506,38 +378,32 @@ jobs:
         run: |
           echo "📤 Sending Discord message..."
           
-          # Color scheme
           case "${{ steps.context.outputs.TYPE }}" in
-            "morning") COLOR=16766720 ;;  # Gold
-            "afternoon") COLOR=16763904 ;; # Orange
-            "evening") COLOR=16744448 ;;  # Red-orange
-            "night") COLOR=8947848 ;;     # Dark blue
+            "morning") COLOR=16766720 ;;
+            "afternoon") COLOR=16763904 ;;
+            "evening") COLOR=16744448 ;;
+            "night") COLOR=8947848 ;;
           esac
           
-          # Get content
           TITLE="${{ steps.ai_generation.outputs.TITLE }}"
           DESC="${{ steps.ai_generation.outputs.DESC_RAW }}"
           THUMB="${{ steps.ai_generation.outputs.THUMB }}"
           TIMESTAMP=$(TZ='Asia/Jakarta' date -u +%Y-%m-%dT%H:%M:%S.000Z)
           
-          # Create JSON with Python for proper escaping
           python3 << 'PYTHON_EOF'
           import json
           import os
           
-          title = os.environ.get('TITLE', 'Gaming Squad')
+          title = os.environ.get('TITLE', 'Skye Squad')
           desc_raw = os.environ.get('DESC', 'What\'s good everyone!')
           color = int(os.environ.get('COLOR', '16766720'))
           timestamp = os.environ.get('TIMESTAMP', '')
           thumb = os.environ.get('THUMB', '1f305')
           context = os.environ.get('CONTEXT', 'weekday')
           
-          # For weekend, add Skye role tag naturally in the same message
           if context == 'weekend':
-              # Add role tag naturally to the existing message
               desc = desc_raw.replace('siapa mau', '<@&1374047008829997157> siapa mau')
               if '<@&1374047008829997157>' not in desc:
-                  # If pattern not found, add at the beginning of second sentence
                   sentences = desc_raw.split('? ', 1)
                   if len(sentences) == 2:
                       desc = f"{sentences[0]}? <@&1374047008829997157> {sentences[1]}"
@@ -546,7 +412,6 @@ jobs:
           else:
               desc = desc_raw
           
-          # Add attribution
           desc += "\n> by server dev guanteng - <@399393175904714752>"
           
           embed = {
@@ -571,7 +436,6 @@ jobs:
           print("✅ Payload created")
           PYTHON_EOF
           
-          # Send to Discord
           curl -f -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
                -H "Content-Type: application/json" \
                --data-binary @/tmp/discord_payload.json
@@ -606,7 +470,6 @@ jobs:
         run: |
           echo "🎲 Sending random sticker..."
           
-          # Check if OpenWrt mode (no delay needed)
           if [[ "${{ steps.context.outputs.OPENWRT_MODE }}" == "true" ]]; then
             echo "🏠 OpenWrt mode - sending sticker immediately"
             sleep 1
@@ -615,7 +478,6 @@ jobs:
             sleep 3
           fi
           
-          # Context-aware stickers
           case "${{ steps.context.outputs.TYPE }}" in
             "morning")
               STICKERS=(
@@ -664,10 +526,9 @@ jobs:
           echo "================================"
           echo "🕐 Time: ${{ steps.context.outputs.CURRENT_TIME }} WIB (${{ steps.context.outputs.CURRENT_DAY }})"
           echo "🎯 Type: ${{ steps.context.outputs.TYPE }} (${{ steps.context.outputs.CONTEXT }})"
-          echo "🌟 Special: ${{ steps.context.outputs.SPECIAL_CONTEXT }}"
           echo "🌤️ Weather: ${{ steps.weather.outputs.WEATHER_INFO }}"
           echo "🤖 AI Success: ${{ steps.ai_generation.outputs.USE_AI }}"
           echo "🏠 OpenWrt Mode: ${{ steps.context.outputs.OPENWRT_MODE }}"
           echo "🧪 Test Mode: ${{ github.event.inputs.test_mode }}"
           echo "================================"
-          echo "✅ Fixed greeting workflow complete!"
+          echo "✅ Skye community greeting complete!"
