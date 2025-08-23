@@ -196,25 +196,33 @@ jobs:
           
           EXACT 2-SENTENCE STRUCTURE:
           
-          SENTENCE 1 (casual greeting asking about mood/activity):
-          - Start with casual greeting: "yooo", "wassup", "heyyyy", "ayooo", "brooo"
-          - Ask creatively about what they're doing, mood, day, vibe, feeling
-          - Use extended words: "wassuppppp", "how's everyone doinggg", "what's the vibeeeee"
-          - Examples: "yooo what's everyone up to rn?", "wassuppp how's the day treating y'all?", "heyyyy what's the mood like tonight?"
+          SENTENCE 1 (100% English slang - asking about mood/activity):
+          - Start with casual English greeting: "yooo", "wassup", "heyyyy", "ayooo", "brooo"
+          - Ask in ENGLISH about: what they're doing, mood, day, vibe, feeling
+          - Use extended English words: "wassuppppp", "how's everyone doinggg", "what's the vibeeeee"
+          - FULL ENGLISH examples: "yooo what's everyone up to rn?", "wassuppp how's the day treating y'all?", "heyyyy what's the mood like tonight?"
           
-          SENTENCE 2 (gaming invitation with weather - MANDATORY):
-          - PRIORITIZE: roblox, mobile legends/ml/emel (main games)
-          - Use natural Indonesian gaming slang: "mabar", "push rank", "main bareng", "yuk", "skuy"
-          - ALWAYS include weather mention: WEATHER_INFO_PLACEHOLDER
-          - Weather examples: "cuaca enak perfect buat gaming", "panas banget outside let's game inside", "hujan-hujan gini cocok main game"
-          - Examples: "yuk mabar roblox cuaca enak!", "siapa mau push rank emel WEATHER_INFO_PLACEHOLDER", "main ml bareng yuk WEATHER_INFO_PLACEHOLDER"
+          SENTENCE 2 (Indo-English mix - varied activity invitation based on context):
           
-          BE NATURAL:
-          - Type like you're actually texting friends on mobile
-          - Don't sound like AI - sound genuine, casual, spontaneous
-          - Mix languages naturally within each sentence
+          For MORNING (5-12): Mix of exercise, breakfast, light activities + some gaming
+          - "yuk jalan pagi bareng cuaca WEATHER_INFO_PLACEHOLDER enak!", "siapa mau sarapan sambil main roblox?"
           
-          Write ONLY the 2 sentences - exactly like you'd type on Discord mobile! Both sentences required!
+          For AFTERNOON (12-17): Mix of lunch, chill activities + gaming  
+          - "yuk makan siang bareng terus main ml?", "siapa mau nongkrong sambil gaming cuaca WEATHER_INFO_PLACEHOLDER?"
+          
+          For EVENING (17-21): Mix of dinner, hangout, gaming
+          - "yuk dinner bareng terus mabar roblox?", "siapa mau nongki sambil push rank ml cuaca WEATHER_INFO_PLACEHOLDER?"
+          
+          For NIGHT (21-5): Mostly gaming, late night activities
+          - "yuk begadang mabar roblox cuaca WEATHER_INFO_PLACEHOLDER!", "siapa mau push rank ml sampai pagi?"
+          
+          For WEEKEND: More relaxed, varied social activities
+          - "yuk nongkrong bareng main game?", "siapa mau jalan-jalan terus gaming sesi cuaca WEATHER_INFO_PLACEHOLDER?"
+          
+          ALWAYS include weather: WEATHER_INFO_PLACEHOLDER
+          Use Indonesian slang: "yuk", "siapa mau", "bareng", "terus", "sambil"
+          
+          Write ONLY the 2 sentences - natural like texting friends! Both sentences required!
           EOF
           
           # Replace placeholders
@@ -310,7 +318,7 @@ jobs:
             
             # Validate AI text - MUST have 2 sentences and gaming content
             SENTENCE_COUNT=$(echo "$AI_TEXT" | grep -o '[.!?]' | wc -l)
-            HAS_GAMING=$(echo "$AI_TEXT" | grep -iE "(roblox|mobile legends|ml|emel|mabar|push rank|main bareng|gaming|game|yuk|siapa mau)")
+            HAS_GAMING=$(echo "$AI_TEXT" | grep -iE "(roblox|mobile legends|ml|emel|mabar|push rank|main bareng|gaming|game|yuk|siapa mau|main|bareng|terus|sambil|nongkrong|jalan|sarapan|makan|dinner|begadang)")
             HAS_QUESTION=$(echo "$AI_TEXT" | grep -E "[?]")
             
             if [[ ${#AI_TEXT} -gt 50 && ${#AI_TEXT} -lt 350 && $SENTENCE_COUNT -ge 2 && -n "$HAS_GAMING" && -n "$HAS_QUESTION" ]]; then
@@ -349,12 +357,12 @@ jobs:
                   )
                 else
                   MESSAGES=(
-                    "yooooo morning legends, udah minum kopi atau masih zombie mode? perfect time buat chill roblox, ${WEATHER_MENTION}"
-                    "wassuppp early birds, how's everyone's morning vibe? gabut nih yuk main ml bareng, ${WEATHER_MENTION}"
-                    "heyyyy morning squad, feeling energetic atau masih males bangun? roblox sounds good rn, ${WEATHER_MENTION}"
-                    "skuy good morning gamers, sarapan apa hari ini? sambil nunggu yuk push rank emel, ${WEATHER_MENTION}"
-                    "brooo morning check-in, gimana tidur semalam? fresh enough buat ml session, ${WEATHER_MENTION} nih"
-                    "woiii pagi-pagi udah online aja, early bird energy maksimal nih! main roblox yuk, ${WEATHER_MENTION}"
+                    "yooooo morning legends, udah minum kopi atau masih zombie mode? yuk jalan pagi bareng terus main roblox, ${WEATHER_MENTION}"
+                    "wassuppp early birds, how's everyone's morning vibe? siapa mau sarapan sambil ngobrolin plan hari ini, ${WEATHER_MENTION}"
+                    "heyyyy morning squad, feeling energetic atau masih males bangun? perfect time buat workout ringan terus gaming, ${WEATHER_MENTION}"
+                    "skuy good morning gamers, sarapan apa hari ini? sambil planning mau ngapain siang nanti, ${WEATHER_MENTION}"
+                    "brooo morning check-in, gimana tidur semalam? fresh enough buat jalan-jalan or just chill main game, ${WEATHER_MENTION} nih"
+                    "woiii pagi-pagi udah online aja, early bird energy maksimal nih! yuk olahraga ringan terus main roblox, ${WEATHER_MENTION}"
                   )
                 fi
                 ;;
@@ -369,12 +377,12 @@ jobs:
                   )
                 else
                   MESSAGES=(
-                    "yooooo afternoon legends, lunch break udah atau masih busy? quick roblox session sounds nice, ${WEATHER_MENTION}"
-                    "wassuppp midday squad, afternoon slump hitting atau masih energetic? main ml chill, ${WEATHER_MENTION}"
-                    "heyyyy afternoon vibes, gimana hari kalian so far? break time dengan emel yuk, ${WEATHER_MENTION}"
-                    "skuy afternoon check, udah makan siang belum? sambil nunggu yuk mabar roblox sebentar, ${WEATHER_MENTION}"
-                    "brooo afternoon mood, productive day atau lagi gabut? perfect timing buat ml session, ${WEATHER_MENTION} nih"
-                    "woiii siang-siang gini enak banget main roblox, siapa free buat quick session? ${WEATHER_MENTION}"
+                    "yooooo afternoon legends, lunch break udah atau masih busy? yuk makan bareng terus main roblox sebentar, ${WEATHER_MENTION}"
+                    "wassuppp midday squad, afternoon slump hitting atau masih energetic? siapa mau nongkrong sambil gaming, ${WEATHER_MENTION}"
+                    "heyyyy afternoon vibes, gimana hari kalian so far? break time makan siang terus main emel, ${WEATHER_MENTION}"
+                    "skuy afternoon check, udah makan siang belum? yuk bareng-bareng terus gaming session ringan, ${WEATHER_MENTION}"
+                    "brooo afternoon mood, productive day atau lagi gabut? perfect timing buat lunch & chill gaming, ${WEATHER_MENTION} nih"
+                    "woiii siang-siang gini enak banget nongkrong, siapa free buat hangout + main roblox? ${WEATHER_MENTION}"
                   )
                 fi
                 ;;
@@ -389,12 +397,12 @@ jobs:
                   )
                 else
                   MESSAGES=(
-                    "yooooo evening squad, how was today treating y'all? winding down dengan roblox sounds perfect, ${WEATHER_MENTION}"
-                    "wassuppp golden hour gang, evening vibes hitting nice! siapa mau chill ml, ${WEATHER_MENTION}?"
-                    "heyyyy evening legends, day almost done nih! relax time dengan emel session, ${WEATHER_MENTION}"
-                    "skuy evening check-in, productive day atau challenging? roblox therapy time, ${WEATHER_MENTION}"
-                    "brooo evening mood, dinner udah atau lagi nyari makan? sambil main ml yuk, ${WEATHER_MENTION} nih"
-                    "woiii evening vibes enak banget, perfect time buat cozy roblox session! ${WEATHER_MENTION}"
+                    "yooooo evening squad, how was today treating y'all? winding down dinner bareng terus main roblox, ${WEATHER_MENTION}"
+                    "wassuppp golden hour gang, evening vibes hitting nice! siapa mau nongkrong terus chill gaming, ${WEATHER_MENTION}?"
+                    "heyyyy evening legends, day almost done nih! dinner time terus relaxing emel session, ${WEATHER_MENTION}"
+                    "skuy evening check-in, productive day atau challenging? perfect time buat hangout & gaming therapy, ${WEATHER_MENTION}"
+                    "brooo evening mood, dinner udah atau lagi nyari makan? yuk bareng-bareng terus main ml santai, ${WEATHER_MENTION} nih"
+                    "woiii evening vibes enak banget, perfect time buat dinner hangout + cozy roblox! ${WEATHER_MENTION}"
                   )
                 fi
                 ;;
