@@ -189,23 +189,32 @@ jobs:
           
           # Create ultra natural human-like prompt with 2-sentence structure
           cat > /tmp/prompt.txt << 'EOF'
-          Write 2 casual sentences for Indonesian Discord gaming friends:
+          You are typing a natural message to your Indonesian gaming friends on Discord. Write exactly 2 sentences with this structure:
           
-          SENTENCE 1: Casual greeting asking about mood/vibe
-          - Start: "yooo", "wassup", "heyyyy" 
-          - Ask about: what they're doing, how they feel, their vibe
-          - Example: "wassuppp everyone, how's the vibe tonight?"
-          
-          SENTENCE 2: Gaming invitation with weather
-          - MUST include: roblox OR mobile legends/ml/emel
-          - MUST include: "yuk", "siapa mau", "main bareng", "mabar", or "push rank"  
-          - MUST include weather: WEATHER_INFO_PLACEHOLDER
-          - Example: "yuk mabar roblox, cuaca enak perfect buat gaming!"
-          
-          Context: TYPE_PLACEHOLDER evening on CONTEXT_PLACEHOLDER
+          Context: TYPE_PLACEHOLDER on CONTEXT_PLACEHOLDER
           Weather: WEATHER_INFO_PLACEHOLDER
           
-          Write exactly 2 sentences, casual and natural like texting friends!
+          EXACT 2-SENTENCE STRUCTURE:
+          
+          SENTENCE 1 (casual greeting asking about mood/activity):
+          - Start with casual greeting: "yooo", "wassup", "heyyyy", "ayooo", "brooo"
+          - Ask creatively about what they're doing, mood, day, vibe, feeling
+          - Use extended words: "wassuppppp", "how's everyone doinggg", "what's the vibeeeee"
+          - Examples: "yooo what's everyone up to rn?", "wassuppp how's the day treating y'all?", "heyyyy what's the mood like tonight?"
+          
+          SENTENCE 2 (gaming invitation with weather - MANDATORY):
+          - PRIORITIZE: roblox, mobile legends/ml/emel (main games)
+          - Use natural Indonesian gaming slang: "mabar", "push rank", "main bareng", "yuk", "skuy"
+          - ALWAYS include weather mention: WEATHER_INFO_PLACEHOLDER
+          - Weather examples: "cuaca enak perfect buat gaming", "panas banget outside let's game inside", "hujan-hujan gini cocok main game"
+          - Examples: "yuk mabar roblox cuaca enak!", "siapa mau push rank emel WEATHER_INFO_PLACEHOLDER", "main ml bareng yuk WEATHER_INFO_PLACEHOLDER"
+          
+          BE NATURAL:
+          - Type like you're actually texting friends on mobile
+          - Don't sound like AI - sound genuine, casual, spontaneous
+          - Mix languages naturally within each sentence
+          
+          Write ONLY the 2 sentences - exactly like you'd type on Discord mobile! Both sentences required!
           EOF
           
           # Replace placeholders
@@ -299,16 +308,17 @@ jobs:
             AI_TEXT=$(cat /tmp/ai_response.txt)
             echo "🎯 AI generated: $AI_TEXT"
             
-            # Validate AI text - MUST have gaming content and reasonable length
+            # Validate AI text - MUST have 2 sentences and gaming content
+            SENTENCE_COUNT=$(echo "$AI_TEXT" | grep -o '[.!?]' | wc -l)
             HAS_GAMING=$(echo "$AI_TEXT" | grep -iE "(roblox|mobile legends|ml|emel|mabar|push rank|main bareng|gaming|game|yuk|siapa mau)")
             HAS_QUESTION=$(echo "$AI_TEXT" | grep -E "[?]")
             
-            if [[ ${#AI_TEXT} -gt 40 && ${#AI_TEXT} -lt 300 && -n "$HAS_GAMING" ]]; then
+            if [[ ${#AI_TEXT} -gt 50 && ${#AI_TEXT} -lt 350 && $SENTENCE_COUNT -ge 2 && -n "$HAS_GAMING" && -n "$HAS_QUESTION" ]]; then
               DESC_RAW="$AI_TEXT"
               USE_AI=true
-              echo "✅ AI text validated: ${#AI_TEXT} chars, has gaming content"
+              echo "✅ AI text validated: ${#AI_TEXT} chars, ${SENTENCE_COUNT} sentences, has gaming + question"
             else
-              echo "⚠️ AI text validation failed: ${#AI_TEXT} chars, gaming: ${HAS_GAMING:-missing}"
+              echo "⚠️ AI text validation failed: ${#AI_TEXT} chars, sentences: ${SENTENCE_COUNT}, gaming: ${HAS_GAMING:-missing}, question: ${HAS_QUESTION:-missing}"
               echo "   Raw text: $AI_TEXT"
               USE_AI=false
             fi
