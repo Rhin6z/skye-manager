@@ -1,14 +1,14 @@
 {
-  "Tanggal": "22 Agu 2025",
-  "Jam": "19:29:09 WIB",
-  "DateTime": "2025-08-22T12:29:09+00:00",
-  "Coordinates": "-2.97,122.00",
-  "Lintang": "2.97 LS",
-  "Bujur": "122.00 BT",
-  "Magnitude": "4.3",
-  "Kedalaman": "5 km",
-  "Wilayah": "Pusat gempa berada di darat 32 km tenggara Morowali",
-  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II-III Morowali",
-  "Shakemap": "20250822192909.mmi.jpg"
+  "Tanggal": "23 Agu 2025",
+  "Jam": "19:24:53 WIB",
+  "DateTime": "2025-08-23T12:24:53+00:00",
+  "Coordinates": "2.03,96.52",
+  "Lintang": "2.03 LU",
+  "Bujur": "96.52 BT",
+  "Magnitude": "5.8",
+  "Kedalaman": "12 km",
+  "Wilayah": "51 km Tenggara SINABANG-ACEH",
+  "Potensi": "Tidak berpotensi tsunami",
+  "Dirasakan": "-",
+  "Shakemap": "20250823192720.mmi.jpg"
 }
