@@ -208,7 +208,7 @@ jobs:
           # Get weather emoji for appropriate matching
           WEATHER_EMOJI="${{ steps.weather.outputs.WEATHER_EMOJI }}"
           
-          # Create a much simpler, more structured prompt
+          # Create a simpler, more structured prompt
           cat > /tmp/prompt.txt << EOF
           You're a hype admin for an Indonesian gaming Discord server called "Skye".
           
@@ -240,78 +240,78 @@ jobs:
           while [[ $ATTEMPT -le $MAX_ATTEMPTS && "$USE_AI" != "true" ]]; do
             echo "🔄 AI generation attempt $ATTEMPT of $MAX_ATTEMPTS"
             
-            python3 << 'PYTHON_EOF'
-            import json
-            import requests
-            import os
-            import sys
-            import re
+            python3 << EOF
+import json
+import requests
+import os
+import sys
+import re
+
+try:
+    with open('/tmp/prompt.txt', 'r') as f:
+        prompt = f.read().strip()
+    
+    api_key = os.environ.get('GEMINI_API_KEY')
+    if not api_key:
+        print("❌ No API key")
+        sys.exit(1)
+    
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={api_key}"
+    
+    payload = {
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {
+            "temperature": 0.4,  # Lower temperature for more deterministic output
+            "maxOutputTokens": 200,
+            "topP": 0.95,
+            "topK": 40
+        }
+    }
+    
+    response = requests.post(url, json=payload, timeout=20)
+    
+    if response.status_code == 200:
+        data = response.json()
+        if 'candidates' in data and len(data['candidates']) > 0:
+            ai_text = data['candidates'][0]['content']['parts'][0]['text'].strip()
             
-            try:
-                with open('/tmp/prompt.txt', 'r') as f:
-                    prompt = f.read().strip()
-                
-                api_key = os.environ.get('GEMINI_API_KEY')
-                if not api_key:
-                    print("❌ No API key")
-                    sys.exit(1)
-                
-                url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={api_key}"
-                
-                payload = {
-                    "contents": [{"parts": [{"text": prompt}]}],
-                    "generationConfig": {
-                        "temperature": 0.4,  # Lower temperature for more deterministic output
-                        "maxOutputTokens": 200,
-                        "topP": 0.95,
-                        "topK": 40
-                    }
-                }
-                
-                response = requests.post(url, json=payload, timeout=20)
-                
-                if response.status_code == 200:
-                    data = response.json()
-                    if 'candidates' in data and len(data['candidates']) > 0:
-                        ai_text = data['candidates'][0]['content']['parts'][0]['text'].strip()
-                        
-                        # Clean formatting and remove any line breaks
-                        clean_text = re.sub(r'\*\*([^*]+)\*\*', r'\1', ai_text)
-                        clean_text = re.sub(r'`([^`]+)`', r'\1', clean_text)
-                        clean_text = re.sub(r'\n+', ' ', clean_text)
-                        clean_text = ' '.join(clean_text.split())
-                        
-                        # Extract only the actual greeting (not explanations)
-                        lines = [line.strip() for line in ai_text.split('\n') if line.strip()]
-                        best_line = ""
-                        
-                        for line in lines:
-                            if ('?' in line and 
-                                (line.startswith('yooo') or 
-                                 line.startswith('wassup') or 
-                                 line.startswith('heyyy') or 
-                                 line.startswith('sup') or 
-                                 line.startswith('oi') or 
-                                 line.startswith('ayo') or
-                                 line.startswith('hello'))):
-                                best_line = line
-                                break
-                        
-                        if not best_line:
-                            best_line = clean_text
-                        
-                        with open('/tmp/ai_response.txt', 'w', encoding='utf-8') as f:
-                            f.write(best_line)
-                        print("✅ AI generation successful")
-                        sys.exit(0)
-                
-                print("❌ AI generation failed - invalid response")
-                sys.exit(1)
-                
-            except Exception as e:
-                print(f"❌ AI generation failed: {e}")
-                sys.exit(1)
-            PYTHON_EOF
+            # Clean formatting and remove any line breaks
+            clean_text = re.sub(r'\*\*([^*]+)\*\*', r'\1', ai_text)
+            clean_text = re.sub(r'`([^`]+)`', r'\1', clean_text)
+            clean_text = re.sub(r'\n+', ' ', clean_text)
+            clean_text = ' '.join(clean_text.split())
+            
+            # Extract only the actual greeting (not explanations)
+            lines = [line.strip() for line in ai_text.split('\n') if line.strip()]
+            best_line = ""
+            
+            for line in lines:
+                if ('?' in line and 
+                    (line.startswith('yooo') or 
+                     line.startswith('wassup') or 
+                     line.startswith('heyyy') or 
+                     line.startswith('sup') or 
+                     line.startswith('oi') or 
+                     line.startswith('ayo') or
+                     line.startswith('hello'))):
+                    best_line = line
+                    break
+            
+            if not best_line:
+                best_line = clean_text
+            
+            with open('/tmp/ai_response.txt', 'w', encoding='utf-8') as f:
+                f.write(best_line)
+            print("✅ AI generation successful")
+            sys.exit(0)
+    
+    print("❌ AI generation failed - invalid response")
+    sys.exit(1)
+    
+except Exception as e:
+    print(f"❌ AI generation failed: {e}")
+    sys.exit(1)
+EOF
             
             if [[ $? -eq 0 && -s /tmp/ai_response.txt ]]; then
               AI_TEXT=$(cat /tmp/ai_response.txt)
@@ -559,44 +559,44 @@ jobs:
           THUMB="${{ steps.ai_generation.outputs.THUMB }}"
           TIMESTAMP=$(TZ='Asia/Jakarta' date -u +%Y-%m-%dT%H:%M:%S.000Z)
           
-          python3 << 'PYTHON_EOF'
-          import json
-          import os
-          
-          title = os.environ.get('TITLE', 'Skye Squad')
-          desc_raw = os.environ.get('DESC', 'what\'s good everyone!')
-          color = int(os.environ.get('COLOR', '16766720'))
-          timestamp = os.environ.get('TIMESTAMP', '')
-          thumb = os.environ.get('THUMB', '1f305')
-          context = os.environ.get('CONTEXT', 'weekday')
-          
-          # Convert description to lowercase
-          desc = desc_raw.lower()
-          
-          # Add signature
-          desc += "\n> by server dev guanteng - <@399393175904714752>"
-          
-          embed = {
-              "title": title,
-              "description": desc,
-              "color": color,
-              "thumbnail": {
-                  "url": f"https://twemoji.maxcdn.com/v/latest/72x72/{thumb}.png"
-              },
-              "footer": {
-                  "text": "chill gaming vibes",
-                  "icon_url": "https://files.catbox.moe/npfh4e.jpg"
-              },
-              "timestamp": timestamp
-          }
-          
-          payload = {"embeds": [embed]}
-          
-          with open('/tmp/discord_payload.json', 'w', encoding='utf-8') as f:
-              json.dump(payload, f, ensure_ascii=False)
-          
-          print("✅ Payload created")
-          PYTHON_EOF
+          python3 << EOF
+import json
+import os
+
+title = os.environ.get('TITLE', 'Skye Squad')
+desc_raw = os.environ.get('DESC', 'what\'s good everyone!')
+color = int(os.environ.get('COLOR', '16766720'))
+timestamp = os.environ.get('TIMESTAMP', '')
+thumb = os.environ.get('THUMB', '1f305')
+context = os.environ.get('CONTEXT', 'weekday')
+
+# Convert description to lowercase
+desc = desc_raw.lower()
+
+# Add signature
+desc += "\n> by server dev guanteng - <@399393175904714752>"
+
+embed = {
+    "title": title,
+    "description": desc,
+    "color": color,
+    "thumbnail": {
+        "url": f"https://twemoji.maxcdn.com/v/latest/72x72/{thumb}.png"
+    },
+    "footer": {
+        "text": "chill gaming vibes",
+        "icon_url": "https://files.catbox.moe/npfh4e.jpg"
+    },
+    "timestamp": timestamp
+}
+
+payload = {"embeds": [embed]}
+
+with open('/tmp/discord_payload.json', 'w', encoding='utf-8') as f:
+    json.dump(payload, f, ensure_ascii=False)
+
+print("✅ Payload created")
+EOF
           
           curl -f -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" \
                -H "Content-Type: application/json" \
