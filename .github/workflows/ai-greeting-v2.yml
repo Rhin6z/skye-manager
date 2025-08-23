@@ -159,24 +159,6 @@ jobs:
           fi
           
           echo "WEATHER_INFO=$WEATHER_INFO" >> $GITHUB_OUTPUT
-          
-          # Extract weather type for activity matching
-          WEATHER_TYPE="normal"
-          if [[ "$WEATHER_INFO" == *"hujan"* ]]; then
-            WEATHER_TYPE="rainy"
-          elif [[ "$WEATHER_INFO" == *"gerimis"* ]]; then
-            WEATHER_TYPE="rainy"
-          elif [[ "$WEATHER_INFO" == *"berawan"* ]]; then
-            WEATHER_TYPE="cloudy"
-          elif [[ "$WEATHER_INFO" == *"mendung"* ]]; then
-            WEATHER_TYPE="cloudy"
-          elif [[ "$WEATHER_INFO" == *"cerah"* ]]; then
-            WEATHER_TYPE="sunny"
-          elif [[ "$WEATHER_INFO" == *"panas"* ]]; then
-            WEATHER_TYPE="sunny"
-          fi
-          
-          echo "WEATHER_TYPE=$WEATHER_TYPE" >> $GITHUB_OUTPUT
 
       - name: Generate AI Greeting
         id: ai_generation
@@ -184,53 +166,43 @@ jobs:
           echo "🤖 Generating AI greeting..."
           
           cat > /tmp/prompt.txt << 'EOF'
-          **role:** you are a hype admin for the indonesian gaming discord server "skye". your task is to write a daily greeting that feels authentic and engages the adult community.
-
-          **context for this message:**
-          * time: ${{ steps.context.outputs.TYPE }}
-          * day type: ${{ steps.context.outputs.CONTEXT }}
-          * weather: ${{ steps.weather.outputs.WEATHER_INFO }}
-
-          **CRITICAL FORMAT REQUIREMENT - FOLLOW EXACTLY:**
-          You MUST write exactly TWO sentences:
-          1. FIRST sentence: 100% English - start with hype opener, ask question
-          2. SECOND sentence: 80% Indonesian with some English game terms - start with invitation word
-
-          **hard rules**
-          1. write exactly two sentences total separated by space
-          2. sentence one is one hundred percent english
-          3. sentence two is about eighty percent indonesian you may mix game names or gamer slang in english
-          4. all lowercase only max two emojis if they fit
-          5. mild friendly toxicity allowed but keep it chill
-          6. if day type is weekend include the role tag <@&1374047008829997157> inside sentence two naturally on weekday do not include any tag the sentence structure must stay identical
-          7. weave weather naturally as a reason in sentence two
-          8. never use any dash characters in the generated message this includes minus hyphen and long dash
-          9. keep it creative and avoid repeating patterns
-          10. IMPORTANT: Weather context must match activity suggestions:
-              - For rainy/drizzly weather: Suggest indoor activities like voice chat, gaming sessions, watching movies, etc.
-              - For sunny/clear weather: Suggest outdoor activities when appropriate (morning walks, meetups, etc.)
-              - For cloudy weather: Suggest flexible activities that work indoors or outdoors
-              - Make sure the activity suggestion logically connects with the weather mentioned
-
-          **sentence one structure in english:**
-          * start with a hype opener: yoooo wasuiiip heyyy sup oi ayokkk yo team aight okay heads up
-          * ask a specific question about their current vibe or activity that matches time
-          * keep it punchy around ten to eighteen words
-          * end with question mark
-
-          **sentence two structure in indonesian:**
-          * start with invitation word: yuk gas ayo pada mau siapa mau
-          * suggest an activity that fits both time AND weather (indoor for rain, outdoor for clear when appropriate)
-          * weave weather as the reason for the suggested activity
-          * if weekend insert role tag naturally inside this sentence
-
-          **YOU MUST OUTPUT BOTH SENTENCES - DO NOT OUTPUT ONLY ONE SENTENCE**
-
-          **correct example format:**
-          heyyy morning squad, coffee or controller which quest are you speedrunning before life aggro hits? yuk ngopi dulu sambil warm up aim lima belas menit, cuaca cerah bikin fokus jadi ayo colong daily 🎮
-          EOF
+          **CONTEXT FOR THIS MESSAGE:**
+          - Time: ${{ steps.context.outputs.TYPE }}
+          - Day: ${{ steps.context.outputs.CONTEXT }}  
+          - Weather: ${{ steps.weather.outputs.WEATHER_INFO }}
           
-          AI_SUCCESS=false
+          **ROLE:** You are a hype admin for Indonesian gaming Discord server "Skye". Write a daily greeting.
+          
+          **CRITICAL FORMAT REQUIREMENT - MUST FOLLOW EXACTLY:**
+          Write exactly TWO complete sentences separated by a space:
+          
+          SENTENCE 1 (English only):
+          - Start with hype opener: yoooo, wassup, heyyy, sup, oi, ayokkk, yo
+          - Ask engaging question about current vibe/activity matching the time
+          - End with question mark
+          - 10-18 words total
+          
+          SENTENCE 2 (Indonesian with English game terms):
+          - Start with invitation: yuk, gas, ayo, pada mau, siapa mau
+          - Suggest activity fitting time + weather
+          - Include weather as reason naturally
+          - If weekend, include <@&1374047008829997157> tag naturally
+          - No tag on weekdays
+          
+          **EXAMPLES:**
+          heyyy morning squad, coffee or controller which quest are you speedrunning today? yuk ngopi dulu sambil warm up aim, cuaca cerah bikin fokus jadi perfect buat daily quest 🎮
+          
+          sup afternoon crew, post lunch energy hitting different or still food coma mode? gas quick match ml sambil ngadem, cuaca panas bikin mager jadi mending ranked push di AC ☕
+          
+          **RULES:**
+          - All lowercase 
+          - Max 2 emojis
+          - No dashes/hyphens
+          - Weather must match activity suggestions
+          - Must be creative, avoid templates
+          
+          Write the greeting now:
+          EOF
           
           python3 << 'PYTHON_EOF'
           import json
@@ -245,6 +217,7 @@ jobs:
               
               api_key = os.environ.get('GEMINI_API_KEY')
               if not api_key:
+                  print("❌ No API key")
                   sys.exit(1)
               
               url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={api_key}"
@@ -252,41 +225,49 @@ jobs:
               payload = {
                   "contents": [{"parts": [{"text": prompt}]}],
                   "generationConfig": {
-                      "temperature": 0.85,
-                      "maxOutputTokens": 200,
+                      "temperature": 0.8,
+                      "maxOutputTokens": 150,
                       "topP": 0.9
                   }
               }
               
-              response = requests.post(url, json=payload, timeout=25)
+              response = requests.post(url, json=payload, timeout=20)
               
               if response.status_code == 200:
                   data = response.json()
                   if 'candidates' in data and len(data['candidates']) > 0:
                       ai_text = data['candidates'][0]['content']['parts'][0]['text'].strip()
                       
-                      # Clean and extract the message
+                      # Clean formatting
                       clean_text = re.sub(r'\*\*([^*]+)\*\*', r'\1', ai_text)
-                      clean_text = re.sub(r'\*([^*]+)\*', r'\1', clean_text)
                       clean_text = re.sub(r'`([^`]+)`', r'\1', clean_text)
+                      clean_text = re.sub(r'\n+', ' ', clean_text)
+                      clean_text = ' '.join(clean_text.split())
                       
-                      # Find the best line (longest substantial content)
-                      lines = [line.strip() for line in clean_text.split('\n') if line.strip()]
+                      # Find actual greeting (not metadata)
+                      lines = [line.strip() for line in ai_text.split('\n') if line.strip()]
                       best_line = ""
                       
                       for line in lines:
-                          if (len(line) > 30 and 
-                              not line.startswith(('**', '#', '-', '*', 'Context:', 'Weather:', 'SENTENCE', 'TIME-BASED')) and
-                              not line.lower().startswith(('greeting:', 'message:', 'response:', 'output:'))):
-                              if len(line) > len(best_line):
+                          if (len(line) > 50 and 
+                              not line.startswith(('**', '#', '-', '*', 'Context:', 'Weather:', 'Time:', 'Day:')) and
+                              not line.lower().startswith(('greeting:', 'message:', 'response:', 'output:', 'here'))) :
+                              if ('?' in line and 
+                                  any(word in line.lower() for word in ['yuk', 'gas', 'ayo', 'pada', 'siapa']) and
+                                  any(word in line.lower() for word in ['yoooo', 'wassup', 'heyyy', 'sup', 'oi', 'ayokkk', 'yo'])):
                                   best_line = line
+                                  break
                       
-                      if best_line:
+                      if not best_line and clean_text:
+                          best_line = clean_text
+                      
+                      if best_line and len(best_line) > 50:
                           with open('/tmp/ai_response.txt', 'w', encoding='utf-8') as f:
                               f.write(best_line)
                           print("✅ AI generation successful")
                           sys.exit(0)
               
+              print("❌ AI generation failed - invalid response")
               sys.exit(1)
               
           except Exception as e:
@@ -296,55 +277,26 @@ jobs:
           
           if [[ $? -eq 0 && -s /tmp/ai_response.txt ]]; then
             AI_TEXT=$(cat /tmp/ai_response.txt)
-            WEATHER_MENTION="${{ steps.weather.outputs.WEATHER_INFO }}"
-            WEATHER_TYPE="${{ steps.weather.outputs.WEATHER_TYPE }}"
             echo "🎯 AI generated: $AI_TEXT"
             
-            # Strict validation for proper 2-sentence English-Indonesian structure
+            # Validation
             SENTENCE_COUNT=$(echo "$AI_TEXT" | grep -o '[.!?]' | wc -l)
+            HAS_ENGLISH_START=$(echo "$AI_TEXT" | grep -iE "^(yooo|wassup|heyyy|sup|oi|ayokkk|yo)" || echo "")
+            HAS_INDONESIAN=$(echo "$AI_TEXT" | grep -iE "(yuk|siapa mau|gas|ayo|pada mau)" || echo "")
+            HAS_WEATHER=$(echo "$AI_TEXT" | grep -iE "(cuaca|hujan|gerimis|cerah|panas|dingin|sejuk|berawan|mendung)" || echo "")
+            HAS_QUESTION=$(echo "$AI_TEXT" | grep -E "\?" || echo "")
             
-            # Check for English greeting at the start
-            HAS_ENGLISH_START=$(echo "$AI_TEXT" | grep -iE "^(yooo|wassup|heyyyy|sup|ayooo|heyyy|oi|yo|aight|okay)")
-            
-            # Check for Indonesian invitation words  
-            HAS_INDONESIAN=$(echo "$AI_TEXT" | grep -iE "(yuk|siapa mau|gas|ayo|pada mau)")
-            
-            # Check for gaming activities
-            HAS_ACTIVITY=$(echo "$AI_TEXT" | grep -iE "(mabar|valo|valorant|ml|mobile legends|roblox|gaming|game|voice chat|push rank|nongkrong|begadang)")
-            
-            # Check for weather mention
-            HAS_WEATHER=$(echo "$AI_TEXT" | grep -iE "(cuaca|hujan|gerimis|cerah|panas|dingin|sejuk|berawan|mendung)")
-            
-            # Check for proper sentence separation (. or ? followed by space and word)
-            HAS_SENTENCE_BREAK=$(echo "$AI_TEXT" | grep -E '[.?]\s+[a-z]')
-            
-            # Weather context validation
-            WEATHER_ACTIVITY_MATCH=true
-            
-            # Check for weather-appropriate activities
-            if [[ "$WEATHER_TYPE" == "rainy" ]]; then
-              # For rainy weather, should suggest indoor activities
-              if [[ "$AI_TEXT" == *"jogging"* || "$AI_TEXT" == *"jalan-jalan"* || "$AI_TEXT" == *"olahraga pagi"* ]]; then
-                WEATHER_ACTIVITY_MATCH=false
-                echo "⚠️ Weather-activity mismatch: Outdoor activities suggested for rainy weather"
-              fi
-            fi
-            
-            # Strict validation - must have all components
-            if [[ ${#AI_TEXT} -gt 70 && ${#AI_TEXT} -lt 280 && $SENTENCE_COUNT -ge 2 && -n "$HAS_ENGLISH_START" && -n "$HAS_INDONESIAN" && -n "$HAS_ACTIVITY" && -n "$HAS_WEATHER" && -n "$HAS_SENTENCE_BREAK" && "$WEATHER_ACTIVITY_MATCH" == "true" ]]; then
+            if [[ ${#AI_TEXT} -gt 60 && ${#AI_TEXT} -lt 300 && $SENTENCE_COUNT -ge 1 && -n "$HAS_ENGLISH_START" && -n "$HAS_INDONESIAN" && -n "$HAS_WEATHER" && -n "$HAS_QUESTION" ]]; then
               DESC_RAW="$AI_TEXT"
               USE_AI=true
-              echo "✅ AI validated: ${#AI_TEXT} chars, proper English-Indonesian structure with weather-appropriate activities"
+              echo "✅ AI validated: ${#AI_TEXT} chars"
             else
-              echo "⚠️ AI validation failed: ${#AI_TEXT} chars"
+              echo "⚠️ AI validation failed"
+              echo "   Length: ${#AI_TEXT} chars"
               echo "   English start: ${HAS_ENGLISH_START:-missing}"
               echo "   Indonesian: ${HAS_INDONESIAN:-missing}" 
-              echo "   Activity: ${HAS_ACTIVITY:-missing}"
               echo "   Weather: ${HAS_WEATHER:-missing}"
-              echo "   Sentence break: ${HAS_SENTENCE_BREAK:-missing}"
-              echo "   Weather-activity match: $WEATHER_ACTIVITY_MATCH"
-              echo "   Sentence count: $SENTENCE_COUNT"
-              echo "   Raw text: $AI_TEXT"
+              echo "   Question: ${HAS_QUESTION:-missing}"
               USE_AI=false
             fi
           else
@@ -353,203 +305,74 @@ jobs:
           fi
           
           if [[ "$USE_AI" != "true" ]]; then
-            echo "🎲 Using enhanced fallback system..."
+            echo "🎲 Using fallback system..."
             
             WEATHER_MENTION="${{ steps.weather.outputs.WEATHER_INFO }}"
-            WEATHER_TYPE="${{ steps.weather.outputs.WEATHER_TYPE }}"
             declare -a MESSAGES
             
             case "${{ steps.context.outputs.TYPE }}" in
               "morning")
-                if [[ "$WEATHER_TYPE" == "rainy" ]]; then
+                MESSAGES=(
+                  "yooooo morning squad, coffee hitting different or controller calling your name already? yuk <@&1374047008829997157> ngopi sambil warm up aim dulu, ${WEATHER_MENTION} perfect buat fokus grinding!"
+                  "wassuppp early birds, energy level udah full atau masih butuh boost? gas <@&1374047008829997157> sarapan sambil daily quest ringan, ${WEATHER_MENTION} bikin mood enak buat main!"
+                  "heyyy morning legends, dreams about ranked or nightmares about losing streak? ayo <@&1374047008829997157> stretching dulu terus langsung gaming, ${WEATHER_MENTION} cocok banget!"
+                  "sup morning crew, ready to conquer today atau masih half asleep mode? yuk <@&1374047008829997157> planning strategy sambil ngopi, ${WEATHER_MENTION} enak nih!"
+                )
+                if [[ "${{ steps.context.outputs.CONTEXT }}" != "weekend" ]]; then
                   MESSAGES=(
-                    "yooooo morning squad, how's everyone feeling with this rainy start? yuk <@&1374047008829997157> ngumpul di voice chat sambil sarapan bareng, ${WEATHER_MENTION} perfect buat santai di dalam rumah!"
-                    "wassuppp early birds, getting cozy with the rain sounds? siapa mau <@&1374047008829997157> main game sambil ngopi hangat, ${WEATHER_MENTION} bikin betah di rumah!"
-                    "heyyyy morning legends, rain keeping you in bed or already up grinding? gas <@&1374047008829997157> mabar game sambil dengerin musik, ${WEATHER_MENTION} enak banget buat indoor gaming!"
-                    "sup good morning gamers, rain hitting your windows making that perfect ambience? yuk <@&1374047008829997157> main roblox sambil sarapan, ${WEATHER_MENTION} bikin perfect buat grinding di dalam!"
+                    "yooooo morning squad, coffee hitting different or controller calling your name already? yuk ngopi sambil warm up aim dulu, ${WEATHER_MENTION} perfect buat fokus grinding!"
+                    "wassuppp early birds, energy level udah full atau masih butuh boost? gas sarapan sambil daily quest ringan, ${WEATHER_MENTION} bikin mood enak buat main!"
+                    "heyyy morning legends, dreams about ranked or nightmares about losing streak? ayo stretching dulu terus langsung gaming, ${WEATHER_MENTION} cocok banget!"
+                    "sup morning crew, ready to conquer today atau masih half asleep mode? yuk planning strategy sambil ngopi, ${WEATHER_MENTION} enak nih!"
                   )
-                  if [[ "${{ steps.context.outputs.CONTEXT }}" != "weekend" ]]; then
-                    MESSAGES=(
-                      "yooooo morning squad, how's everyone feeling with this rainy start? yuk ngumpul di voice chat sambil sarapan bareng, ${WEATHER_MENTION} perfect buat santai di dalam rumah!"
-                      "wassuppp early birds, getting cozy with the rain sounds? siapa mau main game sambil ngopi hangat, ${WEATHER_MENTION} bikin betah di rumah!"
-                      "heyyyy morning legends, rain keeping you in bed or already up grinding? gas mabar game sambil dengerin musik, ${WEATHER_MENTION} enak banget buat indoor gaming!"
-                      "sup good morning gamers, rain hitting your windows making that perfect ambience? yuk main roblox sambil sarapan, ${WEATHER_MENTION} bikin perfect buat grinding di dalam!"
-                    )
-                  fi
-                elif [[ "$WEATHER_TYPE" == "cloudy" ]]; then
-                  MESSAGES=(
-                    "yooooo morning squad, cloudy vibes got you feeling chill or sleepy? yuk <@&1374047008829997157> jalan santai sambil ngopi pagi, ${WEATHER_MENTION} enak buat aktivitas ringan!"
-                    "wassuppp early birds, energy level gimana with these clouds? siapa mau <@&1374047008829997157> workout ringan di teras terus sarapan bareng, ${WEATHER_MENTION} adem gak panas!"
-                    "heyyyy morning legends, cloudy start making you productive or lazy? gas <@&1374047008829997157> planning day ini sambil nongkrong santai, ${WEATHER_MENTION} nyaman buat ngobrol!"
-                    "sup good morning gamers, cloudy weather got you in that perfect mood? yuk <@&1374047008829997157> light stretching dulu terus gaming session, ${WEATHER_MENTION} pas banget buat fokus!"
-                  )
-                  if [[ "${{ steps.context.outputs.CONTEXT }}" != "weekend" ]]; then
-                    MESSAGES=(
-                      "yooooo morning squad, cloudy vibes got you feeling chill or sleepy? yuk jalan santai sambil ngopi pagi, ${WEATHER_MENTION} enak buat aktivitas ringan!"
-                      "wassuppp early birds, energy level gimana with these clouds? siapa mau workout ringan di teras terus sarapan bareng, ${WEATHER_MENTION} adem gak panas!"
-                      "heyyyy morning legends, cloudy start making you productive or lazy? gas planning day ini sambil nongkrong santai, ${WEATHER_MENTION} nyaman buat ngobrol!"
-                      "sup good morning gamers, cloudy weather got you in that perfect mood? yuk light stretching dulu terus gaming session, ${WEATHER_MENTION} pas banget buat fokus!"
-                    )
-                  fi
-                else
-                  MESSAGES=(
-                    "yooooo morning squad, sunshine energy flowing through yet? yuk <@&1374047008829997157> jogging pagi terus sarapan bareng, ${WEATHER_MENTION} perfect buat outdoor activity!"
-                    "wassuppp early birds, feeling that morning freshness? siapa mau <@&1374047008829997157> olahraga ringan di taman terus main roblox, ${WEATHER_MENTION} cerah bikin semangat!"
-                    "heyyyy morning legends, day looking bright or still sleepy mode? gas <@&1374047008829997157> jalan-jalan pagi terus mampir kedai kopi, ${WEATHER_MENTION} enak banget buat keluar!"
-                    "sup good morning gamers, ready to conquer this bright day? yuk <@&1374047008829997157> morning routine di luar terus gaming session, ${WEATHER_MENTION} bikin fresh!"
-                  )
-                  if [[ "${{ steps.context.outputs.CONTEXT }}" != "weekend" ]]; then
-                    MESSAGES=(
-                      "yooooo morning squad, sunshine energy flowing through yet? yuk jogging pagi terus sarapan bareng, ${WEATHER_MENTION} perfect buat outdoor activity!"
-                      "wassuppp early birds, feeling that morning freshness? siapa mau olahraga ringan di taman terus main roblox, ${WEATHER_MENTION} cerah bikin semangat!"
-                      "heyyyy morning legends, day looking bright or still sleepy mode? gas jalan-jalan pagi terus mampir kedai kopi, ${WEATHER_MENTION} enak banget buat keluar!"
-                      "sup good morning gamers, ready to conquer this bright day? yuk morning routine di luar terus gaming session, ${WEATHER_MENTION} bikin fresh!"
-                    )
-                  fi
                 fi
                 ;;
               "afternoon")
-                if [[ "$WEATHER_TYPE" == "rainy" ]]; then
+                MESSAGES=(
+                  "yooooo afternoon vibes, lunch coma hitting atau energy masih tinggi banget? yuk <@&1374047008829997157> quick match ml sambil digest, ${WEATHER_MENTION} pas buat santai gaming!"
+                  "wassuppp midday squad, productivity tinggi atau udah mulai burnout? siapa mau <@&1374047008829997157> aram party sambil ngobrol, ${WEATHER_MENTION} bikin pengen ngadem!"
+                  "heyyy afternoon crew, grind mode on atau break time calling? gas <@&1374047008829997157> push rank valo sambil makan siang, ${WEATHER_MENTION} enak banget!"
+                  "sup afternoon legends, motivation still high atau udah weekend mode? ayo <@&1374047008829997157> roblox party sambil chill, ${WEATHER_MENTION} perfect timing!"
+                )
+                if [[ "${{ steps.context.outputs.CONTEXT }}" != "weekend" ]]; then
                   MESSAGES=(
-                    "yooooo afternoon vibes, rain making you sleepy or extra focused? yuk <@&1374047008829997157> voice chat sambil mabar valo, ${WEATHER_MENTION} perfect buat gaming marathon di dalam!"
-                    "wassuppp midday squad, rain hitting hard outside? siapa mau <@&1374047008829997157> nonton film bareng di discord, ${WEATHER_MENTION} cocok buat indoor chill!"
-                    "heyyyy afternoon legends, lunch done while watching the rain? gas <@&1374047008829997157> push rank ml sambil santai di rumah, ${WEATHER_MENTION} enak banget buat fokus gaming!"
-                    "sup afternoon crew, rain got you in that perfect gaming mood? ayo <@&1374047008829997157> hangout di voice channel sambil grinding, ${WEATHER_MENTION} bikin betah di dalam ruangan!"
+                    "yooooo afternoon vibes, lunch coma hitting atau energy masih tinggi banget? yuk quick match ml sambil digest, ${WEATHER_MENTION} pas buat santai gaming!"
+                    "wassuppp midday squad, productivity tinggi atau udah mulai burnout? siapa mau aram party sambil ngobrol, ${WEATHER_MENTION} bikin pengen ngadem!"
+                    "heyyy afternoon crew, grind mode on atau break time calling? gas push rank valo sambil makan siang, ${WEATHER_MENTION} enak banget!"
+                    "sup afternoon legends, motivation still high atau udah weekend mode? ayo roblox party sambil chill, ${WEATHER_MENTION} perfect timing!"
                   )
-                  if [[ "${{ steps.context.outputs.CONTEXT }}" != "weekend" ]]; then
-                    MESSAGES=(
-                      "yooooo afternoon vibes, rain making you sleepy or extra focused? yuk voice chat sambil mabar valo, ${WEATHER_MENTION} perfect buat gaming marathon di dalam!"
-                      "wassuppp midday squad, rain hitting hard outside? siapa mau nonton film bareng di discord, ${WEATHER_MENTION} cocok buat indoor chill!"
-                      "heyyyy afternoon legends, lunch done while watching the rain? gas push rank ml sambil santai di rumah, ${WEATHER_MENTION} enak banget buat fokus gaming!"
-                      "sup afternoon crew, rain got you in that perfect gaming mood? ayo hangout di voice channel sambil grinding, ${WEATHER_MENTION} bikin betah di dalam ruangan!"
-                    )
-                  fi
-                elif [[ "$WEATHER_TYPE" == "cloudy" ]]; then
-                  MESSAGES=(
-                    "yooooo afternoon vibes, clouds giving you that perfect gaming light? yuk <@&1374047008829997157> makan siang bareng terus mabar ml, ${WEATHER_MENTION} enak buat santai!"
-                    "wassuppp midday squad, enjoying the cool cloudy afternoon? siapa mau <@&1374047008829997157> jalan ke cafe terus gaming mobile, ${WEATHER_MENTION} pas banget gak panas!"
-                    "heyyyy afternoon legends, feeling those chill cloudy vibes? gas <@&1374047008829997157> nongkrong santai sambil main roblox, ${WEATHER_MENTION} adem buat hangout!"
-                    "sup afternoon crew, clouds making the perfect afternoon ambience? ayo <@&1374047008829997157> ke mall sambil planning mabar nanti malem, ${WEATHER_MENTION} enak buat jalan-jalan!"
-                  )
-                  if [[ "${{ steps.context.outputs.CONTEXT }}" != "weekend" ]]; then
-                    MESSAGES=(
-                      "yooooo afternoon vibes, clouds giving you that perfect gaming light? yuk makan siang bareng terus mabar ml, ${WEATHER_MENTION} enak buat santai!"
-                      "wassuppp midday squad, enjoying the cool cloudy afternoon? siapa mau jalan ke cafe terus gaming mobile, ${WEATHER_MENTION} pas banget gak panas!"
-                      "heyyyy afternoon legends, feeling those chill cloudy vibes? gas nongkrong santai sambil main roblox, ${WEATHER_MENTION} adem buat hangout!"
-                      "sup afternoon crew, clouds making the perfect afternoon ambience? ayo planning mabar nanti malem sambil makan siang, ${WEATHER_MENTION} enak buat istirahat sejenak!"
-                    )
-                  fi
-                else
-                  MESSAGES=(
-                    "yooooo afternoon vibes, sun shining on your gaming setup? yuk <@&1374047008829997157> makan siang di outdoor spot terus mabar, ${WEATHER_MENTION} enak buat jalan keluar!"
-                    "wassuppp midday squad, feeling energized by the sun? siapa mau <@&1374047008829997157> mampir ke taman sambil chill gaming, ${WEATHER_MENTION} cerah perfect buat aktivitas outdoor!"
-                    "heyyyy afternoon legends, tan lines or screen time this sunny day? gas <@&1374047008829997157> jalan-jalan sore terus nongkrong, ${WEATHER_MENTION} bagus buat keluar sebentar!"
-                    "sup afternoon crew, sunshine making you active or wanting shade? ayo <@&1374047008829997157> hangout di cafe outdoor sambil main mobile games, ${WEATHER_MENTION} cerah ceria!"
-                  )
-                  if [[ "${{ steps.context.outputs.CONTEXT }}" != "weekend" ]]; then
-                    MESSAGES=(
-                      "yooooo afternoon vibes, sun shining on your gaming setup? yuk makan siang di outdoor spot terus mabar, ${WEATHER_MENTION} enak buat jalan keluar!"
-                      "wassuppp midday squad, feeling energized by the sun? siapa mau mampir ke taman sambil chill gaming, ${WEATHER_MENTION} cerah perfect buat aktivitas outdoor!"
-                      "heyyyy afternoon legends, tan lines or screen time this sunny day? gas jalan-jalan sore terus nongkrong, ${WEATHER_MENTION} bagus buat keluar sebentar!"
-                      "sup afternoon crew, sunshine making you active or wanting shade? ayo hangout di cafe outdoor sambil main mobile games, ${WEATHER_MENTION} cerah ceria!"
-                    )
-                  fi
                 fi
                 ;;
               "evening")
-                if [[ "$WEATHER_TYPE" == "rainy" ]]; then
+                MESSAGES=(
+                  "yooooo evening squad, day was productive atau disaster yang indah? gas <@&1374047008829997157> dinner sambil voice chat, ${WEATHER_MENTION} bikin mood relaxing!"
+                  "wassuppp golden hour gang, winding down atau masih full energy? yuk <@&1374047008829997157> mabar ml sambil sunset vibes, ${WEATHER_MENTION} aesthetic banget!"
+                  "heyyy evening crew, tired dari seharian atau ready for night session? ayo <@&1374047008829997157> push rank sambil makan malam, ${WEATHER_MENTION} pas!"
+                  "sup evening legends, chores done atau masih ada PR hidup? siapa mau <@&1374047008829997157> gaming marathon prep, ${WEATHER_MENTION} cocok buat focus!"
+                )
+                if [[ "${{ steps.context.outputs.CONTEXT }}" != "weekend" ]]; then
                   MESSAGES=(
-                    "yooooo evening squad, rain setting that perfect gaming mood? yuk <@&1374047008829997157> voice chat sambil dinner delivery, ${WEATHER_MENTION} bikin perfect buat mabar di rumah!"
-                    "wassuppp golden hour gang, rain keeping you indoors tonight? siapa mau <@&1374047008829997157> movie night di discord sambil gaming breaks, ${WEATHER_MENTION} cocok banget buat cozy night in!"
-                    "heyyyy evening legends, rain soundtrack hitting different tonight? gas <@&1374047008829997157> mabar valo tournament kita sendiri, ${WEATHER_MENTION} bikin fokus maksimal di dalam!"
-                    "sup evening mood check, cozy with the rain sounds? yuk <@&1374047008829997157> makan malam delivery terus marathon gaming, ${WEATHER_MENTION} perfect buat stay home activities!"
+                    "yooooo evening squad, day was productive atau disaster yang indah? gas dinner sambil voice chat, ${WEATHER_MENTION} bikin mood relaxing!"
+                    "wassuppp golden hour gang, winding down atau masih full energy? yuk mabar ml sambil sunset vibes, ${WEATHER_MENTION} aesthetic banget!"
+                    "heyyy evening crew, tired dari seharian atau ready for night session? ayo push rank sambil makan malam, ${WEATHER_MENTION} pas!"
+                    "sup evening legends, chores done atau masih ada PR hidup? siapa mau gaming marathon prep, ${WEATHER_MENTION} cocok buat focus!"
                   )
-                  if [[ "${{ steps.context.outputs.CONTEXT }}" != "weekend" ]]; then
-                    MESSAGES=(
-                      "yooooo evening squad, rain setting that perfect gaming mood? yuk voice chat sambil dinner delivery, ${WEATHER_MENTION} bikin perfect buat mabar di rumah!"
-                      "wassuppp golden hour gang, rain keeping you indoors tonight? siapa mau movie night di discord sambil gaming breaks, ${WEATHER_MENTION} cocok banget buat cozy night in!"
-                      "heyyyy evening legends, rain soundtrack hitting different tonight? gas mabar valo tournament kita sendiri, ${WEATHER_MENTION} bikin fokus maksimal di dalam!"
-                      "sup evening mood check, cozy with the rain sounds? yuk makan malam delivery terus marathon gaming, ${WEATHER_MENTION} perfect buat stay home activities!"
-                    )
-                  fi
-                elif [[ "$WEATHER_TYPE" == "cloudy" ]]; then
-                  MESSAGES=(
-                    "yooooo evening squad, clouds making that perfect dim gaming light? yuk <@&1374047008829997157> makan malem di restoran terus lanjut discord, ${WEATHER_MENTION} enak buat keluar sebentar!"
-                    "wassuppp golden hour gang, cloudy evening got you in the mood? siapa mau <@&1374047008829997157> jalan-jalan sore sambil planning mabar, ${WEATHER_MENTION} adem banget nih!"
-                    "heyyyy evening legends, clouds bringing the chill evening vibes? gas <@&1374047008829997157> nongkrong di cafe terus mabar mobile, ${WEATHER_MENTION} nyaman buat hangout!"
-                    "sup evening mood check, feeling the cloudy evening energy? yuk <@&1374047008829997157> dinner bareng terus voice chat session, ${WEATHER_MENTION} perfect buat aktivitas fleksibel!"
-                  )
-                  if [[ "${{ steps.context.outputs.CONTEXT }}" != "weekend" ]]; then
-                    MESSAGES=(
-                      "yooooo evening squad, clouds making that perfect dim gaming light? yuk makan malem di restoran terus lanjut discord, ${WEATHER_MENTION} enak buat keluar sebentar!"
-                      "wassuppp golden hour gang, cloudy evening got you in the mood? siapa mau jalan-jalan sore sambil planning mabar, ${WEATHER_MENTION} adem banget nih!"
-                      "heyyyy evening legends, clouds bringing the chill evening vibes? gas nongkrong di cafe terus mabar mobile, ${WEATHER_MENTION} nyaman buat hangout!"
-                      "sup evening mood check, feeling the cloudy evening energy? yuk dinner bareng terus voice chat session, ${WEATHER_MENTION} perfect buat aktivitas fleksibel!"
-                    )
-                  fi
-                else
-                  MESSAGES=(
-                    "yooooo evening squad, clear skies making for a perfect night? yuk <@&1374047008829997157> dinner di tempat outdoor terus lanjut gaming, ${WEATHER_MENTION} enak buat keluar malam ini!"
-                    "wassuppp golden hour gang, sunset looking perfect for an evening out? siapa mau <@&1374047008829997157> jalan-jalan malam terus nongkrong sambil main game, ${WEATHER_MENTION} bagus banget buat aktivitas outdoor!"
-                    "heyyyy evening legends, stars visible yet on this clear night? gas <@&1374047008829997157> makan malem di rooftop terus mabar, ${WEATHER_MENTION} pas buat hangout outdoor!"
-                    "sup evening mood check, night air feeling refreshing? yuk <@&1374047008829997157> hangout di outdoor cafe terus voice chat, ${WEATHER_MENTION} enak buat keluar rumah sejenak!"
-                  )
-                  if [[ "${{ steps.context.outputs.CONTEXT }}" != "weekend" ]]; then
-                    MESSAGES=(
-                      "yooooo evening squad, clear skies making for a perfect night? yuk dinner di tempat outdoor terus lanjut gaming, ${WEATHER_MENTION} enak buat keluar malam ini!"
-                      "wassuppp golden hour gang, sunset looking perfect for an evening out? siapa mau jalan-jalan malam terus nongkrong sambil main game, ${WEATHER_MENTION} bagus banget buat aktivitas outdoor!"
-                      "heyyyy evening legends, stars visible yet on this clear night? gas makan malem di rooftop terus mabar, ${WEATHER_MENTION} pas buat hangout outdoor!"
-                      "sup evening mood check, night air feeling refreshing? yuk hangout di outdoor cafe terus voice chat, ${WEATHER_MENTION} enak buat keluar rumah sejenak!"
-                    )
-                  fi
                 fi
                 ;;
               "night")
-                if [[ "$WEATHER_TYPE" == "rainy" ]]; then
+                MESSAGES=(
+                  "yooooo night owls, insomnia squad atau pilihan begadang for fun? perfect time <@&1374047008829997157> marathon gaming sambil vibing, ${WEATHER_MENTION} enak buat late night session!"
+                  "wassuppp midnight legends, peaceful hours atau chaos di ranked? siapa mau <@&1374047008829997157> grind sampai pagi sambil ngobrol, ${WEATHER_MENTION} bikin betah!"
+                  "heyyy nocturnal gamers, night hits different atau sama aja? gas <@&1374047008829997157> push rank ml sampai subuh, ${WEATHER_MENTION} perfect buat focus!"
+                  "sup late night squad, bocil udah tidur semua nih freedom time! ayo <@&1374047008829997157> party games sambil ketawa, ${WEATHER_MENTION} cocok buat chill!"
+                )
+                if [[ "${{ steps.context.outputs.CONTEXT }}" != "weekend" ]]; then
                   MESSAGES=(
-                    "yooooo night owls, rain making that perfect sleep ambience but you're gaming instead? perfect time <@&1374047008829997157> begadang voice chat sambil mabar, ${WEATHER_MENTION} bikin fokus maksimal di dalam!"
-                    "wassuppp midnight squad, rain hitting your roof while you grind? siapa mau <@&1374047008829997157> marathon horror games sambil dengerin hujan, ${WEATHER_MENTION} setting sempurna buat gaming malam di rumah!"
-                    "heyyyy nocturnal gamers, rain drops becoming your gaming soundtrack? gas <@&1374047008829997157> push rank ml sambil makan snack, ${WEATHER_MENTION} bikin betah begadang di dalam!"
-                    "sup late night legends, rain got you in that perfect focus zone? ayo <@&1374047008829997157> movie marathon di discord sambil gaming breaks, ${WEATHER_MENTION} cocok banget buat activities indoor!"
+                    "yooooo night owls, insomnia squad atau pilihan begadang for fun? perfect time marathon gaming sambil vibing, ${WEATHER_MENTION} enak buat late night session!"
+                    "wassuppp midnight legends, peaceful hours atau chaos di ranked? siapa mau grind sampai pagi sambil ngobrol, ${WEATHER_MENTION} bikin betah!"
+                    "heyyy nocturnal gamers, night hits different atau sama aja? gas push rank ml sampai subuh, ${WEATHER_MENTION} perfect buat focus!"
+                    "sup late night squad, bocil udah tidur semua nih freedom time! ayo party games sambil ketawa, ${WEATHER_MENTION} cocok buat chill!"
                   )
-                  if [[ "${{ steps.context.outputs.CONTEXT }}" != "weekend" ]]; then
-                    MESSAGES=(
-                      "yooooo night owls, rain making that perfect sleep ambience but you're gaming instead? perfect time begadang voice chat sambil mabar, ${WEATHER_MENTION} bikin fokus maksimal di dalam!"
-                      "wassuppp midnight squad, rain hitting your roof while you grind? siapa mau marathon horror games sambil dengerin hujan, ${WEATHER_MENTION} setting sempurna buat gaming malam di rumah!"
-                      "heyyyy nocturnal gamers, rain drops becoming your gaming soundtrack? gas push rank ml sambil makan snack, ${WEATHER_MENTION} bikin betah begadang di dalam!"
-                      "sup late night legends, rain got you in that perfect focus zone? ayo movie marathon di discord sambil gaming breaks, ${WEATHER_MENTION} cocok banget buat activities indoor!"
-                    )
-                  fi
-                elif [[ "$WEATHER_TYPE" == "cloudy" ]]; then
-                  MESSAGES=(
-                    "yooooo night owls, moonlight through clouds creating perfect ambience? perfect time <@&1374047008829997157> begadang voice chat sambil grinding game favorit, ${WEATHER_MENTION} enak buat fokus malem-malem!"
-                    "wassuppp midnight squad, night air feeling just right? siapa mau <@&1374047008829997157> marathon valo sampai pagi, ${WEATHER_MENTION} bikin betah buat gaming session panjang!"
-                    "heyyyy nocturnal gamers, night bringing the best gaming energy? gas <@&1374047008829997157> push rank ml sambil ngobrol santai, ${WEATHER_MENTION} pas buat begadang produktif!"
-                    "sup late night legends, peaceful night vibes hitting just right? ayo <@&1374047008829997157> voice chat sambil gaming marathon, ${WEATHER_MENTION} perfect buat night session!"
-                  )
-                  if [[ "${{ steps.context.outputs.CONTEXT }}" != "weekend" ]]; then
-                    MESSAGES=(
-                      "yooooo night owls, moonlight through clouds creating perfect ambience? perfect time begadang voice chat sambil grinding game favorit, ${WEATHER_MENTION} enak buat fokus malem-malem!"
-                      "wassuppp midnight squad, night air feeling just right? siapa mau marathon valo sampai pagi, ${WEATHER_MENTION} bikin betah buat gaming session panjang!"
-                      "heyyyy nocturnal gamers, night bringing the best gaming energy? gas push rank ml sambil ngobrol santai, ${WEATHER_MENTION} pas buat begadang produktif!"
-                      "sup late night legends, peaceful night vibes hitting just right? ayo voice chat sambil gaming marathon, ${WEATHER_MENTION} perfect buat night session!"
-                    )
-                  fi
-                else
-                  MESSAGES=(
-                    "yooooo night owls, clear night sky got you feeling zen while gaming? perfect time <@&1374047008829997157> stargazing break sambil voice chat, ${WEATHER_MENTION} bikin enak buat keluar sebentar!"
-                    "wassuppp midnight squad, clear night giving you that perfect gaming focus? siapa mau <@&1374047008829997157> mabar di balkon sambil nikmatin malam, ${WEATHER_MENTION} pas banget buat chill gaming!"
-                    "heyyyy nocturnal gamers, stars out bright tonight for your gaming session? gas <@&1374047008829997157> push rank ml sambil ngopi malam, ${WEATHER_MENTION} bikin betah begadang!"
-                    "sup late night legends, clear night boosting your gaming performance? ayo <@&1374047008829997157> voice chat sambil gaming marathon, ${WEATHER_MENTION} enak buat night activities!"
-                  )
-                  if [[ "${{ steps.context.outputs.CONTEXT }}" != "weekend" ]]; then
-                    MESSAGES=(
-                      "yooooo night owls, clear night sky got you feeling zen while gaming? perfect time stargazing break sambil voice chat, ${WEATHER_MENTION} bikin enak buat keluar sebentar!"
-                      "wassuppp midnight squad, clear night giving you that perfect gaming focus? siapa mau mabar di balkon sambil nikmatin malam, ${WEATHER_MENTION} pas banget buat chill gaming!"
-                      "heyyyy nocturnal gamers, stars out bright tonight for your gaming session? gas push rank ml sambil ngopi malam, ${WEATHER_MENTION} bikin betah begadang!"
-                      "sup late night legends, clear night boosting your gaming performance? ayo voice chat sambil gaming marathon, ${WEATHER_MENTION} enak buat night activities!"
-                    )
-                  fi
                 fi
                 ;;
             esac
@@ -563,83 +386,22 @@ jobs:
           
           case "${{ steps.context.outputs.TYPE }}" in
             "morning") 
-              TITLES=("☀️ Good Morning, Skye Squad!" "🌅 Rise and Shine, Skyers!" "☕ Morning Vibes, Skye Squad!" "🌞 Good Morning, Skyers!" "⭐ Fresh Morning, Skye Squad!")
+              TITLES=("☀️ Morning Skye Squad" "🌅 Early Bird Energy" "☕ Coffee & Gaming Time" "🌞 Fresh Morning Vibes" "⭐ New Day New Games")
               THUMBS=("2600" "1f305" "2615" "1f31e" "2b50")
               ;;
             "afternoon") 
-              TITLES=("🍃 Good Afternoon, Skye Squad!" "🌤️ Midday Check, Skyers!" "☀️ Lunch Time, Skye Squad!" "🎯 Afternoon Gaming, Skyers!" "💼 Break Time, Skye Squad!")
+              TITLES=("🍃 Afternoon Chill Mode" "🌤️ Midday Squad Check" "☀️ Lunch Break Gaming" "🎯 Afternoon Focus Time" "💼 Productive Break")
               THUMBS=("1f343" "1f324" "2600" "1f3af" "1f4bc")
               ;;
             "evening") 
-              TITLES=("🌇 Good Evening, Skye Squad!" "🌆 Golden Hour, Skyers!" "✨ Evening Chill, Skye Squad!" "🌅 Sunset Gaming, Skyers!" "🎮 Evening Session, Skye Squad!")
+              TITLES=("🌇 Evening Chill Squad" "🌆 Golden Hour Gaming" "✨ Evening Wind-Down" "🌅 Sunset Gaming Time" "🎯 Evening Focus Mode")
               THUMBS=("1f307" "1f307" "2728" "1f305" "1f3af")
               ;;
             "night") 
-              TITLES=("🦉 Good Night, Skye Squad!" "🌙 Midnight Club, Skyers!" "⭐ Night Owls, Skye Squad!" "✨ Nocturnal Gaming, Skyers!" "🌟 Late Night Crew, Skye Squad!")
+              TITLES=("🦉 Late Night Squad" "🌙 Midnight Gaming Club" "⭐ Night Owl Assembly" "✨ Nocturnal Gamers" "🌟 Late Night Energy")
               THUMBS=("1f989" "1f319" "2b50" "2728" "1f31f")
               ;;
           esac
-          
-          # Add weather-specific emojis to titles
-          WEATHER_TYPE="${{ steps.weather.outputs.WEATHER_TYPE }}"
-          if [[ "$WEATHER_TYPE" == "rainy" ]]; then
-            case "${{ steps.context.outputs.TYPE }}" in
-              "morning")
-                TITLES=("🌧️ Good Morning, Skye Squad!" "☔ Rise and Shine, Skyers!" "🌦️ Rainy Morning, Skye Squad!" "🌧️ Good Morning, Skyers!" "☔ Fresh Morning, Skye Squad!")
-                THUMBS=("1f327" "2614" "1f326" "1f327" "2614")
-                ;;
-              "afternoon")
-                TITLES=("🌧️ Good Afternoon, Skye Squad!" "☔ Midday Check, Skyers!" "🌦️ Rainy Lunch, Skye Squad!" "🌧️ Afternoon Gaming, Skyers!" "☔ Break Time, Skye Squad!")
-                THUMBS=("1f327" "2614" "1f326" "1f327" "2614")
-                ;;
-              "evening")
-                TITLES=("🌧️ Good Evening, Skye Squad!" "☔ Golden Hour, Skyers!" "🌦️ Rainy Evening, Skye Squad!" "🌧️ Sunset Gaming, Skyers!" "☔ Evening Session, Skye Squad!")
-                THUMBS=("1f327" "2614" "1f326" "1f327" "2614")
-                ;;
-              "night")
-                TITLES=("🌧️ Good Night, Skye Squad!" "☔ Midnight Club, Skyers!" "🌦️ Rainy Night, Skye Squad!" "🌧️ Nocturnal Gaming, Skyers!" "☔ Late Night Crew, Skye Squad!")
-                THUMBS=("1f327" "2614" "1f326" "1f327" "2614")
-                ;;
-            esac
-          elif [[ "$WEATHER_TYPE" == "cloudy" ]]; then
-            case "${{ steps.context.outputs.TYPE }}" in
-              "morning")
-                TITLES=("☁️ Good Morning, Skye Squad!" "🌥️ Rise and Shine, Skyers!" "⛅ Cloudy Morning, Skye Squad!" "☁️ Good Morning, Skyers!" "🌥️ Fresh Morning, Skye Squad!")
-                THUMBS=("2601" "1f325" "26c5" "2601" "1f325")
-                ;;
-              "afternoon")
-                TITLES=("☁️ Good Afternoon, Skye Squad!" "🌥️ Midday Check, Skyers!" "⛅ Cloudy Lunch, Skye Squad!" "☁️ Afternoon Gaming, Skyers!" "🌥️ Break Time, Skye Squad!")
-                THUMBS=("2601" "1f325" "26c5" "2601" "1f325")
-                ;;
-              "evening")
-                TITLES=("☁️ Good Evening, Skye Squad!" "🌥️ Golden Hour, Skyers!" "⛅ Cloudy Evening, Skye Squad!" "☁️ Sunset Gaming, Skyers!" "🌥️ Evening Session, Skye Squad!")
-                THUMBS=("2601" "1f325" "26c5" "2601" "1f325")
-                ;;
-              "night")
-                TITLES=("☁️ Good Night, Skye Squad!" "🌥️ Midnight Club, Skyers!" "⛅ Cloudy Night, Skye Squad!" "☁️ Nocturnal Gaming, Skyers!" "🌥️ Late Night Crew, Skye Squad!")
-                THUMBS=("2601" "1f325" "26c5" "2601" "1f325")
-                ;;
-            esac
-          elif [[ "$WEATHER_TYPE" == "sunny" ]]; then
-            case "${{ steps.context.outputs.TYPE }}" in
-              "morning")
-                TITLES=("☀️ Good Morning, Skye Squad!" "🌞 Rise and Shine, Skyers!" "🌈 Sunny Morning, Skye Squad!" "☀️ Good Morning, Skyers!" "🌞 Fresh Morning, Skye Squad!")
-                THUMBS=("2600" "1f31e" "1f308" "2600" "1f31e")
-                ;;
-              "afternoon")
-                TITLES=("☀️ Good Afternoon, Skye Squad!" "🌞 Midday Check, Skyers!" "🌈 Sunny Lunch, Skye Squad!" "☀️ Afternoon Gaming, Skyers!" "🌞 Break Time, Skye Squad!")
-                THUMBS=("2600" "1f31e" "1f308" "2600" "1f31e")
-                ;;
-              "evening")
-                TITLES=("☀️ Good Evening, Skye Squad!" "🌞 Golden Hour, Skyers!" "🌈 Sunny Evening, Skye Squad!" "☀️ Sunset Gaming, Skyers!" "🌞 Evening Session, Skye Squad!")
-                THUMBS=("2600" "1f31e" "1f308" "2600" "1f31e")
-                ;;
-              "night")
-                TITLES=("🌙 Good Night, Skye Squad!" "✨ Midnight Club, Skyers!" "⭐ Clear Night, Skye Squad!" "🌃 Nocturnal Gaming, Skyers!" "🌟 Late Night Crew, Skye Squad!")
-                THUMBS=("1f319" "2728" "2b50" "1f303" "1f31f")
-                ;;
-            esac
-          fi
           
           RANDOM_INDEX=$((RANDOM % ${#TITLES[@]}))
           TITLE="${TITLES[$RANDOM_INDEX]}"
@@ -684,9 +446,7 @@ jobs:
           # Convert description to lowercase
           desc = desc_raw.lower()
           
-          # Weekend role tagging is handled in AI prompt and fallback messages
-          # No additional processing needed here since it's already included
-          
+          # Add signature
           desc += "\n> by server dev guanteng - <@399393175904714752>"
           
           embed = {
