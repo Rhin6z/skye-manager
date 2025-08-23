@@ -161,23 +161,23 @@ jobs:
                   fi
                 fi
                 
-                # Format final weather info
+                # Format final weather info - NO LOCATION, just casual weather
                 if [[ -n "$TEMP" && -n "$WEATHER_CASUAL" ]]; then
-                  WEATHER_INFO=" ${WEATHER_CASUAL} ${TEMP}°C"
+                  WEATHER_INFO="${WEATHER_CASUAL} ${TEMP}°c"
                 elif [[ -n "$WEATHER_CASUAL" ]]; then
-                  WEATHER_INFO=" cuaca ${WEATHER_CASUAL}"
+                  WEATHER_INFO="${WEATHER_CASUAL} outside"
                 elif [[ -n "$TEMP" ]]; then
-                  WEATHER_INFO=" ${TEMP}°C"
+                  WEATHER_INFO="${TEMP}°c outside"
                 fi
                 
                 echo "✅ BMKG Weather: $WEATHER_INFO"
               else
                 echo "⚠️ Could not extract weather data from BMKG response"
-                WEATHER_INFO=" cuaca enak"  # Default fallback
+                WEATHER_INFO="nice weather"  # Default fallback
               fi
             else
               echo "❌ BMKG API failed, using fallback"
-              WEATHER_INFO=" cuaca enak"  # Always provide weather info
+              WEATHER_INFO="chill outside"  # Always provide weather info
             fi
           
           echo "WEATHER_INFO=$WEATHER_INFO" >> $GITHUB_OUTPUT
@@ -194,7 +194,7 @@ jobs:
           Context: TYPE_PLACEHOLDER on CONTEXT_PLACEHOLDER
           Time: CURRENT_DAY_PLACEHOLDER (CURRENT_DATE_PLACEHOLDER) at CURRENT_TIME_PLACEHOLDER WIB
           Special: SPECIAL_CONTEXT_PLACEHOLDER
-          Weather Yogyakarta: WEATHER_INFO_PLACEHOLDER
+          Weather: WEATHER_INFO_PLACEHOLDER
           
           EXACT 2-SENTENCE STRUCTURE:
           
@@ -209,8 +209,10 @@ jobs:
           - SECONDARY: voice chat/vc, other casual games
           - RARELY mention: valorant (only occasionally)
           - Use natural Indonesian gaming slang: "mabar", "push rank", "main bareng", "yuk", "skuy"
-          - ALWAYS include Yogyakarta weather mention
-          - Examples: "yuk mabar roblox sambil ngobrol", "siapa mau push rank emel?", "perfect time buat roblox session di cuaca [weather]"
+          - ALWAYS include weather mention but NO LOCATION NAMES (no "jogja", "yogyakarta", "di sini", etc.)
+          - Weather examples: "it's cold outside", "panas banget", "lagi hujan", "nice weather", "cuaca enak", "hot af", "so chill outside"
+          - Use LOWERCASE weather descriptions: "dingin", "panas", "sejuk", "hujan", "enak", "cold", "hot", "chill", "rainy"
+          - Examples: "yuk mabar roblox it's so chill outside", "siapa mau push rank emel cuaca enak nih", "perfect weather buat roblox session"
           
           BE 100% NATURAL:
           - Type like you're actually texting friends on mobile
@@ -336,80 +338,80 @@ jobs:
               "morning")
                 if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "monday_motivation" ]]; then
                   MESSAGES=(
-                    "brooooo monday lagi nih, how's everyone feeling? fresh start perfect buat grinding roblox sambil ngopi${WEATHER_MENTION}!"
-                    "yooooo wassup monday warriors, energy level gimana? yuk mabar ml sambil motivasi-motivasian${WEATHER_MENTION}"
-                    "heyyyy squad monday vibes hitting different, siapa udah siap crushing this week? main emel push rank yuk${WEATHER_MENTION}"
-                    "ayooo monday motivation time, feeling fresh atau masih ngantuk? perfect timing buat roblox session${WEATHER_MENTION}"
-                    "woiii monday energy check, gimana mood kalian hari ini? yuk charge up dengan mabar ml${WEATHER_MENTION}"
+                    "brooooo monday lagi nih, how's everyone feeling? fresh start perfect buat grinding roblox sambil ngopi, ${WEATHER_MENTION}!"
+                    "yooooo wassup monday warriors, energy level gimana? yuk mabar ml sambil motivasi-motivasian, ${WEATHER_MENTION} nih"
+                    "heyyyy squad monday vibes hitting different, siapa udah siap crushing this week? main emel push rank yuk, ${WEATHER_MENTION}"
+                    "ayooo monday motivation time, feeling fresh atau masih ngantuk? perfect timing buat roblox session, it's ${WEATHER_MENTION}"
+                    "woiii monday energy check, gimana mood kalian hari ini? yuk charge up dengan mabar ml, ${WEATHER_MENTION} outside"
                   )
                 else
                   MESSAGES=(
-                    "yooooo morning legends, udah minum kopi atau masih zombie mode? perfect time buat chill roblox${WEATHER_MENTION}"
-                    "wassuppp early birds, how's everyone's morning vibe? gabut nih yuk main ml bareng${WEATHER_MENTION}"
-                    "heyyyy morning squad, feeling energetic atau masih males bangun? roblox sounds good rn${WEATHER_MENTION}"
-                    "ayooo good morning gamers, sarapan apa hari ini? sambil nunggu yuk push rank emel${WEATHER_MENTION}"
-                    "brooo morning check-in, gimana tidur semalam? fresh enough buat ml session${WEATHER_MENTION}?"
-                    "woiii pagi-pagi udah online aja, early bird energy maksimal nih! main roblox yuk${WEATHER_MENTION}"
+                    "yooooo morning legends, udah minum kopi atau masih zombie mode? perfect time buat chill roblox, ${WEATHER_MENTION}"
+                    "wassuppp early birds, how's everyone's morning vibe? gabut nih yuk main ml bareng, it's ${WEATHER_MENTION}"
+                    "heyyyy morning squad, feeling energetic atau masih males bangun? roblox sounds good rn, ${WEATHER_MENTION} outside"
+                    "ayooo good morning gamers, sarapan apa hari ini? sambil nunggu yuk push rank emel, ${WEATHER_MENTION}"
+                    "brooo morning check-in, gimana tidur semalam? fresh enough buat ml session, ${WEATHER_MENTION} nih"
+                    "woiii pagi-pagi udah online aja, early bird energy maksimal nih! main roblox yuk, ${WEATHER_MENTION}"
                   )
                 fi
                 ;;
               "afternoon")
                 if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "hump_day" ]]; then
                   MESSAGES=(
-                    "heyyyy wednesday warriors, udah setengah jalan weekend nih gimana energy level? emel push rank yuk${WEATHER_MENTION}!"
-                    "yooooo hump day vibes, wednesday feeling heavy atau light? perfect distraction dengan roblox${WEATHER_MENTION}"
-                    "wassuppp midweek squad, wednesday mood check siapa butuh break? ml therapy session${WEATHER_MENTION}"
-                    "ayooo wednesday afternoon hits, halfway through the week! deserve some fun roblox time${WEATHER_MENTION}"
-                    "brooo wednesday energy, masih semangat atau udah capek? refresh dengan emel yuk${WEATHER_MENTION}"
+                    "heyyyy wednesday warriors, udah setengah jalan weekend nih gimana energy level? emel push rank yuk, ${WEATHER_MENTION}!"
+                    "yooooo hump day vibes, wednesday feeling heavy atau light? perfect distraction dengan roblox, it's ${WEATHER_MENTION}"
+                    "wassuppp midweek squad, wednesday mood check siapa butuh break? ml therapy session, ${WEATHER_MENTION} outside"
+                    "ayooo wednesday afternoon hits, halfway through the week! deserve some fun roblox time, ${WEATHER_MENTION}"
+                    "brooo wednesday energy, masih semangat atau udah capek? refresh dengan emel yuk, ${WEATHER_MENTION} nih"
                   )
                 else
                   MESSAGES=(
-                    "yooooo afternoon legends, lunch break udah atau masih busy? quick roblox session sounds nice${WEATHER_MENTION}"
-                    "wassuppp midday squad, afternoon slump hitting atau masih energetic? main ml chill${WEATHER_MENTION}"
-                    "heyyyy afternoon vibes, gimana hari kalian so far? break time dengan emel yuk${WEATHER_MENTION}"
-                    "ayooo afternoon check, udah makan siang belum? sambil nunggu yuk mabar roblox sebentar${WEATHER_MENTION}"
-                    "brooo afternoon mood, productive day atau lagi gabut? perfect timing buat ml session${WEATHER_MENTION}"
-                    "woiii siang-siang gini enak banget main roblox, siapa free buat quick session${WEATHER_MENTION}?"
+                    "yooooo afternoon legends, lunch break udah atau masih busy? quick roblox session sounds nice, ${WEATHER_MENTION}"
+                    "wassuppp midday squad, afternoon slump hitting atau masih energetic? main ml chill, it's ${WEATHER_MENTION}"
+                    "heyyyy afternoon vibes, gimana hari kalian so far? break time dengan emel yuk, ${WEATHER_MENTION} outside"
+                    "ayooo afternoon check, udah makan siang belum? sambil nunggu yuk mabar roblox sebentar, ${WEATHER_MENTION}"
+                    "brooo afternoon mood, productive day atau lagi gabut? perfect timing buat ml session, ${WEATHER_MENTION} nih"
+                    "woiii siang-siang gini enak banget main roblox, siapa free buat quick session? ${WEATHER_MENTION}"
                   )
                 fi
                 ;;
               "evening")
                 if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "weekend_countdown" ]]; then
                   MESSAGES=(
-                    "yooooo FRIDAY EVENING, weekend mode activated finally! besok libur perfect buat marathon roblox${WEATHER_MENTION}!"
-                    "wassuppp weekend warriors, friday feeling different nih! long ml session incoming${WEATHER_MENTION}"
-                    "heyyyy TGIF squad, weekend countdown complete! celebrate dengan emel party yuk${WEATHER_MENTION}"
-                    "ayooo friday night energy, weekend vibes kicking in hard! roblox time maksimal${WEATHER_MENTION}"
-                    "brooo weekend mode ON, friday evening hits different! main ml sampai malem yuk${WEATHER_MENTION}"
+                    "yooooo FRIDAY EVENING, weekend mode activated finally! besok libur perfect buat marathon roblox, ${WEATHER_MENTION}!"
+                    "wassuppp weekend warriors, friday feeling different nih! long ml session incoming, it's ${WEATHER_MENTION}"
+                    "heyyyy TGIF squad, weekend countdown complete! celebrate dengan emel party yuk, ${WEATHER_MENTION} outside"
+                    "ayooo friday night energy, weekend vibes kicking in hard! roblox time maksimal, ${WEATHER_MENTION}"
+                    "brooo weekend mode ON, friday evening hits different! main ml sampai malem yuk, ${WEATHER_MENTION} nih"
                   )
                 else
                   MESSAGES=(
-                    "yooooo evening squad, how was today treating y'all? winding down dengan roblox sounds perfect${WEATHER_MENTION}"
-                    "wassuppp golden hour gang, evening vibes hitting nice! siapa mau chill ml${WEATHER_MENTION}?"
-                    "heyyyy evening legends, day almost done nih! relax time dengan emel session${WEATHER_MENTION}"
-                    "ayooo evening check-in, productive day atau challenging? roblox therapy time${WEATHER_MENTION}"
-                    "brooo evening mood, dinner udah atau lagi nyari makan? sambil main ml yuk${WEATHER_MENTION}"
-                    "woiii evening vibes enak banget, perfect time buat cozy roblox session${WEATHER_MENTION}!"
+                    "yooooo evening squad, how was today treating y'all? winding down dengan roblox sounds perfect, ${WEATHER_MENTION}"
+                    "wassuppp golden hour gang, evening vibes hitting nice! siapa mau chill ml, it's ${WEATHER_MENTION}?"
+                    "heyyyy evening legends, day almost done nih! relax time dengan emel session, ${WEATHER_MENTION} outside"
+                    "ayooo evening check-in, productive day atau challenging? roblox therapy time, ${WEATHER_MENTION}"
+                    "brooo evening mood, dinner udah atau lagi nyari makan? sambil main ml yuk, ${WEATHER_MENTION} nih"
+                    "woiii evening vibes enak banget, perfect time buat cozy roblox session! ${WEATHER_MENTION}"
                   )
                 fi
                 ;;
               "night")
                 if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "sunday_prep" ]]; then
                   MESSAGES=(
-                    "heyyyy sunday night owls, weekend ending how's everyone feeling? masih sempat roblox session terakhir${WEATHER_MENTION}!"
-                    "yooooo sunday evening vibes, last chance weekend gaming before monday? make it count dengan ml${WEATHER_MENTION}"
-                    "wassuppp sunday squad, weekend finale nih how was it? siapa mau closing ceremony emel${WEATHER_MENTION}?"
-                    "ayooo sunday night feels, tomorrow back to routine ready? enjoy last roblox freedom${WEATHER_MENTION}"
-                    "brooo sunday evening mood, weekend was good right? cap it off dengan chill ml session${WEATHER_MENTION}"
+                    "heyyyy sunday night owls, weekend ending how's everyone feeling? masih sempat roblox session terakhir, ${WEATHER_MENTION}!"
+                    "yooooo sunday evening vibes, last chance weekend gaming before monday? make it count dengan ml, it's ${WEATHER_MENTION}"
+                    "wassuppp sunday squad, weekend finale nih how was it? siapa mau closing ceremony emel, ${WEATHER_MENTION} outside"
+                    "ayooo sunday night feels, tomorrow back to routine ready? enjoy last roblox freedom, ${WEATHER_MENTION}"
+                    "brooo sunday evening mood, weekend was good right? cap it off dengan chill ml session, ${WEATHER_MENTION} nih"
                   )
                 else
                   MESSAGES=(
-                    "yooooo night owls, who's still vibing at this hour? perfect late night roblox energy${WEATHER_MENTION}"
-                    "wassuppp midnight squad, insomnia hitting atau just chilling? ml therapy available${WEATHER_MENTION}"
-                    "heyyyy late night legends, can't sleep atau choice to stay up? emel sounds good${WEATHER_MENTION}"
-                    "ayooo nocturnal gamers, night vibes different nih how we feeling? cozy roblox session yuk${WEATHER_MENTION}"
-                    "brooo night time energy, peaceful gaming hours when everyone's sleeping? perfect ml timing${WEATHER_MENTION}"
-                    "woiii night squad assemble, best roblox hours when it's quiet! who's down${WEATHER_MENTION}?"
+                    "yooooo night owls, who's still vibing at this hour? perfect late night roblox energy, ${WEATHER_MENTION}"
+                    "wassuppp midnight squad, insomnia hitting atau just chilling? ml therapy available, it's ${WEATHER_MENTION}"
+                    "heyyyy late night legends, can't sleep atau choice to stay up? emel sounds good, ${WEATHER_MENTION} outside"
+                    "ayooo nocturnal gamers, night vibes different nih how we feeling? cozy roblox session yuk, ${WEATHER_MENTION}"
+                    "brooo night time energy, peaceful gaming hours when everyone's sleeping? perfect ml timing, ${WEATHER_MENTION} nih"
+                    "woiii night squad assemble, best roblox hours when it's quiet! who's down? ${WEATHER_MENTION}"
                   )
                 fi
                 ;;
@@ -652,7 +654,7 @@ jobs:
           echo "🕐 Time: ${{ steps.context.outputs.CURRENT_TIME }} WIB (${{ steps.context.outputs.CURRENT_DAY }})"
           echo "🎯 Type: ${{ steps.context.outputs.TYPE }} (${{ steps.context.outputs.CONTEXT }})"
           echo "🌟 Special: ${{ steps.context.outputs.SPECIAL_CONTEXT }}"
-          echo "🌤️ Weather Yogyakarta: ${{ steps.weather.outputs.WEATHER_INFO }}"
+          echo "🌤️ Weather: ${{ steps.weather.outputs.WEATHER_INFO }}"
           echo "🤖 AI Success: ${{ steps.ai_generation.outputs.USE_AI }}"
           echo "🏠 OpenWrt Mode: ${{ steps.context.outputs.OPENWRT_MODE }}"
           echo "🧪 Test Mode: ${{ github.event.inputs.test_mode }}"
