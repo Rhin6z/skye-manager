@@ -189,43 +189,23 @@ jobs:
           
           # Create ultra natural human-like prompt with 2-sentence structure
           cat > /tmp/prompt.txt << 'EOF'
-          You are typing a natural message to your Indonesian gaming friends on Discord. You MUST write exactly 2 sentences with this structure:
+          Write 2 casual sentences for Indonesian Discord gaming friends:
           
-          Context: TYPE_PLACEHOLDER on CONTEXT_PLACEHOLDER
-          Time: CURRENT_DAY_PLACEHOLDER (CURRENT_DATE_PLACEHOLDER) at CURRENT_TIME_PLACEHOLDER WIB
-          Special: SPECIAL_CONTEXT_PLACEHOLDER
+          SENTENCE 1: Casual greeting asking about mood/vibe
+          - Start: "yooo", "wassup", "heyyyy" 
+          - Ask about: what they're doing, how they feel, their vibe
+          - Example: "wassuppp everyone, how's the vibe tonight?"
+          
+          SENTENCE 2: Gaming invitation with weather
+          - MUST include: roblox OR mobile legends/ml/emel
+          - MUST include: "yuk", "siapa mau", "main bareng", "mabar", or "push rank"  
+          - MUST include weather: WEATHER_INFO_PLACEHOLDER
+          - Example: "yuk mabar roblox, cuaca enak perfect buat gaming!"
+          
+          Context: TYPE_PLACEHOLDER evening on CONTEXT_PLACEHOLDER
           Weather: WEATHER_INFO_PLACEHOLDER
           
-          MANDATORY 2-SENTENCE STRUCTURE (both sentences required):
-          
-          SENTENCE 1 (60% English - asking about mood/activity):
-          - Start with casual greeting: "yooo", "wassup", "heyyyy", "ayooo", "brooo"
-          - Ask creatively about what they're doing, mood, day, vibe, feeling
-          - Use extended words: "wassuppppp", "how's everyone doinggg", "what's the vibeeeee"
-          - Examples: "yooo what's everyone up to rn?", "wassuppp how's the day treating y'all?", "heyyyy what's the mood like tonight?"
-          
-          SENTENCE 2 (English/Indo mix - PRIORITY ROBLOX/ML gaming invitation) - MANDATORY:
-          - PRIORITIZE: roblox, mobile legends/ml/emel (main games)
-          - SECONDARY: voice chat/vc, other casual games
-          - RARELY mention: valorant (only occasionally)
-          - Use natural Indonesian gaming slang: "mabar", "push rank", "main bareng", "yuk", "skuy"
-          - ALWAYS include weather mention but NO LOCATION NAMES (no "jogja", "yogyakarta", "di sini", etc.)
-          - Weather examples for INDOOR gaming: "cuaca dingin enak buat gaming", "panas banget outside perfect indoor gaming", "hujan-hujan gini cocok main game", "cold weather = gaming time", "it's hot af outside let's game inside"
-          - Use LOWERCASE weather descriptions: "dingin", "panas", "sejuk", "hujan", "cold", "hot", "rainy"
-          - AVOID confusing phrases like "chill outside" (sounds like go outside), use "chill weather", "nice and cold", "cuaca enak"
-          - NO REDUNDANCY: don't use "ayooo" + "skuy" (both mean same thing), choose one
-          - Examples: "yuk mabar roblox cuaca dingin enak", "siapa mau push rank emel it's hot outside perfect for indoor gaming", "hujan-hujan gini cocok roblox session"
-          
-          CRITICAL REQUIREMENTS:
-          - Write EXACTLY 2 sentences (no more, no less)
-          - Both sentences must be complete
-          - Second sentence MUST include gaming invitation
-          - Type like you're actually texting friends on mobile
-          - Don't sound like AI - sound genuine, casual, spontaneous
-          - Mix languages naturally within each sentence
-          - Include random human elements: tiredness, excitement, boredom
-          
-          Write ONLY the 2 sentences - exactly like you'd type on Discord mobile! Do NOT write just one sentence!
+          Write exactly 2 sentences, casual and natural like texting friends!
           EOF
           
           # Replace placeholders
@@ -236,6 +216,10 @@ jobs:
           sed -i "s/CURRENT_TIME_PLACEHOLDER/${{ steps.context.outputs.CURRENT_TIME }}/g" /tmp/prompt.txt
           sed -i "s/SPECIAL_CONTEXT_PLACEHOLDER/${{ steps.context.outputs.SPECIAL_CONTEXT }}/g" /tmp/prompt.txt
           sed -i "s/WEATHER_INFO_PLACEHOLDER/${{ steps.weather.outputs.WEATHER_INFO }}/g" /tmp/prompt.txt
+          
+          # Handle empty SPECIAL_CONTEXT (remove extra underscores and fix formatting)
+          sed -i 's/SPECIAL_[a-zA-Z_]*//g' /tmp/prompt.txt
+          sed -i 's/Special: *$//g' /tmp/prompt.txt
           
           # Try AI generation with simplified approach
           AI_SUCCESS=false
@@ -315,16 +299,17 @@ jobs:
             AI_TEXT=$(cat /tmp/ai_response.txt)
             echo "🎯 AI generated: $AI_TEXT"
             
-            # Validate AI text - MUST have 2 sentences with gaming content
-            SENTENCE_COUNT=$(echo "$AI_TEXT" | grep -o '[.!?]' | wc -l)
-            HAS_GAMING=$(echo "$AI_TEXT" | grep -iE "(roblox|mobile legends|ml|emel|mabar|push rank|main bareng|gaming|game)")
+            # Validate AI text - MUST have gaming content and reasonable length
+            HAS_GAMING=$(echo "$AI_TEXT" | grep -iE "(roblox|mobile legends|ml|emel|mabar|push rank|main bareng|gaming|game|yuk|siapa mau)")
+            HAS_QUESTION=$(echo "$AI_TEXT" | grep -E "[?]")
             
-            if [[ ${#AI_TEXT} -gt 50 && ${#AI_TEXT} -lt 400 && $SENTENCE_COUNT -ge 2 && -n "$HAS_GAMING" ]]; then
+            if [[ ${#AI_TEXT} -gt 40 && ${#AI_TEXT} -lt 300 && -n "$HAS_GAMING" ]]; then
               DESC_RAW="$AI_TEXT"
               USE_AI=true
-              echo "✅ AI text validated: ${SENTENCE_COUNT} sentences, has gaming content"
+              echo "✅ AI text validated: ${#AI_TEXT} chars, has gaming content"
             else
-              echo "⚠️ AI text validation failed: ${#AI_TEXT} chars, ${SENTENCE_COUNT} sentences, gaming: ${HAS_GAMING:-missing}"
+              echo "⚠️ AI text validation failed: ${#AI_TEXT} chars, gaming: ${HAS_GAMING:-missing}"
+              echo "   Raw text: $AI_TEXT"
               USE_AI=false
             fi
           else
