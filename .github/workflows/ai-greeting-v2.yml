@@ -474,7 +474,7 @@ jobs:
           
           # Execute the OpenAI script
           echo "🧪 Executing OpenAI generation script..."
-          OPENAI_API_KEY="YOUR_OPENAI_API_KEY" python3 /tmp/openai_generator.py
+          OPENAI_API_KEY="${{ secrets.OPENAI_API_KEY }}" python3 /tmp/openai_generator.py
           
           if [[ $? -eq 0 && -s /tmp/ai_response.txt ]]; then
             AI_TEXT=$(cat /tmp/ai_response.txt)
