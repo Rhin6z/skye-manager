@@ -195,21 +195,21 @@ jobs:
           WEATHER_INFO: ${{ steps.weather.outputs.WEATHER_INFO }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          echo "🤖 Generating AI greeting with MORE DYNAMIC approach..."
+          echo "🤖 generating ai greeting (natural, no-dash)…"
 
-          # derive weekend flag di shell
+          # derive weekend flag
           if [ "$CONTEXT" = "weekend" ]; then
             export IS_WEEKEND=true
           else
             export IS_WEEKEND=false
           fi
           
-          # Python generator
+          # ---------- python generator ----------
           cat > /tmp/fixed_contextual_generator.py << 'EOL'
-          import json, requests, os, sys, re, random
+          import os, re, random, requests, sys
 
           """
-          SLANG_GLOSSARY (arti asli, supaya pemakaian tepat konteks):
+          SLANG_GLOSSARY (arti asli biar konteks bener):
           indo:
             - yuk/yuuuk/yok/ayoo: ajakan halus buat mulai
             - gas: ayo langsung jalan sekarang
@@ -219,21 +219,16 @@ jobs:
             - gacorrr: perform bagus/ramai (voice/game), bukan buat cuaca
             - wkwkwk: ketawa tulisan (hindari di frasa cuaca)
             - njirrr: kaget/sinis santai (hindari di frasa cuaca)
-            - ygy: “ya ga sih”
-            - ytta: “yang tau tau aja” (inside joke; hindari di cuaca)
+            - ygy: “ya ga sih”; ytta: “yang tau tau aja” (inside joke; hindari di cuaca)
           english:
-            - crew/squad/gang/team: panggilan komunal santai
-            - vibe: suasana/feel
-            - grind: kerja keras/latihan intens
-            - queue up: antri match
-            - dialed in: fokus siap kerja
-            - buffering/booting: masih pemanasan
+            - crew/squad/team: panggilan komunal santai
+            - vibe: suasana/feel; grind: kerja keras; queue up: antri match
+            - dialed in: fokus siap kerja; booting: masih pemanasan
             - touch grass: keluar sebentar dari layar
-            - roll call/check-in: absen/cek kehadiran singkat
           """
 
-          # ---------- helpers ----------
-          def normalize_weather(raw):
+          # -------- helpers --------
+          def norm_wx(raw: str) -> str:
               w = (raw or "").lower()
               if "hujan" in w or "gerimis" in w: return "rain"
               if "cerah" in w or "terang" in w or "matahari" in w: return "clear"
@@ -242,367 +237,201 @@ jobs:
               if "angin" in w or "berangin" in w or "wind" in w: return "windy"
               return "ok"
 
-          def time_indo_label(t):
-              return {"morning":"pagi", "afternoon":"siang", "evening":"sore", "night":"malem"}.get(t, "")
-
-          def weather_phrase(day_indo, time_indo, wx):
-              # variasi per waktu biar ga keulang
+          def t_id(t): return {"morning":"pagi","afternoon":"siang","evening":"sore","night":"malem"}.get(t, "")
+          
+          def wx_phrase(time_id: str, wx: str):
+              # variasi pendek, tanpa nyebut hari terus
               pools = {
-                  "rain": {
-                      "pagi": [
-                          f"hujan pagi, enak fokus di {day_indo}",
-                          f"grimis dari subuh, kopi dulu trus jalan di {day_indo}",
-                          f"rintik pagi, ritme pelan aman di {day_indo}",
-                          f"adem dari pagi, fokus rapi di {day_indo}",
-                      ],
-                      "siang": [
-                          f"hujan siang, mending indoor di {day_indo}",
-                          f"rintik siang, enak rapihin kerjaan di {day_indo}",
-                          f"siang adem, konsen lumayan di {day_indo}",
-                          f"langit basah, pace stabil di {day_indo}",
-                      ],
-                      "sore": [
-                          f"hujan sore, komuter santai di {day_indo}",
-                          f"gerimis sore, enak wrap-up di {day_indo}",
-                          f"udara turun, fokus kelarin sisa di {day_indo}",
-                          f"rinai sore, timing santai di {day_indo}",
-                      ],
-                      "malem": [
-                          f"hujan malem, cozy mode di {day_indo}",
-                          f"rintik malem, indoor vibes di {day_indo}",
-                          f"adem malem, enak wind down di {day_indo}",
-                          f"malem basah, nyantai produktif di {day_indo}",
-                      ],
-                  },
-                  "clear": {
-                      "pagi": [
-                          f"langit cerah, mood booster di {day_indo}",
-                          f"matahari ramah, langkah ringan di {day_indo}",
-                          f"pagi cerah, niat naik di {day_indo}",
-                          f"udara bersih, start mulus di {day_indo}",
-                      ],
-                      "siang": [
-                          f"cerah siang, energi naik di {day_indo}",
-                          f"matahari sopan, gerak enak di {day_indo}",
-                          f"langit biru, fokus kejaga di {day_indo}",
-                          f"terang santai, pace oke di {day_indo}",
-                      ],
-                      "sore": [
-                          f"golden hour, vibes enak di {day_indo}",
-                          f"sore cerah, enak closing task di {day_indo}",
-                          f"langit bening, energi sisa cukup di {day_indo}",
-                          f"cahaya manis, fokus rapi di {day_indo}",
-                      ],
-                      "malem": [
-                          f"malem cerah, kepala ringan di {day_indo}",
-                          f"langit tenang, enak chill di {day_indo}",
-                          f"bintang tipis, mood steady di {day_indo}",
-                          f"udara bersih, wind down enak di {day_indo}",
-                      ],
-                  },
-                  "cloudy": {
-                      "pagi": [
-                          f"mendung pagi, no silau di {day_indo}",
-                          f"awan tipis, enak nyicil di {day_indo}",
-                          f"pagi teduh, fokus aman di {day_indo}",
-                          f"berawan adem, jalan pelan di {day_indo}",
-                      ],
-                      "siang": [
-                          f"berawan siang, suhu aman di {day_indo}",
-                          f"mendung halus, konsen jalan di {day_indo}",
-                          f"awan rata, pace stabil di {day_indo}",
-                          f"siang teduh, tugas rapi di {day_indo}",
-                      ],
-                      "sore": [
-                          f"sore teduh, enak wrap-up di {day_indo}",
-                          f"berawan sore, nyaman gerak di {day_indo}",
-                          f"langit rata, fokus sisa task di {day_indo}",
-                          f"adem sore, langkah mantap di {day_indo}",
-                      ],
-                      "malem": [
-                          f"malem teduh, enak santai produktif di {day_indo}",
-                          f"awan tenang, fokus ringan di {day_indo}",
-                          f"langit kalem, good wind down di {day_indo}",
-                          f"malem adem, tempo pas di {day_indo}",
-                      ],
-                  },
-                  "hot": {
-                      "pagi": [
-                          f"pagi udah terik, indoor dulu di {day_indo}",
-                          f"panas cepat naik, hidrasi dulu di {day_indo}",
-                          f"matahari galak, atur tenaga di {day_indo}",
-                          f"terik pagi, keep it chill di {day_indo}",
-                      ],
-                      "siang": [
-                          f"siang terik, mending indoor di {day_indo}",
-                          f"panas nempel, kerja tipis-tipis di {day_indo}",
-                          f"UV nyolot, pilih fokus pendek di {day_indo}",
-                          f"gerah siang, ritme hemat di {day_indo}",
-                      ],
-                      "sore": [
-                          f"sore masih panas, cooldown dulu di {day_indo}",
-                          f"terik sisa, pilih task ringan di {day_indo}",
-                          f"hawanya naik, slow pace di {day_indo}",
-                          f"gerah tipis, indoor enak di {day_indo}",
-                      ],
-                      "malem": [
-                          f"malem masih hangat, santai panjang di {day_indo}",
-                          f"panas sisa, pilih indoor di {day_indo}",
-                          f"udara nempel, pelan aja di {day_indo}",
-                          f"gerah malem, nyantai low effort di {day_indo}",
-                      ],
-                  },
-                  "windy": {
-                      "pagi": [
-                          f"pagi berangin, sinyal semoga aman di {day_indo}",
-                          f"hembus kenceng, jaketan dikit di {day_indo}",
-                          f"angin pagi, enak indoor di {day_indo}",
-                          f"gusty tipis, fokus pelan di {day_indo}",
-                      ],
-                      "siang": [
-                          f"siang berangin, rapihin kerjaan di {day_indo}",
-                          f"hembus siang, nyaman di {day_indo}",
-                          f"angin narik awan, pace stabil di {day_indo}",
-                          f"semilir kenceng, indoor vibes di {day_indo}",
-                      ],
-                      "sore": [
-                          f"sore berangin, comms aman di {day_indo}",
-                          f"hembus sore, enak tutup hari di {day_indo}",
-                          f"angin dorong, fokus tipis di {day_indo}",
-                          f"semilir rame, santai di {day_indo}",
-                      ],
-                      "malem": [
-                          f"malem berangin, cozy indoor di {day_indo}",
-                          f"hembus malem, headset aman di {day_indo}",
-                          f"angin malam, nyantai rapi di {day_indo}",
-                          f"semilir kenceng, enak chill di {day_indo}",
-                      ],
-                  },
-                  "ok": {
-                      "pagi": [
-                          f"pagi nyaman, start mulus di {day_indo}",
-                          f"hawanya pas, niat jalan di {day_indo}",
-                          f"pagi ringan, fokus enak di {day_indo}",
-                          f"cuaca oke, pelan tapi pasti di {day_indo}",
-                      ],
-                      "siang": [
-                          f"siang oke, ritme stabil di {day_indo}",
-                          f"hawanya pas, gerak mantap di {day_indo}",
-                          f"nyaman siang, task rapi di {day_indo}",
-                          f"cuaca oke, fokus jalan di {day_indo}",
-                      ],
-                      "sore": [
-                          f"sore enak, closing task di {day_indo}",
-                          f"nyaman sore, wrap-up mulus di {day_indo}",
-                          f"cuaca oke, sisa kerja kelar di {day_indo}",
-                          f"sore halus, pace pas di {day_indo}",
-                      ],
-                          "malem": [
-                          f"malem oke, wind down santai di {day_indo}",
-                          f"nyaman malem, santai produktif di {day_indo}",
-                          f"cuaca oke, rileks rapi di {day_indo}",
-                          f"malem halus, tempo enak di {day_indo}",
-                      ],
-                  },
+                "rain": {
+                  "pagi":[ "lagi rintik, enak fokus dulu", "hujan pagi, kopi dulu trus jalan", "adem dari pagi, langkah pelan aman" ],
+                  "siang":[ "hujan siang, mending indoor", "rintik siang, rapihin kerjaan", "siang adem, konsen lumayan" ],
+                  "sore":[ "hujan sore, wrap-up santai", "gerimis sore, kelarin sisa", "udara turun, enak tutup hari" ],
+                  "malem":[ "hujan malem, cozy mode", "rintik malem, indoor vibes", "adem malem, enak wind down" ],
+                },
+                "clear": {
+                  "pagi":[ "langit cerah, start mulus", "matahari ramah, langkah ringan", "pagi cerah, niat naik" ],
+                  "siang":[ "cerah siang, energi naik", "matahari sopan, gerak enak", "langit biru, fokus kejaga" ],
+                  "sore":[ "golden hour, vibes enak", "sore cerah, enak closing task", "cahaya manis, fokus rapi" ],
+                  "malem":[ "malem cerah, kepala ringan", "langit tenang, enak chill", "bintang tipis, mood steady" ],
+                },
+                "cloudy": {
+                  "pagi":[ "mendung pagi, no silau", "awan tipis, nyicil enak", "pagi teduh, fokus aman" ],
+                  "siang":[ "berawan siang, suhu aman", "mendung halus, konsen jalan", "awan rata, pace stabil" ],
+                  "sore":[ "sore teduh, wrap-up mulus", "berawan sore, nyaman gerak", "langit rata, sisa task rapi" ],
+                  "malem":[ "malem teduh, santai produktif", "awan kalem, wind down enak", "malem adem, tempo pas" ],
+                },
+                "hot": {
+                  "pagi":[ "pagi udah terik, indoor dulu", "panas naik cepat, hidrasi dulu", "terik pagi, keep it chill" ],
+                  "siang":[ "siang terik, mending indoor", "panas nempel, kerja tipis-tipis", "uv nyolot, pilih fokus pendek" ],
+                  "sore":[ "sore masih panas, cooldown dulu", "terik sisa, task ringan", "hawanya naik, slow pace" ],
+                  "malem":[ "malem hangat, pelan aja", "panas sisa, pilih indoor", "udara nempel, low effort" ],
+                },
+                "windy": {
+                  "pagi":[ "pagi berangin, headset aman", "hembus kenceng, jaketan dikit", "angin pagi, enak indoor" ],
+                  "siang":[ "siang berangin, indoor vibes", "hembus siang, nyaman gerak", "angin narik awan, pace stabil" ],
+                  "sore":[ "sore berangin, komuter santai", "hembus sore, tutup hari enak", "semilir rame, santai aja" ],
+                  "malem":[ "malem berangin, cozy indoor", "hembus malem, comms aman", "angin malam, chill rapi" ],
+                },
+                "ok": {
+                  "pagi":[ "pagi nyaman, start mulus", "hawanya pas, niat jalan", "pagi ringan, fokus enak" ],
+                  "siang":[ "siang oke, ritme stabil", "hawanya pas, gerak mantap", "nyaman siang, task rapi" ],
+                  "sore":[ "sore enak, closing task", "nyaman sore, wrap-up mulus", "sore halus, pace pas" ],
+                  "malem":[ "malem oke, wind down santai", "nyaman malem, rileks rapi", "malem halus, tempo enak" ],
+                }
               }
-              return random.choice(pools.get(wx, {}).get(time_indo, pools["ok"][time_indo]))
+              return random.choice(pools.get(wx, pools["ok"]).get(time_id, pools["ok"]["pagi"]))
 
           def coin(p=0.5): return random.random() < p
 
-          # ---------- english first sentence ----------
-          def english_first_sentence(day, time, is_weekend, wx):
-              openers = ["yoooow", "wassuuup", "heyyy", "yo", "sup", "oi", "hey team", "morning fam", "what's good", "rise n shine"]
+          # ---------- english first (no dash, no “check-in/roll call”) ----------
+          def first_en(day, time, is_weekend, wx):
+              openers = ["yoooow", "heyyy", "yo", "sup", "hey team", "morning fam", "what's good"]
               labels = {
-                  "morning": [f"{day} morning crew", f"{day} a.m. squad", f"{day} early shift", f"{day} roll call", f"{day} check-in"],
-                  "afternoon": [f"{day} afternoon squad", f"{day} afternoon crew", f"{day} afternoon check-in", f"{day} mid-shift team"],
-                  "evening": [f"{day} evening squad", f"{day} evening crew", f"{day} golden hour check-in", f"{day} dusk team"],
-                  "night": [f"{day} night squad", f"{day} night crew", f"{day} late shift", f"{day} night check-in"],
+                "morning":[ f"{day} morning crew", f"{day} morning", f"{day} a.m." ],
+                "afternoon":[ f"{day} afternoon squad", f"{day} afternoon", f"{day} midday" ],
+                "evening":[ f"{day} evening crew", f"{day} evening", f"{day} dusk" ],
+                "night":[ f"{day} night squad", f"{day} night", f"{day} late" ],
               }
-              energy = [
-                  "dialed in or still booting",
-                  "locked in or easing in",
-                  "sharp already or warming up",
-                  "green bar or low battery",
-                  "heads-down or light start",
+              # hooks tanpa “x or y” spam
+              hooks_general = [
+                "staying dry" if wx=="rain" else "keeping it steady",
+                "coffee ready",
+                "heads on",
+                "feeling sharp",
+                "locking in",
+                "keeping it light",
               ]
-              plans = [
-                  "sprint or steady pace",
-                  "deep work or light warm-up",
-                  "plan locked or freestyling",
-                  "calendar-led or vibe-led",
-                  "clear runway or quick detours",
+              hooks_alt = [
+                "who's up",
+                "you good",
+                "we moving",
+                "focus first",
+                "one step at a time",
               ]
-              rain_hooks = [
-                  "rain check—umbrella mode or hoodie mode",
-                  "drizzly start—coffee secured or top-up needed",
-                  "wet commute—on time or adjusting route",
-                  "grey morning—steady focus or gentle ramp",
-              ]
-              lunch_hooks = [
-                  "post-lunch—power back up or short reset",
-                  "siesta vibes—push through or quick stretch",
-                  "midday pulse—energy back or still mellow",
-              ]
-              evening_hooks = [
-                  "wrap-up soon or second wind coming",
-                  "dinner first or queue later",
-                  "golden hour—close loops or open comms",
-              ]
-              night_hooks = [
-                  "wind down or one last queue",
-                  "late energy or screen dim soon",
-                  "quiet grind or chill chat",
-              ]
-
-              bits = []
-              if coin(0.55): bits.append(random.choice(openers))
-              bits.append(random.choice(labels.get(time, [f"{day} {time} crew"])))
-              
-              if time == "morning":
-                  hook_pool = (rain_hooks if wx == "rain" and not is_weekend else []) + energy + plans
-              elif time == "afternoon":
-                  hook_pool = lunch_hooks + plans + energy
-              elif time == "evening":
-                  hook_pool = evening_hooks + plans
+              lead = (random.choice(openers) + " " if coin(0.6) else "") + random.choice(labels.get(time, [f"{day} {time}"]))
+              hook = random.choice(hooks_general + hooks_alt)
+              # beberapa varian bentuk kalimat
+              if coin(0.5):
+                  sent = f"{lead}, {hook}?"
               else:
-                  hook_pool = night_hooks + energy
+                  sent = f"{lead} — {hook}?"  # nanti dash disanitasi ke koma
+              return sent
 
-              hook = random.choice(hook_pool)
-              first = ", ".join([" ".join(bits), hook])
-              if not first.endswith("?"): first += "?"
-              # pastikan english-only di kalimat 1
-              return first
-
-          # ---------- indonesian second sentence ----------
-          def indo_second_sentence(day_indo, time, is_weekend, wx):
-              games = ["valorant", "mobile legends", "roblox"]
-              tindo = time_indo_label(time)
-              wx_line = weather_phrase(day_indo, tindo, wx)
-
-              if time == "morning" and not is_weekend:
-                  later_slots = ["nanti sore", "ntaran abis pulang", "malem nanti", "abis tugas kelar"]
+          # ---------- indo second (sinkron cuaca & konteks) ----------
+          def second_id(day, time, is_weekend, wx):
+              games = ["valorant","mobile legends","roblox"]
+              tind = t_id(time)
+              wxline = wx_phrase(tind, wx)
+              if time=="morning" and not is_weekend:
+                  later = random.choice(["nanti sore","abis pulang","malem nanti","abis tugas kelar"])
                   lines = [
-                      f"prioritas tugas dulu, game {random.choice(later_slots)}",
-                      f"fokus sekolah atau kerja dulu, {random.choice(games)} {random.choice(later_slots)}",
-                      f"rapihin to-do dulu, {random.choice(games)} {random.choice(later_slots)}",
-                      f"kerjain inti dulu, baru santai {random.choice(games)} {random.choice(later_slots)}",
+                    f"prioritas tugas dulu, game {later}",
+                    f"fokus sekolah atau kerja dulu, {random.choice(games)} {later}",
+                    f"rapihin to-do dulu, {random.choice(games)} {later}",
+                    f"serius bentar, baru santai {random.choice(games)} {later}",
                   ]
-                  starter = random.choice(["yuk", "yuuuk", "yok", "gas", "gaskeun", "ayoo"])
-                  return f"{starter} {wx_line}, {random.choice(lines)}" if coin(0.5) else f"{starter} {random.choice(lines)}, {wx_line}"
-
-              # weekend morning: bebas, tapi ikut cuaca
-              if time == "morning" and is_weekend:
-                  acts_rain = [
-                      f"pemanasan aim tipis di {random.choice(games)}",
-                      f"classic {random.choice(games)} sambil ngopi",
-                      f"chill {random.choice(games)} dulu biar hangat",
-                  ]
-                  acts_clear = [
-                      f"quick {random.choice(games)} sambil sarapan",
-                      f"unrated {random.choice(games)} tipis-tipis",
-                      f"adventure {random.choice(games)} santai",
-                  ]
-                  act = random.choice(acts_rain if wx in ["rain","cloudy"] else acts_clear)
-                  starter = random.choice(["yuk", "yuuuk", "yok", "gas", "gaskeun", "ayoo"])
-                  tag = " <@&1374047008829997157>"
-                  return f"{starter}{tag} {wx_line}, {act}" if coin(0.5) else f"{starter}{tag} {act}, {wx_line}"
-
-              # selain itu: gaming ok, arahkan sesuai cuaca
+                  starter = random.choice(["yuk","yuuuk","yok","gas","gaskeun","ayoo"])
+                  return f"{starter} {wxline}, {random.choice(lines)}" if coin(0.5) else f"{starter} {random.choice(lines)}, {wxline}"
+              # other times
               if wx in ["rain","hot","windy","cloudy"]:
                   recs = [
-                      f"mabar {random.choice(games)} santai",
-                      f"{random.choice(games)} classic dulu",
-                      f"voice chat {random.choice(games)} sambil ngemil",
-                      f"aim training tipis-tipis",
+                    f"mabar {random.choice(games)} santai",
+                    f"{random.choice(games)} classic dulu",
+                    f"voice chat {random.choice(games)} sambil ngemil",
+                    f"aim training tipis-tipis",
                   ]
               else:
                   recs = [
-                      f"{random.choice(games)} session bareng",
-                      f"push tipis di {random.choice(games)}",
-                      f"quick match {random.choice(games)}",
-                      f"comms on, {random.choice(games)} yuk",
+                    f"{random.choice(games)} session bareng",
+                    f"push tipis di {random.choice(games)}",
+                    f"quick match {random.choice(games)}",
+                    f"comms on, {random.choice(games)} yuk",
                   ]
-              starter = random.choice(["yuk", "yuuuk", "yok", "gas", "gaskeun", "ayoo"])
+              starter = random.choice(["yuk","yuuuk","yok","gas","gaskeun","ayoo"])
               tag = " <@&1374047008829997157>" if is_weekend else ""
-              return f"{starter}{tag} {wx_line}, {random.choice(recs)}" if coin(0.5) else f"{starter}{tag} {random.choice(recs)}, {wx_line}"
+              return f"{starter}{tag} {wxline}, {random.choice(recs)}" if coin(0.5) else f"{starter}{tag} {random.choice(recs)}, {wxline}"
 
-          def build_message():
-              day = os.environ.get('CURRENT_DAY', 'today').lower()
-              time = os.environ.get('TIME_OF_DAY', 'day')
-              weather_raw = os.environ.get('WEATHER_INFO', '')
-              is_weekend = os.environ.get('IS_WEEKEND', 'false').lower() == 'true'
-              
-              wx = normalize_weather(weather_raw)
-              day_indo_map = {'monday':'senin','tuesday':'selasa','wednesday':'rabu','thursday':'kamis','friday':'jumat','saturday':'sabtu','sunday':'minggu'}
-              day_indo = day_indo_map.get(day, day)
-              
-              first = english_first_sentence(day, time, is_weekend, wx)
-              second = indo_second_sentence(day_indo, time, is_weekend, wx)
-              
-              # pastikan struktur bersih
-              msg = (first.strip() + " " + second.strip()).lower()
-              msg = re.sub(r"\s+", " ", msg).strip()
-              # hapus emoji trailing
-              msg = re.sub(r'[🎮💯🔥⚡✨🎯💪🚀☕📚]+$', '', msg)
+          def sanitize(s: str) -> str:
+              # hilangin dash “—/–” biar ga kerasa ai
+              s = s.replace("—", ",").replace("–", ",")
+              s = re.sub(r"\s+,", ",", s)
+              s = re.sub(r"\s+", " ", s).strip()
+              s = s.lower()
+              return s
+
+          def build():
+              day = os.environ.get("CURRENT_DAY","today").lower()
+              time = os.environ.get("TIME_OF_DAY","day")
+              is_weekend = os.environ.get("IS_WEEKEND","false").lower()=="true"
+              wx = norm_wx(os.environ.get("WEATHER_INFO",""))
+              first = first_en(day, time, is_weekend, wx)
+              if "?" not in first: first = first.rstrip(".") + "?"
+              second = second_id(day, time, is_weekend, wx)
+              msg = sanitize(first + " " + second)
+              # guard english-only untuk kalimat 1
+              first_part = msg.split("?",1)[0]
+              if re.search(r"\b(yuk|yuuuk|yok|gas|gaskeun|atau|dulu|gini|banget|aja|sama|juga|kali|deh|dong|lah|nih|yg|kuy|mabar|anjay|wkwk|njir|pas|udah|ntar|besok|gue|gua|kamu|lu)\b", first_part):
+                  # fallback: paksa english pendek
+                  msg = re.sub(r"^.*?\?", f"{day} {time} crew, keep it steady? ", msg)
+              # bersihin emoji trailing
+              msg = re.sub(r"[🎮💯🔥⚡✨🎯💪🚀☕📚]+$", "", msg).strip()
               return msg
 
           try:
-              # optional: coba gemini dulu dengan prompt ringkas
-              day = os.environ.get('CURRENT_DAY', 'today').lower()
-              time = os.environ.get('TIME_OF_DAY', 'day')
-              is_weekend = os.environ.get('IS_WEEKEND', 'false').lower() == 'true'
-              
-              if time == 'morning' and not is_weekend:
-                  prompt = f"""write a discord greeting for {day} morning (weekday), 2 sentences, all lowercase.
-          sentence 1: english only, dynamic phrasing (avoid repeating templates), end with '?'.
-          sentence 2: indonesian, productivity first then gaming later (valorant/mobile legends/roblox) + natural weather clause (no laughter slang). write only the greeting."""
-              elif time == 'morning' and is_weekend:
-                  prompt = f"""write a discord greeting for {day} morning (weekend), 2 sentences, all lowercase.
-          sentence 1: english only, dynamic phrasing, end with '?'.
-          sentence 2: indonesian, start with yuk/yuuuk/yok/gas/gaskeun + <@&1374047008829997157>, pick one game, add natural weather clause. write only the greeting."""
-              else:
-                  prompt = f"""write a discord greeting for {day} {time}, 2 sentences, all lowercase.
-          sentence 1: english only, dynamic phrasing, end with '?'.
-          sentence 2: indonesian, invite to valorant/mobile legends/roblox + natural weather clause (no laughter slang). write only the greeting."""
-              
-              api_key = os.environ.get('GEMINI_API_KEY')
+              # small prompt for gemini (optional)
+              day = os.environ.get("CURRENT_DAY","today").lower()
+              time = os.environ.get("TIME_OF_DAY","day")
+              is_weekend = os.environ.get("IS_WEEKEND","false").lower()=="true"
+              api_key = os.environ.get("GEMINI_API_KEY")
               if api_key:
+                  if time=="morning" and not is_weekend:
+                      prompt = f"""write a discord greeting for {day} morning (weekday), 2 sentences, all lowercase.
+              sentence 1: english only, short and natural (no 'check in', no em dash). end with '?'.
+              sentence 2: indonesian, productivity first then gaming later (valorant/mobile legends/roblox) + natural weather clause. no laughter slang. write only the greeting."""
+                  elif time=="morning" and is_weekend:
+                      prompt = f"""write a discord greeting for {day} morning (weekend), 2 sentences, all lowercase.
+              sentence 1: english only, short and natural (no 'check in', no em dash). end with '?'.
+              sentence 2: indonesian, start with yuk/yuuuk/yok/gas/gaskeun + <@&1374047008829997157>, include one game and a natural weather clause. write only the greeting."""
+                  else:
+                      prompt = f"""write a discord greeting for {day} {time}, 2 sentences, all lowercase.
+              sentence 1: english only, short and natural (no 'check in', no em dash). end with '?'.
+              sentence 2: indonesian, invite to valorant/mobile legends/roblox + natural weather clause. no laughter slang. write only the greeting."""
                   url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
-                  payload = {"contents":[{"parts":[{"text":prompt}]}], "generationConfig":{"temperature":0.7,"maxOutputTokens":110,"topP":0.9}}
-                  resp = requests.post(url, json=payload, timeout=15)
-                  if resp.status_code == 200:
-                      data = resp.json()
+                  payload = {"contents":[{"parts":[{"text":prompt}]}],"generationConfig":{"temperature":0.66,"maxOutputTokens":110,"topP":0.9}}
+                  r = requests.post(url, json=payload, timeout=15)
+                  if r.status_code==200:
+                      data = r.json()
                       cand = (data.get("candidates") or [None])[0]
-                      if cand and cand.get("finishReason") != "MAX_TOKENS":
+                      if cand and cand.get("finishReason")!="MAX_TOKENS":
                           parts = cand.get("content",{}).get("parts") or []
                           if parts and "text" in parts[0]:
                               t = parts[0]["text"].strip().lower()
                               t = re.sub(r"\*+|\n+"," ",t); t = " ".join(t.split())
                               if "?" not in t: t = re.sub(r"\.", "?", t, count=1)
-                              first, second = (t.split("?",1)+[""])[:2]
-                              # guard: no gaming in first (weekday morning), english-only first, no ketawa di cuaca
-                              ok = True
+                              msg = sanitize(t)
+                              # guard gaming di kalimat 1 (weekday pagi)
                               if time=="morning" and not is_weekend:
-                                  if any(w in first for w in ['apex','valorant','mobile legends','roblox','gaming','main','mabar','push rank','competitive']): ok=False
-                              if any(tok in first.split() for tok in ['yuk','yuuuk','yok','gaskeun','gas','atau','dulu','gini','banget','aja','sama','juga','kali','deh','dong','lah','nih','yg','kuy','mabar','anjay','wkwk','njir','pas','udah','ntar','besok','gue','gua','kamu','lu']): ok=False
-                              if re.search(r'(cuaca|hujan|cerah|mendung|berawan|panas|terik|angin)[^.!?]{0,80}(kocak+k*|wkwk(wk)*|ytta)', second): ok=False
-                              rebuilt = (first.strip()+"? "+second.strip()).strip()
-                              rebuilt = re.sub(r"\s+"," ",rebuilt)
-                              if ok and 60 <= len(rebuilt) <= 200:
-                                  with open('/tmp/ai_response.txt','w',encoding='utf-8') as f: f.write(rebuilt)
+                                  first_part = msg.split("?",1)[0]
+                                  if re.search(r"\b(apex|valorant|mobile legends|roblox|gaming|main|mabar|push rank|competitive)\b", first_part):
+                                      raise ValueError("gaming in first sentence")
+                              # guard dash sisa
+                              if "—" in msg or "–" in msg:
+                                  msg = sanitize(msg)
+                              if 60 <= len(msg) <= 200:
+                                  open("/tmp/ai_response.txt","w",encoding="utf-8").write(msg)
                                   print("✅ gemini ok"); sys.exit(0)
-              # fallback ke generator kita
-              msg = build_message()
-              with open('/tmp/ai_response.txt','w',encoding='utf-8') as f: f.write(msg)
-              print("✅ dynamic generator ok"); sys.exit(0)
+              # fallback local
+              msg = build()
+              open("/tmp/ai_response.txt","w",encoding="utf-8").write(msg)
+              print("✅ local generator ok"); sys.exit(0)
           except Exception as e:
-              print(f"⚠️ exception: {e}")
-              msg = build_message()
-              with open('/tmp/ai_response.txt','w',encoding='utf-8') as f: f.write(msg)
+              print("⚠️", e)
+              msg = build()
+              open("/tmp/ai_response.txt","w",encoding="utf-8").write(msg)
               print("✅ exception fallback ok"); sys.exit(0)
           EOL
 
-          # payload (tetep)
+          # ---------- payload script (unchanged) ----------
           cat > /tmp/discord_script.py << 'EOL'
           import json, os
           title = os.environ.get('TITLE', 'Skye Squad')
@@ -625,19 +454,18 @@ jobs:
           print("✅ payload created")
           EOL
 
-          # eksekusi
-          echo "🧪 Executing generator..."
+          # ---------- run ----------
+          echo "🧪 executing generator..."
           python3 /tmp/fixed_contextual_generator.py
           
-          # proses hasil
+          # ---------- process result ----------
           if [[ -s /tmp/ai_response.txt ]]; then
             AI_TEXT=$(cat /tmp/ai_response.txt)
-            echo "🎯 Generated text: $AI_TEXT"
+            echo "🎯 generated: $AI_TEXT"
             if [[ ${#AI_TEXT} -gt 40 && ${#AI_TEXT} -lt 250 ]]; then
               if [[ "$CONTEXT" == "weekend" ]]; then
                 HAS_TAG=$(echo "$AI_TEXT" | grep -E "<@&[0-9]+>" || echo "")
                 if [[ -z "$HAS_TAG" ]]; then
-                  echo "⚠️ adding weekend tag..."
                   if [[ "$AI_TEXT" == *"?"* ]]; then
                     AI_TEXT=$(echo "$AI_TEXT" | sed 's/? /? <@&1374047008829997157> /')
                   else
@@ -645,87 +473,78 @@ jobs:
                   fi
                 fi
               else
-                AI_TEXT=$(echo "$AI_TEXT" | sed 's/<@&[0-9]*>//g' | sed 's/  / /g')
+                AI_TEXT=$(echo "$AI_TEXT" | sed 's/<@&[0-9]*>//g')
               fi
-              # style kecil
+              # style fixes (tanpa dash)
+              AI_TEXT=$(echo "$AI_TEXT" | tr '–—' ',')
               AI_TEXT=$(echo "$AI_TEXT" | sed 's/school\/work/school or work/gI' | sed 's/sekolah\/kerja/sekolah atau kerja/gI')
               AI_TEXT=$(echo "$AI_TEXT" | sed -E 's/[🎮💯🔥⚡✨🎯💪🚀☕📚]+$//')
+              AI_TEXT=$(echo "$AI_TEXT" | tr -s ' ')
               [ ${#AI_TEXT} -gt 200 ] && AI_TEXT="${AI_TEXT:0:190}..."
-              DESC_RAW="$AI_TEXT"
-              USE_AI=true
-              echo "✅ AI text accepted (${#AI_TEXT} chars)"
+              DESC_RAW="$AI_TEXT"; USE_AI=true
+              echo "✅ text accepted (${#AI_TEXT} chars)"
             else
               echo "❌ invalid length (${#AI_TEXT})"; USE_AI=false
             fi
           else
-            echo "❌ no AI response file"; USE_AI=false
+            echo "❌ no ai response"; USE_AI=false
           fi
           
-          # fallback dinamis di bash (singkat, tetap kontekstual)
+          # ---------- bash fallback (ringkas, no dash) ----------
           if [[ "$USE_AI" != "true" ]]; then
-            echo "🎲 Using bash fallback..."
-            DAY_LOWER=$(echo "$CURRENT_DAY" | tr '[:upper:]' '[:lower:]')
-            # normalize wx
-            if echo "$WEATHER_INFO" | grep -qi "hujan\|gerimis"; then WX="rain"
-            elif echo "$WEATHER_INFO" | grep -qi "cerah\|terang\|matahari"; then WX="clear"
-            elif echo "$WEATHER_INFO" | grep -qi "mendung\|berawan\|cloud"; then WX="cloudy"
-            elif echo "$WEATHER_INFO" | grep -qi "panas\|terik"; then WX="hot"
-            elif echo "$WEATHER_INFO" | grep -qi "angin\|berangin\|wind"; then WX="windy"
-            else WX="ok"; fi
-            # wx line simple per time
-            case "$TIME_OF_DAY-$WX" in
-              morning-rain) WX_LINE="hujan pagi, enak fokus di ${DAY_LOWER}" ;;
-              afternoon-rain) WX_LINE="hujan siang, mending indoor di ${DAY_LOOWER}" ;;
-              evening-rain) WX_LINE="hujan sore, wrap-up santai di ${DAY_LOWER}" ;;
-              night-rain) WX_LINE="hujan malem, cozy mode di ${DAY_LOWER}" ;;
-              morning-clear) WX_LINE="langit cerah, start mulus di ${DAY_LOWER}" ;;
-              afternoon-clear) WX_LINE="cerah siang, energi naik di ${DAY_LOWER}" ;;
-              evening-clear) WX_LINE="golden hour, vibes enak di ${DAY_LOWER}" ;;
-              night-clear) WX_LINE="malem cerah, wind down enak di ${DAY_LOWER}" ;;
-              morning-cloudy) WX_LINE="mendung pagi, no silau di ${DAY_LOWER}" ;;
-              afternoon-cloudy) WX_LINE="berawan siang, nyaman gerak di ${DAY_LOWER}" ;;
-              evening-cloudy) WX_LINE="sore teduh, enak closing di ${DAY_LOWER}" ;;
-              night-cloudy) WX_LINE="malem teduh, santai produktif di ${DAY_LOWER}" ;;
-              morning-hot) WX_LINE="pagi terik, indoor dulu di ${DAY_LOWER}" ;;
-              afternoon-hot) WX_LINE="siang terik, hemat tenaga di ${DAY_LOWER}" ;;
-              evening-hot) WX_LINE="sore masih panas, cooldown dulu di ${DAY_LOWER}" ;;
-              night-hot) WX_LINE="malem hangat, pelan aja di ${DAY_LOWER}" ;;
-              morning-windy) WX_LINE="pagi berangin, headset aman di ${DAY_LOWER}" ;;
-              afternoon-windy) WX_LINE="siang berangin, indoor vibes di ${DAY_LOWER}" ;;
-              evening-windy) WX_LINE="sore berangin, komuter santai di ${DAY_LOWER}" ;;
-              night-windy) WX_LINE="malem berangin, cozy indoor di ${DAY_LOWER}" ;;
-              *) WX_LINE="cuaca oke, pace enak di ${DAY_LOWER}" ;;
+            DAY=$(echo "$CURRENT_DAY" | tr '[:upper:]' '[:lower:]')
+            case "$WEATHER_INFO" in
+              *hujan*|*gerimis*) WX="rain" ;;
+              *cerah*|*terang*|*matahari*) WX="clear" ;;
+              *mendung*|*berawan*|*cloud*) WX="cloudy" ;;
+              *panas*|*terik*) WX="hot" ;;
+              *angin*|*berangin*|*wind*) WX="windy" ;;
+              *) WX="ok" ;;
             esac
-            # english first fallback
-            FIRST=$(shuf -e \
-              "yoooow ${DAY_LOWER} morning crew, dialed in or easing in" \
-              "hey team ${DAY_LOWER} check-in, plan locked or freestyling" \
-              "${DAY_LOWER} a.m. squad, coffee secured or still booting" \
-              "${DAY_LOWER} roll call, green bar or low battery" \
-              "${DAY_LOWER} morning crew, rain check—umbrella or hoodie" -n1)
-            # indo second
-            if [ "$TIME_OF_DAY" = "morning" ] && [ "$CONTEXT" != "weekend" ]; then
+            # english first (no dash)
+            case "$TIME_OF_DAY" in
+              morning) FIRST="$(shuf -e "yoooow $DAY morning crew, staying dry?" "hey team $DAY morning, coffee ready?" "$DAY morning, keep it steady?" -n1)" ;;
+              afternoon) FIRST="$(shuf -e "$DAY afternoon squad, keeping it steady?" "$DAY afternoon crew, heads on?" -n1)" ;;
+              evening) FIRST="$(shuf -e "$DAY evening crew, dinner first?" "$DAY evening, feeling sharp?" -n1)" ;;
+              night) FIRST="$(shuf -e "$DAY night squad, wind down?" "$DAY night, we moving?" -n1)" ;;
+            esac
+            # wx line
+            case "$TIME_OF_DAY-$WX" in
+              morning-rain) WXLINE="lagi rintik, enak fokus dulu" ;;
+              afternoon-rain) WXLINE="hujan siang, mending indoor" ;;
+              evening-rain) WXLINE="hujan sore, wrap-up santai" ;;
+              night-rain) WXLINE="hujan malem, cozy mode" ;;
+              morning-clear) WXLINE="langit cerah, start mulus" ;;
+              afternoon-clear) WXLINE="cerah siang, energi naik" ;;
+              evening-clear) WXLINE="golden hour, vibes enak" ;;
+              night-clear) WXLINE="malem cerah, kepala ringan" ;;
+              morning-cloudy) WXLINE="mendung pagi, no silau" ;;
+              afternoon-cloudy) WXLINE="berawan siang, nyaman gerak" ;;
+              evening-cloudy) WXLINE="sore teduh, wrap-up mulus" ;;
+              night-cloudy) WXLINE="malem teduh, santai produktif" ;;
+              morning-hot) WXLINE="pagi terik, indoor dulu" ;;
+              afternoon-hot) WXLINE="siang terik, hemat tenaga" ;;
+              evening-hot) WXLINE="sore masih panas, cooldown dulu" ;;
+              night-hot) WXLINE="malem hangat, pelan aja" ;;
+              morning-windy) WXLINE="pagi berangin, headset aman" ;;
+              afternoon-windy) WXLINE="siang berangin, indoor vibes" ;;
+              evening-windy) WXLINE="sore berangin, komuter santai" ;;
+              night-windy) WXLINE="malem berangin, cozy indoor" ;;
+              *) WXLINE="cuaca oke, pace enak" ;;
+            esac
+            if [[ "$TIME_OF_DAY" = "morning" && "$CONTEXT" != "weekend" ]]; then
               GAME=$(shuf -e valorant "mobile legends" roblox -n1)
-              LATER=$(shuf -e "nanti sore" "ntaran abis pulang" "malem nanti" "abis tugas kelar" -n1)
-              SECOND=$(shuf -e \
-                "yuk ${WX_LINE}, prioritas tugas dulu, ${GAME} ${LATER}" \
-                "yok ${WX_LINE}, fokus sekolah atau kerja dulu, ${GAME} ${LATER}" \
-                "gas ${WX_LINE}, rapihin to-do dulu, ${GAME} ${LATER}" \
-                "gaskeun ${WX_LINE}, kerjain inti dulu, baru santai ${GAME} ${LATER}" -n1)
+              LATER=$(shuf -e "nanti sore" "abis pulang" "malem nanti" "abis tugas kelar" -n1)
+              SECOND=$(shuf -e "yuk $WXLINE, prioritas tugas dulu, $GAME $LATER" "yok $WXLINE, fokus sekolah atau kerja dulu, $GAME $LATER" -n1)
             else
               GAME=$(shuf -e valorant "mobile legends" roblox -n1)
-              TAG=""; [ "$CONTEXT" = "weekend" ] && TAG=" <@&1374047008829997157>"
-              SECOND=$(shuf -e \
-                "yuk ${WX_LINE}, mabar ${GAME} santai${TAG}" \
-                "yok ${WX_LINE}, ${GAME} classic dulu${TAG}" \
-                "gas ${WX_LINE}, quick match ${GAME}${TAG}" \
-                "gaskeun ${WX_LINE}, comms on, ${GAME} yuk${TAG}" -n1)
+              TAG=""; [[ "$CONTEXT" = "weekend" ]] && TAG=" <@&1374047008829997157>"
+              SECOND=$(shuf -e "yuk $WXLINE, mabar $GAME santai$TAG" "gas $WXLINE, quick match $GAME$TAG" -n1)
             fi
-            DESC_RAW="${FIRST}? ${SECOND}"
-            echo "🎯 Fallback built: ${DESC_RAW}"
+            DESC_RAW="$FIRST $SECOND"
           fi
           
-          # judul & thumb
+          # titles & thumbs
           case "$TIME_OF_DAY" in
             "morning")
               if [[ "$WEATHER_INFO" == *"hujan"* ]]; then TITLE="good morning skyers"; THUMB="2614"; else TITLE="yoww morning skye squad"; THUMB="2600"; fi
