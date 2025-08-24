@@ -1,14 +1,14 @@
 {
   "Tanggal": "24 Agu 2025",
-  "Jam": "14:13:48 WIB",
-  "DateTime": "2025-08-24T07:13:48+00:00",
-  "Coordinates": "-7.13,107.81",
-  "Lintang": "7.13 LS",
-  "Bujur": "107.81 BT",
-  "Magnitude": "2.4",
-  "Kedalaman": "5 km",
-  "Wilayah": "Pusat gempa berada di darat 13 km baratlaut Kab. Garut",
+  "Jam": "14:31:14 WIB",
+  "DateTime": "2025-08-24T07:31:14+00:00",
+  "Coordinates": "-9.46,115.16",
+  "Lintang": "9.46 LS",
+  "Bujur": "115.16 BT",
+  "Magnitude": "4.3",
+  "Kedalaman": "20 km",
+  "Wilayah": "Pusat gempa berada di laut 74 km baratdaya Kuta Selatan",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Leles, II Kadungora",
-  "Shakemap": "20250824141348.mmi.jpg"
+  "Dirasakan": "II-III Kuta Selatan, II-III Kuta, II-III Kuta Utara",
+  "Shakemap": "20250824143114.mmi.jpg"
 }
