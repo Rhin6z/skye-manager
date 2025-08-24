@@ -295,47 +295,73 @@ jobs:
               
               if response.status_code == 200:
                   data = response.json()
+                  print(f"🔍 AI Response structure: {list(data.keys())}")
+                  
                   if 'candidates' in data and len(data['candidates']) > 0:
-                      ai_text = data['candidates'][0]['content']['parts'][0]['text'].strip()
+                      candidate = data['candidates'][0]
+                      print(f"🔍 Candidate structure: {list(candidate.keys())}")
                       
-                      # Enhanced JSON extraction
-                      json_patterns = [
-                          r'\{[^}]*"message"[^}]*"title"[^}]*"footer"[^}]*\}',
-                          r'\{[^}]*"title"[^}]*"message"[^}]*"footer"[^}]*\}',
-                          r'\{[^}]*"footer"[^}]*"message"[^}]*"title"[^}]*\}'
-                      ]
+                      # Handle different response structures
+                      ai_text = ""
+                      if 'content' in candidate and 'parts' in candidate['content']:
+                          if len(candidate['content']['parts']) > 0 and 'text' in candidate['content']['parts'][0]:
+                              ai_text = candidate['content']['parts'][0]['text'].strip()
+                      elif 'text' in candidate:
+                          ai_text = candidate['text'].strip()
+                      elif 'content' in candidate and isinstance(candidate['content'], str):
+                          ai_text = candidate['content'].strip()
                       
-                      for pattern in json_patterns:
-                          json_match = re.search(pattern, ai_text, re.DOTALL)
-                          if json_match:
-                              try:
-                                  content = json.loads(json_match.group())
-                                  if all(key in content for key in ['message', 'title', 'footer']):
-                                      # Validate dan clean content
-                                      message = content['message'].lower().strip()
-                                      title = content['title'].lower().strip()
-                                      footer = content['footer'].lower().strip()
-                                      
-                                      # Ensure proper role tag for weekend
-                                      if is_weekend and '<@&1374047008829997157>' not in message:
-                                          # Add tag after first sentence
-                                          if '?' in message:
-                                              message = message.replace('?', '? <@&1374047008829997157>', 1)
-                                          else:
-                                              message += ' <@&1374047008829997157>'
-                                      elif not is_weekend:
-                                          message = re.sub(r'<@&[0-9]+>', '', message).strip()
-                                      
-                                      # Length validation
-                                      if 60 <= len(message) <= 220:
-                                          return {
-                                              'message': message,
-                                              'title': title,
-                                              'footer': footer,
-                                              'source': 'ai'
-                                          }
-                              except json.JSONDecodeError:
-                                  continue
+                      print(f"🔍 Extracted text length: {len(ai_text)}")
+                      print(f"🔍 Text preview: {ai_text[:100]}...")
+                      
+                      if ai_text:
+                      if ai_text:
+                          # Enhanced JSON extraction
+                          json_patterns = [
+                              r'\{[^}]*"message"[^}]*"title"[^}]*"footer"[^}]*\}',
+                              r'\{[^}]*"title"[^}]*"message"[^}]*"footer"[^}]*\}',
+                              r'\{[^}]*"footer"[^}]*"message"[^}]*"title"[^}]*\}',
+                              r'\{.*?"message".*?"title".*?"footer".*?\}',
+                              r'\{.*?"title".*?"footer".*?"message".*?\}',
+                              r'\{.*?"footer".*?"title".*?"message".*?\}'
+                          ]
+                          
+                          for pattern in json_patterns:
+                              json_match = re.search(pattern, ai_text, re.DOTALL)
+                              if json_match:
+                                  try:
+                                      content = json.loads(json_match.group())
+                                      if all(key in content for key in ['message', 'title', 'footer']):
+                                          # Validate dan clean content
+                                          message = content['message'].lower().strip()
+                                          title = content['title'].lower().strip()
+                                          footer = content['footer'].lower().strip()
+                                          
+                                          # Ensure proper role tag for weekend
+                                          if is_weekend and '<@&1374047008829997157>' not in message:
+                                              # Add tag after first sentence
+                                              if '?' in message:
+                                                  message = message.replace('?', '? <@&1374047008829997157>', 1)
+                                              else:
+                                                  message += ' <@&1374047008829997157>'
+                                          elif not is_weekend:
+                                              message = re.sub(r'<@&[0-9]+>', '', message).strip()
+                                          
+                                          # Length validation
+                                          if 60 <= len(message) <= 220:
+                                              return {
+                                                  'message': message,
+                                                  'title': title,
+                                                  'footer': footer,
+                                                  'source': 'ai'
+                                              }
+                                  except json.JSONDecodeError:
+                                      continue
+                  else:
+                      print(f"❌ No valid candidates in response or missing content structure")
+              else:
+                  print(f"❌ API request failed with status: {response.status_code}")
+                  print(f"❌ Response: {response.text[:200]}...")
               
               raise Exception("AI generation failed")
 
