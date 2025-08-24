@@ -189,163 +189,138 @@ jobs:
       - name: Generate AI Greeting
         id: ai_generation
         run: |
-          echo "🤖 Generating AI greeting with FIXED approach..."
+          echo "🤖 Generating AI greeting with CONTEXTUAL approach..."
           
-          # Create MINIMAL prompt to avoid token limits
-          cat > /tmp/minimal_prompt.txt << 'EOL'
-          Write a 2-sentence Discord greeting:
-          
-          Sentence 1 (English): Start with "yoooow" or "wassuuup", mention ${{ steps.context.outputs.CURRENT_DAY }} ${{ steps.context.outputs.TYPE }}, ask a gaming question. All lowercase.
-          
-          Sentence 2 (Indonesian): Start with "yuuuk" or "gaskeun", include slang "anjay/wkwkwk/ygy", mention ${{ steps.weather.outputs.WEATHER_INFO }}, end with emoji. Add <@&1374047008829997157> if weekend. All lowercase.
-          
-          Example: "yoooow monday night squad, ready for some late gaming? gaskeun mabar valorant, cuaca sejuk perfect buat grinding wkwkwk! 🎮"
-          
-          Write only the 2 sentences:
-          EOL
-          
-          # Create SIMPLIFIED Python script that WILL work
-          cat > /tmp/super_simple_generator.py << 'EOL'
+          # Create CONTEXTUAL Python script
+          cat > /tmp/contextual_generator.py << 'EOL'
           import json
           import requests
           import os
           import sys
           import re
           import random
+          import datetime
           
-          def create_dynamic_ai_message():
-              """Creates contextually appropriate, human-like messages"""
+          def create_contextual_ai_message():
+              """Creates contextually appropriate, human-like messages with proper logic"""
               day = os.environ.get('CURRENT_DAY', 'today').lower()
               time = os.environ.get('TIME_OF_DAY', 'day')
               weather = os.environ.get('WEATHER_INFO', 'cuaca enak')
               is_weekend = os.environ.get('IS_WEEKEND', 'false').lower() == 'true'
               
-              # Get actual hour for more precise context
-              import datetime
-              jakarta_time = datetime.datetime.now()
-              hour = jakarta_time.hour
-              
-              # More contextually appropriate starters and activities
+              # Updated Indonesian slang - no more cringe "skuyyyy"
+              indo_starters = ["yuuuk", "gaskeun", "gas", "ayoook", "yok"]
+              slang_terms = ["anjayyy", "gileee", "gacorrr", "wkwkwkwk", "awkowkoak", "njirrr", "ygy", "ytta", "dah", "kocakk"]
               english_starters = ["yoooow", "wassuuup", "heyyy", "bro", "suuup"]
+              emojis = ["🎮", "💯", "🔥", "⚡", "✨", "🎯", "💪", "🚀", "☕", "📚"]
               
-              # Context-aware questions that make sense for the time and day
+              # Contextual logic based on time and day
               if time == 'morning':
                   if is_weekend:
+                      # Weekend morning - gaming is OK
                       questions = [
-                          f"weekend lazy morning atau udah siap gaming {day}?",
-                          f"coffee first atau straight to valorant {day}?",
-                          f"bangun pagi weekend vibes atau kebangun sendiri {day}?",
-                          f"productive weekend morning atau chill mode {day}?"
+                          f"weekend morning vibes hitting different {day}?",
+                          f"bangun pagi buat gaming atau kebetulan {day}?", 
+                          f"coffee first atau straight to controller {day}?",
+                          f"lazy weekend morning atau productive mode {day}?"
                       ]
                       activities = [
-                          "ngopi sambil daily quest mobile legends",
-                          "chill valorant unrated sambil sarapan", 
-                          "roblox building sambil stretching",
-                          "warm up aim training sambil ngopi"
+                          "ngopi sambil valorant unrated",
+                          "chill mobile legends sambil sarapan",
+                          "roblox building sambil stretching", 
+                          "warm up aim training weekend session"
                       ]
+                      activity_emojis = ["🎮", "☕", "🔥", "✨"]
                   else:
+                      # Weekday morning - encourage productivity
                       questions = [
-                          f"siap sekolah/kerja atau masih butuh coffee {day}?",
-                          f"energy level udah full atau masih loading {day}?",
-                          f"weekend masih jauh ya {day} morning nih?",
-                          f"semangat {day} atau butuh motivasi extra?"
+                          f"siap sekolah/kerja atau masih butuh motivasi {day}?",
+                          f"semangat {day} morning atau weekend countdown mode?",
+                          f"energy level full atau masih loading {day}?",
+                          f"productive {day} atau survival mode aja?"
                       ]
                       activities = [
-                          "quick valorant deathmatch sebelum berangkat",
-                          "daily login mobile legends sambil sarapan",
-                          "chill roblox bentar sebelum sibuk",
-                          "coffee break sambil check rank"
+                          "semangat sekolah/kerja dulu, gaming nanti sore",
+                          "focus aktivitas dulu, valorant tunggu break time", 
+                          "productive dulu, mobile legends reward nanti",
+                          "gas sekolah/kerja, weekend gaming marathon menanti"
                       ]
+                      activity_emojis = ["📚", "💪", "⚡", "🚀"]
               
               elif time == 'afternoon':
                   if is_weekend:
+                      # Weekend afternoon - full gaming mode
                       questions = [
-                          f"lunch coma atau masih semangat gaming {day}?",
-                          f"productive weekend afternoon atau santai total {day}?",
-                          f"panas siang gini perfect buat indoor gaming {day}?",
+                          f"lunch coma atau masih energetic {day}?",
+                          f"productive weekend afternoon atau santai total {day}?", 
+                          f"panas siang gini perfect indoor gaming {day}?",
                           f"weekend vibes masih going strong {day}?"
                       ]
                       activities = [
-                          "ranked push mobile legends sambil makan",
-                          "competitive valorant session",
+                          "ranked push mobile legends bareng",
+                          "competitive valorant session", 
                           "roblox adventure sambil ngadem",
-                          "team fight bareng sambil snacking"
+                          "voice chat gaming sambil makan"
                       ]
                   else:
+                      # Weekday afternoon - light gaming/break time
                       questions = [
-                          f"lunch break atau masih stuck di aktivitas {day}?",
-                          f"capek seharian butuh gaming therapy {day}?",
-                          f"siang bolong gini enak buat break sejenak {day}?",
-                          f"weekend countdown mode udah aktif {day}?"
+                          f"lunch break freedom atau masih busy {day}?",
+                          f"butuh gaming therapy break {day}?",
+                          f"capek siang gini enak quick gaming {day}?", 
+                          f"weekend masih jauh ya {day} afternoon?"
                       ]
                       activities = [
                           "quick mobile legends classic break time",
-                          "valorant unrated sambil istirahat",
-                          "chill roblox sambil charging hp",
+                          "valorant unrated sambil istirahat bentar",
+                          "chill roblox sambil charging energy",
                           "aim training sambil snack break"
                       ]
               
               elif time == 'evening':
+                  # Evening is generally OK for gaming regardless of day
                   questions = [
-                      f"day was productive atau disaster total {day}?",
-                      f"dinner time gaming atau family time dulu {day}?",
-                      f"cape seharian butuh gaming relaxation {day}?",
-                      f"golden hour vibes perfect buat voice chat {day}?"
+                      f"day was productive atau challenging {day}?",
+                      f"dinner gaming session atau family time dulu {day}?",
+                      f"cape seharian butuh relaxing gaming {day}?",
+                      f"golden hour vibes perfect buat mabar {day}?"
                   ]
                   activities = [
                       "mabar valorant sambil dinner",
                       "mobile legends team fight bareng",
-                      "roblox hangout sambil makan malam", 
-                      "chill gaming session sambil ngobrol"
+                      "roblox voice chat sambil makan", 
+                      "evening gaming session santai"
                   ]
               
               else:  # night
-                  if hour >= 22 or hour <= 2:  # Late night (10 PM - 2 AM)
-                      if is_weekend:
-                          questions = [
-                              f"weekend late night freedom atau udah ngantuk {day}?",
-                              f"marathon gaming session atau peaceful vibes {day}?",
-                              f"night owl energy atau forcing yourself {day}?",
-                              f"weekend privilege jadi begadang legal {day}?"
-                          ]
-                          activities = [
-                              "competitive valorant push rank",
-                              "mobile legends night session bareng",
-                              "roblox building project sambil ngobrol",
-                              "late night gaming marathon"
-                          ]
-                      else:
-                          # Weekday late night - more responsible messaging
-                          questions = [
-                              f"insomnia atau sengaja begadang sebentar {day}?",
-                              f"besok {day} masih jauh atau udah close {day}?",
-                              f"quick gaming atau udah waktunya istirahat {day}?",
-                              f"night owl mode atau forcing stay awake {day}?"
-                          ]
-                          activities = [
-                              "quick valorant unrated aja dulu",
-                              "chill mobile legends classic bentar",
-                              "roblox santai sambil wind down",
-                              "aim training bentar sebelum bobo"
-                          ]
-                  else:  # Early night (6-10 PM)
+                  if is_weekend:
+                      # Weekend night - gaming marathon OK
                       questions = [
-                          f"prime gaming time atau family time dulu {day}?",
-                          f"dinner done jadi gaming time {day}?",
-                          f"evening energy masih ada atau udah drop {day}?",
-                          f"peaceful night gaming atau competitive mode {day}?"
+                          f"weekend night freedom atau udah ngantuk {day}?",
+                          f"marathon gaming session mode {day}?",
+                          f"night owl weekend energy {day}?",
+                          f"weekend privilege jadi begadang legal {day}?"
                       ]
                       activities = [
-                          "prime time valorant competitive",
-                          "mobile legends ranked push",
-                          "roblox voice chat sambil chill",
-                          "evening gaming session bareng"
+                          "competitive valorant push rank",
+                          "mobile legends night session marathon", 
+                          "roblox building project sambil ngobrol",
+                          "late night gaming dengan squad"
                       ]
-              
-              # Indonesian dynamic parts with proper slang
-              indo_starters = ["yuuuk", "gaskeun", "gas", "skuyyyy", "ayoook"]
-              slang_terms = ["anjay", "wkwkwk", "ygy", "njirrr", "sih", "dah", "bet"]
-              emojis = ["🎮", "💯", "🔥", "⚡", "✨", "🎯", "💪", "🚀"]
+                  else:
+                      # Weekday night - suggest lighter activities
+                      questions = [
+                          f"quick gaming sebelum istirahat {day}?",
+                          f"besok masih ada aktivitas atau santai {day}?",
+                          f"wind down gaming atau langsung bobo {day}?",
+                          f"insomnia atau sengaja begadang bentar {day}?"
+                      ]
+                      activities = [
+                          "valorant unrated bentar sebelum tidur",
+                          "mobile legends classic santai dulu",
+                          "roblox chill sambil wind down", 
+                          "aim training ringan sebelum istirahat"
+                      ]
               
               # Build contextually appropriate message
               starter = random.choice(english_starters)
@@ -354,11 +329,11 @@ jobs:
               indo_starter = random.choice(indo_starters)
               activity = random.choice(activities)
               slang = random.choice(slang_terms)
-              emoji = random.choice(emojis)
+              emoji = random.choice(emojis if time != 'morning' or is_weekend else activity_emojis)
               
-              # Weekend tag only for appropriate times
+              # Weekend tag only for appropriate gaming times
               tag = ""
-              if is_weekend and (time in ['morning', 'afternoon', 'evening'] or (time == 'night' and hour <= 23)):
+              if is_weekend and time in ['morning', 'afternoon', 'evening', 'night']:
                   tag = " <@&1374047008829997157>"
               
               # Indonesian day mapping
@@ -368,104 +343,110 @@ jobs:
               }
               day_indo = day_indo_map.get(day, day)
               
-              # Create natural message
-              message = f"{starter} {question} {indo_starter}{tag} {activity}, {weather} di {day_indo} gini {slang} perfect {emoji}"
+              # Create contextually logical message
+              message = f"{starter} {question} {indo_starter}{tag} {activity}, {weather} di {day_indo} gini {slang} cocok! {emoji}"
               
               return message
           
           try:
-              # Try Gemini API first
-              with open('/tmp/minimal_prompt.txt', 'r') as f:
-                  prompt = f.read().strip()
+              # Create MUCH more specific prompt for weekday mornings
+              day = os.environ.get('CURRENT_DAY', 'today').lower()
+              time = os.environ.get('TIME_OF_DAY', 'day')
+              is_weekend = os.environ.get('IS_WEEKEND', 'false').lower() == 'true'
+              
+              if time == 'morning' and not is_weekend:
+                  # Weekday morning - very specific prompt
+                  prompt = f"""Write 2 sentences for {day} morning Discord greeting:
+          
+          1. English: "yoooow/wassuuup {day} morning crew, [question about school/work readiness]?" (lowercase)
+          2. Indonesian: "yuuuk/gaskeun [encourage school/work first, gaming later], cuaca [weather] gini [slang] cocok buat semangat! [emoji]" (lowercase)
+          
+          Focus: Encourage productivity first, gaming as reward later.
+          Slang: anjayyy, gileee, wkwkwkwk, njirrr, ygy, dah
+          NO gaming invites for weekday mornings.
+          
+          Write only the 2 sentences:"""
+              else:
+                  # Other times - regular prompt  
+                  prompt = f"""Write 2 sentences for {day} {time} Discord greeting:
+          
+          1. English: "yoooow/wassuuup {day} {time}, [contextual question]?" (lowercase)
+          2. Indonesian: "yuuuk/gaskeun [appropriate activity], cuaca [weather] gini [slang] perfect! [emoji]" (lowercase)
+          
+          Context: {day} {time}, weekend: {is_weekend}
+          Games: valorant, mobile legends, roblox only
+          Slang: anjayyy, gileee, wkwkwkwk, njirrr, ygy, dah
+          
+          Write only the 2 sentences:"""
               
               api_key = os.environ.get('GEMINI_API_KEY')
-              if not api_key:
-                  print("❌ No API key, using dynamic generation")
-                  message = create_dynamic_message()
-                  with open('/tmp/ai_response.txt', 'w', encoding='utf-8') as f:
-                      f.write(message)
-                  print(f"✅ Dynamic generation: {message[:50]}...")
-                  sys.exit(0)
               
-              # Use flash-lite with VERY low token limit to avoid MAX_TOKENS
-              url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={api_key}"
-              
-              payload = {
-                  "contents": [{"parts": [{"text": prompt}]}],
-                  "generationConfig": {
-                      "temperature": 0.8,
-                      "maxOutputTokens": 80,  # VERY LOW to avoid MAX_TOKENS
-                      "topP": 0.9
+              if api_key:
+                  url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={api_key}"
+                  
+                  payload = {
+                      "contents": [{"parts": [{"text": prompt}]}],
+                      "generationConfig": {
+                          "temperature": 0.7,
+                          "maxOutputTokens": 80,
+                          "topP": 0.9
+                      }
                   }
-              }
-              
-              print("📡 Trying Gemini with minimal tokens...")
-              response = requests.post(url, json=payload, timeout=15)
-              
-              if response.status_code == 200:
-                  data = response.json()
-                  print(f"API Response: {str(data)[:200]}...")
                   
-                  # Try to extract text from various possible structures
-                  text_content = None
+                  print("📡 Trying contextual Gemini prompt...")
+                  response = requests.post(url, json=payload, timeout=15)
                   
-                  if 'candidates' in data and data['candidates']:
-                      candidate = data['candidates'][0]
+                  if response.status_code == 200:
+                      data = response.json()
+                      print(f"Response: {str(data)[:150]}...")
                       
-                      # Check finish reason
-                      finish_reason = candidate.get('finishReason', '')
-                      if finish_reason == 'MAX_TOKENS':
-                          print("⚠️ Hit MAX_TOKENS, using dynamic generation")
-                          message = create_dynamic_message()
-                          with open('/tmp/ai_response.txt', 'w', encoding='utf-8') as f:
-                              f.write(message)
-                          print(f"✅ Dynamic fallback: {message[:50]}...")
-                          sys.exit(0)
-                      
-                      # Try to extract text
-                      if 'content' in candidate:
-                          content = candidate['content']
-                          if 'parts' in content and content['parts']:
-                              if 'text' in content['parts'][0]:
-                                  text_content = content['parts'][0]['text']
-                              else:
-                                  # Sometimes text is directly in parts
-                                  text_content = str(content['parts'][0])
-                          elif 'text' in content:
-                              text_content = content['text']
-                      elif 'text' in candidate:
-                          text_content = candidate['text']
-                  
-                  if text_content and len(text_content.strip()) > 20:
-                      # Clean the text
-                      clean_text = text_content.strip()
-                      clean_text = re.sub(r'\*\*([^*]+)\*\*', r'\1', clean_text)
-                      clean_text = re.sub(r'`([^`]+)`', r'\1', clean_text)
-                      clean_text = ' '.join(clean_text.split())
-                      
-                      # Make sure it's lowercase
-                      clean_text = clean_text.lower()
-                      
-                      # Save the AI response
-                      with open('/tmp/ai_response.txt', 'w', encoding='utf-8') as f:
-                          f.write(clean_text)
-                      print(f"✅ Gemini success: {clean_text[:50]}...")
-                      sys.exit(0)
+                      if 'candidates' in data and data['candidates']:
+                          candidate = data['candidates'][0]
+                          
+                          if candidate.get('finishReason') != 'MAX_TOKENS':
+                              try:
+                                  if 'content' in candidate and 'parts' in candidate['content']:
+                                      parts = candidate['content']['parts']
+                                      if parts and 'text' in parts[0]:
+                                          text_content = parts[0]['text'].strip().lower()
+                                          
+                                          # Clean the text
+                                          clean_text = re.sub(r'\*+', '', text_content)
+                                          clean_text = re.sub(r'\n+', ' ', clean_text)
+                                          clean_text = ' '.join(clean_text.split())
+                                          
+                                          # Validate context appropriateness
+                                          is_appropriate = True
+                                          if time == 'morning' and not is_weekend:
+                                              # Check if it inappropriately invites gaming
+                                              gaming_invites = ['apex', 'valorant', 'mobile legends', 'roblox', 'gaming', 'main', 'mabar']
+                                              if any(invite in clean_text for invite in gaming_invites):
+                                                  is_appropriate = False
+                                                  print("⚠️ Inappropriate weekday morning gaming invite detected")
+                                          
+                                          if is_appropriate and len(clean_text) > 40 and len(clean_text) < 200:
+                                              with open('/tmp/ai_response.txt', 'w', encoding='utf-8') as f:
+                                                  f.write(clean_text)
+                                              print(f"✅ Contextual Gemini success: {clean_text[:50]}...")
+                                              sys.exit(0)
+                              except:
+                                  pass
               
-              # If we get here, Gemini failed, use dynamic generation
-              print("⚠️ Gemini failed, using dynamic generation")
-              message = create_dynamic_message()
+              # Fallback to contextual generation
+              print("🎲 Using contextual generation...")
+              message = create_contextual_ai_message()
+              
               with open('/tmp/ai_response.txt', 'w', encoding='utf-8') as f:
                   f.write(message)
-              print(f"✅ Dynamic generation: {message[:50]}...")
+              print(f"✅ Contextual message: {message[:50]}...")
               sys.exit(0)
               
           except Exception as e:
-              print(f"⚠️ Exception: {e}, using dynamic generation")
-              message = create_dynamic_message()
+              print(f"⚠️ Exception: {e}")
+              message = create_contextual_ai_message()
               with open('/tmp/ai_response.txt', 'w', encoding='utf-8') as f:
                   f.write(message)
-              print(f"✅ Dynamic generation: {message[:50]}...")
+              print(f"✅ Exception fallback: {message[:50]}...")
               sys.exit(0)
           EOL
 
@@ -508,14 +489,14 @@ jobs:
           print("✅ Payload created")
           EOL
 
-          # Execute with environment variables for dynamic generation
-          echo "🧪 Executing FIXED generator..."
+          # Execute with environment variables for contextual generation
+          echo "🧪 Executing CONTEXTUAL generator..."
           CURRENT_DAY="${{ steps.context.outputs.CURRENT_DAY }}" \
           TIME_OF_DAY="${{ steps.context.outputs.TYPE }}" \
           WEATHER_INFO="${{ steps.weather.outputs.WEATHER_INFO }}" \
           IS_WEEKEND="${{ steps.context.outputs.CONTEXT == 'weekend' }}" \
           GEMINI_API_KEY="${{ secrets.GEMINI_API_KEY }}" \
-          python3 /tmp/super_simple_generator.py
+          python3 /tmp/contextual_generator.py
           
           # This should ALWAYS succeed now
           if [[ -s /tmp/ai_response.txt ]]; then
@@ -570,33 +551,33 @@ jobs:
             case "${{ steps.context.outputs.TYPE }}" in
               "morning")
                 if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
-                  DESC_RAW="yoooow ${DAY_LOWER} morning crew, weekend vibes hitting different? gaskeun <@&1374047008829997157> warm up aim sambil ngopi, ${WEATHER_MENTION} di ${DAY_LOWER} gini anjay bgt buat grinding! ${WEATHER_EMOJI}"
+                  DESC_RAW="yoooow ${DAY_LOWER} morning crew, weekend vibes hitting different? gaskeun <@&1374047008829997157> warm up aim sambil ngopi, ${WEATHER_MENTION} di ${DAY_LOWER} gini anjayyy bgt buat grinding! ${WEATHER_EMOJI}"
                 else
-                  DESC_RAW="heyyy ${DAY_LOWER} morning gang, ready for the day or still zombie mode? semangat ${DAY_LOWER} ini wkwkwk, ${WEATHER_MENTION} pas bgt buat fresh start ygy! ${WEATHER_EMOJI}"
+                  DESC_RAW="heyyy ${DAY_LOWER} morning gang, ready for the day or still zombie mode? semangat ${DAY_LOWER} ini wkwkwkwk, ${WEATHER_MENTION} pas bgt buat fresh start ygy! ${WEATHER_EMOJI}"
                 fi
                 ;;
               "afternoon")
                 if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
-                  DESC_RAW="wassuuup ${DAY_LOWER} afternoon squad, lunch coma or still grinding? yuuuk <@&1374047008829997157> quick match valorant, ${WEATHER_MENTION} di ${DAY_LOWER} gini bjirrr enak bgt dah! ${WEATHER_EMOJI}"
+                  DESC_RAW="wassuuup ${DAY_LOWER} afternoon squad, lunch coma or still grinding? yuuuk <@&1374047008829997157> quick match valorant, ${WEATHER_MENTION} di ${DAY_LOWER} gini gileee enak bgt dah! ${WEATHER_EMOJI}"
                 else
-                  DESC_RAW="bro ${DAY_LOWER} siang, lunch break atau masih grind? istirahat dulu kali yak, ${WEATHER_MENTION} di ${DAY_LOWER} gini anjay enak buat refreshing! ${WEATHER_EMOJI}"
+                  DESC_RAW="bro ${DAY_LOWER} siang, lunch break atau masih grind? istirahat dulu kali yak, ${WEATHER_MENTION} di ${DAY_LOWER} gini anjayyy enak buat refreshing! ${WEATHER_EMOJI}"
                 fi
                 ;;
               "evening")
                 if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
-                  DESC_RAW="suuup ${DAY_LOWER} evening legends, weekend still going strong? skuyyyy <@&1374047008829997157> mabar valorant nih, ${WEATHER_MENTION} di ${DAY_LOWER} sore gini wkwkwk perfect bet! ${WEATHER_EMOJI}"
+                  DESC_RAW="suuup ${DAY_LOWER} evening legends, weekend still going strong? yuuuk <@&1374047008829997157> mabar valorant nih, ${WEATHER_MENTION} di ${DAY_LOWER} sore gini wkwkwkwk perfect bet! ${WEATHER_EMOJI}"
                 else
                   DESC_RAW="yoooow ${DAY_LOWER} evening, school/work done for today? gas santai dulu abis capek seharian, ${WEATHER_MENTION} di ${DAY_LOWER} gini ygy pas buat relaxing! ${WEATHER_EMOJI}"
                 fi
                 ;;
               "night")
                 if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
-                  DESC_RAW="wassuuup ${DAY_LOWER} night gang, still awake and gaming? yuuuk <@&1374047008829997157> push rank valorant, ${WEATHER_MENTION} malem ${DAY_LOWER} gini anjay sih buat naikin elo! ${WEATHER_EMOJI}"
+                  DESC_RAW="wassuuup ${DAY_LOWER} night gang, still awake and gaming? yuuuk <@&1374047008829997157> push rank valorant, ${WEATHER_MENTION} malem ${DAY_LOWER} gini gacorrr sih buat naikin elo! ${WEATHER_EMOJI}"
                 else
                   if [[ "${{ steps.context.outputs.CURRENT_DAY }}" == "Sunday" ]]; then
-                    DESC_RAW="heyyy sunday night crew, ready for monday or denial mode? jgn begadang y besok udh senin wkwkwk, ${WEATHER_MENTION} gini enak buat bobo ygy! ${WEATHER_EMOJI}"
+                    DESC_RAW="heyyy sunday night crew, ready for monday or denial mode? jgn begadang y besok udh senin wkwkwkwk, ${WEATHER_MENTION} gini enak buat bobo ygy! ${WEATHER_EMOJI}"
                   else
-                    DESC_RAW="bro ${DAY_LOWER} malam, grinding atau mau bobo soon? jgn begadang mulu deh besok ${DAY_LOWER}, ${WEATHER_MENTION} gini bjirrr enak bat buat istirahat! ${WEATHER_EMOJI}"
+                    DESC_RAW="bro ${DAY_LOWER} malam, grinding atau mau bobo soon? jgn begadang mulu deh besok ${DAY_LOWER}, ${WEATHER_MENTION} gini njirrr enak bat buat istirahat! ${WEATHER_EMOJI}"
                   fi
                 fi
                 ;;
