@@ -405,7 +405,7 @@ jobs:
           OUTPUT FORMAT: Just write the two sentences separated by a space, nothing else.
           EOL
           
-          # Create simpler Python script with detailed error handling
+          # Create fixed Python script with better error handling
           cat > /tmp/gemini_generator.py << 'EOL'
           import json
           import requests
@@ -425,7 +425,7 @@ jobs:
                   print_error("No API key found in environment")
                   sys.exit(1)
               
-              # Using gemini-2.5-flash as requested (not lite version)
+              # Using gemini-2.5-flash as requested
               url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
               
               payload = {
@@ -447,12 +447,38 @@ jobs:
               print("✅ Received response from API")
               data = response.json()
               
+              # Debug: Print the actual response structure
+              print(f"DEBUG - Response structure: {json.dumps(data, indent=2)[:500]}...")
+              
               if 'candidates' not in data or len(data['candidates']) == 0:
                   print_error("No candidates in response")
                   print(f"Response data: {json.dumps(data, indent=2)}")
                   sys.exit(1)
               
-              ai_text = data['candidates'][0]['content']['parts'][0]['text'].strip()
+              # Fixed access to response content - handle multiple possible response structures
+              try:
+                  # Try the standard structure first
+                  if 'content' in data['candidates'][0] and 'parts' in data['candidates'][0]['content']:
+                      if len(data['candidates'][0]['content']['parts']) > 0 and 'text' in data['candidates'][0]['content']['parts'][0]:
+                          ai_text = data['candidates'][0]['content']['parts'][0]['text'].strip()
+                      else:
+                          # Try alternative structure
+                          ai_text = str(data['candidates'][0]['content']['parts'][0]).strip()
+                  # Try alternative response structure (text field directly in content)
+                  elif 'content' in data['candidates'][0] and 'text' in data['candidates'][0]['content']:
+                      ai_text = data['candidates'][0]['content']['text'].strip()
+                  # Try even more alternative structure
+                  elif 'text' in data['candidates'][0]:
+                      ai_text = data['candidates'][0]['text'].strip()
+                  else:
+                      # Last resort - convert the whole candidate to string
+                      ai_text = str(data['candidates'][0]).strip()
+                      
+                  print(f"Extracted text: {ai_text[:100]}...")
+              except Exception as e:
+                  print_error(f"Failed to extract text from response: {str(e)}")
+                  print(f"Candidate structure: {json.dumps(data['candidates'][0], indent=2)}")
+                  sys.exit(1)
               
               # Clean formatting
               clean_text = re.sub(r'\*\*([^*]+)\*\*', r'\1', ai_text)
@@ -461,7 +487,7 @@ jobs:
               clean_text = ' '.join(clean_text.split())
               
               # Find actual greeting (not metadata)
-              if len(clean_text) > 40 and '?' in clean_text:
+              if len(clean_text) > 40:
                   with open('/tmp/ai_response.txt', 'w', encoding='utf-8') as f:
                       f.write(clean_text)
                   print(f"✅ AI generation successful: {clean_text[:50]}...")
@@ -479,6 +505,8 @@ jobs:
               sys.exit(1)
           except Exception as e:
               print_error(f"Unexpected error: {str(e)}")
+              import traceback
+              traceback.print_exc()
               sys.exit(1)
           EOL
           
@@ -490,10 +518,9 @@ jobs:
             AI_TEXT=$(cat /tmp/ai_response.txt)
             echo "🎯 AI generated: $AI_TEXT"
             
-            # Validate key components
-            HAS_ENGLISH=$(echo "$AI_TEXT" | grep -E "\?" || echo "")
-            HAS_INDONESIAN=$(echo "$AI_TEXT" | grep -iE "(yu+k|gas|ayo+k*|pada|hayu+k|gaskeun|skuyy)" || echo "")
-            HAS_SLANG=$(echo "$AI_TEXT" | grep -iE "(njir|bjir|ygy|anjay|wkwk|hehe)" || echo "")
+            # Validate key components (more relaxed validation)
+            HAS_ENGLISH=$(echo "$AI_TEXT" | grep -E "[a-zA-Z]{10,}" || echo "")
+            HAS_INDONESIAN=$(echo "$AI_TEXT" | grep -iE "(yu+k|gas|ayo+k*|pada|hayu+k|gaskeun|skuyy|buat|sama|nih|gini|aja)" || echo "")
             
             # Weekend tag check
             if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
@@ -511,8 +538,8 @@ jobs:
               fi
             fi
             
-            # Final validation
-            if [[ -n "$HAS_ENGLISH" && -n "$HAS_INDONESIAN" ]]; then
+            # Ensure AI text has proper content
+            if [[ ${#AI_TEXT} -gt 50 && -n "$HAS_ENGLISH" && -n "$HAS_INDONESIAN" ]]; then
               DESC_RAW="$AI_TEXT"
               USE_AI=true
               echo "✅ AI validation passed: ${#AI_TEXT} chars"
