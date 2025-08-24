@@ -1,14 +1,14 @@
 {
-  "Tanggal": "24 Agu 2025",
-  "Jam": "22:26:58 WIB",
-  "DateTime": "2025-08-24T15:26:58+00:00",
-  "Coordinates": "1.07,125.59",
-  "Lintang": "1.07 LU",
-  "Bujur": "125.59 BT",
-  "Magnitude": "4.4",
-  "Kedalaman": "33 km",
-  "Wilayah": "Pusat gempa berada di laut 66 km Tenggara Bitung",
-  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Manado, II Minahasa Utara",
-  "Shakemap": "20250824222658.mmi.jpg"
+  "Tanggal": "25 Agu 2025",
+  "Jam": "00:22:41 WIB",
+  "DateTime": "2025-08-24T17:22:41+00:00",
+  "Coordinates": "-1.86,139.00",
+  "Lintang": "1.86 LS",
+  "Bujur": "139.00 BT",
+  "Magnitude": "5.0",
+  "Kedalaman": "15 km",
+  "Wilayah": "27 km Tenggara SARMI-PAPUA",
+  "Potensi": "Tidak berpotensi tsunami",
+  "Dirasakan": "-",
+  "Shakemap": "20250825002533.mmi.jpg"
 }
