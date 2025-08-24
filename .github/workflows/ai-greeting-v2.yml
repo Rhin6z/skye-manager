@@ -213,75 +213,163 @@ jobs:
           import re
           import random
           
-          def create_dynamic_message():
-              """Create a dynamic AI-style message when API fails"""
+          def create_dynamic_ai_message():
+              """Creates contextually appropriate, human-like messages"""
               day = os.environ.get('CURRENT_DAY', 'today').lower()
               time = os.environ.get('TIME_OF_DAY', 'day')
               weather = os.environ.get('WEATHER_INFO', 'cuaca enak')
               is_weekend = os.environ.get('IS_WEEKEND', 'false').lower() == 'true'
               
-              # Dynamic English starters and questions
-              starters = ["yoooow", "wassuuup", "heyyy", "bro", "suuup"]
+              # Get actual hour for more precise context
+              import datetime
+              jakarta_time = datetime.datetime.now()
+              hour = jakarta_time.hour
               
-              time_questions = {
-                  'morning': [
-                      f"coffee atau gaming dulu nih {day} pagi?",
-                      f"weekend vibes hitting different {day} morning?",
-                      f"energy levels maksimal atau masih loading {day}?",
-                      f"siap conquer {day} atau butuh warm up dulu?"
-                  ],
-                  'afternoon': [
-                      f"lunch break atau masih grinding {day} siang?",
-                      f"productive {day} afternoon atau santai mode?",
-                      f"energy drop atau masih full power {day}?",
-                      f"break time atau lanjut gaming {day}?"
-                  ],
-                  'evening': [
-                      f"gimana hari ini, epic atau disaster {day}?",
-                      f"wind down time atau masih hype {day} evening?",
-                      f"dinner sambil gaming atau fokus makan {day}?",
-                      f"tired mode atau masih semangat {day}?"
-                  ],
-                  'night': [
-                      f"insomnia squad atau sengaja begadang {day}?",
-                      f"peaceful night gaming atau chaos energy {day}?",
-                      f"late night grind atau chill vibes {day}?",
-                      f"weekend freedom atau weekday rebel {day}?"
+              # More contextually appropriate starters and activities
+              english_starters = ["yoooow", "wassuuup", "heyyy", "bro", "suuup"]
+              
+              # Context-aware questions that make sense for the time and day
+              if time == 'morning':
+                  if is_weekend:
+                      questions = [
+                          f"weekend lazy morning atau udah siap gaming {day}?",
+                          f"coffee first atau straight to valorant {day}?",
+                          f"bangun pagi weekend vibes atau kebangun sendiri {day}?",
+                          f"productive weekend morning atau chill mode {day}?"
+                      ]
+                      activities = [
+                          "ngopi sambil daily quest mobile legends",
+                          "chill valorant unrated sambil sarapan", 
+                          "roblox building sambil stretching",
+                          "warm up aim training sambil ngopi"
+                      ]
+                  else:
+                      questions = [
+                          f"siap sekolah/kerja atau masih butuh coffee {day}?",
+                          f"energy level udah full atau masih loading {day}?",
+                          f"weekend masih jauh ya {day} morning nih?",
+                          f"semangat {day} atau butuh motivasi extra?"
+                      ]
+                      activities = [
+                          "quick valorant deathmatch sebelum berangkat",
+                          "daily login mobile legends sambil sarapan",
+                          "chill roblox bentar sebelum sibuk",
+                          "coffee break sambil check rank"
+                      ]
+              
+              elif time == 'afternoon':
+                  if is_weekend:
+                      questions = [
+                          f"lunch coma atau masih semangat gaming {day}?",
+                          f"productive weekend afternoon atau santai total {day}?",
+                          f"panas siang gini perfect buat indoor gaming {day}?",
+                          f"weekend vibes masih going strong {day}?"
+                      ]
+                      activities = [
+                          "ranked push mobile legends sambil makan",
+                          "competitive valorant session",
+                          "roblox adventure sambil ngadem",
+                          "team fight bareng sambil snacking"
+                      ]
+                  else:
+                      questions = [
+                          f"lunch break atau masih stuck di aktivitas {day}?",
+                          f"capek seharian butuh gaming therapy {day}?",
+                          f"siang bolong gini enak buat break sejenak {day}?",
+                          f"weekend countdown mode udah aktif {day}?"
+                      ]
+                      activities = [
+                          "quick mobile legends classic break time",
+                          "valorant unrated sambil istirahat",
+                          "chill roblox sambil charging hp",
+                          "aim training sambil snack break"
+                      ]
+              
+              elif time == 'evening':
+                  questions = [
+                      f"day was productive atau disaster total {day}?",
+                      f"dinner time gaming atau family time dulu {day}?",
+                      f"cape seharian butuh gaming relaxation {day}?",
+                      f"golden hour vibes perfect buat voice chat {day}?"
                   ]
-              }
+                  activities = [
+                      "mabar valorant sambil dinner",
+                      "mobile legends team fight bareng",
+                      "roblox hangout sambil makan malam", 
+                      "chill gaming session sambil ngobrol"
+                  ]
               
-              # Dynamic Indonesian parts
-              indo_starters = ["yuuuk", "gaskeun", "gas", "skuyyyy"]
-              slang_terms = ["anjay", "wkwkwk", "ygy", "njirrr", "bjirrr"]
+              else:  # night
+                  if hour >= 22 or hour <= 2:  # Late night (10 PM - 2 AM)
+                      if is_weekend:
+                          questions = [
+                              f"weekend late night freedom atau udah ngantuk {day}?",
+                              f"marathon gaming session atau peaceful vibes {day}?",
+                              f"night owl energy atau forcing yourself {day}?",
+                              f"weekend privilege jadi begadang legal {day}?"
+                          ]
+                          activities = [
+                              "competitive valorant push rank",
+                              "mobile legends night session bareng",
+                              "roblox building project sambil ngobrol",
+                              "late night gaming marathon"
+                          ]
+                      else:
+                          # Weekday late night - more responsible messaging
+                          questions = [
+                              f"insomnia atau sengaja begadang sebentar {day}?",
+                              f"besok {day} masih jauh atau udah close {day}?",
+                              f"quick gaming atau udah waktunya istirahat {day}?",
+                              f"night owl mode atau forcing stay awake {day}?"
+                          ]
+                          activities = [
+                              "quick valorant unrated aja dulu",
+                              "chill mobile legends classic bentar",
+                              "roblox santai sambil wind down",
+                              "aim training bentar sebelum bobo"
+                          ]
+                  else:  # Early night (6-10 PM)
+                      questions = [
+                          f"prime gaming time atau family time dulu {day}?",
+                          f"dinner done jadi gaming time {day}?",
+                          f"evening energy masih ada atau udah drop {day}?",
+                          f"peaceful night gaming atau competitive mode {day}?"
+                      ]
+                      activities = [
+                          "prime time valorant competitive",
+                          "mobile legends ranked push",
+                          "roblox voice chat sambil chill",
+                          "evening gaming session bareng"
+                      ]
               
-              activities = {
-                  'morning': ["warm up aim", "ngopi sambil main", "daily quest", "fresh start gaming"],
-                  'afternoon': ["quick match", "santai main", "break time gaming", "chill session"],
-                  'evening': ["mabar bareng", "dinner gaming", "voice chat", "team fight"],
-                  'night': ["marathon gaming", "push rank", "grinding", "late night session"]
-              }
+              # Indonesian dynamic parts with proper slang
+              indo_starters = ["yuuuk", "gaskeun", "gas", "skuyyyy", "ayoook"]
+              slang_terms = ["anjay", "wkwkwk", "ygy", "njirrr", "sih", "dah", "bet"]
+              emojis = ["🎮", "💯", "🔥", "⚡", "✨", "🎯", "💪", "🚀"]
               
-              emojis = ["🎮", "💯", "🔥", "⚡", "🚀", "✨"]
-              
-              # Build dynamic message
-              starter = random.choice(starters)
-              question = random.choice(time_questions.get(time, time_questions['afternoon']))
+              # Build contextually appropriate message
+              starter = random.choice(english_starters)
+              question = random.choice(questions)
               
               indo_starter = random.choice(indo_starters)
-              activity = random.choice(activities.get(time, activities['afternoon']))
+              activity = random.choice(activities)
               slang = random.choice(slang_terms)
               emoji = random.choice(emojis)
               
-              # Weekend tag
-              tag = " <@&1374047008829997157>" if is_weekend else ""
+              # Weekend tag only for appropriate times
+              tag = ""
+              if is_weekend and (time in ['morning', 'afternoon', 'evening'] or (time == 'night' and hour <= 23)):
+                  tag = " <@&1374047008829997157>"
               
-              # Indonesian day translation
-              day_indo = {
-                  'monday': 'senin', 'tuesday': 'selasa', 'wednesday': 'rabu', 
+              # Indonesian day mapping
+              day_indo_map = {
+                  'monday': 'senin', 'tuesday': 'selasa', 'wednesday': 'rabu',
                   'thursday': 'kamis', 'friday': 'jumat', 'saturday': 'sabtu', 'sunday': 'minggu'
-              }.get(day, day)
+              }
+              day_indo = day_indo_map.get(day, day)
               
-              message = f"{starter} {question} {indo_starter}{tag} {activity}, {weather} di {day_indo} gini {slang} perfect bet! {emoji}"
+              # Create natural message
+              message = f"{starter} {question} {indo_starter}{tag} {activity}, {weather} di {day_indo} gini {slang} perfect {emoji}"
               
               return message
           
