@@ -219,76 +219,65 @@ jobs:
               - Examples: "rapihin to-do dulu", "fokus tugas dulu", "gaming nanti sore"
               """
               
-              prompt = f"""Create Discord greeting for Skye gaming community using Indonesian slang authentically.
+              prompt = f"""Create Discord greeting for Indonesian gaming community.
 
-              **CONTEXT:**
-              - Day: {day} ({context})
-              - Time: {time}
-              - Mood: {mood}
-              - Community: Indonesian gamers (Roblox, Mobile Legends, Valorant)
-              - Title Emoji: {random_emoji}
+              Context: {day} {time} ({context})
+              Mood: {mood}
+              Games: Roblox, Mobile Legends, Valorant
+              Emoji: {random_emoji}
 
-              **SLANG REFERENCE:{slang_context}
-              {weekday_morning_note}
-
-              **GENERATE JSON:**
+              GENERATE JSON ONLY:
               {{
-                "message": "natural 2-sentence greeting",
-                "title": "creative dynamic title with emoji", 
-                "footer": "contextual footer"
+                "message": "2-sentence greeting",
+                "title": "title with emoji", 
+                "footer": "short footer"
               }}
 
-              **MESSAGE REQUIREMENTS:**
-              - Sentence 1: English opener (vary beyond "sup/wassup/yooo") + contextual question with natural day mention
-              - Sentence 2: Indonesian response using appropriate slang + {'weekend tag <@&1374047008829997157>' if is_weekend else 'weekday focus'}
-              - Use slang naturally, including mild expressions like "anjirrr", "anjayyy" when appropriate
-              - Include day mentions naturally: "monday grind", "friday vibes", "weekend energy", "tuesday mood"
-              - All lowercase, authentic conversation style
-              - 70-200 characters total
+              Requirements:
+              - Sentence 1: English opener + question with {day} mention
+              - Sentence 2: Indonesian slang response + {'<@&1374047008829997157>' if is_weekend else 'gaming focus'}
+              - Use slang: yuk, gas, mabar, anjirrr, anjayyy naturally
+              - Include day: "monday grind", "friday vibes", "{day} energy"
+              - All lowercase style
+              - Title: "{random_emoji} [2-4 words]"
+              - Footer: "[2-3 words matching time/day]"
 
-              **VARIETY REQUIREMENTS:**
-              - Avoid repetitive openers - use: "morning legends", "afternoon warriors", "{day} heroes", "late night champions"
-              - Questions should vary: productivity check, energy level, mood assessment, activity status
-              - Natural slang integration based on context and meaning
-              - Mild badwords like "anjirrr", "anjayyy" are acceptable for authentic feel
-              - Day-specific contexts: "monday motivation", "wednesday hump day", "friday countdown", "weekend freedom"
+              {weekday_morning_note if time == "morning" and not is_weekend else ""}
 
-              **TITLE CREATIVITY:**
-              - Dynamic titles reflecting current moment WITH the provided emoji: {random_emoji}
-              - Include day naturally when relevant: "{random_emoji} {day} operations", "{random_emoji} weekend protocol"
-              - Avoid templates like "morning squad", "evening crew"
-              - Examples: "{random_emoji} {day} launch sequence", "{random_emoji} post-coffee protocol", "{random_emoji} productivity mode engaged"
-              - Include the emoji at the start: "{random_emoji} [title content]"
-              - 3-6 words total including emoji, engaging and fresh
+              Examples:
+              Monday morning: {{"message": "morning warriors, monday grind energy looking good? yuk fokus tugas dulu, mabar valorant nanti sore", "title": "{random_emoji} monday launch mode", "footer": "grind time active"}}
 
-              **FOOTER CONTEXT:**
-              - Match current time/mood/activity with day awareness
-              - Examples: "monday grind mode", "friday energy peak", "weekend chill vibes", "tuesday momentum"
-              - 2-4 words, specific to moment and day
+              Weekend: {{"message": "evening legends, saturday vibes epic today? gaskeun <@&1374047008829997157> dinner sambil push rank", "title": "{random_emoji} weekend protocol", "footer": "saturday energy"}}
 
-              **EXAMPLES WITH SLANG & DAY MENTIONS:**
-              Weekday morning: {{"message": "morning warriors, anjirrr monday energy levels looking crisp? yuk rapihin to-do dulu, mabar valorant nanti malem", "title": "{random_emoji} monday launch sequence", "footer": "monday grind mode"}}
+              Return JSON only:"""
               
-              Weekend evening: {{"message": "evening legends, anjayyy saturday vibes was epic or total chaos? gaskeun <@&1374047008829997157> dinner sambil push rank mobile legends", "title": "{random_emoji} weekend wind down protocol", "footer": "saturday chill activated"}}
-              
-              Friday afternoon: {{"message": "afternoon champions, friday momentum still going strong? yuuuk quick valorant match bentar, weekend countdown mode", "title": "{random_emoji} friday power session", "footer": "weekend countdown energy"}}
-
-              **EXAMPLES WITH SLANG & BADWORDS:**
-              Weekday morning: {{"message": "morning warriors {day}, anjirrr energy levels looking crisp? yuk rapihin to-do dulu, mabar valorant nanti malem", "title": "{random_emoji} {day} launch sequence", "footer": "productivity mode engaged"}}
-              
-              Weekend evening: {{"message": "evening legends, anjayyy day was epic or total chaos? gaskeun <@&1374047008829997157> dinner sambil push rank mobile legends", "title": "{random_emoji} weekend wind down protocol", "footer": "evening chill activated"}}
-
-              Generate only JSON:
-              """
-              
-              url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
+              url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
               payload = {
                   "contents": [{"parts": [{"text": prompt}]}],
                   "generationConfig": {
-                      "temperature": 0.9,
-                      "maxOutputTokens": 300,
-                      "topP": 0.95
-                  }
+                      "temperature": 0.7,
+                      "maxOutputTokens": 400,
+                      "topP": 0.8,
+                      "candidateCount": 1
+                  },
+                  "safetySettings": [
+                      {
+                          "category": "HARM_CATEGORY_HARASSMENT",
+                          "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+                      },
+                      {
+                          "category": "HARM_CATEGORY_HATE_SPEECH", 
+                          "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+                      },
+                      {
+                          "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                          "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+                      },
+                      {
+                          "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+                          "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+                      }
+                  ]
               }
               
               response = requests.post(url, json=payload, timeout=25)
@@ -300,6 +289,13 @@ jobs:
                   if 'candidates' in data and len(data['candidates']) > 0:
                       candidate = data['candidates'][0]
                       print(f"🔍 Candidate structure: {list(candidate.keys())}")
+                      
+                      # Check finish reason
+                      if 'finishReason' in candidate:
+                          finish_reason = candidate['finishReason']
+                          print(f"🔍 Finish reason: {finish_reason}")
+                          if finish_reason != 'STOP':
+                              print(f"⚠️ Non-STOP finish reason: {finish_reason}")
                       
                       # Handle different response structures
                       ai_text = ""
@@ -313,6 +309,38 @@ jobs:
                       
                       print(f"🔍 Extracted text length: {len(ai_text)}")
                       print(f"🔍 Text preview: {ai_text[:100]}...")
+                      
+                      # If no text but STOP reason, try simpler prompt
+                      if not ai_text and candidate.get('finishReason') == 'STOP':
+                          print("🔄 Trying simplified prompt...")
+                          simple_prompt = f"""Generate a Discord greeting for Indonesian gamers in JSON format:
+                          
+                          Context: {day} {time} ({context})
+                          Emoji: {random_emoji}
+                          
+                          Return JSON with message, title, footer fields only.
+                          
+                          Example:
+                          {{"message": "morning legends, ready for the grind? yuk gaming session", "title": "{random_emoji} {day} vibes", "footer": "gaming mode on"}}
+                          """
+                          
+                          simple_payload = {
+                              "contents": [{"parts": [{"text": simple_prompt}]}],
+                              "generationConfig": {
+                                  "temperature": 0.5,
+                                  "maxOutputTokens": 200
+                              }
+                          }
+                          
+                          simple_response = requests.post(url, json=simple_payload, timeout=15)
+                          if simple_response.status_code == 200:
+                              simple_data = simple_response.json()
+                              if 'candidates' in simple_data and len(simple_data['candidates']) > 0:
+                                  simple_candidate = simple_data['candidates'][0]
+                                  if 'content' in simple_candidate and 'parts' in simple_candidate['content']:
+                                      if len(simple_candidate['content']['parts']) > 0 and 'text' in simple_candidate['content']['parts'][0]:
+                                          ai_text = simple_candidate['content']['parts'][0]['text'].strip()
+                                          print(f"🔄 Simple prompt result: {ai_text[:50]}...")
                       
                       if ai_text:
                           # Enhanced JSON extraction
