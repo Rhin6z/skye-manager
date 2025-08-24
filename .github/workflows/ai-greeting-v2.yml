@@ -184,62 +184,48 @@ jobs:
       - name: Create AI Prompt
         id: create_prompt
         run: |
-          # Create prompt file with authentic Indonesian gaming slang
-          cat > /tmp/prompt.txt << 'EOL'
-          **CONTEXT:**
-          - Time: ${{ steps.context.outputs.TYPE }}
-          - Day: ${{ steps.context.outputs.CURRENT_DAY }} (${{ steps.context.outputs.CONTEXT }})
-          - Weather: ${{ steps.weather.outputs.WEATHER_INFO }}
+          # Step 1: Generate the English part first
+          cat > /tmp/prompt_english.txt << 'EOL'
+          You are a casual Indonesian gaming Discord admin writing a greeting message.
           
-          **ROLE:** You are a super casual Indonesian gaming Discord admin for server "Skye". You must sound EXACTLY like a real Indonesian gamer with their slang.
+          Write ONLY ONE SHORT casual English question sentence with these requirements:
+          - Start with one of these openers: "yoooow", "wassuuup", "heyyy", "suuup", "bro", "guyss"
+          - Directly mention ${{ steps.context.outputs.CURRENT_DAY }} (like "monday vibes" or "tuesday grind")
+          - Ask a question relevant to ${{ steps.context.outputs.TYPE }} time of day
+          - End with a question mark
+          - Keep it casual and authentic
+          - Make it 10-12 words maximum
+          - ALL lowercase only
           
-          **MESSAGE FORMAT (2 SENTENCES ONLY):**
-          
-          **SENTENCE 1 (ENGLISH WITH DAY REFERENCE):**
-          - Start with casual opener: "yoooow", "wassuuup", "heyyy", "suuup", "bro", "guyss"
-          - MUST mention ${{ steps.context.outputs.CURRENT_DAY }} casually 
-          - Ask about specific activities based on time:
-            * Morning: about school/work preparation, energy levels
-            * Afternoon: about breaks, lunch, relaxing
-            * Evening: how their school/work day went
-            * Night: gaming plans or rest plans
-          - End with question mark
-          - Max 12 words
-          
-          **SENTENCE 2 (INDONESIAN WITH AUTHENTIC SLANG):**
-          - MUST include AT LEAST ONE authentic Indonesian slang: "njirrr", "bjirrr", "ygy", "ytta", "anjay", "kocakkk", "wkwkwk", "awkowkwoka", "hehehehe", "walawe"
-          - MUST use casual abbreviations: "dah", "gk", "yg", "aja", "bgt", "trs", "klo", "gmn"
-          - Include day reference again in Indonesian
-          - Include weather: ${{ steps.weather.outputs.WEATHER_INFO }}
-          - IMPORTANT: ONLY add tag <@&1374047008829997157> if it's weekend (${{ steps.context.outputs.CONTEXT }} == "weekend")
-          - Context-specific content:
-            * Weekday Morning: encourage for school/work
-            * Weekday Afternoon: suggest break time
-            * Weekday Evening: ask about their day
-            * Weekday Night: invite gamers or suggest rest (no late nights)
-            * Weekend: more gaming-focused, invite to play together
-          - End with emoji that matches mood
-          
-          **CRITICAL RULES:**
-          - ALL LOWERCASE text only
-          - STAY UNDER 180 CHARACTERS TOTAL
-          - Sound EXACTLY like Indonesian gamers chat (not formal)
-          - Messages should feel like they're from a real human, not AI
-          - Use the Indonesian slang words authentically (don't force them)
-          
-          Write a super authentic Indonesian gamer greeting:
+          Just write the ONE English greeting sentence and nothing else:
           EOL
-
-          # Create Python AI generator script with more emphasis on brevity
-          cat > /tmp/ai_generator.py << 'EOL'
-          import json
+          
+          # Step 2: Generate the Indonesian part separately
+          cat > /tmp/prompt_indonesian.txt << 'EOL'
+          You are an Indonesian gaming Discord admin writing the second part of a greeting.
+          
+          Write ONLY ONE SHORT Indonesian sentence with these requirements:
+          - Start with one of these: "yuuuk", "gaskeun", "gas", "ayooook", "skuyyyy"
+          - Include at least one authentic Indonesian slang like: "njirrr", "bjirrr", "ygy", "anjay", "wkwkwk", "hehehehe"
+          - Use abbreviations like: "dah", "gk", "yg", "aja", "bgt"
+          - Mention ${{ steps.context.outputs.CURRENT_DAY }} in Indonesian (senin/selasa/rabu/etc)
+          - Include reference to ${{ steps.weather.outputs.WEATHER_INFO }}
+          - If it's ${{ steps.context.outputs.CONTEXT }} == "weekend", include this tag: <@&1374047008829997157>
+          - End with one emoji
+          - Keep it under 100 characters
+          - ALL lowercase only
+          
+          Just write the ONE Indonesian sentence and nothing else:
+          EOL
+          
+          # Create Python scripts for each part
+          cat > /tmp/generate_english.py << 'EOL'
           import requests
           import os
           import sys
-          import re
           
           try:
-              with open('/tmp/prompt.txt', 'r') as f:
+              with open('/tmp/prompt_english.txt', 'r') as f:
                   prompt = f.read().strip()
               
               api_key = os.environ.get('GEMINI_API_KEY')
@@ -247,14 +233,14 @@ jobs:
                   print("❌ No API key")
                   sys.exit(1)
               
-              url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={api_key}"
+              url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key={api_key}"
               
               payload = {
                   "contents": [{"parts": [{"text": prompt}]}],
                   "generationConfig": {
-                      "temperature": 0.7,  # Increased for more creativity
-                      "maxOutputTokens": 150,
-                      "topP": 0.95
+                      "temperature": 0.5,
+                      "maxOutputTokens": 50,
+                      "topP": 0.8
                   }
               }
               
@@ -263,52 +249,89 @@ jobs:
               if response.status_code == 200:
                   data = response.json()
                   if 'candidates' in data and len(data['candidates']) > 0:
-                      ai_text = data['candidates'][0]['content']['parts'][0]['text'].strip()
+                      text = data['candidates'][0]['content']['parts'][0]['text'].strip()
+                      text = text.lower().strip()
                       
-                      # Clean formatting
-                      clean_text = re.sub(r'\*\*([^*]+)\*\*', r'\1', ai_text)
-                      clean_text = re.sub(r'`([^`]+)`', r'\1', clean_text)
-                      clean_text = re.sub(r'\n+', ' ', clean_text)
-                      clean_text = ' '.join(clean_text.split())
+                      # Clean up any formatting
+                      text = text.replace('"', '').replace('*', '')
                       
-                      # Find actual greeting
-                      lines = [line.strip() for line in ai_text.split('\n') if line.strip()]
-                      best_line = ""
-                      
-                      for line in lines:
-                          if (len(line) > 40 and len(line) < 200 and
-                              not line.startswith(('**', '#', '-', '*', 'Context:', 'Weather:', 'Time:', 'Day:')) and
-                              not line.lower().startswith(('greeting:', 'message:', 'response:', 'output:', 'here'))) :
-                              if ('?' in line):
-                                  best_line = line
-                                  break
-                      
-                      if not best_line and clean_text:
-                          best_line = clean_text
-                      
-                      if best_line and len(best_line) > 40 and len(best_line) < 200:
-                          # Enforce brevity by truncating if still too long
-                          if len(best_line) > 180:
-                              # Find a good breakpoint 
-                              breakpoint = best_line.rfind(' ', 0, 177)
-                              if breakpoint > 0:
-                                  best_line = best_line[:breakpoint] + "..."
-                              else:
-                                  best_line = best_line[:177] + "..."
-                          
-                          with open('/tmp/ai_response.txt', 'w', encoding='utf-8') as f:
-                              f.write(best_line)
-                          print("✅ AI generation successful")
+                      # Verify it's a proper question
+                      if '?' in text and len(text) < 100:
+                          with open('/tmp/english_part.txt', 'w') as f:
+                              f.write(text)
+                          print(f"✅ English part generated: {text}")
                           sys.exit(0)
               
-              print("❌ AI generation failed - invalid response")
+              print("❌ English generation failed")
               sys.exit(1)
               
           except Exception as e:
-              print(f"❌ AI generation failed: {e}")
+              print(f"❌ Error: {e}")
               sys.exit(1)
           EOL
-
+          
+          cat > /tmp/generate_indonesian.py << 'EOL'
+          import requests
+          import os
+          import sys
+          
+          try:
+              with open('/tmp/prompt_indonesian.txt', 'r') as f:
+                  prompt = f.read().strip()
+              
+              api_key = os.environ.get('GEMINI_API_KEY')
+              if not api_key:
+                  print("❌ No API key")
+                  sys.exit(1)
+              
+              url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key={api_key}"
+              
+              payload = {
+                  "contents": [{"parts": [{"text": prompt}]}],
+                  "generationConfig": {
+                      "temperature": 0.5,
+                      "maxOutputTokens": 100,
+                      "topP": 0.8
+                  }
+              }
+              
+              response = requests.post(url, json=payload, timeout=20)
+              
+              if response.status_code == 200:
+                  data = response.json()
+                  if 'candidates' in data and len(data['candidates']) > 0:
+                      text = data['candidates'][0]['content']['parts'][0]['text'].strip()
+                      text = text.lower().strip()
+                      
+                      # Clean up any formatting
+                      text = text.replace('"', '').replace('*', '')
+                      
+                      # Verify it contains Indonesian slang
+                      slang_terms = ["njirrr", "bjirrr", "ygy", "ytta", "anjay", "kocak", "wkwk", "wkwkwk", "hehe", "hehehehe", "walawe"]
+                      has_slang = any(term in text.lower() for term in slang_terms)
+                      
+                      # Check for weather and weekend tag when needed
+                      has_weather = "${{ steps.weather.outputs.WEATHER_INFO }}" in text
+                      
+                      if "${{ steps.context.outputs.CONTEXT }}" == "weekend":
+                          has_tag = "<@&1374047008829997157>" in text
+                      else:
+                          has_tag = True  # No tag needed for weekdays
+                      
+                      if has_slang and len(text) < 120:
+                          with open('/tmp/indonesian_part.txt', 'w') as f:
+                              f.write(text)
+                          print(f"✅ Indonesian part generated: {text}")
+                          sys.exit(0)
+              
+              print("❌ Indonesian generation failed")
+              sys.exit(1)
+              
+          except Exception as e:
+              print(f"❌ Error: {e}")
+              sys.exit(1)
+          EOL
+          
           # Create Discord payload script
           cat > /tmp/discord_script.py << 'EOL'
           import json
@@ -353,165 +376,120 @@ jobs:
         run: |
           echo "🤖 Generating AI greeting..."
           
-          # Execute the Python script
-          GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }} python3 /tmp/ai_generator.py
+          # Execute the English part generation
+          echo "📝 Generating English part..."
+          GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }} python3 /tmp/generate_english.py
           
-          if [[ $? -eq 0 && -s /tmp/ai_response.txt ]]; then
-            AI_TEXT=$(cat /tmp/ai_response.txt)
-            echo "🎯 AI generated: $AI_TEXT"
+          if [[ $? -eq 0 && -s /tmp/english_part.txt ]]; then
+            ENGLISH_PART=$(cat /tmp/english_part.txt)
+            echo "✅ English part: $ENGLISH_PART"
             
-            # Improved validation with better pattern matching
-            HAS_ENGLISH_PART=$(echo "$AI_TEXT" | grep -E "\?" || echo "")
-            HAS_INDONESIAN_PART=$(echo "$AI_TEXT" | grep -iE "(yu+k|gas|ayo+k*|pada|hayu+k|gaskeun|mabar|santuy|ngepush|main)" || echo "")
-            HAS_WEATHER=$(echo "$AI_TEXT" | grep -iE "(cuaca|hujan|gerimis|cerah|panas|dingin|sejuk|berawan|mendung)" || echo "")
-            HAS_QUESTION=$(echo "$AI_TEXT" | grep -E "\?" || echo "")
+            # Execute the Indonesian part generation
+            echo "📝 Generating Indonesian part..."
+            GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }} python3 /tmp/generate_indonesian.py
             
-            # Check for tag existence
-            HAS_TAG=$(echo "$AI_TEXT" | grep -E "<@&[0-9]+>" || echo "")
-            
-            # Auto-fix for missing Indonesian part
-            if [[ -z "$HAS_INDONESIAN_PART" ]]; then
-              echo "⚠️ Missing Indonesian part, attempting to fix..."
+            if [[ $? -eq 0 && -s /tmp/indonesian_part.txt ]]; then
+              INDONESIAN_PART=$(cat /tmp/indonesian_part.txt)
+              echo "✅ Indonesian part: $INDONESIAN_PART"
               
-              if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" && -z "$HAS_TAG" ]]; then
-                # Create weekend fallback with tag - keeping these short
-                case "${{ steps.context.outputs.TYPE }}" in
-                  "morning")
-                    SECOND_PART="yuuuk <@&1374047008829997157> ngopi sambil warm up, ${{ steps.weather.outputs.WEATHER_INFO }} enak buat fokus! ${{ steps.weather.outputs.WEATHER_EMOJI }}"
-                    ;;
-                  "afternoon")
-                    SECOND_PART="gaskeun <@&1374047008829997157> quick match, ${{ steps.weather.outputs.WEATHER_INFO }} pas buat chill! ${{ steps.weather.outputs.WEATHER_EMOJI }}"
-                    ;;
-                  "evening")
-                    SECOND_PART="gas <@&1374047008829997157> mabar sambil makan, ${{ steps.weather.outputs.WEATHER_INFO }} bikin relaxing! ${{ steps.weather.outputs.WEATHER_EMOJI }}"
-                    ;;
-                  "night")
-                    SECOND_PART="yuuk <@&1374047008829997157> push rank, ${{ steps.weather.outputs.WEATHER_INFO }} enak buat grinding! ${{ steps.weather.outputs.WEATHER_EMOJI }}"
-                    ;;
-                esac
-              elif [[ "${{ steps.context.outputs.CONTEXT }}" != "weekend" && -z "$HAS_TAG" ]]; then
-                # Create weekday fallback without tag - keeping these short
-                case "${{ steps.context.outputs.TYPE }}" in
-                  "morning")
-                    SECOND_PART="yuuuk ngopi sambil warm up aim, ${{ steps.weather.outputs.WEATHER_INFO }} enak buat fokus! ${{ steps.weather.outputs.WEATHER_EMOJI }}"
-                    ;;
-                  "afternoon")
-                    SECOND_PART="gaskeun quick match, ${{ steps.weather.outputs.WEATHER_INFO }} pas buat chill gaming! ${{ steps.weather.outputs.WEATHER_EMOJI }}"
-                    ;;
-                  "evening")
-                    SECOND_PART="gas mabar sambil makan, ${{ steps.weather.outputs.WEATHER_INFO }} bikin relaxing! ${{ steps.weather.outputs.WEATHER_EMOJI }}"
-                    ;;
-                  "night")
-                    SECOND_PART="yuuk push rank bareng, ${{ steps.weather.outputs.WEATHER_INFO }} enak buat grinding! ${{ steps.weather.outputs.WEATHER_EMOJI }}"
-                    ;;
-                esac
-              else
-                # Already has a tag, don't add another one
-                SECOND_PART=""
-              fi
+              # Combine both parts
+              AI_TEXT="$ENGLISH_PART $INDONESIAN_PART"
               
-              # Add second part if the AI only generated the first part
-              if [[ "$AI_TEXT" =~ \? && -n "$SECOND_PART" ]]; then
-                AI_TEXT="$AI_TEXT $SECOND_PART"
-                echo "✅ Fixed by adding second part: $AI_TEXT"
-              fi
-            fi
-            
-            # Length limit check - stricter enforcement
-            if [[ ${#AI_TEXT} -gt 200 ]]; then
-              echo "⚠️ Message too long (${#AI_TEXT} chars), trimming..."
-              # Simplified trimming approach for better readability
-              if [[ "$AI_TEXT" =~ "<@&" ]]; then
-                # Find tag position
-                TAG_START=$(echo "$AI_TEXT" | grep -b -o "<@&" | head -1 | cut -d':' -f1)
-                # Find space before tag to create clean break
-                BREAK_POINT=$(echo "$AI_TEXT" | cut -c1-$TAG_START | grep -b -o " " | tail -1 | cut -d':' -f1)
+              # Ensure total length is within limits
+              if [[ ${#AI_TEXT} -gt 200 ]]; then
+                echo "⚠️ Combined message too long (${#AI_TEXT} chars), trimming..."
                 
-                if [[ -n "$BREAK_POINT" && $BREAK_POINT -gt 50 ]]; then
-                  # We have a good break point before the tag
-                  AI_TEXT=$(echo "$AI_TEXT" | cut -c1-$BREAK_POINT)
-                  AI_TEXT="${AI_TEXT} <@&1374047008829997157> ${{ steps.weather.outputs.WEATHER_EMOJI }}"
-                else
-                  # Fallback to simpler approach
-                  AI_TEXT=$(echo "$AI_TEXT" | cut -c1-150)
-                  AI_TEXT="${AI_TEXT}... <@&1374047008829997157> ${{ steps.weather.outputs.WEATHER_EMOJI }}"
-                fi
-              else
-                # Find a good sentence break
-                QUESTION_MARK=$(echo "$AI_TEXT" | grep -b -o "?" | head -1 | cut -d':' -f1)
-                if [[ -n "$QUESTION_MARK" && $QUESTION_MARK -gt 30 && $QUESTION_MARK -lt 150 ]]; then
-                  # Keep just the question part and add a simple second part
-                  PREFIX=$(echo "$AI_TEXT" | cut -c1-$((QUESTION_MARK+1)))
-                  
-                  if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
-                    AI_TEXT="${PREFIX} yuuuk <@&1374047008829997157> main game bareng, ${{ steps.weather.outputs.WEATHER_INFO }} mantap! ${{ steps.weather.outputs.WEATHER_EMOJI }}"
-                  else
-                    AI_TEXT="${PREFIX} yuuuk main game bareng, ${{ steps.weather.outputs.WEATHER_INFO }} mantap! ${{ steps.weather.outputs.WEATHER_EMOJI }}"
+                # Try to keep both parts by shortening if needed
+                if [[ ${#ENGLISH_PART} -gt 80 ]]; then
+                  # Trim the English part while preserving the question mark
+                  QUESTION_MARK_POS=$(echo "$ENGLISH_PART" | grep -b -o "?" | head -1 | cut -d':' -f1)
+                  if [[ -n "$QUESTION_MARK_POS" && $QUESTION_MARK_POS -gt 30 ]]; then
+                    # Find a space before the question mark to create a clean break
+                    BREAK_POINT=$(echo "${ENGLISH_PART:0:$QUESTION_MARK_POS}" | grep -b -o " " | tail -2 | head -1 | cut -d':' -f1)
+                    if [[ -n "$BREAK_POINT" && $BREAK_POINT -gt 20 ]]; then
+                      ENGLISH_PART="${ENGLISH_PART:0:$BREAK_POINT}...?"
+                    fi
                   fi
-                else
-                  # Simple trim
-                  AI_TEXT=$(echo "$AI_TEXT" | cut -c1-180)
-                  AI_TEXT="${AI_TEXT}... ${{ steps.weather.outputs.WEATHER_EMOJI }}"
+                fi
+                
+                # Reassemble with trimmed parts
+                AI_TEXT="$ENGLISH_PART $INDONESIAN_PART"
+                
+                # If still too long, do a final trim
+                if [[ ${#AI_TEXT} -gt 200 ]]; then
+                  AI_TEXT=$(echo "$AI_TEXT" | cut -c1-197)"..."
                 fi
               fi
-            fi
-            
-            # Final validation after fixes
-            if [[ -n "$HAS_ENGLISH_PART" && -n "$HAS_QUESTION" && (${#AI_TEXT} -gt 60) ]]; then
-              DESC_RAW="$AI_TEXT"
+              
               USE_AI=true
-              echo "✅ AI validated: ${#AI_TEXT} chars"
+              DESC_RAW="$AI_TEXT"
+              echo "🎯 Final greeting: $AI_TEXT"
+              echo "✅ AI validation passed: ${#AI_TEXT} chars"
             else
               USE_AI=false
-              echo "⚠️ AI validation failed"
+              echo "❌ Indonesian part generation failed"
             fi
           else
             USE_AI=false
-            echo "❌ AI generation failed, using fallback"
+            echo "❌ English part generation failed"
           fi
           
-          # Fallback system - simplified with shorter messages
+          # Fallback system for when AI generation fails
           if [[ "$USE_AI" != "true" ]]; then
-            echo "🎲 Using creative fallback system..."
+            echo "🎲 Using fallback system..."
             
             WEATHER_MENTION="${{ steps.weather.outputs.WEATHER_INFO }}"
             WEATHER_EMOJI="${{ steps.weather.outputs.WEATHER_EMOJI }}"
             
-            # Compact fallback options per time period
-            if [[ "${{ steps.context.outputs.TYPE }}" == "morning" ]]; then
-              if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
-                DESC_RAW="yoooow morning squad, coffee or gaming which comes first today? yuuuk <@&1374047008829997157> warm up aim sambil ngopi, ${WEATHER_MENTION} perfect buat fokus! ${WEATHER_EMOJI}"
-              else
-                DESC_RAW="heyyyyyy weekday warriors, energy level udah ready buat grinding? gaskeun warm up aim sambil ngopi, ${WEATHER_MENTION} enak buat fresh start! ${WEATHER_EMOJI}"
-              fi
-            elif [[ "${{ steps.context.outputs.TYPE }}" == "afternoon" ]]; then
-              if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
-                DESC_RAW="wassuuup weekend squad, lunch break atau udah makan sambil main? yuuuk <@&1374047008829997157> quick match bareng, ${WEATHER_MENTION} pas buat chill! ${WEATHER_EMOJI}"
-              else
-                DESC_RAW="suuuup afternoon crew, break time atau masih grind mode? gas quick match bentar, ${WEATHER_MENTION} cocok buat refresh otak! ${WEATHER_EMOJI}"
-              fi
-            elif [[ "${{ steps.context.outputs.TYPE }}" == "evening" ]]; then
-              if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
-                DESC_RAW="yoooow evening legends, weekend vibe masih tinggi atau udah capek? gas polll <@&1374047008829997157> voice chat sambil mabar, ${WEATHER_MENTION} enak buat relaxing! ${WEATHER_EMOJI}"
-              else
-                DESC_RAW="heyyyyyy evening crew, hari ini productive atau butuh gaming therapy? yuuuk mabar valorant santai, ${WEATHER_MENTION} cocok buat wind down! ${WEATHER_EMOJI}"
-              fi
-            else
-              if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
-                DESC_RAW="wassuuup night owls, masih semangat gaming atau udah sleepy mode? gas <@&1374047008829997157> push rank sampe pagi, ${WEATHER_MENTION} bikin betah begadang! ${WEATHER_EMOJI}"
-              else
-                DESC_RAW="suuuup night crew, insomnia squad atau emang dedicated gamer? yuuuk mabar sebentar, ${WEATHER_MENTION} pas buat late night gaming! ${WEATHER_EMOJI}"
-              fi
-            fi
+            # Enhanced fallbacks with better Indonesian slang
+            case "${{ steps.context.outputs.TYPE }}" in
+              "morning")
+                if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
+                  if [[ "${{ steps.context.outputs.CURRENT_DAY }}" == "Saturday" ]]; then
+                    DESC_RAW="heyyy saturday morning squad, weekend vibes hitting different yet? gaskeun <@&1374047008829997157> warm up sambil ngopi, ${WEATHER_MENTION} di sabtu pagi gini anjay bgt buat grinding! ${WEATHER_EMOJI}"
+                  else
+                    DESC_RAW="yoooow sunday morning crew, last day of weekend feels? skuyyy <@&1374047008829997157> main game bareng, ${WEATHER_MENTION} di minggu gini wkwkwk santuy aja ygy! ${WEATHER_EMOJI}"
+                  fi
+                else
+                  if [[ "${{ steps.context.outputs.CURRENT_DAY }}" == "Monday" ]]; then
+                    DESC_RAW="wassuuup monday morning warriors, weekend hangover or ready to grind? semangat senin woy, jgn males coy, ${WEATHER_MENTION} enak buat fresh start bjirrrr! ${WEATHER_EMOJI}"
+                  else
+                    DESC_RAW="guyss ${CURRENT_DAY} morning, energy levels ready for the day? awali pagi dengan semangat, ${WEATHER_MENTION} di ${CURRENT_DAY} gini tuh njirrr enak bgt! ${WEATHER_EMOJI}"
+                  fi
+                fi
+                ;;
+              "afternoon")
+                if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
+                  if [[ "${{ steps.context.outputs.CURRENT_DAY }}" == "Saturday" ]]; then
+                    DESC_RAW="bro saturday afternoon, lunch coma or still grinding? yuuuk <@&1374047008829997157> mabar sambil santai, ${WEATHER_MENTION} di sabtu siang gini anjay bgt dah cocok bgt! ${WEATHER_EMOJI}"
+                  else
+                    DESC_RAW="heyyy sunday afternoon vibes, weekend plans still going strong? gas <@&1374047008829997157> quick match, ${WEATHER_MENTION} gini di minggu sore wkwkwk pas banget! ${WEATHER_EMOJI}"
+                  fi
+                else
+                  DESC_RAW="wassuuup ${CURRENT_DAY} afternoon squad, lunch break or back to grind? istirahat dulu kali yak, ${WEATHER_MENTION} di ${CURRENT_DAY} gini ygy enak buat refresh otak! ${WEATHER_EMOJI}"
+                fi
+                ;;
+              "evening")
+                if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
+                  DESC_RAW="yoooow ${CURRENT_DAY} evening legends, how's the weekend treating you? skuyyyy <@&1374047008829997157> mabar valorant, ${WEATHER_MENTION} di ${CURRENT_DAY} sore gini wkwkwk ajib abis! ${WEATHER_EMOJI}"
+                else
+                  DESC_RAW="suuup ${CURRENT_DAY} evening, how was school or work today? gas santai dulu abis capek seharian, ${WEATHER_MENTION} di ${CURRENT_DAY} gini bjirrr pas buat relax! ${WEATHER_EMOJI}"
+                fi
+                ;;
+              "night")
+                if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
+                  DESC_RAW="guyss ${CURRENT_DAY} night squad, weekend energy still pumping? yuuuk <@&1374047008829997157> push rank bareng, ${WEATHER_MENTION} malem ${CURRENT_DAY} gini anjay sih buat naikin mmr! ${WEATHER_EMOJI}"
+                else
+                  if [[ "${{ steps.context.outputs.CURRENT_DAY }}" == "Sunday" ]]; then
+                    DESC_RAW="bro sunday night, ready for monday or still in denial? jgn begadang ygy besok udh senin, ${WEATHER_MENTION} gini enak buat bobo ytta, klo mau mabar skrg gas! ${WEATHER_EMOJI}"
+                  else
+                    DESC_RAW="wassuuup ${CURRENT_DAY} night owls, grinding or heading to bed soon? jgn begadang mulu deh besok masih ${CURRENT_DAY}, ${WEATHER_MENTION} gini wkwkwk enak bat buat istirahat! ${WEATHER_EMOJI}"
+                  fi
+                fi
+                ;;
+            esac
             
-            # Special context overrides
-            if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "monday_motivation" ]]; then
-              DESC_RAW="heyyyyyy monday warriors, weekend hangover atau udah siap conquer the week? yuuuk warm up pagi buat semangat, ${WEATHER_MENTION} cocok buat fresh start! ${WEATHER_EMOJI}"
-            elif [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "sunday_prep" ]]; then
-              DESC_RAW="oiiiii sunday squad, enjoying weekend freedom atau udah kepikiran monday? yuuuk <@&1374047008829997157> max out weekend fun, ${WEATHER_MENTION} enak buat last day gaming! ${WEATHER_EMOJI}"
-            fi
-            
-            echo "🎯 Selected creative fallback: ${DESC_RAW}"
+            echo "🎯 Selected fallback: ${DESC_RAW}"
           fi
           
           # Set title and thumbnail based on time and weather
