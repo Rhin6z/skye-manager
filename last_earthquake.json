@@ -1,14 +1,14 @@
 {
   "Tanggal": "24 Agu 2025",
-  "Jam": "14:31:14 WIB",
-  "DateTime": "2025-08-24T07:31:14+00:00",
-  "Coordinates": "-9.46,115.16",
-  "Lintang": "9.46 LS",
-  "Bujur": "115.16 BT",
-  "Magnitude": "4.3",
-  "Kedalaman": "20 km",
-  "Wilayah": "Pusat gempa berada di laut 74 km baratdaya Kuta Selatan",
+  "Jam": "22:26:58 WIB",
+  "DateTime": "2025-08-24T15:26:58+00:00",
+  "Coordinates": "1.07,125.59",
+  "Lintang": "1.07 LU",
+  "Bujur": "125.59 BT",
+  "Magnitude": "4.4",
+  "Kedalaman": "33 km",
+  "Wilayah": "Pusat gempa berada di laut 66 km Tenggara Bitung",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II-III Kuta Selatan, II-III Kuta, II-III Kuta Utara",
-  "Shakemap": "20250824143114.mmi.jpg"
+  "Dirasakan": "II Manado, II Minahasa Utara",
+  "Shakemap": "20250824222658.mmi.jpg"
 }
