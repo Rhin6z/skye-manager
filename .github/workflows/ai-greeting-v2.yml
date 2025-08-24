@@ -209,7 +209,7 @@ jobs:
               is_weekend = os.environ.get('IS_WEEKEND', 'false').lower() == 'true'
               
               # English starters (sentence 1 - PURE ENGLISH)
-              english_starters = ["yoooow", "wassuuup", "heyyy", "bro", "suuup"]
+              english_starters = ["yoooow", "wassuuup", "heyyy", "sup", "ayooo"]
               
               # Indonesian starters (sentence 2 - Indonesian + some English allowed)
               indo_starters = ["yuuuk", "gaskeun", "gas", "ayoook", "yok"]
@@ -225,12 +225,11 @@ jobs:
               # PURE ENGLISH first sentences based on context
               if time == 'morning':
                   if is_weekend:
-                      # Weekend morning - gaming OK
                       english_questions = [
-                          f"{day} morning vibes hitting different?",
-                          f"early bird gaming or just woke up {day}?", 
-                          f"coffee first or straight to gaming {day}?",
-                          f"productive weekend morning or chill mode {day}?"
+                          f"{day} morning crew, early bird gaming or just woke up?",
+                          f"{day} morning crew, coffee first or straight to gaming?",
+                          f"{day} morning crew, productive weekend or full chill?",
+                          f"{day} morning crew, what’s the plan—grind or vibe?"
                       ]
                       indo_activities = [
                           "ngopi sambil valorant unrated",
@@ -239,28 +238,26 @@ jobs:
                           "warm up aim training weekend"
                       ]
                   else:
-                      # Weekday morning - NO gaming, encourage productivity
                       english_questions = [
-                          f"ready for school/work or need more coffee {day}?",
-                          f"energy level full or still loading {day}?",
-                          f"motivated for {day} or weekend countdown mode?",
-                          f"productive {day} vibes or survival mode only?"
+                          f"{day} morning crew, ready for school or need more coffee?",
+                          f"{day} morning crew, energy full or still loading?",
+                          f"{day} morning crew, motivated or counting down to weekend?",
+                          f"{day} morning crew, productivity mode or survival mode?"
                       ]
                       indo_activities = [
-                          "semangat sekolah/kerja dulu, gaming nanti sore",
-                          "focus aktivitas dulu, valorant abis pulang", 
+                          "semangat sekolah atau kerja dulu, gaming nanti sore",
+                          "fokus aktivitas dulu, valorant abis pulang", 
                           "produktif dulu, mobile legends jadi reward",
-                          "gas sekolah/kerja, weekend gaming menanti"
+                          "gas sekolah dulu, weekend gaming menanti"
                       ]
               
               elif time == 'afternoon':
                   if is_weekend:
-                      # Weekend afternoon - full gaming
                       english_questions = [
-                          f"lunch coma hitting or still energetic {day}?",
-                          f"productive weekend afternoon or total chill {day}?", 
-                          f"hot afternoon perfect for indoor gaming {day}?",
-                          f"weekend vibes still going strong {day}?"
+                          f"{day} afternoon squad, lunch coma or still energetic?",
+                          f"{day} afternoon squad, indoor gaming weather or go outside?",
+                          f"{day} afternoon squad, queue time or chill time?",
+                          f"{day} afternoon squad, weekend still going strong?"
                       ]
                       indo_activities = [
                           "ranked push mobile legends bareng",
@@ -269,12 +266,11 @@ jobs:
                           "voice chat gaming sambil makan"
                       ]
                   else:
-                      # Weekday afternoon - light gaming/break
                       english_questions = [
-                          f"lunch break freedom or still busy {day}?",
-                          f"need some gaming therapy break {day}?",
-                          f"tired afternoon perfect for quick gaming {day}?", 
-                          f"weekend still far away {day} afternoon?"
+                          f"{day} afternoon, lunch break freedom or still busy?",
+                          f"{day} afternoon, need a quick gaming therapy break?",
+                          f"{day} afternoon, tired brain—quick match maybe?",
+                          f"{day} afternoon, halfway there—hold on?"
                       ]
                       indo_activities = [
                           "quick mobile legends classic break",
@@ -284,12 +280,11 @@ jobs:
                       ]
               
               elif time == 'evening':
-                  # Evening - generally OK for gaming
                   english_questions = [
-                      f"day was productive or total disaster {day}?",
-                      f"dinner gaming session or family time first {day}?",
-                      f"tired from today need relaxing gaming {day}?",
-                      f"golden hour vibes perfect for gaming {day}?"
+                      f"{day} evening crew, day was productive or total disaster?",
+                      f"{day} evening crew, dinner then gaming or family time first?",
+                      f"{day} evening crew, need relaxing games or just chat?",
+                      f"{day} evening crew, golden hour vibes on or off?"
                   ]
                   indo_activities = [
                       "mabar valorant sambil dinner",
@@ -300,12 +295,11 @@ jobs:
               
               else:  # night
                   if is_weekend:
-                      # Weekend night - marathon OK
                       english_questions = [
-                          f"weekend night freedom or getting sleepy {day}?",
-                          f"marathon gaming session mode {day}?",
-                          f"night owl weekend energy {day}?",
-                          f"weekend privilege means legal staying up {day}?"
+                          f"{day} night gang, weekend freedom or getting sleepy?",
+                          f"{day} night gang, marathon gaming session mode?",
+                          f"{day} night gang, night owl energy still up?",
+                          f"{day} night gang, legal staying up unlocked?"
                       ]
                       indo_activities = [
                           "competitive valorant push rank",
@@ -314,12 +308,11 @@ jobs:
                           "late night gaming bareng squad"
                       ]
                   else:
-                      # Weekday night - light activities
                       english_questions = [
-                          f"quick gaming before rest or straight to bed {day}?",
-                          f"tomorrow still have activities or free day {day}?",
-                          f"wind down gaming or sleep time {day}?",
-                          f"insomnia or intentionally staying up {day}?"
+                          f"{day} night, quick gaming before rest or straight to bed?",
+                          f"{day} night, tomorrow packed or kinda free?",
+                          f"{day} night, wind down gaming or sleep time?",
+                          f"{day} night, insomnia or just scrolling?"
                       ]
                       indo_activities = [
                           "valorant unrated bentar sebelum tidur",
@@ -328,86 +321,81 @@ jobs:
                           "aim training ringan sebelum bobo"
                       ]
               
-              # Build the message
               starter = random.choice(english_starters)
               question = random.choice(english_questions)
+              if not question.endswith("?"):
+                  question += "?"
               
               indo_starter = random.choice(indo_starters)
               activity = random.choice(indo_activities)
               slang = random.choice(slang_terms)
               
-              # Weekend tag only for appropriate gaming times
               tag = ""
               if is_weekend and time in ['morning', 'afternoon', 'evening', 'night']:
                   tag = " <@&1374047008829997157>"
               
-              # Create natural message with proper language separation
               message = f"{starter} {question} {indo_starter}{tag} {activity}, {weather} di {day_indo} gini {slang} pas banget"
-              
+              message = re.sub(r"\s+", " ", message).strip()
               return message
           
           try:
-              # Create specific prompts for different contexts
               day = os.environ.get('CURRENT_DAY', 'today').lower()
               time = os.environ.get('TIME_OF_DAY', 'day')
               is_weekend = os.environ.get('IS_WEEKEND', 'false').lower() == 'true'
               weather = os.environ.get('WEATHER_INFO', 'cuaca enak')
               
               if time == 'morning' and not is_weekend:
-                  # Weekday morning - STRICT no gaming invites
                   prompt = f"""Write Discord greeting for {day} morning (WEEKDAY):
-          
+
           Format: Two sentences, ALL LOWERCASE
           1. English only: "yoooow/wassuuup {day} morning crew, [question about work/school readiness]?"
           2. Indonesian: "yuuuk [encourage productivity first, gaming later], {weather} di {day} gini [slang] pas banget"
-          
+
           Rules:
           - NO gaming words in sentence 1 (no apex, valorant, mobile legends, roblox, gaming, main, mabar)
           - Encourage school/work first, gaming as reward later
           - Use slang: anjayyy, gileee, wkwkwkwk, njirrr, ygy, dah
           - NO emoji at end
-          
+
           Example: "yoooow monday morning crew, ready for school or need more coffee? yuuuk semangat sekolah dulu gaming nanti sore, cuaca hujan di senin gini wkwkwkwk pas banget"
-          
+
           Write only the greeting:"""
               
               elif time == 'morning' and is_weekend:
-                  # Weekend morning - gaming OK
                   prompt = f"""Write Discord greeting for {day} morning (WEEKEND):
-          
+
           Format: Two sentences, ALL LOWERCASE
           1. English only: "yoooow/wassuuup {day} morning crew, [weekend gaming question]?"
           2. Indonesian: "yuuuk <@&1374047008829997157> [gaming activity], {weather} di {day} gini [slang] pas banget"
-          
+
           Rules:
           - Gaming OK since weekend
           - Games: valorant, mobile legends, roblox only
           - Use slang: anjayyy, gileee, wkwkwkwk, njirrr, ygy, dah
           - Include weekend tag
           - NO emoji at end
-          
+
           Write only the greeting:"""
               
               else:
-                  # Other times - normal gaming OK
                   prompt = f"""Write Discord greeting for {day} {time}:
-          
+
           Format: Two sentences, ALL LOWERCASE
           1. English only: "yoooow/wassuuup {day} {time}, [contextual question]?"
           2. Indonesian: "yuuuk [gaming activity], {weather} di {day} gini [slang] pas banget"
-          
+
           Context: {day} {time}, weekend: {is_weekend}
           Games: valorant, mobile legends, roblox only
           Slang: anjayyy, gileee, wkwkwkwk, njirrr, ygy, dah
           Tag if weekend: <@&1374047008829997157>
           NO emoji at end
-          
+
           Write only the greeting:"""
               
               api_key = os.environ.get('GEMINI_API_KEY')
               
               if api_key:
-                  url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={api_key}"
+                  url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
                   
                   payload = {
                       "contents": [{"parts": [{"text": prompt}]}],
@@ -440,10 +428,16 @@ jobs:
                                           clean_text = re.sub(r'\n+', ' ', clean_text)
                                           clean_text = ' '.join(clean_text.split())
                                           
+                                          # Ensure exactly two sentences by forcing one '?'
+                                          if '?' not in clean_text:
+                                              # try to insert a '?'
+                                              clean_text = re.sub(r'\.', '?', clean_text, count=1)
+                                          # Final collapse
+                                          clean_text = re.sub(r'\s+', ' ', clean_text).strip()
+                                          
                                           # Extra validation for weekday mornings
                                           is_appropriate = True
                                           if time == 'morning' and not is_weekend:
-                                              # Check for inappropriate gaming words
                                               gaming_words = ['apex', 'valorant', 'mobile legends', 'roblox', 'gaming', 'main', 'mabar', 'push rank', 'competitive']
                                               first_sentence = clean_text.split('?')[0] if '?' in clean_text else clean_text.split('.')[0]
                                               if any(word in first_sentence for word in gaming_words):
@@ -451,19 +445,20 @@ jobs:
                                                   print("⚠️ Gaming words detected in weekday morning first sentence")
                                           
                                           # Check for mixed language in first sentence
-                                          first_sentence = clean_text.split('?')[0] if '?' in clean_text else ""
-                                          indonesian_words = ['yuuuk', 'gaskeun', 'gas', 'atau', 'dulu', 'gini', 'banget', 'aja', 'sama', 'juga', 'kali', 'deh']
-                                          if any(word in first_sentence for word in indonesian_words):
+                                          first_sentence = clean_text.split('?')[0] if '?' in clean_text else clean_text.split('.')[0]
+                                          indowords = ['yuuuk','yuk','yok','gaskeun','gas','atau','dulu','gini','banget','aja','sama','juga','kali','deh','dong','lah','nih','yg','kuy','mabar','anjay','anjayyy','wkwk','wkwkwk','njir','njirrr','pas']
+                                          if any(word in first_sentence.split() for word in indowords):
                                               is_appropriate = False
                                               print("⚠️ Indonesian words detected in first sentence")
                                           
-                                          if is_appropriate and len(clean_text) > 50 and len(clean_text) < 220:
+                                          # Length & structure guard
+                                          if is_appropriate and 60 <= len(clean_text) <= 220 and '?' in clean_text:
                                               with open('/tmp/ai_response.txt', 'w', encoding='utf-8') as f:
                                                   f.write(clean_text)
                                               print(f"✅ Fixed contextual success: {clean_text[:50]}...")
                                               sys.exit(0)
-                              except:
-                                  pass
+                              except Exception as e:
+                                  print(f"⚠️ Parse error: {e}")
               
               # Fallback to fixed contextual generation
               print("🎲 Using fixed contextual generation...")
@@ -555,6 +550,9 @@ jobs:
                 AI_TEXT=$(echo "$AI_TEXT" | sed 's/<@&[0-9]*>//g' | sed 's/  / /g')
               fi
               
+              # De-slash phrasing for style consistency
+              AI_TEXT=$(echo "$AI_TEXT" | sed 's/school\/work/school or work/gI' | sed 's/sekolah\/kerja/sekolah atau kerja/gI')
+              
               # Remove any trailing emojis to make it more natural
               AI_TEXT=$(echo "$AI_TEXT" | sed 's/[🎮💯🔥⚡✨🎯💪🚀☕📚]*$//')
               
@@ -581,28 +579,27 @@ jobs:
             
             WEATHER_MENTION="${{ steps.weather.outputs.WEATHER_INFO }}"
             DAY_LOWER=$(echo "${{ steps.context.outputs.CURRENT_DAY }}" | tr '[:upper:]' '[:lower:]')
-            DAY_INDO_MAP='{monday: senin, tuesday: selasa, wednesday: rabu, thursday: kamis, friday: jumat, saturday: sabtu, sunday: minggu}'
             
             case "${{ steps.context.outputs.TYPE }}" in
               "morning")
                 if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
                   DESC_RAW="yoooow ${DAY_LOWER} morning crew, coffee first or straight to gaming? gaskeun <@&1374047008829997157> warm up aim sambil ngopi, ${WEATHER_MENTION} di ${DAY_LOWER} gini anjayyy pas banget"
                 else
-                  DESC_RAW="heyyy ${DAY_LOWER} morning crew, ready for school/work or need more motivation? yuuuk semangat aktivitas dulu gaming nanti sore, ${WEATHER_MENTION} di ${DAY_LOWER} gini wkwkwkwk cocok buat semangat"
+                  DESC_RAW="heyyy ${DAY_LOWER} morning crew, ready for school or need more motivation? yuuuk semangat sekolah atau kerja dulu, gaming nanti sore, ${WEATHER_MENTION} di ${DAY_LOWER} gini wkwkwkwk cocok buat semangat"
                 fi
                 ;;
               "afternoon")
                 if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
                   DESC_RAW="wassuuup ${DAY_LOWER} afternoon squad, lunch coma or still gaming energy? yuuuk <@&1374047008829997157> quick match valorant, ${WEATHER_MENTION} di ${DAY_LOWER} gini gileee enak banget"
                 else
-                  DESC_RAW="bro ${DAY_LOWER} afternoon, lunch break or still busy mode? yuuuk quick mobile legends classic break time, ${WEATHER_MENTION} di ${DAY_LOWER} gini anjayyy cocok buat refreshing"
+                  DESC_RAW="sup ${DAY_LOWER} afternoon, lunch break or still busy mode? yuuuk quick mobile legends classic break time, ${WEATHER_MENTION} di ${DAY_LOWER} gini anjayyy cocok buat refreshing"
                 fi
                 ;;
               "evening")
                 if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
-                  DESC_RAW="suuup ${DAY_LOWER} evening legends, weekend vibes still strong? yuuuk <@&1374047008829997157> mabar valorant bareng, ${WEATHER_MENTION} di ${DAY_LOWER} sore gini wkwkwkwk perfect"
+                  DESC_RAW="yoooow ${DAY_LOWER} evening crew, weekend vibes still strong? yuuuk <@&1374047008829997157> mabar valorant bareng, ${WEATHER_MENTION} di ${DAY_LOWER} sore gini wkwkwkwk perfect"
                 else
-                  DESC_RAW="yoooow ${DAY_LOWER} evening crew, school/work done for today? yuuuk santai gaming sambil dinner, ${WEATHER_MENTION} di ${DAY_LOWER} gini ygy pas buat relaxing"
+                  DESC_RAW="heyyy ${DAY_LOWER} evening crew, school or work done for today? yuuuk santai gaming sambil dinner, ${WEATHER_MENTION} di ${DAY_LOWER} gini ygy pas buat relaxing"
                 fi
                 ;;
               "night")
@@ -612,7 +609,7 @@ jobs:
                   if [[ "${{ steps.context.outputs.CURRENT_DAY }}" == "Sunday" ]]; then
                     DESC_RAW="heyyy sunday night crew, ready for monday or denial mode? yuuuk santai dulu besok senin, ${WEATHER_MENTION} gini dah cocok buat istirahat"
                   else
-                    DESC_RAW="bro ${DAY_LOWER} night, quick gaming or sleep time? yuuuk valorant unrated bentar aja, ${WEATHER_MENTION} gini njirrr enak buat wind down"
+                    DESC_RAW="sup ${DAY_LOWER} night, quick gaming or sleep time? yuuuk valorant unrated bentar aja, ${WEATHER_MENTION} gini njirrr enak buat wind down"
                   fi
                 fi
                 ;;
