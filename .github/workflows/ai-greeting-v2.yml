@@ -315,7 +315,6 @@ jobs:
                       print(f"🔍 Text preview: {ai_text[:100]}...")
                       
                       if ai_text:
-                      if ai_text:
                           # Enhanced JSON extraction
                           json_patterns = [
                               r'\{[^}]*"message"[^}]*"title"[^}]*"footer"[^}]*\}',
