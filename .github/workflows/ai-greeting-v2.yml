@@ -105,349 +105,334 @@ jobs:
           
           echo "🎯 Context: $TYPE on $CURRENT_DAY ($SPECIAL_CONTEXT)"
 
-      - name: Get Weather (BMKG Yogyakarta)
-        id: weather
+      - name: Setup Creative Context
+        id: creative_context
         run: |
-          WEATHER_INFO=""
-          echo "🌤️ Fetching BMKG weather for Yogyakarta..."
+          echo "� Setting up creative context for AI generation..."
           
-          BMKG_RAW=$(curl -s "https://api.bmkg.go.id/publik/prakiraan-cuaca?adm4=34.04.07.2001" --connect-timeout 8 --max-time 15 || echo "")
-            
-          if [[ -n "$BMKG_RAW" && "$BMKG_RAW" != *"error"* && "$BMKG_RAW" != *"Error"* ]]; then
-            echo "✅ BMKG API response received"
-            
-            TEMP=$(echo "$BMKG_RAW" | grep -o '"t":"[^"]*"' | head -1 | cut -d'"' -f4 || echo "")
-            DESC=$(echo "$BMKG_RAW" | grep -o '"weather_desc":"[^"]*"' | head -1 | cut -d'"' -f4 || echo "")
-            
-            if [[ -n "$TEMP" || -n "$DESC" ]]; then
-              echo "🌡️ Raw: $TEMP°C | $DESC"
-              
-              WEATHER_CASUAL=""
-              if [[ -n "$DESC" ]]; then
-                DESC_LOWER=$(echo "$DESC" | tr '[:upper:]' '[:lower:]')
-                
-                if [[ "$DESC_LOWER" == *"hujan"* || "$DESC_LOWER" == *"rain"* ]]; then
-                  WEATHER_CASUAL="hujan"
-                elif [[ "$DESC_LOWER" == *"gerimis"* || "$DESC_LOWER" == *"drizzle"* ]]; then
-                  WEATHER_CASUAL="gerimis"
-                elif [[ "$DESC_LOWER" == *"panas"* || "$DESC_LOWER" == *"hot"* || "$DESC_LOWER" == *"terik"* ]]; then
-                  WEATHER_CASUAL="panas"
-                elif [[ "$DESC_LOWER" == *"dingin"* || "$DESC_LOWER" == *"cold"* ]]; then
-                  WEATHER_CASUAL="dingin"
-                elif [[ "$DESC_LOWER" == *"sejuk"* || "$DESC_LOWER" == *"cool"* || "$DESC_LOWER" == *"adem"* ]]; then
-                  WEATHER_CASUAL="sejuk"
-                elif [[ "$DESC_LOWER" == *"berawan"* || "$DESC_LOWER" == *"cloudy"* ]]; then
-                  WEATHER_CASUAL="berawan"
-                elif [[ "$DESC_LOWER" == *"cerah"* || "$DESC_LOWER" == *"sunny"* || "$DESC_LOWER" == *"clear"* ]]; then
-                  WEATHER_CASUAL="cerah"
-                else
-                  WEATHER_CASUAL="enak"
-                fi
-              fi
-              
-              if [[ -n "$TEMP" && -n "$WEATHER_CASUAL" ]]; then
-                WEATHER_INFO="cuaca ${WEATHER_CASUAL} ${TEMP}°c"
-              elif [[ -n "$WEATHER_CASUAL" ]]; then
-                WEATHER_INFO="cuaca ${WEATHER_CASUAL}"
-              elif [[ -n "$TEMP" ]]; then
-                WEATHER_INFO="${TEMP}°c"
-              fi
-              
-              echo "✅ BMKG Weather: $WEATHER_INFO"
-            else
-              echo "⚠️ Could not extract weather data from BMKG response"
-              WEATHER_INFO="cuaca enak"
-            fi
-          else
-            echo "❌ BMKG API failed, using fallback"
-            WEATHER_INFO="cuaca enak"
-          fi
+          # Generate random context elements for creativity
+          MOOD_WORDS=("chill" "energetic" "focused" "relaxed" "hyped" "zen" "wild" "smooth")
+          RANDOM_MOOD=${MOOD_WORDS[$((RANDOM % ${#MOOD_WORDS[@]}))]}
           
-          WEATHER_EMOJI="🌤️"
-          echo "WEATHER_INFO=$WEATHER_INFO" >> $GITHUB_OUTPUT
-          echo "WEATHER_EMOJI=$WEATHER_EMOJI" >> $GITHUB_OUTPUT
+          VIBES=("gaming vibes" "squad energy" "team spirit" "community feels" "discord energy" "crew vibes" "collective mood")
+          RANDOM_VIBE=${VIBES[$((RANDOM % ${#VIBES[@]}))]}
+          
+          echo "MOOD_CONTEXT=$RANDOM_MOOD" >> $GITHUB_OUTPUT
+          echo "VIBE_CONTEXT=$RANDOM_VIBE" >> $GITHUB_OUTPUT
+          echo "✅ Creative context ready: $RANDOM_MOOD $RANDOM_VIBE"
 
-      - name: Generate AI Greeting
+      - name: Generate AI Content (Message + Title + Footer)
         id: ai_generation
         env:
           CURRENT_DAY: ${{ steps.context.outputs.CURRENT_DAY }}
           TIME_OF_DAY: ${{ steps.context.outputs.TYPE }}
           CONTEXT: ${{ steps.context.outputs.CONTEXT }}
+          MOOD_CONTEXT: ${{ steps.creative_context.outputs.MOOD_CONTEXT }}
+          VIBE_CONTEXT: ${{ steps.creative_context.outputs.VIBE_CONTEXT }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          echo "🤖 generating ai greeting (natural, no weather)…"
+          echo "🤖 Generating complete AI content (message + title + footer)..."
 
-          # weekend flag
+          # Weekend flag
           if [ "$CONTEXT" = "weekend" ]; then
             export IS_WEEKEND=true
           else
             export IS_WEEKEND=false
           fi
           
-          # ---------- python generator (no weather mention) ----------
-          cat > /tmp/fixed_contextual_generator.py << 'EOL'
-          import os, re, random, requests, sys
+          # Advanced AI generator dengan title dan footer
+          cat > /tmp/advanced_ai_generator.py << 'EOL'
+          import os, re, random, requests, sys, json
 
-          """
-          SLANG_GLOSSARY (arti asli singkat):
-          indo:
-            - yuk/yuuuk/yok/ayoo: ajakan halus mulai
-            - gas: ayo jalan sekarang
-            - gaskeun: push terus tanpa ragu
-          english:
-            - crew/squad/team: panggilan komunal santai
-            - vibe: suasana; grind: kerja keras; queue up: antri match
-            - dialed in: fokus siap; booting: masih pemanasan
-          """
+          def generate_content():
+              day = os.environ.get("CURRENT_DAY", "today").lower()
+              time = os.environ.get("TIME_OF_DAY", "day")
+              context = os.environ.get("CONTEXT", "weekday")
+              mood = os.environ.get("MOOD_CONTEXT", "chill")
+              vibe = os.environ.get("VIBE_CONTEXT", "gaming vibes")
+              is_weekend = context == "weekend"
+              api_key = os.environ.get("GEMINI_API_KEY")
+              
+              if not api_key:
+                  raise Exception("No API key")
+              
+              # Comprehensive prompt untuk message, title, dan footer
+              prompt = f"""You are creating content for Skye Discord gaming community. Generate exactly 3 items in JSON format:
 
-          def coin(p=0.5): 
-              import random
-              return random.random() < p
+              **CONTEXT:**
+              - Day: {day} ({context})
+              - Time: {time}
+              - Mood: {mood}
+              - Community vibe: {vibe}
+              - Games played: Roblox, Mobile Legends, Valorant
 
-          # english opener (natural, no dash, no "check-in/roll call")
-          def first_en(day, time, is_weekend):
-              openers = ["yoooow", "heyyy", "yo", "sup", "hey team", "morning fam", "what's good"]
-              labels = {
-                "morning":[ f"{day} morning crew", f"{day} morning", f"{day} a.m." ],
-                "afternoon":[ f"{day} afternoon squad", f"{day} afternoon", f"{day} midday" ],
-                "evening":[ f"{day} evening crew", f"{day} evening", f"{day} dusk" ],
-                "night":[ f"{day} night squad", f"{day} night", f"{day} late" ],
+              **GENERATE JSON WITH:**
+              {{
+                "message": "2-sentence Discord greeting",
+                "title": "creative channel title", 
+                "footer": "contextual footer text"
+              }}
+
+              **MESSAGE REQUIREMENTS:**
+              - Sentence 1: English only, casual greeting + question about current state/mood/activity
+              - Sentence 2: Indonesian invitation to game + {'<@&1374047008829997157>' if is_weekend else 'no role tag'}
+              - All lowercase, natural conversation, 80-200 chars
+              - No weather mentions, focus on time/day context and gaming
+
+              **TITLE REQUIREMENTS:**
+              - Creative, unique title reflecting current {time} {day} mood
+              - Avoid templates like "Morning Squad" or "Evening Crew"  
+              - Be creative: "code red caffeine protocol", "post-lunch power mode", "midnight legends unite"
+              - 3-6 words max, engaging and dynamic
+              - All lowercase
+
+              **FOOTER REQUIREMENTS:**
+              - Contextual to time/day/mood, not generic "chill gaming vibes"
+              - Examples: "{time} energy activated", "{day} grind mode", "{mood} squad assembled"
+              - 2-4 words, lowercase, specific to current context
+
+              **EXAMPLES:**
+              Morning weekday: {{"message": "yoooow {day} crew, ready to tackle this productive day? yuk prioritas tugas dulu, gaming nanti sore", "title": "morning fuel squad", "footer": "productivity first mode"}}
+              
+              Evening weekend: {{"message": "wassup {day} legends, day was epic or disaster? yuuuk <@&1374047008829997157> dinner sambil voice chat valorant", "title": "weekend wind down", "footer": "evening chill activated"}}
+
+              Write only the JSON, no other text:
+              """
+              
+              url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
+              payload = {
+                  "contents": [{"parts": [{"text": prompt}]}],
+                  "generationConfig": {
+                      "temperature": 0.8,
+                      "maxOutputTokens": 250,
+                      "topP": 0.9
+                  }
               }
-              hooks = [
-                "coffee ready",
-                "keep it steady",
-                "we move",
-                "heads on",
-                "feeling sharp",
-                "light and easy",
-              ]
-              lead = (random.choice(openers) + " " if coin(0.6) else "") + random.choice(labels.get(time, [f"{day} {time}"]))
-              hook = random.choice(hooks)
-              sent = f"{lead}, {hook}?"
-              return sent
+              
+              response = requests.post(url, json=payload, timeout=20)
+              
+              if response.status_code == 200:
+                  data = response.json()
+                  if 'candidates' in data and len(data['candidates']) > 0:
+                      ai_text = data['candidates'][0]['content']['parts'][0]['text'].strip()
+                      
+                      # Extract JSON dari response
+                      json_match = re.search(r'\{[^}]*"message"[^}]*\}', ai_text, re.DOTALL)
+                      if json_match:
+                          try:
+                              content = json.loads(json_match.group())
+                              if all(key in content for key in ['message', 'title', 'footer']):
+                                  # Validate dan clean content
+                                  message = content['message'].lower().strip()
+                                  title = content['title'].lower().strip()
+                                  footer = content['footer'].lower().strip()
+                                  
+                                  # Ensure proper role tag for weekend
+                                  if is_weekend and '<@&1374047008829997157>' not in message:
+                                      if '?' in message:
+                                          message = message.replace('?', '? <@&1374047008829997157>', 1)
+                                      else:
+                                          message += ' <@&1374047008829997157>'
+                                  elif not is_weekend:
+                                      message = re.sub(r'<@&[0-9]+>', '', message).strip()
+                                  
+                                  # Length validation
+                                  if 50 <= len(message) <= 220:
+                                      return {
+                                          'message': message,
+                                          'title': title,
+                                          'footer': footer,
+                                          'source': 'ai'
+                                      }
+                          except json.JSONDecodeError:
+                              pass
+              
+              raise Exception("AI generation failed")
 
-          # indonesian follow-up (context only, no weather)
-          def second_id(day, time, is_weekend):
-              games = ["valorant","mobile legends","roblox"]
-              if time=="morning" and not is_weekend:
-                  later = random.choice(["nanti sore","abis pulang","malem nanti","abis tugas kelar"])
-                  lines = [
-                    f"prioritas tugas dulu, {random.choice(games)} {later}",
-                    f"fokus sekolah atau kerja dulu, {random.choice(games)} {later}",
-                    f"rapihin to-do dulu, {random.choice(games)} {later}",
-                    f"serius dulu bentar, baru santai {random.choice(games)} {later}",
-                  ]
-                  starter = random.choice(["yuk","yuuuk","yok","gas","gaskeun","ayoo"])
-                  return f"{starter} {random.choice(lines)}"
-              # other times
-              recs_day = {
-                "afternoon": [
-                  f"quick match {random.choice(games)} pas break",
-                  f"{random.choice(games)} classic bentar",
-                  f"aim training tipis-tipis",
-                  f"voice chat {random.choice(games)} sambil ngemil",
-                ],
-                "evening": [
-                  f"mabar {random.choice(games)} santai",
-                  f"{random.choice(games)} sambil dinner",
-                  f"comms on, {random.choice(games)} yuk",
-                  f"push tipis di {random.choice(games)}",
-                ],
-                "night": [
-                  f"unrated {random.choice(games)} bentar terus rest",
-                  f"{random.choice(games)} chill session",
-                  f"wind down sambil {random.choice(games)}",
-                  f"last queue tipis di {random.choice(games)}",
-                ],
+          def generate_fallback():
+              day = os.environ.get("CURRENT_DAY", "today").lower()
+              time = os.environ.get("TIME_OF_DAY", "day")
+              context = os.environ.get("CONTEXT", "weekday")
+              is_weekend = context == "weekend"
+              
+              # Creative fallback messages
+              openers = ["yoooow", "wassup", "heyyyy", "sup", "ayooo"]
+              
+              time_contexts = {
+                  "morning": {
+                      "questions": ["coffee ready or controller calling?", "energy level check how we feeling?", "productive mood activated or still sleepy?"],
+                      "activities": ["warm up aim training", "daily quest speedrun", "morning gaming ritual"],
+                      "titles": ["dawn patrol squad", "morning fuel crew", "early bird legends", "sunrise gaming mode"],
+                      "footers": ["morning energy on", "dawn squad ready", "early grind mode", "sunrise vibes"]
+                  },
+                  "afternoon": {
+                      "questions": ["lunch break energy hitting different?", "midday vibe check how we doing?", "post-meal gaming mood?"],
+                      "activities": ["quick match session", "ranked push time", "afternoon gaming break"],
+                      "titles": ["midday momentum", "afternoon power mode", "lunch break legends", "peak hour squad"],
+                      "footers": ["midday energy peak", "afternoon grind on", "peak gaming hours", "lunch power mode"]
+                  },
+                  "evening": {
+                      "questions": ["day was productive or chaos?", "dinner plans or gaming first?", "evening chill mode activated?"],
+                      "activities": ["dinner sambil voice chat", "evening gaming session", "wind down gaming"],
+                      "titles": ["golden hour crew", "evening legends", "dinner gaming mode", "sunset squad"],
+                      "footers": ["evening chill on", "golden hour vibes", "dinner gaming time", "sunset mode"]
+                  },
+                  "night": {
+                      "questions": ["insomnia hitting or choice begadang?", "night owl mode activated?", "peaceful late hours?"],
+                      "activities": ["marathon gaming session", "late night competitive", "midnight gaming vibes"],
+                      "titles": ["midnight legends", "night owl squad", "late shift crew", "nocturnal gamers"],
+                      "footers": ["midnight mode on", "night owl energy", "late shift vibes", "nocturnal gaming"]
+                  }
               }
-              bucket = recs_day.get(time, [
-                  f"{random.choice(games)} session bareng",
-                  f"quick match {random.choice(games)}",
-              ])
-              starter = random.choice(["yuk","yuuuk","yok","gas","gaskeun","ayoo"])
+              
+              ctx = time_contexts.get(time, time_contexts["afternoon"])
+              
+              opener = random.choice(openers)
+              question = random.choice(ctx["questions"])
+              activity = random.choice(ctx["activities"])
+              title = random.choice(ctx["titles"])
+              footer = random.choice(ctx["footers"])
+              
               tag = " <@&1374047008829997157>" if is_weekend else ""
-              return f"{starter}{tag} {random.choice(bucket)}"
-
-          def sanitize(s: str) -> str:
-              s = s.replace("—", ",").replace("–", ",")
-              s = re.sub(r"\s+,", ",", s)
-              s = re.sub(r"\s+", " ", s).strip().lower()
-              return s
-
-          def build():
-              day = os.environ.get("CURRENT_DAY","today").lower()
-              time = os.environ.get("TIME_OF_DAY","day")
-              is_weekend = os.environ.get("IS_WEEKEND","false").lower()=="true"
-              first = first_en(day, time, is_weekend)
-              if "?" not in first: first = first.rstrip(".") + "?"
-              second = second_id(day, time, is_weekend)
-              msg = sanitize(first + " " + second)
-              # ensure english-only on first sentence
-              first_part = msg.split("?",1)[0]
-              if re.search(r"\b(yuk|yuuuk|yok|gas|gaskeun|atau|dulu|gini|aja|sama|juga|kali|deh|dong|lah|nih|yg|kuy|mabar|anjay|wkwk|njir|udah|ntar|besok|gue|gua|kamu|lu)\b", first_part):
-                  msg = re.sub(r"^.*?\?", f"{day} {time} crew, keep it steady? ", msg)
-              return msg
+              games = ["valorant", "mobile legends", "roblox"]
+              game = random.choice(games)
+              
+              message = f"{opener} {day} squad, {question} yuuuk{tag} {activity} {game}"
+              
+              return {
+                  'message': message,
+                  'title': title,
+                  'footer': footer,
+                  'source': 'fallback'
+              }
 
           try:
-              day = os.environ.get("CURRENT_DAY","today").lower()
-              time = os.environ.get("TIME_OF_DAY","day")
-              is_weekend = os.environ.get("IS_WEEKEND","false").lower()=="true"
-              api_key = os.environ.get("GEMINI_API_KEY")
-              if api_key:
-                  if time=="morning" and not is_weekend:
-                      prompt = f"""write a discord greeting for {day} morning (weekday), 2 sentences, all lowercase.
-              sentence 1: english only, short and natural. end with '?'.
-              sentence 2: indonesian, productivity first then gaming later (valorant/mobile legends/roblox). write only the greeting."""
-                  elif time=="morning" and is_weekend:
-                      prompt = f"""write a discord greeting for {day} morning (weekend), 2 sentences, all lowercase.
-              sentence 1: english only, short and natural. end with '?'.
-              sentence 2: indonesian, start with yuk/yuuuk/yok/gas/gaskeun + <@&1374047008829997157>, include one game. write only the greeting."""
-                  else:
-                      prompt = f"""write a discord greeting for {day} {time}, 2 sentences, all lowercase.
-              sentence 1: english only, short and natural. end with '?'.
-              sentence 2: indonesian, invite to valorant/mobile legends/roblox. write only the greeting."""
-                  url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
-                  payload = {"contents":[{"parts":[{"text":prompt}]}],"generationConfig":{"temperature":0.66,"maxOutputTokens":110,"topP":0.9}}
-                  r = requests.post(url, json=payload, timeout=15)
-                  if r.status_code==200:
-                      data = r.json()
-                      cand = (data.get("candidates") or [None])[0]
-                      if cand and cand.get("finishReason")!="MAX_TOKENS":
-                          parts = cand.get("content",{}).get("parts") or []
-                          if parts and "text" in parts[0]:
-                              t = parts[0]["text"].strip().lower()
-                              t = re.sub(r"\*+|\n+"," ",t); t = " ".join(t.split())
-                              if "?" not in t: t = re.sub(r"\.", "?", t, count=1)
-                              msg = sanitize(t)
-                              # weekday morning: no game names in first sentence
-                              if time=="morning" and not is_weekend:
-                                  first_part = msg.split("?",1)[0]
-                                  if re.search(r"\b(apex|valorant|mobile legends|roblox|gaming|main|mabar|push rank|competitive)\b", first_part):
-                                      raise ValueError("gaming in first sentence")
-                              if 50 <= len(msg) <= 200:
-                                  open("/tmp/ai_response.txt","w",encoding="utf-8").write(msg)
-                                  print("✅ gemini ok"); sys.exit(0)
-              # fallback local
-              msg = build()
-              open("/tmp/ai_response.txt","w",encoding="utf-8").write(msg)
-              print("✅ local generator ok"); sys.exit(0)
+              result = generate_content()
+              print(f"✅ AI generation successful")
           except Exception as e:
-              print("⚠️", e)
-              msg = build()
-              open("/tmp/ai_response.txt","w",encoding="utf-8").write(msg)
-              print("✅ exception fallback ok"); sys.exit(0)
-          EOL
-
-          # ---------- payload script ----------
-          cat > /tmp/discord_script.py << 'EOL'
-          import json, os
-          title = os.environ.get('TITLE', 'Skye Squad')
-          desc_raw = os.environ.get('DESC', "what's good everyone!")
-          color = int(os.environ.get('COLOR', '16766720'))
-          timestamp = os.environ.get('TIMESTAMP', '')
-          thumb = os.environ.get('THUMB', '1f305')
-          desc = (desc_raw or '').lower()
-          desc += "\n> by server dev guanteng - <@399393175904714752>"
-          embed = {
-              "title": title,
-              "description": desc,
-              "color": color,
-              "thumbnail": {"url": f"https://twemoji.maxcdn.com/v/latest/72x72/{thumb}.png"},
-              "footer": {"text": "chill gaming vibes", "icon_url": "https://files.catbox.moe/npfh4e.jpg"},
-              "timestamp": timestamp
-          }
-          with open('/tmp/discord_payload.json', 'w', encoding='utf-8') as f:
-              json.dump({"embeds": [embed]}, f, ensure_ascii=False)
-          print("✅ payload created")
-          EOL
-
-          # ---------- run ----------
-          echo "🧪 executing generator..."
-          python3 /tmp/fixed_contextual_generator.py
+              print(f"⚠️ AI failed: {e}, using creative fallback")
+              result = generate_fallback()
           
-          # ---------- process result ----------
-          if [[ -s /tmp/ai_response.txt ]]; then
-            AI_TEXT=$(cat /tmp/ai_response.txt)
-            echo "🎯 generated: $AI_TEXT"
-            if [[ ${#AI_TEXT} -gt 40 && ${#AI_TEXT} -lt 250 ]]; then
-              if [[ "$CONTEXT" == "weekend" ]]; then
-                HAS_TAG=$(echo "$AI_TEXT" | grep -E "<@&[0-9]+>" || echo "")
-                if [[ -z "$HAS_TAG" ]]; then
-                  if [[ "$AI_TEXT" == *"?"* ]]; then
-                    AI_TEXT=$(echo "$AI_TEXT" | sed 's/? /? <@&1374047008829997157> /')
-                  else
-                    AI_TEXT="$AI_TEXT <@&1374047008829997157>"
-                  fi
-                fi
-              else
-                AI_TEXT=$(echo "$AI_TEXT" | sed 's/<@&[0-9]*>//g')
-              fi
-              # style fixes
-              AI_TEXT=$(echo "$AI_TEXT" | tr '–—' ',')
-              AI_TEXT=$(echo "$AI_TEXT" | sed 's/school\/work/school or work/gI' | sed 's/sekolah\/kerja/sekolah atau kerja/gI')
-              AI_TEXT=$(echo "$AI_TEXT" | sed -E 's/[🎮💯🔥⚡✨🎯💪🚀☕📚]+$//')
-              AI_TEXT=$(echo "$AI_TEXT" | tr -s ' ')
-              [ ${#AI_TEXT} -gt 200 ] && AI_TEXT="${AI_TEXT:0:190}..."
-              DESC_RAW="$AI_TEXT"; USE_AI=true
-              echo "✅ text accepted (${#AI_TEXT} chars)"
+          # Write results
+          with open('/tmp/ai_message.txt', 'w', encoding='utf-8') as f:
+              f.write(result['message'])
+          with open('/tmp/ai_title.txt', 'w', encoding='utf-8') as f:
+              f.write(result['title'])
+          with open('/tmp/ai_footer.txt', 'w', encoding='utf-8') as f:
+              f.write(result['footer'])
+          with open('/tmp/ai_source.txt', 'w', encoding='utf-8') as f:
+              f.write(result['source'])
+          
+          print(f"🎯 Generated content:")
+          print(f"   Message: {result['message'][:60]}...")
+          print(f"   Title: {result['title']}")
+          print(f"   Footer: {result['footer']}")
+          print(f"   Source: {result['source']}")
+          EOL
+
+          # Execute the advanced generator
+          echo "🧪 Executing advanced AI generator..."
+          python3 /tmp/advanced_ai_generator.py
+          
+          # Process results
+          if [[ -s /tmp/ai_message.txt && -s /tmp/ai_title.txt && -s /tmp/ai_footer.txt ]]; then
+            AI_MESSAGE=$(cat /tmp/ai_message.txt)
+            AI_TITLE=$(cat /tmp/ai_title.txt)
+            AI_FOOTER=$(cat /tmp/ai_footer.txt)
+            AI_SOURCE=$(cat /tmp/ai_source.txt)
+            
+            echo "🎯 Generated content:"
+            echo "   Message: $AI_MESSAGE"
+            echo "   Title: $AI_TITLE"
+            echo "   Footer: $AI_FOOTER"
+            echo "   Source: $AI_SOURCE"
+            
+            # Validation
+            if [[ ${#AI_MESSAGE} -gt 40 && ${#AI_MESSAGE} -lt 250 ]]; then
+              DESC_RAW="$AI_MESSAGE"
+              TITLE="$AI_TITLE"
+              FOOTER_TEXT="$AI_FOOTER"
+              USE_AI=true
+              echo "✅ Content validated and accepted"
             else
-              echo "❌ invalid length (${#AI_TEXT})"; USE_AI=false
+              echo "❌ Content validation failed, using backup"
+              USE_AI=false
             fi
           else
-            echo "❌ no ai response"; USE_AI=false
+            echo "❌ Generation failed, using backup"
+            USE_AI=false
           fi
           
-          # ---------- bash fallback (no weather mention) ----------
+          # Backup system jika AI gagal
           if [[ "$USE_AI" != "true" ]]; then
+            echo "🎲 Using backup creative system..."
+            
             DAY=$(echo "$CURRENT_DAY" | tr '[:upper:]' '[:lower:]')
+            
             case "$TIME_OF_DAY" in
-              morning) FIRST="$(shuf -e "yoooow $DAY morning crew, coffee ready?" "hey team $DAY morning, keep it steady?" "$DAY morning, we move?" -n1)" ;;
-              afternoon) FIRST="$(shuf -e "$DAY afternoon squad, heads on?" "$DAY afternoon, keep it light?" -n1)" ;;
-              evening) FIRST="$(shuf -e "$DAY evening crew, dinner first?" "$DAY evening, feeling sharp?" -n1)" ;;
-              night) FIRST="$(shuf -e "$DAY night squad, wind down?" "$DAY night, we moving?" -n1)" ;;
+              "morning")
+                DESC_RAW=$(shuf -e \
+                  "yoooow $DAY crew, coffee ready or controller calling? yuuuk warm up aim valorant dulu" \
+                  "wassup $DAY squad, energy level gimana nih? gaskeun daily quest mobile legends" \
+                  "heyyyy $DAY legends, productive mood on? yuuuk morning gaming ritual roblox" \
+                  -n1)
+                TITLE=$(shuf -e "dawn patrol activated" "morning fuel squad" "early bird legends" "sunrise gaming mode" -n1)
+                FOOTER_TEXT=$(shuf -e "morning energy on" "dawn squad ready" "early grind mode" "sunrise vibes" -n1)
+                ;;
+              "afternoon")
+                DESC_RAW=$(shuf -e \
+                  "yoooow $DAY squad, lunch break energy different? yuuuk quick match valorant" \
+                  "wassup $DAY crew, midday vibe check? gaskeun ranked push mobile legends" \
+                  "heyyyy $DAY legends, post-meal gaming mood? yuuuk afternoon session roblox" \
+                  -n1)
+                TITLE=$(shuf -e "midday momentum" "afternoon power mode" "lunch break legends" "peak hour squad" -n1)
+                FOOTER_TEXT=$(shuf -e "midday energy peak" "afternoon grind on" "peak gaming hours" "lunch power mode" -n1)
+                ;;
+              "evening")
+                DESC_RAW=$(shuf -e \
+                  "yoooow $DAY squad, day productive atau chaos? yuuuk dinner sambil voice chat valorant" \
+                  "wassup $DAY crew, evening chill activated? gaskeun wind down mobile legends" \
+                  "heyyyy $DAY legends, golden hour vibes? yuuuk evening session roblox" \
+                  -n1)
+                TITLE=$(shuf -e "golden hour crew" "evening legends" "dinner gaming mode" "sunset squad" -n1)
+                FOOTER_TEXT=$(shuf -e "evening chill on" "golden hour vibes" "dinner gaming time" "sunset mode" -n1)
+                ;;
+              "night")
+                DESC_RAW=$(shuf -e \
+                  "yoooow $DAY squad, insomnia atau choice begadang? yuuuk marathon gaming valorant" \
+                  "wassup $DAY crew, night owl mode on? gaskeun late night competitive mobile legends" \
+                  "heyyyy $DAY legends, peaceful late hours? yuuuk midnight session roblox" \
+                  -n1)
+                TITLE=$(shuf -e "midnight legends" "night owl squad" "late shift crew" "nocturnal gamers" -n1)
+                FOOTER_TEXT=$(shuf -e "midnight mode on" "night owl energy" "late shift vibes" "nocturnal gaming" -n1)
+                ;;
             esac
-            if [[ "$TIME_OF_DAY" = "morning" && "$CONTEXT" != "weekend" ]]; then
-              GAME=$(shuf -e valorant "mobile legends" roblox -n1)
-              LATER=$(shuf -e "nanti sore" "abis pulang" "malem nanti" "abis tugas kelar" -n1)
-              SECOND=$(shuf -e "yuk prioritas tugas dulu, $GAME $LATER" "yok fokus sekolah atau kerja dulu, $GAME $LATER" "gas rapihin to-do dulu, $GAME $LATER" -n1)
-            else
-              GAME=$(shuf -e valorant "mobile legends" roblox -n1)
-              TAG=""; [[ "$CONTEXT" = "weekend" ]] && TAG=" <@&1374047008829997157>"
-              SECOND=$(shuf -e "yuk mabar $GAME santai$TAG" "gas quick match $GAME$TAG" "yok comms on, $GAME yuk$TAG" -n1)
+            
+            # Add weekend role tag
+            if [[ "$CONTEXT" == "weekend" ]]; then
+              DESC_RAW=$(echo "$DESC_RAW" | sed 's/yuuuk /yuuuk <@&1374047008829997157> /' | sed 's/gaskeun /gaskeun <@&1374047008829997157> /')
             fi
-            DESC_RAW="$FIRST $SECOND"
           fi
           
-          # dynamic titles (randomized per time of day) + thumbs per time
+          # Dynamic thumbnail based on time
           case "$TIME_OF_DAY" in
-            "morning")
-              TITLE=$(shuf -e "good morning skyers" "rise and shine skye squad" "morning, team skye" "fresh start crew" "a.m. vibes, skye" "new day new queue" -n1)
-              THUMB="2600"
-              ;;
-            "afternoon")
-              TITLE=$(shuf -e "good afternoon skyers" "midday momentum" "afternoon grind" "after lunch squad" "keep it rolling" "pm vibes, skye" -n1)
-              THUMB="1f343"
-              ;;
-            "evening")
-              TITLE=$(shuf -e "evening chill skyers" "golden hour crew" "evening run" "after hours squad" "soft light, skye" "evening mode on" -n1)
-              THUMB="1f307"
-              ;;
-            "night")
-              TITLE=$(shuf -e "good night skyers" "night mode on" "late shift squad" "midnight crew" "slow down team" "lights low, skye" -n1)
-              THUMB="1f989"
-              ;;
+            "morning") THUMB="2600" ;;
+            "afternoon") THUMB="1f343" ;;
+            "evening") THUMB="1f307" ;;
+            "night") THUMB="1f989" ;;
           esac
           
-          # outputs
+          # Output untuk step berikutnya
           echo "TITLE=$TITLE" >> $GITHUB_OUTPUT
           echo "DESC_RAW=$DESC_RAW" >> $GITHUB_OUTPUT
+          echo "FOOTER_TEXT=$FOOTER_TEXT" >> $GITHUB_OUTPUT
           echo "USE_AI=$USE_AI" >> $GITHUB_OUTPUT
           echo "THUMB=$THUMB" >> $GITHUB_OUTPUT
 
       - name: Send Discord Message
         if: ${{ github.event.inputs.test_mode != 'true' }}
         run: |
-          echo "📤 Sending Discord message..."
+          echo "📤 Sending Discord message with dynamic content..."
           
           case "${{ steps.context.outputs.TYPE }}" in
             "morning") COLOR=16766720 ;;
@@ -458,6 +443,7 @@ jobs:
           
           TITLE="${{ steps.ai_generation.outputs.TITLE }}"
           DESC="${{ steps.ai_generation.outputs.DESC_RAW }}"
+          FOOTER_TEXT="${{ steps.ai_generation.outputs.FOOTER_TEXT }}"
           THUMB="${{ steps.ai_generation.outputs.THUMB }}"
           TIMESTAMP=$(TZ='Asia/Jakarta' date -u +%Y-%m-%dT%H:%M:%S.000Z)
           
@@ -469,14 +455,51 @@ jobs:
             echo "Using PRODUCTION webhook"
           fi
           
-          TITLE="$TITLE" DESC="$DESC" COLOR="$COLOR" TIMESTAMP="$TIMESTAMP" THUMB="$THUMB" python3 /tmp/discord_script.py
+          # Create advanced Discord payload dengan AI-generated footer
+          cat > /tmp/advanced_discord_script.py << 'EOL'
+          import json, os
+          
+          title = os.environ.get('TITLE', 'skye squad')
+          desc_raw = os.environ.get('DESC', "what's good everyone!")
+          footer_text = os.environ.get('FOOTER_TEXT', 'gaming vibes')
+          color = int(os.environ.get('COLOR', '16766720'))
+          timestamp = os.environ.get('TIMESTAMP', '')
+          thumb = os.environ.get('THUMB', '1f305')
+          
+          # Convert description to lowercase dan add signature
+          desc = (desc_raw or '').lower()
+          desc += "\n> by server dev guanteng - <@399393175904714752>"
+          
+          embed = {
+              "title": title,
+              "description": desc,
+              "color": color,
+              "thumbnail": {"url": f"https://twemoji.maxcdn.com/v/latest/72x72/{thumb}.png"},
+              "footer": {
+                  "text": footer_text,
+                  "icon_url": "https://files.catbox.moe/npfh4e.jpg"
+              },
+              "timestamp": timestamp
+          }
+          
+          payload = {"embeds": [embed]}
+          
+          with open('/tmp/discord_payload.json', 'w', encoding='utf-8') as f:
+              json.dump(payload, f, ensure_ascii=False)
+          
+          print("✅ Advanced payload created with dynamic footer")
+          EOL
+          
+          TITLE="$TITLE" DESC="$DESC" FOOTER_TEXT="$FOOTER_TEXT" COLOR="$COLOR" TIMESTAMP="$TIMESTAMP" THUMB="$THUMB" python3 /tmp/advanced_discord_script.py
           
           curl -f -X POST "$WEBHOOK_URL" \
                -H "Content-Type: application/json" \
                --data-binary @/tmp/discord_payload.json
           
-          echo "✅ Message sent!"
+          echo "✅ Message sent with dynamic content!"
           echo "🤖 AI Used: ${{ steps.ai_generation.outputs.USE_AI }}"
+          echo "🎨 Title: $TITLE"
+          echo "💬 Footer: $FOOTER_TEXT"
 
       - name: Test Mode Output
         if: ${{ github.event.inputs.test_mode == 'true' }}
@@ -485,9 +508,10 @@ jobs:
           echo "================================"
           echo "Title: ${{ steps.ai_generation.outputs.TITLE }}"
           echo "Description: ${{ steps.ai_generation.outputs.DESC_RAW }}"
+          echo "Footer: ${{ steps.ai_generation.outputs.FOOTER_TEXT }}"
           echo "AI Used: ${{ steps.ai_generation.outputs.USE_AI }}"
-          echo "Weather: ${{ steps.weather.outputs.WEATHER_INFO }}"
           echo "Context: ${{ steps.context.outputs.TYPE }} (${{ steps.context.outputs.SPECIAL_CONTEXT }})"
+          echo "Creative Context: ${{ steps.creative_context.outputs.MOOD_CONTEXT }} ${{ steps.creative_context.outputs.VIBE_CONTEXT }}"
           echo "OpenWrt Mode: ${{ steps.context.outputs.OPENWRT_MODE }}"
           if [[ "${{ github.event.inputs.use_test_webhook }}" == "true" ]]; then
             echo "Webhook: TEST"
@@ -539,8 +563,10 @@ jobs:
           echo "================================"
           echo "🕐 Time: ${{ steps.context.outputs.CURRENT_TIME }} WIB (${{ steps.context.outputs.CURRENT_DAY }})"
           echo "🎯 Type: ${{ steps.context.outputs.TYPE }} (${{ steps.context.outputs.CONTEXT }})"
-          echo "🌤️ Weather: ${{ steps.weather.outputs.WEATHER_INFO }}"
+          echo "� Creative Context: ${{ steps.creative_context.outputs.MOOD_CONTEXT }} ${{ steps.creative_context.outputs.VIBE_CONTEXT }}"
           echo "🤖 AI Success: ${{ steps.ai_generation.outputs.USE_AI }}"
+          echo "📝 Title: ${{ steps.ai_generation.outputs.TITLE }}"
+          echo "💬 Footer: ${{ steps.ai_generation.outputs.FOOTER_TEXT }}"
           echo "🏠 OpenWrt Mode: ${{ steps.context.outputs.OPENWRT_MODE }}"
           echo "🧪 Test Mode: ${{ github.event.inputs.test_mode }}"
           if [[ "${{ github.event.inputs.use_test_webhook }}" == "true" ]]; then
@@ -549,4 +575,4 @@ jobs:
             echo "🔄 Using PRODUCTION webhook"
           fi
           echo "================================"
-          echo "✅ Skye community greeting complete!"
+          echo "✅ Skye community greeting complete with dynamic AI content!"
