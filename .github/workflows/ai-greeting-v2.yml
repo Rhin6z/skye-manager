@@ -374,21 +374,23 @@ jobs:
       - name: Generate AI Greeting
         id: ai_generation
         run: |
-          echo "🤖 Generating AI greeting with DeepSeek..."
+          echo "🤖 Generating AI greeting with Gemini 2.5 Flash..."
           
-          # Create simplified prompt for DeepSeek
-          cat > /tmp/deepseek_prompt.txt << 'EOL'
-          You are a casual Indonesian gaming Discord admin for server "Skye". Create a Discord greeting with EXACTLY these parts:
+          # Create simplified prompt file
+          cat > /tmp/simplified_prompt.txt << 'EOL'
+          You are a casual Indonesian gaming Discord admin for the server "Skye".
 
-          PART 1: A casual English sentence that:
-          - Starts with "yoooow", "wassuuup", "heyyy", or "bro"
+          Write a Discord greeting message with EXACTLY these two parts:
+
+          PART 1: ONE casual English sentence that:
+          - Starts with "yoooow", "wassuuup", "heyyy", "suuup", or "bro"
           - Mentions ${{ steps.context.outputs.CURRENT_DAY }} by name
           - Asks a question about ${{ steps.context.outputs.TYPE }} activities
           - Ends with a question mark
           - Is all lowercase
           - Maximum 12 words
 
-          PART 2: A casual Indonesian sentence that:
+          PART 2: ONE casual Indonesian sentence that:
           - Starts with "yuuuk", "gaskeun", "gas", or "skuyyyy" 
           - Includes Indonesian slang like "anjay", "wkwkwk", "bjirrr", or "ygy"
           - References ${{ steps.weather.outputs.WEATHER_INFO }}
@@ -400,82 +402,89 @@ jobs:
           - Maximum 15 words
 
           TOTAL MESSAGE MUST BE UNDER 180 CHARACTERS.
-          RESPONSE FORMAT: Write only the two sentences separated by a space, nothing else.
+          OUTPUT FORMAT: Just write the two sentences separated by a space, nothing else.
           EOL
           
-          # Create Python script using DeepSeek
-          cat > /tmp/deepseek_generator.py << 'EOL'
+          # Create simpler Python script with detailed error handling
+          cat > /tmp/gemini_generator.py << 'EOL'
           import json
           import requests
           import os
           import sys
+          import re
+          
+          def print_error(message):
+              print(f"❌ Error: {message}")
           
           try:
-              with open('/tmp/deepseek_prompt.txt', 'r') as f:
+              with open('/tmp/simplified_prompt.txt', 'r') as f:
                   prompt = f.read().strip()
               
-              api_key = os.environ.get('DEEPSEEK_API_KEY')
+              api_key = os.environ.get('GEMINI_API_KEY')
               if not api_key:
-                  print("❌ No DeepSeek API key found")
+                  print_error("No API key found in environment")
                   sys.exit(1)
               
-              headers = {
-                  "Content-Type": "application/json",
-                  "Authorization": f"Bearer {api_key}"
-              }
+              # Using gemini-2.5-flash as requested (not lite version)
+              url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
               
               payload = {
-                  "model": "deepseek-chat",
-                  "messages": [
-                      {"role": "system", "content": "You are a Discord admin for an Indonesian gaming server."},
-                      {"role": "user", "content": prompt}
-                  ],
-                  "temperature": 0.7,
-                  "max_tokens": 150,
-                  "top_p": 0.9
+                  "contents": [{"parts": [{"text": prompt}]}],
+                  "generationConfig": {
+                      "temperature": 0.6,
+                      "maxOutputTokens": 200,
+                      "topP": 0.9
+                  }
               }
               
-              print("📡 Sending request to DeepSeek API...")
-              response = requests.post(
-                  "https://api.deepseek.com/v1/chat/completions",
-                  headers=headers,
-                  json=payload,
-                  timeout=30
-              )
+              print("📡 Sending request to Gemini API...")
+              response = requests.post(url, json=payload, timeout=30)
               
               if response.status_code != 200:
-                  print(f"❌ DeepSeek API error: {response.status_code}")
-                  print(response.text)
+                  print_error(f"API returned status code {response.status_code}: {response.text}")
                   sys.exit(1)
               
+              print("✅ Received response from API")
               data = response.json()
-              if 'choices' in data and len(data['choices']) > 0:
-                  ai_text = data['choices'][0]['message']['content'].strip()
-                  
-                  # Clean up any possible formatting
-                  ai_text = ai_text.replace('"', '').replace('*', '')
-                  
-                  # Basic validation
-                  if '?' in ai_text and len(ai_text) > 40 and len(ai_text) < 200:
-                      with open('/tmp/ai_response.txt', 'w', encoding='utf-8') as f:
-                          f.write(ai_text)
-                      print(f"✅ DeepSeek generation successful: {ai_text[:50]}...")
-                      sys.exit(0)
-                  else:
-                      print(f"❌ Response doesn't match expected format: {ai_text}")
-                      sys.exit(1)
+              
+              if 'candidates' not in data or len(data['candidates']) == 0:
+                  print_error("No candidates in response")
+                  print(f"Response data: {json.dumps(data, indent=2)}")
+                  sys.exit(1)
+              
+              ai_text = data['candidates'][0]['content']['parts'][0]['text'].strip()
+              
+              # Clean formatting
+              clean_text = re.sub(r'\*\*([^*]+)\*\*', r'\1', ai_text)
+              clean_text = re.sub(r'`([^`]+)`', r'\1', clean_text)
+              clean_text = re.sub(r'\n+', ' ', clean_text)
+              clean_text = ' '.join(clean_text.split())
+              
+              # Find actual greeting (not metadata)
+              if len(clean_text) > 40 and '?' in clean_text:
+                  with open('/tmp/ai_response.txt', 'w', encoding='utf-8') as f:
+                      f.write(clean_text)
+                  print(f"✅ AI generation successful: {clean_text[:50]}...")
+                  sys.exit(0)
               else:
-                  print("❌ No choices in DeepSeek response")
+                  print_error("Generated text doesn't match expected format")
+                  print(f"Generated text: {clean_text}")
                   sys.exit(1)
                   
+          except requests.exceptions.RequestException as e:
+              print_error(f"Request failed: {str(e)}")
+              sys.exit(1)
+          except json.JSONDecodeError as e:
+              print_error(f"Failed to parse response JSON: {str(e)}")
+              sys.exit(1)
           except Exception as e:
-              print(f"❌ Error: {str(e)}")
+              print_error(f"Unexpected error: {str(e)}")
               sys.exit(1)
           EOL
           
-          # Execute the DeepSeek script
-          echo "🧪 Executing DeepSeek generation script..."
-          DEEPSEEK_API_KEY="${{ secrets.DEEPSEEK_API_KEY }}" python3 /tmp/deepseek_generator.py
+          # Execute the script with verbose output
+          echo "🧪 Executing Gemini generation script..."
+          GEMINI_API_KEY="${{ secrets.GEMINI_API_KEY }}" python3 /tmp/gemini_generator.py
           
           if [[ $? -eq 0 && -s /tmp/ai_response.txt ]]; then
             AI_TEXT=$(cat /tmp/ai_response.txt)
@@ -515,7 +524,7 @@ jobs:
             USE_AI=false
             echo "❌ AI generation failed, using fallback"
           fi
-                              
+          
           # Fallback system with authentic Indonesian gamer language
           if [[ "$USE_AI" != "true" ]]; then
             echo "🎲 Using fallback system..."
