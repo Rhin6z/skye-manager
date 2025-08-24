@@ -191,40 +191,47 @@ jobs:
           - Day: ${{ steps.context.outputs.CURRENT_DAY }} (${{ steps.context.outputs.CONTEXT }})
           - Weather: ${{ steps.weather.outputs.WEATHER_INFO }}
           
-          **ROLE:** You are a hype admin for Indonesian gaming Discord server "Skye". Write a daily greeting.
+          **ROLE:** You are a hype gaming admin for Indonesian Discord server "Skye" where members mainly play Roblox, Mobile Legends (ML), and Valorant.
           
-          **CRITICAL FORMAT REQUIREMENT - MUST FOLLOW EXACTLY:**
-          Write exactly TWO complete sentences separated by a space:
+          **MANDATORY FORMAT - EXACTLY 2 SENTENCES:**
           
-          SENTENCE 1 (English only):
-          - Start with hype opener: yoooow, wassuuup, heyyyyyy, suuuup, oiiiii, ayooooo, yoohoooo
-          - Ask engaging question about current vibe/activity matching the time and DAY OF WEEK
-          - End with question mark
-          - 10-18 words total
+          **SENTENCE 1 (100% English casual):**
+          - Start with energetic opener: "yoooow", "wassuuup", "heyyyyyy", "suuuup", "oiiiii", "ayooooo"
+          - Ask engaging question about their current state/mood/activity that fits the TIME and CONTEXT
+          - Be creative with questions - avoid templates!
+          - Examples for TIME context:
+            * Morning: coffee vs controller, energy levels, weekend vs weekday vibes
+            * Afternoon: lunch coma, productivity, midday energy check
+            * Evening: day recap, dinner plans, wind down mode  
+            * Night: insomnia, late night energy, peaceful hours
           
-          SENTENCE 2 (Indonesian with English game terms):
-          - Start with invitation: yuuuk, gaskeun, gas polll, ayooook, hayuuuk, pada mauuu gak, siapaaaa yang mau
-          - Suggest activity fitting time + weather
-          - Include weather as reason naturally
-          - If weekend, include <@&1374047008829997157> tag naturally
-          - No tag on weekdays
-          - End with matching emoji
+          **SENTENCE 2 (Indonesian invitation + gaming activity):**
+          - Start with invitation: "yuuuk", "gaskeun", "gas polll", "ayooook", "siapaaaa yang mau"
+          - Include specific game activities relevant to TIME:
+            * Morning: warm up aim (Valorant), daily quests (ML), chill building (Roblox)
+            * Afternoon: quick matches, ranked push, creative mode
+            * Evening: team fights, voice chat sessions, dinner gaming
+            * Night: marathon sessions, late night competitive, grinding
+          - Naturally include weather: ${{ steps.weather.outputs.WEATHER_INFO }}
+          - If weekend (${{ steps.context.outputs.CONTEXT }}): include "<@&1374047008829997157>" tag
+          - If weekday: no role tags
+          - End with appropriate emoji
           
-          **EXAMPLES:**
-          yoooow morning squad, coffee or controller which quest are you tackling this wednesday? yuuuk ngopi dulu sambil warm up aim, cuaca cerah bikin fokus jadi perfect buat daily quest 🎮
+          **CREATIVE REQUIREMENTS:**
+          - ALL LOWERCASE
+          - Be highly creative - vary sentence structure, questions, activities
+          - Use gaming slang naturally: grinding, push rank, aim training, team fight, etc.
+          - Match energy to time (chill morning vs hype night)
+          - Avoid repetitive patterns - each message should feel unique
+          - Include weather as natural reason for activity choice
+          - 80-250 characters total
           
-          heyyyyyy afternoon crew, post lunch energy hitting different or still food coma mode? gaskeun quick match ml sambil ngadem, cuaca panas bikin mager jadi mending ranked push di AC 🔥
+          **GAME-SPECIFIC ACTIVITIES TO USE:**
+          - Valorant: aim training, competitive, unrated, deathmatch, headshot practice
+          - Mobile Legends: ranked push, team fight, daily quests, classic matches
+          - Roblox: building projects, exploration, adventures, creative mode
           
-          **RULES:**
-          - All lowercase 
-          - Max 2 emojis
-          - No dashes/hyphens
-          - Weather must match activity suggestions
-          - Must be creative, avoid templates
-          - ALWAYS write both sentences
-          - Total length under 200 characters
-          
-          Write the greeting now:
+          Write a creative, unique greeting now:
           EOL
 
           # Create Python AI generator script
@@ -443,36 +450,106 @@ jobs:
           
           # Fallback system
           if [[ "$USE_AI" != "true" ]]; then
-            echo "🎲 Using fallback system..."
+            echo "🎲 Using enhanced creative fallback system..."
             
             WEATHER_MENTION="${{ steps.weather.outputs.WEATHER_INFO }}"
             WEATHER_EMOJI="${{ steps.weather.outputs.WEATHER_EMOJI }}"
             
-            # Simple fallbacks
-            if [[ "${{ steps.context.outputs.TYPE }}" == "morning" && "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
-              DESC_RAW="yoooow morning squad, coffee hitting different or controller calling your name already? yuuuk <@&1374047008829997157> ngopi sambil warm up aim dulu, ${WEATHER_MENTION} perfect buat fokus grinding! ${WEATHER_EMOJI}"
-            elif [[ "${{ steps.context.outputs.TYPE }}" == "morning" ]]; then
-              DESC_RAW="yoooow morning squad, coffee hitting different or controller calling your name already? yuuuk ngopi sambil warm up aim dulu, ${WEATHER_MENTION} perfect buat fokus grinding! ${WEATHER_EMOJI}"
-            elif [[ "${{ steps.context.outputs.TYPE }}" == "afternoon" && "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
-              DESC_RAW="yoooow afternoon vibes, lunch coma hitting atau energy masih tinggi banget? yuuuk <@&1374047008829997157> quick match ml sambil digest, ${WEATHER_MENTION} pas buat santai gaming! ${WEATHER_EMOJI}"
-            elif [[ "${{ steps.context.outputs.TYPE }}" == "afternoon" ]]; then
-              DESC_RAW="yoooow afternoon vibes, lunch coma hitting atau energy masih tinggi banget? yuuuk quick match ml sambil digest, ${WEATHER_MENTION} pas buat santai gaming! ${WEATHER_EMOJI}"
-            elif [[ "${{ steps.context.outputs.TYPE }}" == "evening" && "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
-              DESC_RAW="yoooow evening squad, day was productive atau disaster yang indah? gas polll <@&1374047008829997157> dinner sambil voice chat, ${WEATHER_MENTION} bikin mood relaxing! ${WEATHER_EMOJI}"
-            elif [[ "${{ steps.context.outputs.TYPE }}" == "evening" ]]; then
-              DESC_RAW="yoooow evening squad, day was productive atau disaster yang indah? gas polll dinner sambil voice chat, ${WEATHER_MENTION} bikin mood relaxing! ${WEATHER_EMOJI}"
-            elif [[ "${{ steps.context.outputs.TYPE }}" == "night" && "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
-              DESC_RAW="yoooow night owls, insomnia squad atau pilihan begadang for fun? yuuuk <@&1374047008829997157> marathon gaming sambil vibing, ${WEATHER_MENTION} enak buat late night session! ${WEATHER_EMOJI}"
+            # Creative fallbacks dengan variasi game spesifik
+            declare -a MORNING_MSGS
+            declare -a AFTERNOON_MSGS  
+            declare -a EVENING_MSGS
+            declare -a NIGHT_MSGS
+            
+            # MORNING VARIATIONS (focus: coffee + warm up + daily quests)
+            if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
+              MORNING_MSGS=(
+                "yoooow weekend warriors, coffee atau controller mana yang lebih penting pagi ini? yuuuk <@&1374047008829997157> warm up aim valorant sambil ngopi, ${WEATHER_MENTION} perfect buat fokus headshot training! ${WEATHER_EMOJI}"
+                "wassuuup morning legends, bangun pagi buat roblox atau kebangun karena notification push rank? gaskeun <@&1374047008829997157> daily quest mobile legends sambil sarapan, ${WEATHER_MENTION} bikin mood grinding makin mantap! ${WEATHER_EMOJI}"
+                "heyyyyyy early squad, weekend energy hitting different atau masih sleepy head mode? yuuuk <@&1374047008829997157> chill gaming session sambil coffee time, ${WEATHER_MENTION} cocok banget buat morning vibes! ${WEATHER_EMOJI}"
+                "oiiiii saturday/sunday crew, productive morning atau santai dulu sebelum chaos? gaskeun <@&1374047008829997157> roblox adventure sambil stretching, ${WEATHER_MENTION} bikin fresh start weekend ini! ${WEATHER_EMOJI}"
+              )
             else
-              DESC_RAW="yoooow night owls, insomnia squad atau pilihan begadang for fun? yuuuk marathon gaming sambil vibing, ${WEATHER_MENTION} enak buat late night session! ${WEATHER_EMOJI}"
+              MORNING_MSGS=(
+                "yoooow weekday warriors, school/work energy charging atau masih loading screen mode? yuuuk quick valorant deathmatch sambil ngopi, ${WEATHER_MENTION} bikin fokus sebelum aktivitas! ${WEATHER_EMOJI}"
+                "wassuuup monday-friday squad, ready to conquer hari ini atau butuh warming up dulu? gaskeun daily login mobile legends sambil sarapan, ${WEATHER_MENTION} perfect buat mood booster! ${WEATHER_EMOJI}"
+                "heyyyyyy productive morning, energy level udah max atau masih butuh coffee buff? yuuuk roblox chill sambil prepare hari ini, ${WEATHER_MENTION} cocok banget buat fresh morning start! ${WEATHER_EMOJI}"
+                "oiiiii weekday heroes, siap battle hari ini atau masih dalam tahap respawn? gaskeun warm up aim training sambil coffee time, ${WEATHER_MENTION} bikin concentration level naik! ${WEATHER_EMOJI}"
+              )
             fi
             
-            # Special day overrides
-            if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "monday_motivation" ]]; then
-              DESC_RAW="yoooow monday warriors, ready to conquer the week or still in weekend mode? yuuuk start dengan semangat sambil gaming, ${WEATHER_MENTION} cocok buat fresh start minggu ini! ${WEATHER_EMOJI}"
-            elif [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "sunday_prep" ]]; then
-              DESC_RAW="oiiiii sunday gamers, enjoying the last bits of weekend freedom? yuuuk <@&1374047008829997157> maximal weekend fun sebelum monday, ${WEATHER_MENTION} bikin betah buat last day grinding minggu ini! ${WEATHER_EMOJI}"
+            # AFTERNOON VARIATIONS (focus: lunch break + quick matches + chill)  
+            if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
+              AFTERNOON_MSGS=(
+                "yoooow afternoon squad, lunch coma hitting hard atau energy masih full throttle? yuuuk <@&1374047008829997157> quick match mobile legends sambil digest, ${WEATHER_MENTION} pas banget buat ranked push session! ${WEATHER_EMOJI}"
+                "wassuuup midday legends, productive pagi tadi atau malah marathon gaming sampai sekarang? gaskeun <@&1374047008829997157> valorant competitive sambil makan siang, ${WEATHER_MENTION} bikin focus aim makin sharp! ${WEATHER_EMOJI}"
+                "heyyyyyy weekend afternoon, chilling mode atau masih dalam misi completing daily quest? yuuuk <@&1374047008829997157> roblox building sambil ngadem, ${WEATHER_MENTION} perfect buat creative session! ${WEATHER_EMOJI}"
+                "oiiiii saturday/sunday vibes, afternoon energy different ya atau masih sama aja? gaskeun <@&1374047008829997157> mobile legends team fight sambil snacking, ${WEATHER_MENTION} cocok buat afternoon grinding! ${WEATHER_EMOJI}"
+              )
+            else
+              AFTERNOON_MSGS=(
+                "yoooow weekday afternoon, lunch break freedom atau masih stuck dalam aktivitas? yuuuk quick valorant unrated sambil makan siang, ${WEATHER_MENTION} bikin break time makin refreshing! ${WEATHER_EMOJI}"
+                "wassuuup midday heroes, energy drop post lunch atau malah naik karena makanan enak? gaskeun mobile legends classic sambil charging, ${WEATHER_MENTION} perfect buat afternoon relax! ${WEATHER_EMOJI}"  
+                "heyyyyyy busy afternoon, butuh gaming break atau masih survive tanpa controller? yuuuk roblox chill sambil istirahat sejenak, ${WEATHER_MENTION} cocok banget buat mood reset! ${WEATHER_EMOJI}"
+                "oiiiii productive squad, afternoon hustle masih going strong atau udah butuh gaming therapy? gaskeun valorant aim training sambil snack time, ${WEATHER_MENTION} bikin focus balik lagi! ${WEATHER_EMOJI}"
+              )
             fi
+            
+            # EVENING VARIATIONS (focus: dinner + wind down + voice chat)
+            if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
+              EVENING_MSGS=(
+                "yoooow evening squad, day was epic adventure atau disaster yang memorable banget? yuuuk <@&1374047008829997157> dinner sambil voice chat valorant, ${WEATHER_MENTION} bikin evening vibes makin cozy! ${WEATHER_EMOJI}"
+                "wassuuup golden hour legends, weekend achievement unlocked atau masih ada quest belum selesai? gaskeun <@&1374047008829997157> mobile legends party sambil makan malam, ${WEATHER_MENTION} perfect buat team bonding! ${WEATHER_EMOJI}"
+                "heyyyyyy weekend evening, productive hari ini atau malah productive dalam grinding game? yuuuk <@&1374047008829997157> roblox hangout sambil dinner time, ${WEATHER_MENTION} cocok banget buat chill session! ${WEATHER_EMOJI}"
+                "oiiiii saturday/sunday night, weekend vibes hitting different atau udah mulai thinking about monday? gaskeun <@&1374047008829997157> gaming marathon sambil makan bareng, ${WEATHER_MENTION} bikin evening jadi lebih seru! ${WEATHER_EMOJI}"
+              )
+            else
+              EVENING_MSGS=(
+                "yoooow evening warriors, survived another weekday atau masih dalam tahap recovery? yuuuk wind down valorant sambil dinner, ${WEATHER_MENTION} perfect buat relaxing after busy day! ${WEATHER_EMOJI}"
+                "wassuuup golden hour squad, day was productive atau challenging banget sampai butuh gaming therapy? gaskeun mobile legends chill sambil makan malam, ${WEATHER_MENTION} cocok buat evening decompression! ${WEATHER_EMOJI}"
+                "heyyyyyy evening legends, energy masih ada atau udah fully depleted butuh recharge? yuuuk roblox explore sambil dinner time, ${WEATHER_MENTION} bikin evening mood jadi lebih santai! ${WEATHER_EMOJI}"
+                "oiiiii weekday evening, accomplished feeling atau exhausted tapi satisfied? gaskeun gaming session sambil voice chat, ${WEATHER_MENTION} perfect buat evening bonding time! ${WEATHER_EMOJI}"
+              )
+            fi
+            
+            # NIGHT VARIATIONS (focus: late night gaming + marathon + insomnia)
+            if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
+              NIGHT_MSGS=(
+                "yoooow night owls, weekend insomnia hitting atau memang pilihan begadang for maximum fun? yuuuk <@&1374047008829997157> marathon valorant sambil voice chat, ${WEATHER_MENTION} perfect buat late night competitive session! ${WEATHER_EMOJI}"
+                "wassuuup midnight legends, still going strong atau udah dalam tahap zombie mode gaming? gaskeun <@&1374047008829997157> mobile legends push rank sambil ngobrol, ${WEATHER_MENTION} cocok banget buat night grinding! ${WEATHER_EMOJI}"
+                "heyyyyyy nocturnal squad, peaceful late night vibes atau chaos gaming energy masih tinggi? yuuuk <@&1374047008829997157> roblox building project sambil midnight snack, ${WEATHER_MENTION} bikin creative mode activated! ${WEATHER_EMOJI}"
+                "oiiiii weekend night warriors, maximum weekend utilization atau udah capek tapi belum mau stop? gaskeun <@&1374047008829997157> gaming party sampai sunrise, ${WEATHER_MENTION} perfect buat legendary night session! ${WEATHER_EMOJI}"
+              )
+            else
+              NIGHT_MSGS=(
+                "yoooow night owls, insomnia striking again atau memang sengaja begadang buat gaming time? yuuuk valorant late night session sambil voice chat, ${WEATHER_MENTION} perfect buat peaceful gaming hours! ${WEATHER_EMOJI}"
+                "wassuuup midnight squad, productive day tadi jadi sekarang reward time atau escape from reality mode? gaskeun mobile legends night push sambil ngobrol, ${WEATHER_MENTION} cocok banget buat late night grinding! ${WEATHER_EMOJI}"
+                "heyyyyyy nocturnal gamers, quiet night energy hitting different atau masih same chaos energy? yuuuk roblox chill exploration sambil midnight vibes, ${WEATHER_MENTION} bikin night mode jadi lebih relaxing! ${WEATHER_EMOJI}"
+                "oiiiii late night legends, tomorrow's problem for tomorrow atau masih mikirin hari ini sambil gaming? gaskeun night gaming therapy session, ${WEATHER_MENTION} perfect buat clearing mind! ${WEATHER_EMOJI}"
+              )
+            fi
+            
+            # Select random message berdasarkan waktu
+            case "${{ steps.context.outputs.TYPE }}" in
+              "morning")
+                RANDOM_INDEX=$((RANDOM % ${#MORNING_MSGS[@]}))
+                DESC_RAW="${MORNING_MSGS[$RANDOM_INDEX]}"
+                ;;
+              "afternoon") 
+                RANDOM_INDEX=$((RANDOM % ${#AFTERNOON_MSGS[@]}))
+                DESC_RAW="${AFTERNOON_MSGS[$RANDOM_INDEX]}"
+                ;;
+              "evening")
+                RANDOM_INDEX=$((RANDOM % ${#EVENING_MSGS[@]}))
+                DESC_RAW="${EVENING_MSGS[$RANDOM_INDEX]}"
+                ;;
+              "night")
+                RANDOM_INDEX=$((RANDOM % ${#NIGHT_MSGS[@]}))
+                DESC_RAW="${NIGHT_MSGS[$RANDOM_INDEX]}"
+                ;;
+            esac
+            
+            echo "🎯 Selected creative fallback: ${DESC_RAW:0:100}..."
           fi
           
           # Set title and thumbnail based on time and weather
