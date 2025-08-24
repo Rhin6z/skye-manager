@@ -186,135 +186,172 @@ jobs:
           echo "WEATHER_INFO=$WEATHER_INFO" >> $GITHUB_OUTPUT
           echo "WEATHER_EMOJI=$WEATHER_EMOJI" >> $GITHUB_OUTPUT
 
-      - name: Create AI Prompt
-        id: create_prompt
+      - name: Create Direct OpenAI Generator
+        id: create_generator
         run: |
-          # Create a more structured prompt to get consistent 2-sentence responses
-          cat > /tmp/improved_prompt.txt << 'EOL'
-          You are a casual Indonesian gaming Discord admin for server "Skye".
-
-          Write a 2-sentence greeting message with EXACTLY this format:
-
-          SENTENCE 1: An English question that:
-          - Starts with: "yoooow", "wassuuup", "heyyy", "suuup", "bro", or "guyss"
-          - Mentions ${{ steps.context.outputs.CURRENT_DAY }} (${{ steps.context.outputs.TYPE }} time)
-          - Asks a question about gaming/activities
-          - Ends with a question mark
-          - Is all lowercase
-          - Maximum 12 words
-
-          SENTENCE 2: An Indonesian sentence that:
-          - Starts with: "yuuuk", "gaskeun", "gas", or "skuyyyy"
-          - Includes at least one slang term: "njirrr", "bjirrr", "ygy", "anjay", "wkwkwk", "hehehehe"
-          - References ${{ steps.weather.outputs.WEATHER_INFO }}
-          - Mentions ${{ steps.context.outputs.CURRENT_DAY }} in Indonesian
-          - For weekend: includes tag <@&1374047008829997157>
-          - For weekday: no tag
-          - Ends with an emoji
-          - Is all lowercase
-          - Maximum 15 words
-
-          RULES:
-          - ALL LOWERCASE ONLY
-          - TOTAL LENGTH UNDER 180 CHARACTERS
-          - TWO SENTENCES ONLY (one English, one Indonesian)
-          - JUST OUTPUT THE TWO SENTENCES, NOTHING ELSE
-          - NO ADDITIONAL COMMENTS OR EXPLANATIONS
-
-          CONTEXT:
-          - Current time: ${{ steps.context.outputs.TYPE }}
-          - Current day: ${{ steps.context.outputs.CURRENT_DAY }}
-          - Weather: ${{ steps.weather.outputs.WEATHER_INFO }}
-          - Is weekend: ${{ steps.context.outputs.CONTEXT == 'weekend' }}
-          EOL
-
-          # Create Python script for improved AI generation
-          cat > /tmp/improved_generator.py << 'EOL'
+          # Create a simple and reliable OpenAI generation script
+          cat > /tmp/openai_generator.py << 'EOL'
           import json
           import requests
           import os
           import sys
-          import re
+          import random
           
-          try:
-              with open('/tmp/improved_prompt.txt', 'r') as f:
-                  prompt = f.read().strip()
-              
-              api_key = os.environ.get('GEMINI_API_KEY')
-              if not api_key:
-                  print("❌ No API key")
-                  sys.exit(1)
-              
-              # Using gemini-2.5-flash-lite or other model based on what's working
-              url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
-              
-              payload = {
-                  "contents": [{"parts": [{"text": prompt}]}],
-                  "generationConfig": {
-                      "temperature": 0.5,
-                      "maxOutputTokens": 150,
-                      "topP": 0.85
+          def generate_with_openai():
+              """Generate greeting using OpenAI API"""
+              try:
+                  api_key = os.environ.get('OPENAI_API_KEY')
+                  if not api_key:
+                      print("❌ No OpenAI API key found")
+                      return None
+                  
+                  # Extract context variables
+                  day = os.environ.get('CURRENT_DAY', 'today').lower()
+                  time_of_day = os.environ.get('TIME_OF_DAY', 'day')
+                  weather = os.environ.get('WEATHER_INFO', 'nice weather')
+                  is_weekend = os.environ.get('IS_WEEKEND', 'false').lower() == 'true'
+                  
+                  # Prepare tag based on weekend status
+                  tag = " <@&1374047008829997157>" if is_weekend else ""
+                  
+                  # Super simple prompt focused on the exact output format
+                  system_message = "You are a casual Indonesian gaming Discord admin. Keep responses lowercase only."
+                  
+                  user_message = f"""
+                  Write exactly TWO sentences for a Discord greeting:
+                  
+                  1. An English question starting with "yoooow", "wassuuup", "heyyy", or "bro" about {day} {time_of_day} gaming. End with "?"
+                  
+                  2. An Indonesian invitation starting with "yuuuk", "gaskeun", or "gas" that includes:
+                     - Indonesian gaming slang like "njirrr", "bjirrr", "ygy", "anjay", or "wkwkwk"
+                     - Reference to {weather}
+                     - Reference to {day} in Indonesian
+                     - {'Include tag <@&1374047008829997157>' if is_weekend else 'No tags'}
+                     - End with an emoji
+                  
+                  IMPORTANT: Just write the two sentences with NO additional text. All lowercase. Total under 180 characters.
+                  """
+                  
+                  headers = {
+                      "Content-Type": "application/json",
+                      "Authorization": f"Bearer {api_key}"
                   }
-              }
-              
-              print("📡 Sending request to Gemini API...")
-              response = requests.post(url, json=payload, timeout=20)
-              print(f"Status code: {response.status_code}")
-              
-              if response.status_code == 200:
-                  data = response.json()
                   
-                  # Print first part of response for debugging
-                  print(f"Response preview: {str(data)[:200]}...")
+                  payload = {
+                      "model": "gpt-3.5-turbo",
+                      "messages": [
+                          {"role": "system", "content": system_message},
+                          {"role": "user", "content": user_message}
+                      ],
+                      "temperature": 0.7,
+                      "max_tokens": 150
+                  }
                   
-                  # Extract text from candidates
-                  if 'candidates' in data and len(data['candidates']) > 0:
-                      # Try multiple ways to access content
-                      try:
-                          candidate = data['candidates'][0]
-                          if 'content' in candidate and 'parts' in candidate['content']:
-                              ai_text = candidate['content']['parts'][0]['text'].strip()
-                          else:
-                              # Fallback 
-                              ai_text = str(candidate).strip()
-                      except Exception as e:
-                          print(f"Error extracting text: {e}")
-                          print(f"Candidate data: {candidate}")
-                          sys.exit(1)
-                      
-                      # Clean formatting
-                      clean_text = re.sub(r'\*\*([^*]+)\*\*', r'\1', ai_text)
-                      clean_text = re.sub(r'`([^`]+)`', r'\1', clean_text)
-                      clean_text = re.sub(r'\n+', ' ', clean_text)
-                      clean_text = ' '.join(clean_text.split())
-                      
-                      # Verify basic structure (has English question + Indonesian part)
-                      has_question = '?' in clean_text
-                      
-                      # Save if reasonable length and has a question
-                      if len(clean_text) > 40 and has_question:
-                          with open('/tmp/ai_response.txt', 'w', encoding='utf-8') as f:
-                              f.write(clean_text)
-                          print(f"✅ AI generation successful: {clean_text[:50]}...")
-                          sys.exit(0)
+                  print("📡 Sending request to OpenAI API...")
+                  response = requests.post(
+                      "https://api.openai.com/v1/chat/completions",
+                      headers=headers,
+                      json=payload,
+                      timeout=20
+                  )
+                  
+                  if response.status_code == 200:
+                      data = response.json()
+                      if 'choices' in data and len(data['choices']) > 0:
+                          message = data['choices'][0]['message']['content'].strip()
+                          print(f"✅ OpenAI generated: {message[:50]}...")
+                          return message
                       else:
-                          print(f"❌ Generated text doesn't match expected format: {clean_text}")
+                          print("❌ No choices in OpenAI response")
                   else:
-                      print(f"❌ No candidates in response: {data}")
-              else:
-                  print(f"❌ API error: {response.status_code}")
-                  print(response.text)
+                      print(f"❌ OpenAI API error {response.status_code}: {response.text}")
+                  
+                  return None
+              except Exception as e:
+                  print(f"❌ OpenAI generation error: {str(e)}")
+                  return None
+          
+          def generate_with_template():
+              """Generate greeting using pre-built templates with randomization"""
+              try:
+                  # Extract context variables
+                  day = os.environ.get('CURRENT_DAY', 'today').lower()
+                  time_of_day = os.environ.get('TIME_OF_DAY', 'day')
+                  weather = os.environ.get('WEATHER_INFO', 'nice weather')
+                  is_weekend = os.environ.get('IS_WEEKEND', 'false').lower() == 'true'
+                  weather_emoji = os.environ.get('WEATHER_EMOJI', '🌤️')
+                  
+                  # Prepare tag based on weekend status
+                  tag = " <@&1374047008829997157>" if is_weekend else ""
+                  
+                  # First part variations (English questions)
+                  english_openers = ["yoooow", "wassuuup", "heyyy", "suuup", "bro", "guyss"]
+                  english_templates = [
+                      "{opener} {day} {time} squad, ready for some gaming action?",
+                      "{opener} {day} {time} crew, gaming plans or chilling today?",
+                      "{opener} {day} {time} gang, energy level for gaming looking good?",
+                      "{opener} {day} {time} peeps, vibes good for some ranked matches?",
+                      "{opener} {day} {time} gamers, grinding or taking it easy today?",
+                      "{opener} {time} {day}, anyone up for some competitive matches?"
+                  ]
+                  
+                  # Second part variations (Indonesian with slang)
+                  indo_openers = ["yuuuk", "gaskeun", "gas", "skuyyyy", "ayoook"]
+                  indo_slang = ["njirrr", "bjirrr", "ygy", "anjay", "wkwkwk", "hehehehe"]
+                  indo_templates = [
+                      "{opener}{tag} mabar valorant, {weather} di {day} gini {slang} enak banget buat grinding! {emoji}",
+                      "{opener}{tag} push rank bareng, {weather} {day} gini {slang} pas buat competitive mode! {emoji}",
+                      "{opener}{tag} main game sambil santai, {weather} di {day} gini {slang} bikin mood naik! {emoji}",
+                      "{opener}{tag} ngegame bareng, {weather} di {day} gini {slang} cocok buat fokus! {emoji}",
+                      "{opener}{tag} warming up aim, {weather} {day} gini {slang} perfect buat headshot! {emoji}"
+                  ]
+                  
+                  # Random emojis
+                  emojis = ["🎮", "🔥", "💯", "🏆", "✨", "🚀", weather_emoji]
+                  
+                  # Generate the parts
+                  english_opener = random.choice(english_openers)
+                  english_template = random.choice(english_templates)
+                  english_part = english_template.format(opener=english_opener, day=day, time=time_of_day)
+                  
+                  indo_opener = random.choice(indo_openers)
+                  indo_template = random.choice(indo_templates)
+                  indo_slang = random.choice(indo_slang)
+                  emoji = random.choice(emojis)
+                  indo_part = indo_template.format(opener=indo_opener, tag=tag, weather=weather, day=day, slang=indo_slang, emoji=emoji)
+                  
+                  # Combine
+                  result = f"{english_part} {indo_part}"
+                  print(f"✅ Template generated: {result[:50]}...")
+                  return result
+                  
+              except Exception as e:
+                  print(f"❌ Template generation error: {str(e)}")
+                  return "wassuuup gamers, how's everyone doing? yuuuk mabar valorant, cuaca enak nih wkwkwk! 🎮"
+          
+          def main():
+              # First try OpenAI
+              openai_result = generate_with_openai()
               
-              print("❌ AI generation failed")
-              sys.exit(1)
+              # If successful, save and exit
+              if openai_result:
+                  with open('/tmp/greeting.txt', 'w', encoding='utf-8') as f:
+                      f.write(openai_result)
+                  print("✅ Used OpenAI generation")
+                  sys.exit(0)
               
-          except Exception as e:
-              print(f"❌ AI generation failed: {e}")
-              import traceback
-              traceback.print_exc()
-              sys.exit(1)
+              # Otherwise use template fallback
+              print("⚠️ Falling back to template generation")
+              template_result = generate_with_template()
+              with open('/tmp/greeting.txt', 'w', encoding='utf-8') as f:
+                  f.write(template_result)
+              print("✅ Used template generation")
+              sys.exit(0)
+          
+          if __name__ == "__main__":
+              main()
           EOL
-
+          
           # Create Discord payload script
           cat > /tmp/discord_script.py << 'EOL'
           import json
@@ -354,375 +391,78 @@ jobs:
           print("✅ Payload created")
           EOL
 
-      - name: Generate AI Greeting
+      - name: Generate Greeting
         id: ai_generation
         run: |
-          echo "🤖 Generating AI greeting..."
+          echo "🤖 Generating greeting message..."
           
-          # Create simplified prompt file - making it shorter to avoid token limits
-          cat > /tmp/simplified_prompt.txt << 'EOL'
-          You are a casual Indonesian gaming Discord admin.
-
-          Write a 2-sentence greeting with this format:
-
-          SENTENCE 1: An English question that:
-          - Starts with "yoooow", "wassuuup", "heyyy", or "bro"
-          - Mentions ${{ steps.context.outputs.CURRENT_DAY }} and time of day
-          - Asks about gaming/activities
-          - Ends with a question mark
-          - All lowercase
-          - Max 12 words
-
-          SENTENCE 2: An Indonesian sentence that:
-          - Starts with "yuuuk", "gaskeun", "gas", or "skuyyyy"
-          - Includes a slang term: "njirrr", "bjirrr", "ygy", "anjay", "wkwkwk"
-          - References ${{ steps.weather.outputs.WEATHER_INFO }}
-          - Mentions ${{ steps.context.outputs.CURRENT_DAY }} in Indonesian
-          - For weekend: includes tag <@&1374047008829997157>
-          - For weekday: no tag
-          - Ends with an emoji
-          - All lowercase
-          - Max 15 words
-
-          RESPONSE FORMAT: ONLY OUTPUT THE TWO SENTENCES
-          EOL
-          
-          # Create fixed Python script with better response handling
-          cat > /tmp/fixed_generator.py << 'EOL'
-          import json
-          import requests
-          import os
-          import sys
-          import re
-          
-          try:
-              with open('/tmp/simplified_prompt.txt', 'r') as f:
-                  prompt = f.read().strip()
-              
-              api_key = os.environ.get('GEMINI_API_KEY')
-              if not api_key:
-                  print("❌ No API key")
-                  sys.exit(1)
-              
-              # Use a fallback model or API if needed
-              use_fallback = os.environ.get('USE_FALLBACK', 'false').lower() == 'true'
-              
-              if use_fallback:
-                  # Use OpenAI as fallback (if configured)
-                  openai_key = os.environ.get('OPENAI_API_KEY')
-                  if openai_key:
-                      print("📡 Using OpenAI as fallback...")
-                      headers = {
-                          "Content-Type": "application/json",
-                          "Authorization": f"Bearer {openai_key}"
-                      }
-                      
-                      payload = {
-                          "model": "gpt-3.5-turbo",
-                          "messages": [
-                              {"role": "system", "content": "You are a Discord admin for an Indonesian gaming server."},
-                              {"role": "user", "content": prompt}
-                          ],
-                          "temperature": 0.7,
-                          "max_tokens": 150
-                      }
-                      
-                      response = requests.post(
-                          "https://api.openai.com/v1/chat/completions",
-                          headers=headers,
-                          json=payload,
-                          timeout=30
-                      )
-                      
-                      if response.status_code == 200:
-                          data = response.json()
-                          if 'choices' in data and len(data['choices']) > 0:
-                              ai_text = data['choices'][0]['message']['content'].strip()
-                              with open('/tmp/ai_response.txt', 'w', encoding='utf-8') as f:
-                                  f.write(ai_text)
-                              print(f"✅ OpenAI generation successful: {ai_text[:50]}...")
-                              sys.exit(0)
-                      
-                      print("❌ OpenAI fallback failed")
-                  
-                  # Try a different preset message approach instead
-                  print("⚠️ Using hardcoded message")
-                  day_of_week = os.environ.get('CURRENT_DAY', 'today').lower()
-                  weather = os.environ.get('WEATHER_INFO', 'nice weather')
-                  is_weekend = os.environ.get('IS_WEEKEND', 'false').lower() == 'true'
-                  time_of_day = os.environ.get('TIME_OF_DAY', 'day')
-                  
-                  tag = " <@&1374047008829997157>" if is_weekend else ""
-                  
-                  greetings = [
-                      f"yoooow {day_of_week} {time_of_day} squad, gaming plans or chilling today? yuuuk{tag} mabar valorant, {weather} gini wkwkwk enak banget buat grinding! 🎮",
-                      f"wassuuup {day_of_week} crew, how's the {time_of_day} treating you? gaskeun{tag} push rank sambil santai, {weather} di {day_of_week} gini anjay cocok banget! 💯",
-                      f"heyyy {day_of_week} {time_of_day} gang, energy levels looking good? skuyyyy{tag} main bareng, {weather} enak nih buat gaming session ygy! 🔥"
-                  ]
-                  
-                  import random
-                  chosen = random.choice(greetings)
-                  with open('/tmp/ai_response.txt', 'w', encoding='utf-8') as f:
-                      f.write(chosen)
-                  print(f"✅ Fallback generation: {chosen[:50]}...")
-                  sys.exit(0)
-              
-              # Try regular Gemini
-              url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
-              
-              payload = {
-                  "contents": [{"parts": [{"text": prompt}]}],
-                  "generationConfig": {
-                      "temperature": 0.5,
-                      "maxOutputTokens": 200,
-                      "topP": 0.85
-                  }
-              }
-              
-              print("📡 Sending request to Gemini API...")
-              response = requests.post(url, json=payload, timeout=30)
-              print(f"Status code: {response.status_code}")
-              
-              if response.status_code == 200:
-                  data = response.json()
-                  
-                  # Dump full response for debugging
-                  with open('/tmp/gemini_response.json', 'w') as f:
-                      json.dump(data, f)
-                  
-                  print(f"Response preview: {str(data)[:200]}...")
-                  
-                  # Extract text from candidates with better error handling
-                  if 'candidates' in data and len(data['candidates']) > 0:
-                      candidate = data['candidates'][0]
-                      
-                      # Different ways to try extracting text
-                      ai_text = None
-                      
-                      # Method 1: Try standard path
-                      try:
-                          if 'content' in candidate and 'parts' in candidate['content']:
-                              parts = candidate['content']['parts']
-                              if parts and 'text' in parts[0]:
-                                  ai_text = parts[0]['text'].strip()
-                      except Exception as e:
-                          print(f"Method 1 failed: {e}")
-                      
-                      # Method 2: Try content.text
-                      if not ai_text:
-                          try:
-                              if 'content' in candidate and 'text' in candidate['content']:
-                                  ai_text = candidate['content']['text'].strip()
-                          except Exception as e:
-                              print(f"Method 2 failed: {e}")
-                      
-                      # Method 3: Generate our own fallback
-                      if not ai_text:
-                          print("⚠️ Couldn't extract text, using fallback")
-                          day_of_week = os.environ.get('CURRENT_DAY', 'today').lower()
-                          weather = os.environ.get('WEATHER_INFO', 'nice weather')
-                          is_weekend = os.environ.get('IS_WEEKEND', 'false').lower() == 'true'
-                          time_of_day = os.environ.get('TIME_OF_DAY', 'day')
-                          
-                          tag = " <@&1374047008829997157>" if is_weekend else ""
-                          
-                          ai_text = f"yoooow {day_of_week} {time_of_day} squad, gaming plans or chilling today? yuuuk{tag} mabar valorant, {weather} gini wkwkwk enak banget buat grinding! 🎮"
-                      
-                      # Process the text
-                      if ai_text:
-                          # Clean formatting
-                          clean_text = re.sub(r'\*\*([^*]+)\*\*', r'\1', ai_text)
-                          clean_text = re.sub(r'`([^`]+)`', r'\1', clean_text)
-                          clean_text = re.sub(r'\n+', ' ', clean_text)
-                          clean_text = ' '.join(clean_text.split())
-                          
-                          # Ensure text starts with a proper greeting
-                          starters = ["yoooow", "wassuuup", "heyyy", "bro", "suuup", "guyss"]
-                          has_starter = any(clean_text.lower().startswith(s) for s in starters)
-                          
-                          if not has_starter:
-                              clean_text = f"yoooow {clean_text}"
-                          
-                          # Verify basic structure (has a question)
-                          has_question = '?' in clean_text
-                          if not has_question:
-                              clean_text += "? "
-                          
-                          # Ensure there's an Indonesian part
-                          indo_starters = ["yuuuk", "gaskeun", "gas", "skuyyyy"]
-                          has_indo = any(s in clean_text.lower() for s in indo_starters)
-                          
-                          if not has_indo:
-                              # Add second part
-                              day_of_week = os.environ.get('CURRENT_DAY', 'today').lower()
-                              weather = os.environ.get('WEATHER_INFO', 'nice weather')
-                              is_weekend = os.environ.get('IS_WEEKEND', 'false').lower() == 'true'
-                              
-                              tag = " <@&1374047008829997157>" if is_weekend else ""
-                              clean_text += f" yuuuk{tag} mabar valorant, {weather} gini wkwkwk enak banget! 🎮"
-                          
-                          # Save if reasonable length
-                          if len(clean_text) > 20:
-                              with open('/tmp/ai_response.txt', 'w', encoding='utf-8') as f:
-                                  f.write(clean_text)
-                              print(f"✅ AI generation successful: {clean_text[:50]}...")
-                              sys.exit(0)
-                  
-                  print("❌ Could not extract valid text from response")
-              else:
-                  print(f"❌ API error: {response.status_code}")
-                  print(response.text)
-              
-              # Try the fallback approach since regular generation failed
-              os.environ['USE_FALLBACK'] = 'true'
-              os.environ['CURRENT_DAY'] = os.environ.get('CURRENT_DAY', 'today')
-              os.environ['WEATHER_INFO'] = os.environ.get('WEATHER_INFO', 'cuaca enak')
-              os.environ['IS_WEEKEND'] = os.environ.get('IS_WEEKEND', 'false')
-              os.environ['TIME_OF_DAY'] = os.environ.get('TIME_OF_DAY', 'day')
-              
-              print("🔄 Retrying with fallback...")
-              # This will trigger the fallback logic at the beginning of the script
-              sys.exit(2)
-              
-          except Exception as e:
-              print(f"❌ Error: {str(e)}")
-              import traceback
-              traceback.print_exc()
-              sys.exit(1)
-          EOL
-
-          # Execute the Python script with all needed environment variables
-          echo "🧪 Executing fixed generator script..."
+          # Execute the OpenAI generator script with all context
           CURRENT_DAY="${{ steps.context.outputs.CURRENT_DAY }}" \
-          WEATHER_INFO="${{ steps.weather.outputs.WEATHER_INFO }}" \
-          IS_WEEKEND="${{ steps.context.outputs.CONTEXT == 'weekend' }}" \
           TIME_OF_DAY="${{ steps.context.outputs.TYPE }}" \
-          GEMINI_API_KEY="${{ secrets.GEMINI_API_KEY }}" \
-          python3 /tmp/fixed_generator.py
+          WEATHER_INFO="${{ steps.weather.outputs.WEATHER_INFO }}" \
+          WEATHER_EMOJI="${{ steps.weather.outputs.WEATHER_EMOJI }}" \
+          IS_WEEKEND="${{ steps.context.outputs.CONTEXT == 'weekend' }}" \
+          OPENAI_API_KEY="${{ secrets.OPENAI_API_KEY }}" \
+          python3 /tmp/openai_generator.py
           
-          # If first attempt failed with exit code 2, retry with fallback
-          if [[ $? -eq 2 ]]; then
-            echo "⚠️ First attempt failed, trying fallback..."
-            USE_FALLBACK=true \
-            CURRENT_DAY="${{ steps.context.outputs.CURRENT_DAY }}" \
-            WEATHER_INFO="${{ steps.weather.outputs.WEATHER_INFO }}" \
-            IS_WEEKEND="${{ steps.context.outputs.CONTEXT == 'weekend' }}" \
-            TIME_OF_DAY="${{ steps.context.outputs.TYPE }}" \
-            GEMINI_API_KEY="${{ secrets.GEMINI_API_KEY }}" \
-            OPENAI_API_KEY="${{ secrets.OPENAI_API_KEY }}" \
-            python3 /tmp/fixed_generator.py
-          fi
-          
-          if [[ $? -eq 0 && -s /tmp/ai_response.txt ]]; then
-            AI_TEXT=$(cat /tmp/ai_response.txt)
-            echo "🎯 AI generated: $AI_TEXT"
+          if [[ -s /tmp/greeting.txt ]]; then
+            GREETING=$(cat /tmp/greeting.txt)
+            echo "🎯 Generated greeting: $GREETING"
             
-            # Enhanced validation with better pattern matching
-            HAS_ENGLISH_PART=$(echo "$AI_TEXT" | grep -E "[a-zA-Z]{10,}" || echo "")
-            HAS_INDONESIAN_PART=$(echo "$AI_TEXT" | grep -iE "(yu+k|gas|ayo+k*|hayu+k|gaskeun|skuyy|mabar)" || echo "")
+            # Verify and fix if needed
+            HAS_ENGLISH=$(echo "$GREETING" | grep -E "\?" || echo "")
+            HAS_INDONESIAN=$(echo "$GREETING" | grep -iE "(yu+k|gas|ayo+k*|hayu+k|gaskeun|skuyy)" || echo "")
             
             # Weekend vs Weekday tag check
             if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
-              HAS_TAG=$(echo "$AI_TEXT" | grep -E "<@&[0-9]+>" || echo "")
+              HAS_TAG=$(echo "$GREETING" | grep -E "<@&[0-9]+>" || echo "")
               if [[ -z "$HAS_TAG" ]]; then
                 echo "⚠️ Missing weekend tag, adding..."
                 
                 # Add tag more intelligently - find the second sentence
-                QUESTION_END=$(echo "$AI_TEXT" | grep -b -o "?" | head -1 | cut -d':' -f1)
+                QUESTION_END=$(echo "$GREETING" | grep -b -o "?" | head -1 | cut -d':' -f1)
                 if [[ -n "$QUESTION_END" && $QUESTION_END -gt 10 ]]; then
                   # Insert after the question mark
-                  FIRST_PART="${AI_TEXT:0:$((QUESTION_END+1))}"
-                  SECOND_PART="${AI_TEXT:$((QUESTION_END+1))}"
+                  FIRST_PART="${GREETING:0:$((QUESTION_END+1))}"
+                  SECOND_PART="${GREETING:$((QUESTION_END+1))}"
                   # Add tag at beginning of second part
-                  AI_TEXT="$FIRST_PART <@&1374047008829997157>$SECOND_PART"
-                  echo "✅ Added tag: $AI_TEXT"
-                else
-                  # Fallback - add at end
-                  AI_TEXT="$AI_TEXT <@&1374047008829997157>"
+                  GREETING="$FIRST_PART <@&1374047008829997157>$SECOND_PART"
+                  echo "✅ Added tag: $GREETING"
                 fi
               fi
             else
               # Make sure weekday has no tag
-              HAS_TAG=$(echo "$AI_TEXT" | grep -E "<@&[0-9]+>" || echo "")
+              HAS_TAG=$(echo "$GREETING" | grep -E "<@&[0-9]+>" || echo "")
               if [[ -n "$HAS_TAG" ]]; then
                 echo "⚠️ Removing tag for weekday..."
-                AI_TEXT=$(echo "$AI_TEXT" | sed "s/<@&[0-9]*>//g")
+                GREETING=$(echo "$GREETING" | sed "s/<@&[0-9]*>//g")
               fi
             fi
             
-            # Ensure response isn't too long
-            if [[ ${#AI_TEXT} -gt 200 ]]; then
-              echo "⚠️ Message too long (${#AI_TEXT} chars), trimming..."
-              AI_TEXT="${AI_TEXT:0:190}..."
+            # Make sure it's not too long
+            if [[ ${#GREETING} -gt 200 ]]; then
+              echo "⚠️ Greeting too long, trimming..."
+              GREETING="${GREETING:0:197}..."
             fi
             
-            # Final validation after all adjustments
-            if [[ -n "$HAS_ENGLISH_PART" && (${#AI_TEXT} -gt 40) ]]; then
-              DESC_RAW="$AI_TEXT"
-              USE_AI=true
-              echo "✅ AI validated: ${#AI_TEXT} chars"
-            else
-              USE_AI=false
-              echo "⚠️ AI validation failed"
-            fi
+            # Set final greeting
+            DESC_RAW="$GREETING"
+            USE_AI=true
           else
-            USE_AI=false
-            echo "❌ AI generation failed, using fallback"
-          fi
-          
-          # Improved fallback system with complete sentences
-          if [[ "$USE_AI" != "true" ]]; then
-            echo "🎲 Using enhanced fallback system..."
+            echo "❌ Generation failed, using emergency fallback"
             
+            # Emergency fallback if everything else fails
+            DAY_LOWER=$(echo "${{ steps.context.outputs.CURRENT_DAY }}" | tr '[:upper:]' '[:lower:]')
             WEATHER_MENTION="${{ steps.weather.outputs.WEATHER_INFO }}"
             WEATHER_EMOJI="${{ steps.weather.outputs.WEATHER_EMOJI }}"
-            DAY_LOWER=$(echo "${{ steps.context.outputs.CURRENT_DAY }}" | tr '[:upper:]' '[:lower:]')
             
-            # Compact fallback options per time period with NO truncation
-            if [[ "${{ steps.context.outputs.TYPE }}" == "morning" ]]; then
-              if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
-                DESC_RAW="yoooow ${DAY_LOWER} morning crew, weekend vibes hitting different? gaskeun <@&1374047008829997157> warm up aim sambil ngopi, ${WEATHER_MENTION} di ${DAY_LOWER} gini anjay bgt buat grinding! ${WEATHER_EMOJI}"
-              else
-                DESC_RAW="heyyy ${DAY_LOWER} morning gang, ready for the day or still in zombie mode? semangat ${DAY_LOWER} ini wkwkwk, ${WEATHER_MENTION} pas bgt buat fresh start ygy! ${WEATHER_EMOJI}"
-              fi
-            elif [[ "${{ steps.context.outputs.TYPE }}" == "afternoon" ]]; then
-              if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
-                DESC_RAW="wassuuup ${DAY_LOWER} afternoon squad, lunch coma or still grinding? yuuuk <@&1374047008829997157> quick match valorant, ${WEATHER_MENTION} di ${DAY_LOWER} gini bjirrr enak bgt dah! ${WEATHER_EMOJI}"
-              else
-                DESC_RAW="bro ${DAY_LOWER} siang, lunch break atau masih grind? istirahat dulu kali yak, ${WEATHER_MENTION} di ${DAY_LOWER} gini anjay enak buat refreshing! ${WEATHER_EMOJI}"
-              fi
-            elif [[ "${{ steps.context.outputs.TYPE }}" == "evening" ]]; then
-              if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
-                DESC_RAW="suuup ${DAY_LOWER} evening legends, weekend still going strong? skuyyyy <@&1374047008829997157> mabar valorant nih, ${WEATHER_MENTION} di ${DAY_LOWER} sore gini wkwkwk perfect bet! ${WEATHER_EMOJI}"
-              else
-                DESC_RAW="yoooow ${DAY_LOWER} evening, school/work all done for today? gas santai dulu abis capek seharian, ${WEATHER_MENTION} di ${DAY_LOWER} gini ygy pas buat relaxing! ${WEATHER_EMOJI}"
-              fi
+            if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
+              DESC_RAW="wassuuup ${DAY_LOWER} ${{ steps.context.outputs.TYPE }} squad, weekend vibes hitting different? yuuuk <@&1374047008829997157> mabar valorant, ${WEATHER_MENTION} di ${DAY_LOWER} gini anjay bgt buat grinding! ${WEATHER_EMOJI}"
             else
-              if [[ "${{ steps.context.outputs.CONTEXT }}" == "weekend" ]]; then
-                DESC_RAW="wassuuup ${DAY_LOWER} night gang, still awake and gaming? yuuuk <@&1374047008829997157> push rank valorant, ${WEATHER_MENTION} malem ${DAY_LOWER} gini anjay sih buat naikin elo! ${WEATHER_EMOJI}"
-              else
-                if [[ "${{ steps.context.outputs.CURRENT_DAY }}" == "Sunday" ]]; then
-                  DESC_RAW="heyyy sunday night crew, ready for monday or still in denial? jgn begadang y besok udh senin wkwkwk, ${WEATHER_MENTION} gini enak buat bobo ygy! ${WEATHER_EMOJI}"
-                else
-                  DESC_RAW="bro ${DAY_LOWER} malam, grinding atau mau bobo soon? jgn begadang mulu deh besok masih ${DAY_LOWER}, ${WEATHER_MENTION} gini bjirrr enak bat buat istirahat! ${WEATHER_EMOJI}"
-                fi
-              fi
+              DESC_RAW="yoooow ${DAY_LOWER} ${{ steps.context.outputs.TYPE }} gang, energy level looking good? gas push rank sambil santai, ${WEATHER_MENTION} pas bgt buat fresh start ygy! ${WEATHER_EMOJI}"
             fi
             
-            # Special context overrides
-            if [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "monday_motivation" ]]; then
-              DESC_RAW="wassuuup monday morning, fresh energy or weekend hangover? gaskeun mulai minggu dengan semangat, senin gini jgn males ygy, ${WEATHER_MENTION} enak buat fresh start! ${WEATHER_EMOJI}"
-            elif [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "weekend_countdown" ]]; then
-              DESC_RAW="heyyy friday ${TYPE}, ready for weekend or still grinding? yuuuk siap-siap weekend njirrr, jumat gini ${WEATHER_MENTION} pas buat closing week dengan semangat! ${WEATHER_EMOJI}"
-            elif [[ "${{ steps.context.outputs.SPECIAL_CONTEXT }}" == "sunday_prep" ]]; then
-              if [[ "${{ steps.context.outputs.TYPE }}" == "night" ]]; then
-                DESC_RAW="bro sunday night crew, ready for monday or still in denial? jgn begadang ygy besok udh senin, ${WEATHER_MENTION} gini enak buat istirahat wkwkwk! ${WEATHER_EMOJI}"
-              else
-                DESC_RAW="oiiiii sunday ${TYPE}, enjoying weekend freedom? yuuuk <@&1374047008829997157> max out weekend fun, ${WEATHER_MENTION} enak buat last day gaming anjay! ${WEATHER_EMOJI}"
-              fi
-            fi
-            
-            echo "🎯 Selected fallback: ${DESC_RAW}"
+            USE_AI=false
           fi
           
           # Set title and thumbnail based on time and weather
