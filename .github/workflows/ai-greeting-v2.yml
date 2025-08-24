@@ -155,7 +155,11 @@ jobs:
                   "tipis-tipis": "sedikit/ringan - use for light/casual activities",
                   "bentar": "sebentar - use for short duration activities",
                   "santai": "rileks/non-kompetitif - use for chill sessions",
-                  "rapihin": "merapikan/beresin - use for organizing tasks"
+                  "rapihin": "merapikan/beresin - use for organizing tasks",
+                  "anjirrr": "ekspresif kaget/excited - use for surprised reactions",
+                  "anjayyy": "ekspresif senang/hype - use for happy/excited moments",
+                  "woyyyy": "panggilan excited - use for energetic calls",
+                  "bjirrrr": "ekspresif shock - use for surprising moments"
               },
               "gaming_terms": {
                   "classic": "mode santai (ML/Valo) - use for non-ranked games",
@@ -200,6 +204,10 @@ jobs:
                   for term, meaning in terms.items():
                       slang_context += f"- {term}: {meaning}\n"
               
+              # Title emoji selection
+              title_emojis = ["😜", "🥵", "🥶", "🤭", "🫣", "🤔", "🫡", "😵", "😮‍💨", "😪", "🤤", "🥱", "🤧", "🤪", "😫", "😖", "😭", "😡", "🤫"]
+              random_emoji = random.choice(title_emojis)
+              
               # Weekday morning special handling
               weekday_morning_note = ""
               if time == "morning" and not is_weekend:
@@ -218,6 +226,7 @@ jobs:
               - Time: {time}
               - Mood: {mood}
               - Community: Indonesian gamers (Roblox, Mobile Legends, Valorant)
+              - Title Emoji: {random_emoji}
 
               **SLANG REFERENCE:{slang_context}
               {weekday_morning_note}
@@ -225,14 +234,15 @@ jobs:
               **GENERATE JSON:**
               {{
                 "message": "natural 2-sentence greeting",
-                "title": "creative dynamic title", 
+                "title": "creative dynamic title with emoji", 
                 "footer": "contextual footer"
               }}
 
               **MESSAGE REQUIREMENTS:**
-              - Sentence 1: English opener (vary beyond "sup/wassup/yooo") + contextual question
+              - Sentence 1: English opener (vary beyond "sup/wassup/yooo") + contextual question with natural day mention
               - Sentence 2: Indonesian response using appropriate slang + {'weekend tag <@&1374047008829997157>' if is_weekend else 'weekday focus'}
-              - Use slang naturally, not forced
+              - Use slang naturally, including mild expressions like "anjirrr", "anjayyy" when appropriate
+              - Include day mentions naturally: "monday grind", "friday vibes", "weekend energy", "tuesday mood"
               - All lowercase, authentic conversation style
               - 70-200 characters total
 
@@ -240,22 +250,33 @@ jobs:
               - Avoid repetitive openers - use: "morning legends", "afternoon warriors", "{day} heroes", "late night champions"
               - Questions should vary: productivity check, energy level, mood assessment, activity status
               - Natural slang integration based on context and meaning
+              - Mild badwords like "anjirrr", "anjayyy" are acceptable for authentic feel
+              - Day-specific contexts: "monday motivation", "wednesday hump day", "friday countdown", "weekend freedom"
 
               **TITLE CREATIVITY:**
-              - Dynamic titles reflecting current moment
+              - Dynamic titles reflecting current moment WITH the provided emoji: {random_emoji}
+              - Include day naturally when relevant: "{random_emoji} {day} operations", "{random_emoji} weekend protocol"
               - Avoid templates like "morning squad", "evening crew"
-              - Examples: "{day} launch sequence", "post-coffee protocol", "productivity mode engaged", "late night operations"
-              - 3-5 words, engaging and fresh
+              - Examples: "{random_emoji} {day} launch sequence", "{random_emoji} post-coffee protocol", "{random_emoji} productivity mode engaged"
+              - Include the emoji at the start: "{random_emoji} [title content]"
+              - 3-6 words total including emoji, engaging and fresh
 
               **FOOTER CONTEXT:**
-              - Match current time/mood/activity
-              - Examples for different times: "dawn preparation mode", "midday momentum active", "evening transition phase", "nocturnal operations online"
-              - 2-4 words, specific to moment
+              - Match current time/mood/activity with day awareness
+              - Examples: "monday grind mode", "friday energy peak", "weekend chill vibes", "tuesday momentum"
+              - 2-4 words, specific to moment and day
 
-              **EXAMPLES WITH SLANG:**
-              Weekday morning: {{"message": "morning warriors {day}, ready to tackle the grind? yuk rapihin to-do dulu, mabar valorant nanti malem", "title": "{day} launch sequence", "footer": "productivity mode engaged"}}
+              **EXAMPLES WITH SLANG & DAY MENTIONS:**
+              Weekday morning: {{"message": "morning warriors, anjirrr monday energy levels looking crisp? yuk rapihin to-do dulu, mabar valorant nanti malem", "title": "{random_emoji} monday launch sequence", "footer": "monday grind mode"}}
               
-              Weekend evening: {{"message": "evening legends, day was epic or total chaos? gaskeun <@&1374047008829997157> dinner sambil push rank mobile legends", "title": "weekend wind down protocol", "footer": "evening chill activated"}}
+              Weekend evening: {{"message": "evening legends, anjayyy saturday vibes was epic or total chaos? gaskeun <@&1374047008829997157> dinner sambil push rank mobile legends", "title": "{random_emoji} weekend wind down protocol", "footer": "saturday chill activated"}}
+              
+              Friday afternoon: {{"message": "afternoon champions, friday momentum still going strong? yuuuk quick valorant match bentar, weekend countdown mode", "title": "{random_emoji} friday power session", "footer": "weekend countdown energy"}}
+
+              **EXAMPLES WITH SLANG & BADWORDS:**
+              Weekday morning: {{"message": "morning warriors {day}, anjirrr energy levels looking crisp? yuk rapihin to-do dulu, mabar valorant nanti malem", "title": "{random_emoji} {day} launch sequence", "footer": "productivity mode engaged"}}
+              
+              Weekend evening: {{"message": "evening legends, anjayyy day was epic or total chaos? gaskeun <@&1374047008829997157> dinner sambil push rank mobile legends", "title": "{random_emoji} weekend wind down protocol", "footer": "evening chill activated"}}
 
               Generate only JSON:
               """
@@ -324,7 +345,11 @@ jobs:
               context = os.environ.get("CONTEXT", "weekday")
               is_weekend = context == "weekend"
               
-              # Enhanced fallback dengan slang yang tepat
+              # Random emoji untuk title
+              title_emojis = ["😜", "🥵", "🥶", "🤭", "🫣", "🤔", "🫡", "😵", "😮‍💨", "😪", "🤤", "🥱", "🤧", "🤪", "😫", "😖", "😭", "😡", "🤫"]
+              random_emoji = random.choice(title_emojis)
+              
+              # Enhanced fallback dengan slang yang tepat dan badword ringan
               varied_openers = {
                   "morning": [f"morning legends", f"{day} warriors", f"early squad", f"{day} heroes"],
                   "afternoon": [f"afternoon champions", f"{day} squad", f"midday legends", f"{day} warriors"],
@@ -332,34 +357,47 @@ jobs:
                   "night": [f"night champions", f"{day} nocturnal squad", f"late shift heroes", f"midnight warriors"]
               }
               
+              # Day-specific context untuk natural mentions
+              day_contexts = {
+                  "monday": ["monday grind", "monday motivation", "week startup", "monday energy"],
+                  "tuesday": ["tuesday flow", "tuesday momentum", "midweek groove", "tuesday vibes"],
+                  "wednesday": ["hump day", "wednesday power", "midweek peak", "wednesday energy"],
+                  "thursday": ["thursday push", "almost weekend", "thursday grind", "weekend prep"],
+                  "friday": ["friday vibes", "weekend countdown", "friday energy", "week finale"],
+                  "saturday": ["saturday freedom", "weekend mode", "saturday vibes", "weekend energy"],
+                  "sunday": ["sunday chill", "weekend wind down", "sunday vibes", "week prep"]
+              }
+              
+              day_context = random.choice(day_contexts.get(day, [f"{day} vibes"]))
+              
               contextual_questions = {
                   "morning": [
-                      "ready to tackle the grind?", 
-                      "energy levels looking good?", 
-                      "dialed in for productivity?",
-                      "feeling sharp for the hustle?"
+                      f"anjirrr {day_context} energy levels looking crisp?", 
+                      f"{day_context} dialed in for productivity?", 
+                      f"feeling sharp for {day_context}?",
+                      f"anjayyy ready to tackle {day_context}?"
                   ],
                   "afternoon": [
-                      "midday momentum still going?", 
-                      "post-lunch vibes hitting right?", 
-                      "keeping the energy steady?",
-                      "afternoon flow dialed in?"
+                      f"{day_context} momentum still going strong?", 
+                      f"anjirrr {day_context} post-lunch vibes hitting right?", 
+                      f"keeping the {day_context} steady?",
+                      f"{day_context} afternoon flow dialed in?"
                   ],
                   "evening": [
-                      "day was epic or total chaos?", 
-                      "evening chill mode activated?", 
-                      "ready to wind down?",
-                      "golden hour vibes hitting?"
+                      f"anjayyy {day_context} was epic or total chaos?", 
+                      f"{day_context} evening chill mode activated?", 
+                      f"ready to wind down from {day_context}?",
+                      f"{day_context} golden hour vibes hitting?"
                   ],
                   "night": [
-                      "night owl mode engaged?", 
-                      "peaceful late hours or chaos?", 
-                      "locked in for late shift?",
-                      "midnight energy still flowing?"
+                      f"{day_context} night owl mode engaged?", 
+                      f"anjirrr {day_context} peaceful late hours or chaos?", 
+                      f"locked in for {day_context} late shift?",
+                      f"{day_context} midnight energy still flowing?"
                   ]
               }
               
-              # Contextual activities dengan slang yang sesuai
+              # Contextual activities dengan slang yang sesuai dan day awareness
               if time == "morning" and not is_weekend:
                   activities = [
                       "yuk rapihin to-do dulu, mabar valorant nanti malem",
@@ -367,8 +405,8 @@ jobs:
                       "yuuuk prioritas kerjaan dulu, gaming session abis magrib",
                       "gaskeun selesaiin tanggung jawab dulu, roblox santai nanti malem"
                   ]
-                  titles = [f"{day} launch sequence", "productivity mode engaged", "morning grind protocol", "weekday warrior mode"]
-                  footers = ["productivity first", "grind mode active", "work-gaming balance", "weekday warrior energy"]
+                  titles = [f"{random_emoji} {day} launch sequence", f"{random_emoji} {day_context} mode", f"{random_emoji} morning {day} protocol", f"{random_emoji} {day} warrior mode"]
+                  footers = [f"{day_context} active", f"{day} grind mode", f"{day_context} energy", f"{day} productivity mode"]
               elif is_weekend:
                   tag = " <@&1374047008829997157>"
                   activities = [
@@ -377,8 +415,8 @@ jobs:
                       f"gas{tag} roblox adventure bareng-bareng",
                       f"gaskeun{tag} comms on, unrated valorant dulu"
                   ]
-                  titles = [f"weekend {time} protocol", f"{day} gaming mode", f"weekend {time} operations", f"{day} squad assembly"]
-                  footers = [f"weekend {time} vibes", f"{day} gaming energy", f"weekend mode active", f"{day} squad online"]
+                  titles = [f"{random_emoji} {day_context} protocol", f"{random_emoji} {day} gaming mode", f"{random_emoji} weekend {time} ops", f"{random_emoji} {day} squad mode"]
+                  footers = [f"{day_context} vibes", f"{day} gaming energy", f"weekend {time} active", f"{day} squad online"]
               else:
                   activities = [
                       "yuuuk quick match valorant bentar",
@@ -386,8 +424,8 @@ jobs:
                       "gas aim training tipis-tipis dulu",
                       "yuuuk roblox chill session bareng"
                   ]
-                  titles = [f"{time} gaming protocol", f"{day} {time} session", f"weekday {time} mode", f"{day} gaming break"]
-                  footers = [f"{time} gaming energy", f"weekday {time} vibes", f"{day} gaming mode", f"{time} session active"]
+                  titles = [f"{random_emoji} {day_context} gaming", f"{random_emoji} {day} {time} session", f"{random_emoji} {day_context} break", f"{random_emoji} {day} gaming pause"]
+                  footers = [f"{day_context} energy", f"{day} {time} vibes", f"{day_context} mode", f"{day} gaming active"]
               
               opener = random.choice(varied_openers.get(time, [f"{day} squad"]))
               question = random.choice(contextual_questions.get(time, ["how's the vibe?"]))
