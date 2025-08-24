@@ -374,10 +374,10 @@ jobs:
       - name: Generate AI Greeting
         id: ai_generation
         run: |
-          echo "🤖 Generating AI greeting with OpenAI..."
+          echo "🤖 Generating AI greeting with DeepSeek..."
           
-          # Create simplified prompt for OpenAI
-          cat > /tmp/openai_prompt.txt << 'EOL'
+          # Create simplified prompt for DeepSeek
+          cat > /tmp/deepseek_prompt.txt << 'EOL'
           You are a casual Indonesian gaming Discord admin for server "Skye". Create a Discord greeting with EXACTLY these parts:
 
           PART 1: A casual English sentence that:
@@ -403,20 +403,20 @@ jobs:
           RESPONSE FORMAT: Write only the two sentences separated by a space, nothing else.
           EOL
           
-          # Create Python script using OpenAI
-          cat > /tmp/openai_generator.py << 'EOL'
+          # Create Python script using DeepSeek
+          cat > /tmp/deepseek_generator.py << 'EOL'
           import json
           import requests
           import os
           import sys
           
           try:
-              with open('/tmp/openai_prompt.txt', 'r') as f:
+              with open('/tmp/deepseek_prompt.txt', 'r') as f:
                   prompt = f.read().strip()
               
-              api_key = os.environ.get('OPENAI_API_KEY')
+              api_key = os.environ.get('DEEPSEEK_API_KEY')
               if not api_key:
-                  print("❌ No OpenAI API key found")
+                  print("❌ No DeepSeek API key found")
                   sys.exit(1)
               
               headers = {
@@ -425,25 +425,26 @@ jobs:
               }
               
               payload = {
-                  "model": "gpt-3.5-turbo",
+                  "model": "deepseek-chat",
                   "messages": [
                       {"role": "system", "content": "You are a Discord admin for an Indonesian gaming server."},
                       {"role": "user", "content": prompt}
                   ],
                   "temperature": 0.7,
-                  "max_tokens": 150
+                  "max_tokens": 150,
+                  "top_p": 0.9
               }
               
-              print("📡 Sending request to OpenAI API...")
+              print("📡 Sending request to DeepSeek API...")
               response = requests.post(
-                  "https://api.openai.com/v1/chat/completions",
+                  "https://api.deepseek.com/v1/chat/completions",
                   headers=headers,
                   json=payload,
                   timeout=30
               )
               
               if response.status_code != 200:
-                  print(f"❌ OpenAI API error: {response.status_code}")
+                  print(f"❌ DeepSeek API error: {response.status_code}")
                   print(response.text)
                   sys.exit(1)
               
@@ -458,13 +459,13 @@ jobs:
                   if '?' in ai_text and len(ai_text) > 40 and len(ai_text) < 200:
                       with open('/tmp/ai_response.txt', 'w', encoding='utf-8') as f:
                           f.write(ai_text)
-                      print(f"✅ OpenAI generation successful: {ai_text[:50]}...")
+                      print(f"✅ DeepSeek generation successful: {ai_text[:50]}...")
                       sys.exit(0)
                   else:
                       print(f"❌ Response doesn't match expected format: {ai_text}")
                       sys.exit(1)
               else:
-                  print("❌ No choices in OpenAI response")
+                  print("❌ No choices in DeepSeek response")
                   sys.exit(1)
                   
           except Exception as e:
@@ -472,9 +473,9 @@ jobs:
               sys.exit(1)
           EOL
           
-          # Execute the OpenAI script
-          echo "🧪 Executing OpenAI generation script..."
-          OPENAI_API_KEY="${{ secrets.OPENAI_API_KEY }}" python3 /tmp/openai_generator.py
+          # Execute the DeepSeek script
+          echo "🧪 Executing DeepSeek generation script..."
+          DEEPSEEK_API_KEY="${{ secrets.DEEPSEEK_API_KEY }}" python3 /tmp/deepseek_generator.py
           
           if [[ $? -eq 0 && -s /tmp/ai_response.txt ]]; then
             AI_TEXT=$(cat /tmp/ai_response.txt)
@@ -514,7 +515,7 @@ jobs:
             USE_AI=false
             echo "❌ AI generation failed, using fallback"
           fi
-                    
+                              
           # Fallback system with authentic Indonesian gamer language
           if [[ "$USE_AI" != "true" ]]; then
             echo "🎲 Using fallback system..."
