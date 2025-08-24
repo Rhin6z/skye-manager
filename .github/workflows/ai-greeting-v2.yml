@@ -140,9 +140,46 @@ jobs:
             export IS_WEEKEND=false
           fi
           
-          # Advanced AI generator dengan title dan footer
+          # Advanced AI generator dengan title dan footer + slang integration
           cat > /tmp/advanced_ai_generator.py << 'EOL'
           import os, re, random, requests, sys, json
+
+          # Integrated slang dictionary untuk context-aware usage
+          SLANG_GUIDE = {
+              "indo_casual": {
+                  "yuk": "ajakan halus untuk mulai - use for gentle invitations",
+                  "yuuuk": "ajakan halus lebih excited - use when more enthusiastic", 
+                  "gas": "ajakan tegas langsung jalan - use for immediate action",
+                  "gaskeun": "ajakan push terus tanpa ragu - use for confident moves",
+                  "mabar": "main bareng - use for group gaming invitations",
+                  "tipis-tipis": "sedikit/ringan - use for light/casual activities",
+                  "bentar": "sebentar - use for short duration activities",
+                  "santai": "rileks/non-kompetitif - use for chill sessions",
+                  "rapihin": "merapikan/beresin - use for organizing tasks"
+              },
+              "gaming_terms": {
+                  "classic": "mode santai (ML/Valo) - use for non-ranked games",
+                  "unrated": "match non-rank (Valo) - use for casual Valorant",
+                  "push rank": "naik peringkat - use for competitive grinding",
+                  "aim training": "latihan aim - use for skill improvement",
+                  "comms on": "voice aktif koordinasi - use for team coordination"
+              },
+              "english_casual": {
+                  "crew": "sapaan ke grup - use for group address", 
+                  "squad": "sapaan ke grup - use for team address",
+                  "vibes": "suasana/feel - use for mood description",
+                  "grind": "kerja keras - use for intensive work/gaming",
+                  "queue up": "antri match - use for getting ready to play",
+                  "dialed in": "fokus siap - use when ready and focused",
+                  "heads on": "pikiran siap - use for mental readiness",
+                  "keep it steady": "ritme stabil - use for maintaining pace",
+                  "we move": "lanjut jalan - use for continuing forward",
+                  "feeling sharp": "ngerasa fit - use when feeling good",
+                  "wind down": "turun tempo/tutup hari - use for ending sessions",
+                  "locked in": "fokus banget - use for high concentration",
+                  "chill session": "sesi santai - use for relaxed gaming"
+              }
+          }
 
           def generate_content():
               day = os.environ.get("CURRENT_DAY", "today").lower()
@@ -156,162 +193,223 @@ jobs:
               if not api_key:
                   raise Exception("No API key")
               
-              # Comprehensive prompt untuk message, title, dan footer
-              prompt = f"""You are creating content for Skye Discord gaming community. Generate exactly 3 items in JSON format:
+              # Enhanced contextual prompt dengan slang integration
+              slang_context = ""
+              for category, terms in SLANG_GUIDE.items():
+                  slang_context += f"\n{category.upper()}:\n"
+                  for term, meaning in terms.items():
+                      slang_context += f"- {term}: {meaning}\n"
+              
+              # Weekday morning special handling
+              weekday_morning_note = ""
+              if time == "morning" and not is_weekend:
+                  weekday_morning_note = """
+              **SPECIAL WEEKDAY MORNING RULES:**
+              - Prioritize productivity/work/school first
+              - Gaming suggestions should be for later (sore/malem)
+              - Use motivational tone for starting the day
+              - Examples: "rapihin to-do dulu", "fokus tugas dulu", "gaming nanti sore"
+              """
+              
+              prompt = f"""Create Discord greeting for Skye gaming community using Indonesian slang authentically.
 
               **CONTEXT:**
               - Day: {day} ({context})
               - Time: {time}
               - Mood: {mood}
-              - Community vibe: {vibe}
-              - Games played: Roblox, Mobile Legends, Valorant
+              - Community: Indonesian gamers (Roblox, Mobile Legends, Valorant)
 
-              **GENERATE JSON WITH:**
+              **SLANG REFERENCE:{slang_context}
+              {weekday_morning_note}
+
+              **GENERATE JSON:**
               {{
-                "message": "2-sentence Discord greeting",
-                "title": "creative channel title", 
-                "footer": "contextual footer text"
+                "message": "natural 2-sentence greeting",
+                "title": "creative dynamic title", 
+                "footer": "contextual footer"
               }}
 
               **MESSAGE REQUIREMENTS:**
-              - Sentence 1: English only, casual greeting + question about current state/mood/activity
-              - Sentence 2: Indonesian invitation to game + {'<@&1374047008829997157>' if is_weekend else 'no role tag'}
-              - All lowercase, natural conversation, 80-200 chars
-              - No weather mentions, focus on time/day context and gaming
+              - Sentence 1: English opener (vary beyond "sup/wassup/yooo") + contextual question
+              - Sentence 2: Indonesian response using appropriate slang + {'weekend tag <@&1374047008829997157>' if is_weekend else 'weekday focus'}
+              - Use slang naturally, not forced
+              - All lowercase, authentic conversation style
+              - 70-200 characters total
 
-              **TITLE REQUIREMENTS:**
-              - Creative, unique title reflecting current {time} {day} mood
-              - Avoid templates like "Morning Squad" or "Evening Crew"  
-              - Be creative: "code red caffeine protocol", "post-lunch power mode", "midnight legends unite"
-              - 3-6 words max, engaging and dynamic
-              - All lowercase
+              **VARIETY REQUIREMENTS:**
+              - Avoid repetitive openers - use: "morning legends", "afternoon warriors", "{day} heroes", "late night champions"
+              - Questions should vary: productivity check, energy level, mood assessment, activity status
+              - Natural slang integration based on context and meaning
 
-              **FOOTER REQUIREMENTS:**
-              - Contextual to time/day/mood, not generic "chill gaming vibes"
-              - Examples: "{time} energy activated", "{day} grind mode", "{mood} squad assembled"
-              - 2-4 words, lowercase, specific to current context
+              **TITLE CREATIVITY:**
+              - Dynamic titles reflecting current moment
+              - Avoid templates like "morning squad", "evening crew"
+              - Examples: "{day} launch sequence", "post-coffee protocol", "productivity mode engaged", "late night operations"
+              - 3-5 words, engaging and fresh
 
-              **EXAMPLES:**
-              Morning weekday: {{"message": "yoooow {day} crew, ready to tackle this productive day? yuk prioritas tugas dulu, gaming nanti sore", "title": "morning fuel squad", "footer": "productivity first mode"}}
+              **FOOTER CONTEXT:**
+              - Match current time/mood/activity
+              - Examples for different times: "dawn preparation mode", "midday momentum active", "evening transition phase", "nocturnal operations online"
+              - 2-4 words, specific to moment
+
+              **EXAMPLES WITH SLANG:**
+              Weekday morning: {{"message": "morning warriors {day}, ready to tackle the grind? yuk rapihin to-do dulu, mabar valorant nanti malem", "title": "{day} launch sequence", "footer": "productivity mode engaged"}}
               
-              Evening weekend: {{"message": "wassup {day} legends, day was epic or disaster? yuuuk <@&1374047008829997157> dinner sambil voice chat valorant", "title": "weekend wind down", "footer": "evening chill activated"}}
+              Weekend evening: {{"message": "evening legends, day was epic or total chaos? gaskeun <@&1374047008829997157> dinner sambil push rank mobile legends", "title": "weekend wind down protocol", "footer": "evening chill activated"}}
 
-              Write only the JSON, no other text:
+              Generate only JSON:
               """
               
               url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
               payload = {
                   "contents": [{"parts": [{"text": prompt}]}],
                   "generationConfig": {
-                      "temperature": 0.8,
-                      "maxOutputTokens": 250,
-                      "topP": 0.9
+                      "temperature": 0.9,
+                      "maxOutputTokens": 300,
+                      "topP": 0.95
                   }
               }
               
-              response = requests.post(url, json=payload, timeout=20)
+              response = requests.post(url, json=payload, timeout=25)
               
               if response.status_code == 200:
                   data = response.json()
                   if 'candidates' in data and len(data['candidates']) > 0:
                       ai_text = data['candidates'][0]['content']['parts'][0]['text'].strip()
                       
-                      # Extract JSON dari response
-                      json_match = re.search(r'\{[^}]*"message"[^}]*\}', ai_text, re.DOTALL)
-                      if json_match:
-                          try:
-                              content = json.loads(json_match.group())
-                              if all(key in content for key in ['message', 'title', 'footer']):
-                                  # Validate dan clean content
-                                  message = content['message'].lower().strip()
-                                  title = content['title'].lower().strip()
-                                  footer = content['footer'].lower().strip()
-                                  
-                                  # Ensure proper role tag for weekend
-                                  if is_weekend and '<@&1374047008829997157>' not in message:
-                                      if '?' in message:
-                                          message = message.replace('?', '? <@&1374047008829997157>', 1)
-                                      else:
-                                          message += ' <@&1374047008829997157>'
-                                  elif not is_weekend:
-                                      message = re.sub(r'<@&[0-9]+>', '', message).strip()
-                                  
-                                  # Length validation
-                                  if 50 <= len(message) <= 220:
-                                      return {
-                                          'message': message,
-                                          'title': title,
-                                          'footer': footer,
-                                          'source': 'ai'
-                                      }
-                          except json.JSONDecodeError:
-                              pass
+                      # Enhanced JSON extraction
+                      json_patterns = [
+                          r'\{[^}]*"message"[^}]*"title"[^}]*"footer"[^}]*\}',
+                          r'\{[^}]*"title"[^}]*"message"[^}]*"footer"[^}]*\}',
+                          r'\{[^}]*"footer"[^}]*"message"[^}]*"title"[^}]*\}'
+                      ]
+                      
+                      for pattern in json_patterns:
+                          json_match = re.search(pattern, ai_text, re.DOTALL)
+                          if json_match:
+                              try:
+                                  content = json.loads(json_match.group())
+                                  if all(key in content for key in ['message', 'title', 'footer']):
+                                      # Validate dan clean content
+                                      message = content['message'].lower().strip()
+                                      title = content['title'].lower().strip()
+                                      footer = content['footer'].lower().strip()
+                                      
+                                      # Ensure proper role tag for weekend
+                                      if is_weekend and '<@&1374047008829997157>' not in message:
+                                          # Add tag after first sentence
+                                          if '?' in message:
+                                              message = message.replace('?', '? <@&1374047008829997157>', 1)
+                                          else:
+                                              message += ' <@&1374047008829997157>'
+                                      elif not is_weekend:
+                                          message = re.sub(r'<@&[0-9]+>', '', message).strip()
+                                      
+                                      # Length validation
+                                      if 60 <= len(message) <= 220:
+                                          return {
+                                              'message': message,
+                                              'title': title,
+                                              'footer': footer,
+                                              'source': 'ai'
+                                          }
+                              except json.JSONDecodeError:
+                                  continue
               
               raise Exception("AI generation failed")
 
-          def generate_fallback():
+          def generate_enhanced_fallback():
               day = os.environ.get("CURRENT_DAY", "today").lower()
               time = os.environ.get("TIME_OF_DAY", "day")
               context = os.environ.get("CONTEXT", "weekday")
               is_weekend = context == "weekend"
               
-              # Creative fallback messages
-              openers = ["yoooow", "wassup", "heyyyy", "sup", "ayooo"]
-              
-              time_contexts = {
-                  "morning": {
-                      "questions": ["coffee ready or controller calling?", "energy level check how we feeling?", "productive mood activated or still sleepy?"],
-                      "activities": ["warm up aim training", "daily quest speedrun", "morning gaming ritual"],
-                      "titles": ["dawn patrol squad", "morning fuel crew", "early bird legends", "sunrise gaming mode"],
-                      "footers": ["morning energy on", "dawn squad ready", "early grind mode", "sunrise vibes"]
-                  },
-                  "afternoon": {
-                      "questions": ["lunch break energy hitting different?", "midday vibe check how we doing?", "post-meal gaming mood?"],
-                      "activities": ["quick match session", "ranked push time", "afternoon gaming break"],
-                      "titles": ["midday momentum", "afternoon power mode", "lunch break legends", "peak hour squad"],
-                      "footers": ["midday energy peak", "afternoon grind on", "peak gaming hours", "lunch power mode"]
-                  },
-                  "evening": {
-                      "questions": ["day was productive or chaos?", "dinner plans or gaming first?", "evening chill mode activated?"],
-                      "activities": ["dinner sambil voice chat", "evening gaming session", "wind down gaming"],
-                      "titles": ["golden hour crew", "evening legends", "dinner gaming mode", "sunset squad"],
-                      "footers": ["evening chill on", "golden hour vibes", "dinner gaming time", "sunset mode"]
-                  },
-                  "night": {
-                      "questions": ["insomnia hitting or choice begadang?", "night owl mode activated?", "peaceful late hours?"],
-                      "activities": ["marathon gaming session", "late night competitive", "midnight gaming vibes"],
-                      "titles": ["midnight legends", "night owl squad", "late shift crew", "nocturnal gamers"],
-                      "footers": ["midnight mode on", "night owl energy", "late shift vibes", "nocturnal gaming"]
-                  }
+              # Enhanced fallback dengan slang yang tepat
+              varied_openers = {
+                  "morning": [f"morning legends", f"{day} warriors", f"early squad", f"{day} heroes"],
+                  "afternoon": [f"afternoon champions", f"{day} squad", f"midday legends", f"{day} warriors"],
+                  "evening": [f"evening heroes", f"{day} crew", f"golden hour squad", f"{day} legends"],
+                  "night": [f"night champions", f"{day} nocturnal squad", f"late shift heroes", f"midnight warriors"]
               }
               
-              ctx = time_contexts.get(time, time_contexts["afternoon"])
+              contextual_questions = {
+                  "morning": [
+                      "ready to tackle the grind?", 
+                      "energy levels looking good?", 
+                      "dialed in for productivity?",
+                      "feeling sharp for the hustle?"
+                  ],
+                  "afternoon": [
+                      "midday momentum still going?", 
+                      "post-lunch vibes hitting right?", 
+                      "keeping the energy steady?",
+                      "afternoon flow dialed in?"
+                  ],
+                  "evening": [
+                      "day was epic or total chaos?", 
+                      "evening chill mode activated?", 
+                      "ready to wind down?",
+                      "golden hour vibes hitting?"
+                  ],
+                  "night": [
+                      "night owl mode engaged?", 
+                      "peaceful late hours or chaos?", 
+                      "locked in for late shift?",
+                      "midnight energy still flowing?"
+                  ]
+              }
               
-              opener = random.choice(openers)
-              question = random.choice(ctx["questions"])
-              activity = random.choice(ctx["activities"])
-              title = random.choice(ctx["titles"])
-              footer = random.choice(ctx["footers"])
+              # Contextual activities dengan slang yang sesuai
+              if time == "morning" and not is_weekend:
+                  activities = [
+                      "yuk rapihin to-do dulu, mabar valorant nanti malem",
+                      "gas fokus tugas dulu, push rank mobile legends nanti sore", 
+                      "yuuuk prioritas kerjaan dulu, gaming session abis magrib",
+                      "gaskeun selesaiin tanggung jawab dulu, roblox santai nanti malem"
+                  ]
+                  titles = [f"{day} launch sequence", "productivity mode engaged", "morning grind protocol", "weekday warrior mode"]
+                  footers = ["productivity first", "grind mode active", "work-gaming balance", "weekday warrior energy"]
+              elif is_weekend:
+                  tag = " <@&1374047008829997157>"
+                  activities = [
+                      f"gaskeun{tag} mabar valorant santai aja",
+                      f"yuuuk{tag} push rank mobile legends tipis-tipis",
+                      f"gas{tag} roblox adventure bareng-bareng",
+                      f"gaskeun{tag} comms on, unrated valorant dulu"
+                  ]
+                  titles = [f"weekend {time} protocol", f"{day} gaming mode", f"weekend {time} operations", f"{day} squad assembly"]
+                  footers = [f"weekend {time} vibes", f"{day} gaming energy", f"weekend mode active", f"{day} squad online"]
+              else:
+                  activities = [
+                      "yuuuk quick match valorant bentar",
+                      "gaskeun classic mobile legends santai", 
+                      "gas aim training tipis-tipis dulu",
+                      "yuuuk roblox chill session bareng"
+                  ]
+                  titles = [f"{time} gaming protocol", f"{day} {time} session", f"weekday {time} mode", f"{day} gaming break"]
+                  footers = [f"{time} gaming energy", f"weekday {time} vibes", f"{day} gaming mode", f"{time} session active"]
               
-              tag = " <@&1374047008829997157>" if is_weekend else ""
-              games = ["valorant", "mobile legends", "roblox"]
-              game = random.choice(games)
+              opener = random.choice(varied_openers.get(time, [f"{day} squad"]))
+              question = random.choice(contextual_questions.get(time, ["how's the vibe?"]))
+              activity = random.choice(activities)
+              title = random.choice(titles)
+              footer = random.choice(footers)
               
-              message = f"{opener} {day} squad, {question} yuuuk{tag} {activity} {game}"
+              message = f"{opener}, {question} {activity}"
               
               return {
                   'message': message,
                   'title': title,
                   'footer': footer,
-                  'source': 'fallback'
+                  'source': 'enhanced_fallback'
               }
 
           try:
               result = generate_content()
-              print(f"✅ AI generation successful")
+              print(f"✅ AI generation successful with slang integration")
           except Exception as e:
-              print(f"⚠️ AI failed: {e}, using creative fallback")
-              result = generate_fallback()
+              print(f"⚠️ AI failed: {e}, using enhanced fallback")
+              result = generate_enhanced_fallback()
           
           # Write results
           with open('/tmp/ai_message.txt', 'w', encoding='utf-8') as f:
@@ -323,8 +421,8 @@ jobs:
           with open('/tmp/ai_source.txt', 'w', encoding='utf-8') as f:
               f.write(result['source'])
           
-          print(f"🎯 Generated content:")
-          print(f"   Message: {result['message'][:60]}...")
+          print(f"🎯 Generated content with slang:")
+          print(f"   Message: {result['message'][:70]}...")
           print(f"   Title: {result['title']}")
           print(f"   Footer: {result['footer']}")
           print(f"   Source: {result['source']}")
@@ -363,55 +461,109 @@ jobs:
             USE_AI=false
           fi
           
-          # Backup system jika AI gagal
+          # Backup system jika AI gagal - dengan konteks yang tepat
           if [[ "$USE_AI" != "true" ]]; then
-            echo "🎲 Using backup creative system..."
+            echo "🎲 Using enhanced contextual backup system..."
             
             DAY=$(echo "$CURRENT_DAY" | tr '[:upper:]' '[:lower:]')
             
-            case "$TIME_OF_DAY" in
-              "morning")
-                DESC_RAW=$(shuf -e \
-                  "yoooow $DAY crew, coffee ready or controller calling? yuuuk warm up aim valorant dulu" \
-                  "wassup $DAY squad, energy level gimana nih? gaskeun daily quest mobile legends" \
-                  "heyyyy $DAY legends, productive mood on? yuuuk morning gaming ritual roblox" \
-                  -n1)
-                TITLE=$(shuf -e "dawn patrol activated" "morning fuel squad" "early bird legends" "sunrise gaming mode" -n1)
-                FOOTER_TEXT=$(shuf -e "morning energy on" "dawn squad ready" "early grind mode" "sunrise vibes" -n1)
-                ;;
-              "afternoon")
-                DESC_RAW=$(shuf -e \
-                  "yoooow $DAY squad, lunch break energy different? yuuuk quick match valorant" \
-                  "wassup $DAY crew, midday vibe check? gaskeun ranked push mobile legends" \
-                  "heyyyy $DAY legends, post-meal gaming mood? yuuuk afternoon session roblox" \
-                  -n1)
-                TITLE=$(shuf -e "midday momentum" "afternoon power mode" "lunch break legends" "peak hour squad" -n1)
-                FOOTER_TEXT=$(shuf -e "midday energy peak" "afternoon grind on" "peak gaming hours" "lunch power mode" -n1)
-                ;;
-              "evening")
-                DESC_RAW=$(shuf -e \
-                  "yoooow $DAY squad, day productive atau chaos? yuuuk dinner sambil voice chat valorant" \
-                  "wassup $DAY crew, evening chill activated? gaskeun wind down mobile legends" \
-                  "heyyyy $DAY legends, golden hour vibes? yuuuk evening session roblox" \
-                  -n1)
-                TITLE=$(shuf -e "golden hour crew" "evening legends" "dinner gaming mode" "sunset squad" -n1)
-                FOOTER_TEXT=$(shuf -e "evening chill on" "golden hour vibes" "dinner gaming time" "sunset mode" -n1)
-                ;;
-              "night")
-                DESC_RAW=$(shuf -e \
-                  "yoooow $DAY squad, insomnia atau choice begadang? yuuuk marathon gaming valorant" \
-                  "wassup $DAY crew, night owl mode on? gaskeun late night competitive mobile legends" \
-                  "heyyyy $DAY legends, peaceful late hours? yuuuk midnight session roblox" \
-                  -n1)
-                TITLE=$(shuf -e "midnight legends" "night owl squad" "late shift crew" "nocturnal gamers" -n1)
-                FOOTER_TEXT=$(shuf -e "midnight mode on" "night owl energy" "late shift vibes" "nocturnal gaming" -n1)
-                ;;
-            esac
-            
-            # Add weekend role tag
-            if [[ "$CONTEXT" == "weekend" ]]; then
-              DESC_RAW=$(echo "$DESC_RAW" | sed 's/yuuuk /yuuuk <@&1374047008829997157> /' | sed 's/gaskeun /gaskeun <@&1374047008829997157> /')
+            # Weekday morning special: prioritas produktivitas dulu
+            if [[ "$TIME_OF_DAY" == "morning" && "$CONTEXT" == "weekday" ]]; then
+              case "$DAY" in
+                "monday")
+                  DESC_RAW=$(shuf -e \
+                    "morning warriors monday, ready to tackle the grind? yuk rapihin to-do dulu, mabar valorant nanti malem" \
+                    "monday legends, energy levels looking good? gaskeun fokus kerjaan dulu, push rank mobile legends abis magrib" \
+                    "morning heroes monday, dialed in for productivity? yuuuk prioritas tugas dulu, roblox santai nanti malem" \
+                    -n1)
+                  TITLE=$(shuf -e "monday launch sequence" "weekday warrior mode" "productivity protocol engaged" "monday grind activated" -n1)
+                  ;;
+                *)
+                  DESC_RAW=$(shuf -e \
+                    "morning legends $DAY, ready for the hustle? yuk selesaiin tanggung jawab dulu, gaming session nanti sore" \
+                    "$DAY warriors, feeling sharp for productivity? gaskeun fokus tugas dulu, mabar valorant abis kerja" \
+                    "morning squad $DAY, dialed in for the grind? yuuuk rapihin kerjaan dulu, push rank mobile legends nanti malem" \
+                    -n1)
+                  TITLE=$(shuf -e "$DAY launch sequence" "weekday grind mode" "productivity first protocol" "morning hustle activated" -n1)
+                  ;;
+              esac
+              FOOTER_TEXT=$(shuf -e "productivity first" "weekday warrior energy" "work-gaming balance" "grind mode active" -n1)
+              
+            # Weekend atau non-morning: gaming focus
+            elif [[ "$CONTEXT" == "weekend" ]]; then
+              case "$TIME_OF_DAY" in
+                "morning")
+                  DESC_RAW=$(shuf -e \
+                    "morning legends $DAY, weekend vibes hitting different? gaskeun <@&1374047008829997157> mabar valorant santai aja" \
+                    "$DAY warriors, feeling fresh for gaming? yuuuk <@&1374047008829997157> push rank mobile legends tipis-tipis" \
+                    "weekend morning squad, energy levels good? gas <@&1374047008829997157> roblox adventure bareng-bareng" \
+                    -n1)
+                  TITLE=$(shuf -e "weekend morning protocol" "$DAY gaming mode" "weekend squad assembly" "$DAY launch sequence" -n1)
+                  FOOTER_TEXT=$(shuf -e "weekend morning vibes" "$DAY gaming energy" "weekend mode active" "$DAY squad online" -n1)
+                  ;;
+                "afternoon")
+                  DESC_RAW=$(shuf -e \
+                    "afternoon champions $DAY, midday momentum still going? gaskeun <@&1374047008829997157> comms on, unrated valorant" \
+                    "$DAY squad, post-lunch vibes hitting right? yuuuk <@&1374047008829997157> classic mobile legends santai" \
+                    "weekend afternoon legends, keeping energy steady? gas <@&1374047008829997157> roblox chill session" \
+                    -n1)
+                  TITLE=$(shuf -e "weekend afternoon protocol" "$DAY gaming session" "midday squad operations" "$DAY afternoon mode" -n1)
+                  FOOTER_TEXT=$(shuf -e "weekend afternoon vibes" "$DAY gaming flow" "midday gaming energy" "$DAY squad active" -n1)
+                  ;;
+                "evening")
+                  DESC_RAW=$(shuf -e \
+                    "evening heroes $DAY, day was epic or chaos? gaskeun <@&1374047008829997157> dinner sambil push rank valorant" \
+                    "$DAY crew, golden hour vibes hitting? yuuuk <@&1374047008829997157> mabar mobile legends tipis-tipis" \
+                    "weekend evening squad, ready to wind down? gas <@&1374047008829997157> aim training bentar terus santai" \
+                    -n1)
+                  TITLE=$(shuf -e "weekend evening protocol" "$DAY wind down mode" "golden hour operations" "$DAY evening session" -n1)
+                  FOOTER_TEXT=$(shuf -e "weekend evening vibes" "$DAY chill mode" "golden hour energy" "$DAY wind down active" -n1)
+                  ;;
+                "night")
+                  DESC_RAW=$(shuf -e \
+                    "night champions $DAY, locked in for late shift? gaskeun <@&1374047008829997157> marathon gaming valorant" \
+                    "$DAY nocturnal squad, midnight energy flowing? yuuuk <@&1374047008829997157> push rank mobile legends sampai pagi" \
+                    "weekend night warriors, peaceful hours or chaos? gas <@&1374047008829997157> roblox adventure midnight session" \
+                    -n1)
+                  TITLE=$(shuf -e "weekend night protocol" "$DAY nocturnal mode" "midnight operations" "$DAY night shift" -n1)
+                  FOOTER_TEXT=$(shuf -e "weekend night vibes" "$DAY nocturnal energy" "midnight gaming mode" "$DAY night squad online" -n1)
+                  ;;
+              esac
+              
+            # Weekday non-morning: gaming ok tapi tetap aware tanggung jawab
+            else
+              case "$TIME_OF_DAY" in
+                "afternoon")
+                  DESC_RAW=$(shuf -e \
+                    "afternoon champions $DAY, keeping the momentum? yuuuk quick match valorant bentar, break sejenak" \
+                    "$DAY squad, post-lunch flow dialed in? gaskeun classic mobile legends tipis-tipis" \
+                    "midday legends $DAY, energy steady? yuuuk aim training bentar terus balik produktif" \
+                    -n1)
+                  TITLE=$(shuf -e "$DAY afternoon break" "midday gaming protocol" "weekday afternoon session" "$DAY gaming pause" -n1)
+                  FOOTER_TEXT=$(shuf -e "afternoon gaming energy" "$DAY midday vibes" "weekday break mode" "$DAY gaming flow" -n1)
+                  ;;
+                "evening")
+                  DESC_RAW=$(shuf -e \
+                    "evening heroes $DAY, day accomplished or still grinding? yuuuk dinner sambil mabar valorant" \
+                    "$DAY crew, evening transition smooth? gaskeun push rank mobile legends santai" \
+                    "golden hour squad $DAY, ready to wind down? yuuuk roblox chill session bareng" \
+                    -n1)
+                  TITLE=$(shuf -e "$DAY evening session" "weekday wind down" "evening gaming protocol" "$DAY transition mode" -n1)
+                  FOOTER_TEXT=$(shuf -e "evening gaming vibes" "$DAY wind down energy" "weekday evening mode" "$DAY gaming time" -n1)
+                  ;;
+                "night")
+                  DESC_RAW=$(shuf -e \
+                    "night champions $DAY, still locked in or winding down? yuuuk unrated valorant bentar terus rest" \
+                    "$DAY nocturnal legends, peaceful late hours? gaskeun classic mobile legends santai" \
+                    "late shift squad $DAY, midnight energy flowing? yuuuk roblox chill session wind down" \
+                    -n1)
+                  TITLE=$(shuf -e "$DAY night session" "weekday nocturnal mode" "late shift gaming" "$DAY midnight protocol" -n1)
+                  FOOTER_TEXT=$(shuf -e "weekday night vibes" "$DAY late shift energy" "midnight gaming mode" "$DAY nocturnal gaming" -n1)
+                  ;;
+              esac
             fi
+            
+            echo "🎯 Selected contextual backup: ${DESC_RAW:0:80}..."
           fi
           
           # Dynamic thumbnail based on time
