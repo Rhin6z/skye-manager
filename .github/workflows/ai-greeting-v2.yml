@@ -145,7 +145,7 @@ jobs:
           cat > /tmp/advanced_ai_generator.py << 'EOL'
           import os, re, random, requests, sys, json
 
-          # Integrated slang dictionary untuk context-aware usage
+          # Integrated slang dictionary untuk context-aware usage (updated from user's file)
           SLANG_GUIDE = {
               "indo_casual": {
                   "yuk": "ajakan halus untuk mulai - use for gentle invitations",
@@ -157,32 +157,33 @@ jobs:
                   "bentar": "sebentar - use for short duration activities",
                   "santai": "rileks/non-kompetitif - use for chill sessions",
                   "rapihin": "merapikan/beresin - use for organizing tasks",
-                  "anjirrr": "ekspresif kaget/excited - use for surprised reactions",
-                  "anjayyy": "ekspresif senang/hype - use for happy/excited moments",
-                  "woyyyy": "panggilan excited - use for energetic calls",
-                  "bjirrrr": "ekspresif shock - use for surprising moments"
+                  "anjirrr": "ekspresif kaget/excited - use sparingly for surprised reactions",
+                  "anjayyy": "ekspresif senang/hype - use sparingly for happy moments",
+                  "woyyyy": "panggilan excited - use sparingly for energetic calls",
+                  "bjirrrr": "ekspresif shock - use sparingly for surprising moments",
+                  "gileee": "takjub santai - use for amazement",
+                  "kocak": "lucu - use for funny situations",
+                  "dah": "penutup/selesai - use for ending"
               },
               "gaming_terms": {
                   "classic": "mode santai (ML/Valo) - use for non-ranked games",
                   "unrated": "match non-rank (Valo) - use for casual Valorant",
                   "push rank": "naik peringkat - use for competitive grinding",
                   "aim training": "latihan aim - use for skill improvement",
-                  "comms on": "voice aktif koordinasi - use for team coordination"
+                  "comms on": "voice aktif koordinasi - use for team coordination",
+                  "queue up": "antri match - use for getting ready to play"
               },
               "english_casual": {
                   "crew": "sapaan ke grup - use for group address", 
                   "squad": "sapaan ke grup - use for team address",
                   "vibes": "suasana/feel - use for mood description",
                   "grind": "kerja keras - use for intensive work/gaming",
-                  "queue up": "antri match - use for getting ready to play",
                   "dialed in": "fokus siap - use when ready and focused",
-                  "heads on": "pikiran siap - use for mental readiness",
-                  "keep it steady": "ritme stabil - use for maintaining pace",
-                  "we move": "lanjut jalan - use for continuing forward",
                   "feeling sharp": "ngerasa fit - use when feeling good",
                   "wind down": "turun tempo/tutup hari - use for ending sessions",
                   "locked in": "fokus banget - use for high concentration",
-                  "chill session": "sesi santai - use for relaxed gaming"
+                  "chill session": "sesi santai - use for relaxed gaming",
+                  "we move": "lanjut jalan - use for continuing forward"
               }
           }
 
@@ -209,14 +210,14 @@ jobs:
               title_emojis = ["😜", "🥵", "🥶", "🤭", "🫣", "🤔", "🫡", "😵", "😮‍💨", "😪", "🤤", "🥱", "🤧", "🤪", "😫", "😖", "😭", "😡", "🤫", "🤨", "😏", "🙃", "😎", "🤯", "🥳", "😈", "👹", "🤡", "👻", "💀", "🔥", "⚡", "💯", "🎯", "🎮", "🕹️", "🎲", "🃏"]
               random_emoji = random.choice(title_emojis)
               
-              # More creative and varied Skytizens greetings with personality
+              # More interactive and natural Skytizens greetings with personality
               skytizens_greetings = {
-                  "morning": ["rise up legends", "wakey wakey warriors", "coffee time crew", "sunrise squad", "early bird gamers", "morning grinders", "breakfast club", "dawn patrol", "AM legends", "fresh start crew"],
-                  "afternoon": ["midday legends", "lunch break warriors", "peak hours squad", "power lunch crew", "afternoon grinders", "daylight squad", "PM vibes", "golden afternoon crew", "peak performance gang", "midday energy"],
-                  "evening": ["golden hour legends", "sunset warriors", "dinner time squad", "twilight crew", "evening grinders", "after hours gang", "dusk patrol", "prime time squad", "evening energy", "wind down crew"],
-                  "night": ["night owls unite", "midnight legends", "insomniac warriors", "late night squad", "nocturnal crew", "after dark gang", "moonlight grinders", "sleepy legends", "night shift crew", "dream team"]
+                  "morning": ["good morning skytizens", "wakey wakey skyers", "morning legends crew", "rise up skytizens", "coffee time skyers", "sunrise skytizens squad", "early bird skytizens"],
+                  "afternoon": ["afternoon skytizens vibes", "midday skyers energy", "lunch break skytizens", "peak hours skyers", "yoww skytizens", "afternoon legends squad", "daylight skyers crew"],
+                  "evening": ["evening skytizens squad", "golden hour skyers", "sunset skytizens crew", "dinner time skyers", "twilight skytizens energy", "evening legends vibes", "prime time skyers"],
+                  "night": ["good night skytizens", "late night skyers", "midnight skytizens crew", "nocturnal skyers squad", "night owl skytizens", "after dark skyers", "sleepy skytizens time"]
               }
-              skytizens_greeting = random.choice(skytizens_greetings.get(time, ["hey legends"]))
+              skytizens_greeting = random.choice(skytizens_greetings.get(time, ["hey skytizens"]))
               
               # Weekday morning special handling
               weekday_morning_note = ""
@@ -230,40 +231,41 @@ jobs:
               """
               
               # Enhanced creative prompt untuk DeepSeek R1 dan Gemini
-              prompt = f"""You are a creative Indonesian gaming community manager for "Skytizens" Discord server. Create an authentic, engaging greeting that sounds natural and fun.
+              prompt = f"""You are a creative Indonesian gaming community manager for "Skytizens" Discord server. Create an authentic, engaging greeting for international server based in Indonesia.
 
               CONTEXT:
               - Day: {day} {time} ({context})  
               - Mood: {mood}
               - Games: Roblox, Mobile Legends, Valorant, Genshin Impact
-              - Style: Casual Indonesian slang mixed with English
-              - Community: Close-knit gaming friends called "Skytizens"
+              - Style: International server (English first sentence + Indonesian second sentence)
+              - Community: Close-knit gaming friends called "Skytizens/Skyers"
 
-              CREATIVITY REQUIREMENTS:
-              - Make it sound like a real friend texting, not a template
-              - Use natural Indonesian slang: "yuk", "gas", "mabar", "anjirrr", "anjayyy", "woyyyy", "bjirrrr"
-              - Include day-specific vibes: "{day} energy", "monday grind", "friday feels"  
-              - Be conversational and authentic
-              - Ask engaging questions about games/mood
-              - Mix English opener with Indonesian response naturally
-              - Add gaming references that fit the time/mood
+              STRICT FORMATTING RULES:
+              1. **SENTENCE 1**: PURE ENGLISH ONLY - ask engaging question about day/mood/gaming
+              2. **SENTENCE 2**: Indonesian slang response with gaming suggestion - keep it SHORT and NATURAL
+              3. **NO EXCESSIVE EMOTICONS** - maximum 1-2 per message, sound like real human
+              4. **AVOID MIXING** languages in same sentence
 
               GENERATE ONLY THIS JSON:
               {{
-                "message": "natural conversational greeting with question + gaming suggestion",
+                "message": "english question + indonesian gaming response (short & natural)",
                 "title": "{random_emoji} {skytizens_greeting}",
-                "footer": "short 2-3 word mood/day phrase"
+                "footer": "short 2-3 word mood phrase"
               }}
 
-              EXAMPLES OF NATURAL STYLE:
-              - "morning warriors! {day} vibes hitting different today? anjayyy yuk warm up dulu valorant before kerja"
-              - "evening squad! weekend energy is real rn, gas mabar ml push rank sambil ngopi?"
-              - "night owls! late {day} grind mode activated? bjirrrr let's squad up roblox till dawn"
-              - "afternoon legends! {day} feels kinda mid? woyyyy gas lah climb ranked genshin buat daily"
+              GOOD EXAMPLES:
+              - "Morning warriors, how's that {day} energy treating you? yuk mabar valorant bentar sebelum kerja"
+              - "Evening squad, weekend vibes hitting right? gas push rank ML santai sambil ngopi"
+              - "Night owls, still locked in for late {day} grind? gaskeun roblox tipis-tipis aja"
+
+              BAD EXAMPLES (AVOID):
+              - Mixed language in one sentence: "Morning skytizens energy masih nendang?"
+              - Too many emoticons: "Anjayyy lagian ngabuburit sambil nge-game kan mantap~ 🚀"
+              - Too long second sentence with multiple topics
 
               {weekday_morning_note if time == "morning" and not is_weekend else ""}
 
-              Be creative, authentic, and conversational. Return ONLY the JSON:"""
+              Keep it authentic, conversational, and natural. Return ONLY the JSON:"""
               
               # Try OpenRouter with DeepSeek R1 first, fallback to Gemini
               api_key = os.environ.get("GEMINI_API_KEY")
@@ -462,21 +464,21 @@ jobs:
               title_emojis = ["😜", "🥵", "🥶", "🤭", "🫣", "🤔", "🫡", "😵", "😮‍💨", "😪", "🤤", "🥱", "🤧", "🤪", "😫", "😖", "😭", "😡", "🤫", "🤨", "😏", "🙃", "😎", "🤯", "🥳", "😈", "👹", "🤡", "👻", "💀", "🔥", "⚡", "💯"]
               random_emoji = random.choice(title_emojis)
               
-              # More creative Skytizens greetings untuk fallback
+              # More interactive Skytizens greetings untuk fallback
               skytizens_greetings = {
-                  "morning": ["rise up legends", "wakey wakey warriors", "coffee time crew", "sunrise squad", "early bird gamers", "morning grinders"],
-                  "afternoon": ["midday legends", "lunch break warriors", "peak hours squad", "power lunch crew", "afternoon grinders", "daylight squad"],
-                  "evening": ["golden hour legends", "sunset warriors", "dinner time squad", "twilight crew", "evening grinders", "after hours gang"],
-                  "night": ["night owls unite", "midnight legends", "insomniac warriors", "late night squad", "nocturnal crew", "after dark gang"]
+                  "morning": ["good morning skytizens", "wakey wakey skyers", "morning legends crew", "rise up skytizens", "coffee time skyers", "sunrise skytizens squad"],
+                  "afternoon": ["afternoon skytizens vibes", "midday skyers energy", "lunch break skytizens", "yoww skytizens", "afternoon legends squad", "daylight skyers crew"],
+                  "evening": ["evening skytizens squad", "golden hour skyers", "sunset skytizens crew", "dinner time skyers", "twilight skytizens energy", "evening legends vibes"],
+                  "night": ["good night skytizens", "late night skyers", "midnight skytizens crew", "nocturnal skyers squad", "night owl skytizens", "after dark skyers"]
               }
-              skytizens_greeting = random.choice(skytizens_greetings.get(time, ["hey legends"]))
+              skytizens_greeting = random.choice(skytizens_greetings.get(time, ["hey skytizens"]))
               
-              # More creative and natural openers
+              # More creative and natural openers (PURE ENGLISH)
               varied_openers = {
-                  "morning": [f"morning warriors", f"rise up {day} squad", f"early birds", f"coffee time legends", f"sunrise crew", f"am grinders"],
-                  "afternoon": [f"midday legends", f"{day} warriors", f"lunch break squad", f"peak hour heroes", f"afternoon grinders", f"daylight crew"],
-                  "evening": [f"evening heroes", f"golden hour {day} crew", f"sunset squad", f"dinner time legends", f"twilight warriors", f"pm grinders"],
-                  "night": [f"night owls", f"midnight {day} squad", f"insomniac legends", f"after dark crew", f"nocturnal warriors", f"late shift heroes"]
+                  "morning": [f"morning warriors", f"rise up crew", f"early birds", f"coffee time squad", f"sunrise crew", f"good morning everyone"],
+                  "afternoon": [f"afternoon legends", f"midday warriors", f"lunch break squad", f"peak hour heroes", f"afternoon crew", f"daylight squad"],
+                  "evening": [f"evening heroes", f"golden hour crew", f"sunset squad", f"dinner time legends", f"twilight warriors", f"evening squad"],
+                  "night": [f"night owls", f"midnight squad", f"late night legends", f"after dark crew", f"nocturnal warriors", f"sleepy legends"]
               }
               
               # More dynamic day contexts with personality
@@ -519,38 +521,43 @@ jobs:
                   ]
               }
               
-              # More creative and natural activities with better slang integration
+              # More creative and natural activities with better format (English + Indonesian)
               if time == "morning" and not is_weekend:
                   activities = [
-                      "yuk rapihin tugas dulu, mabar valorant santai nanti sore",
-                      "gaskeun fokus kerjaan dulu, push rank ml abis maghrib", 
-                      "anjayyy prioritas tanggung jawab dulu, gaming session nanti malem",
-                      "woyyyy selesaiin to-do list dulu, roblox santai before tidur"
+                      "yuk rapihin tugas dulu, mabar valorant nanti sore",
+                      "gas fokus kerjaan dulu, push rank ml abis maghrib", 
+                      "prioritas tanggung jawab dulu, gaming session nanti malem",
+                      "selesaiin to-do list dulu, roblox santai before tidur"
                   ]
-                  titles = [f"{random_emoji} {skytizens_greeting}", f"{random_emoji} {day_context} squad", f"{random_emoji} morning grinders", f"{random_emoji} productivity legends"]
+                  titles = [f"{random_emoji} {skytizens_greeting}", f"{random_emoji} {day_context} squad", f"{random_emoji} morning productivity", f"{random_emoji} weekday grinders"]
                   footers = [f"{day_context} active", f"{day} grind time", f"productivity mode", f"morning energy"]
               elif is_weekend:
                   tag = " <@&1374047008829997157>"
                   activities = [
                       f"gaskeun{tag} mabar valorant santai sambil ngopi",
-                      f"anjayyy{tag} push rank mobile legends tipis-tipis aja",
-                      f"gas{tag} roblox adventure bareng-bareng",
-                      f"gaskeun{tag} comms on, unrated valorant dulu"
+                      f"gas{tag} push rank mobile legends tipis-tipis aja",
+                      f"yuk{tag} roblox adventure bareng-bareng",
+                      f"comms on{tag}, unrated valorant dulu"
                   ]
-                  titles = [f"{random_emoji} {skytizens_greeting}", f"{random_emoji} {day} weekend skytizens", f"{random_emoji} weekend gaming squad", f"{random_emoji} {day} squad skytizens"]
+                  titles = [f"{random_emoji} {skytizens_greeting}", f"{random_emoji} {day} weekend vibes", f"{random_emoji} weekend gaming crew", f"{random_emoji} {day} squad energy"]
                   footers = [f"{day_context} vibes", f"{day} gaming energy", f"weekend {time} active", f"{day} squad online"]
               else:
                   activities = [
-                      "yuuuk quick match valorant bentar",
+                      "yuk quick match valorant bentar",
                       "gaskeun classic mobile legends santai", 
                       "gas aim training tipis-tipis dulu",
-                      "yuuuk roblox chill session bareng"
+                      "yuk roblox chill session bareng"
                   ]
-                  titles = [f"{random_emoji} {skytizens_greeting}", f"{random_emoji} {day} {time} skytizens", f"{random_emoji} {day_context} break squad", f"{random_emoji} gaming pause skytizens"]
+                  titles = [f"{random_emoji} {skytizens_greeting}", f"{random_emoji} {day} {time} vibes", f"{random_emoji} {day_context} break", f"{random_emoji} gaming pause time"]
                   footers = [f"{day_context} energy", f"{day} {time} vibes", f"{day_context} mode", f"{day} gaming active"]
               
               opener = random.choice(varied_openers.get(time, [f"{day} squad"]))
-              question = random.choice(contextual_questions.get(time, ["how's the vibe?"]))
+              question = random.choice([
+                  f"how's that {day_context} energy hitting you?",
+                  f"feeling good about {day_context} vibes?", 
+                  f"ready for some {day_context} gaming?",
+                  f"{day_context} mood looking solid?"
+              ])
               activity = random.choice(activities)
               title = random.choice(titles)
               footer = random.choice(footers)
