@@ -212,12 +212,12 @@ jobs:
               
               # More interactive and natural Skytizens greetings with personality
               skytizens_greetings = {
-                  "morning": ["good morning skytizens", "wakey wakey skyers", "morning legends crew", "rise up skytizens", "coffee time skyers", "sunrise skytizens squad", "early bird skytizens"],
-                  "afternoon": ["afternoon skytizens vibes", "midday skyers energy", "lunch break skytizens", "peak hours skyers", "yoww skytizens", "afternoon legends squad", "daylight skyers crew"],
-                  "evening": ["evening skytizens squad", "golden hour skyers", "sunset skytizens crew", "dinner time skyers", "twilight skytizens energy", "evening legends vibes", "prime time skyers"],
-                  "night": ["good night skytizens", "late night skyers", "midnight skytizens crew", "nocturnal skyers squad", "night owl skytizens", "after dark skyers", "sleepy skytizens time"]
+                  "morning": ["good morning skytizen", "wakey wakey skytizen", "morning legends crew", "rise up skytizen", "coffee time skytizen", "sunrise skytizen squad", "early bird skytizen"],
+                  "afternoon": ["afternoon skytizen vibes", "midday skytizen energy", "lunch break skytizen", "peak hours skytizen", "yoww skytizen", "afternoon legends squad", "daylight skytizen crew"],
+                  "evening": ["evening skytizen squad", "golden hour skytizen", "sunset skytizen crew", "dinner time skytizen", "twilight skytizen energy", "evening legends vibes", "prime time skytizen"],
+                  "night": ["good night skytizen", "late night skytizen", "midnight skytizen crew", "nocturnal skytizen squad", "night owl skytizen", "after dark skytizen", "sleepy skytizen time"]
               }
-              skytizens_greeting = random.choice(skytizens_greetings.get(time, ["hey skytizens"]))
+              skytizens_greeting = random.choice(skytizens_greetings.get(time, ["hey skytizen"]))
               
               # Weekday morning special handling
               weekday_morning_note = ""
@@ -238,7 +238,7 @@ jobs:
               - Mood: {mood}
               - Games: Roblox, Mobile Legends, Valorant, Genshin Impact
               - Style: International server (English first sentence + Indonesian second sentence)
-              - Community: Close-knit gaming friends called "Skytizens/Skyers"
+              - Community: Close-knit gaming friends called "Skytizen"
 
               STRICT FORMATTING RULES:
               1. **SENTENCE 1**: PURE ENGLISH ONLY - ask engaging question about day/mood/gaming
@@ -466,12 +466,12 @@ jobs:
               
               # More interactive Skytizens greetings untuk fallback
               skytizens_greetings = {
-                  "morning": ["good morning skytizens", "wakey wakey skyers", "morning legends crew", "rise up skytizens", "coffee time skyers", "sunrise skytizens squad"],
-                  "afternoon": ["afternoon skytizens vibes", "midday skyers energy", "lunch break skytizens", "yoww skytizens", "afternoon legends squad", "daylight skyers crew"],
-                  "evening": ["evening skytizens squad", "golden hour skyers", "sunset skytizens crew", "dinner time skyers", "twilight skytizens energy", "evening legends vibes"],
-                  "night": ["good night skytizens", "late night skyers", "midnight skytizens crew", "nocturnal skyers squad", "night owl skytizens", "after dark skyers"]
+                  "morning": ["good morning skytizen", "wakey wakey skytizen", "morning legends crew", "rise up skytizen", "coffee time skytizen", "sunrise skytizen squad"],
+                  "afternoon": ["afternoon skytizen vibes", "midday skytizen energy", "lunch break skytizen", "yoww skytizen", "afternoon legends squad", "daylight skytizen crew"],
+                  "evening": ["evening skytizen squad", "golden hour skytizen", "sunset skytizen crew", "dinner time skytizen", "twilight skytizen energy", "evening legends vibes"],
+                  "night": ["good night skytizen", "late night skytizen", "midnight skytizen crew", "nocturnal skytizen squad", "night owl skytizen", "after dark skytizen"]
               }
-              skytizens_greeting = random.choice(skytizens_greetings.get(time, ["hey skytizens"]))
+              skytizens_greeting = random.choice(skytizens_greetings.get(time, ["hey skytizen"]))
               
               # More creative and natural openers (PURE ENGLISH)
               varied_openers = {
@@ -643,7 +643,7 @@ jobs:
                     "monday legends, energy levels looking good? gaskeun fokus kerjaan dulu, push rank mobile legends abis magrib" \
                     "morning heroes monday, dialed in for productivity? yuuuk prioritas tugas dulu, roblox santai nanti malem" \
                     -n1)
-                  TITLE=$(shuf -e "morning skytizens" "rise up skytizens" "monday morning squad" "wakey wakey skytizens" -n1)
+                  TITLE=$(shuf -e "morning skytizen" "rise up skytizen" "monday morning squad" "wakey wakey skytizen" -n1)
                   ;;
                 *)
                   DESC_RAW=$(shuf -e \
@@ -651,7 +651,7 @@ jobs:
                     "$DAY warriors, feeling sharp for productivity? gaskeun fokus tugas dulu, mabar valorant abis kerja" \
                     "morning squad $DAY, dialed in for the grind? yuuuk rapihin kerjaan dulu, push rank mobile legends nanti malem" \
                     -n1)
-                  TITLE=$(shuf -e "morning skytizens" "rise up skytizens" "good morning squad" "wakey wakey skytizens" -n1)
+                  TITLE=$(shuf -e "morning skytizen" "rise up skytizen" "good morning squad" "wakey wakey skytizen" -n1)
                   ;;
               esac
               FOOTER_TEXT=$(shuf -e "productivity first" "weekday warrior energy" "work-gaming balance" "grind mode active" -n1)
@@ -665,7 +665,7 @@ jobs:
                     "$DAY warriors, feeling fresh for gaming? yuuuk <@&1374047008829997157> push rank mobile legends tipis-tipis" \
                     "weekend morning squad, energy levels good? gas <@&1374047008829997157> roblox adventure bareng-bareng" \
                     -n1)
-                  TITLE=$(shuf -e "morning skytizens" "rise up skytizens" "weekend morning squad" "good morning skytizens" -n1)
+                  TITLE=$(shuf -e "morning skytizen" "rise up skytizen" "weekend morning squad" "good morning skytizen" -n1)
                   FOOTER_TEXT=$(shuf -e "weekend morning vibes" "$DAY gaming energy" "weekend mode active" "$DAY squad online" -n1)
                   ;;
                 "afternoon")
@@ -674,7 +674,7 @@ jobs:
                     "$DAY squad, post-lunch vibes hitting right? yuuuk <@&1374047008829997157> classic mobile legends santai" \
                     "weekend afternoon legends, keeping energy steady? gas <@&1374047008829997157> roblox chill session" \
                     -n1)
-                  TITLE=$(shuf -e "afternoon skytizens" "midday skytizens" "hey skytizens" "$DAY afternoon squad" -n1)
+                  TITLE=$(shuf -e "afternoon skytizen" "midday skytizen" "hey skytizen" "$DAY afternoon squad" -n1)
                   FOOTER_TEXT=$(shuf -e "weekend afternoon vibes" "$DAY gaming flow" "midday gaming energy" "$DAY squad active" -n1)
                   ;;
                 "evening")
@@ -683,7 +683,7 @@ jobs:
                     "$DAY crew, golden hour vibes hitting? yuuuk <@&1374047008829997157> mabar mobile legends tipis-tipis" \
                     "weekend evening squad, ready to wind down? gas <@&1374047008829997157> aim training bentar terus santai" \
                     -n1)
-                  TITLE=$(shuf -e "evening skytizens" "golden hour skytizens" "sunset skytizens" "$DAY evening squad" -n1)
+                  TITLE=$(shuf -e "evening skytizen" "golden hour skytizen" "sunset skytizen" "$DAY evening squad" -n1)
                   FOOTER_TEXT=$(shuf -e "weekend evening vibes" "$DAY chill mode" "golden hour energy" "$DAY wind down active" -n1)
                   ;;
                 "night")
@@ -692,7 +692,7 @@ jobs:
                     "$DAY nocturnal squad, midnight energy flowing? yuuuk <@&1374047008829997157> push rank mobile legends sampai pagi" \
                     "weekend night warriors, peaceful hours or chaos? gas <@&1374047008829997157> roblox adventure midnight session" \
                     -n1)
-                  TITLE=$(shuf -e "night skytizens" "late night skytizens" "midnight skytizens" "$DAY night squad" -n1)
+                  TITLE=$(shuf -e "night skytizen" "late night skytizen" "midnight skytizen" "$DAY night squad" -n1)
                   FOOTER_TEXT=$(shuf -e "weekend night vibes" "$DAY nocturnal energy" "midnight gaming mode" "$DAY night squad online" -n1)
                   ;;
               esac
@@ -706,7 +706,7 @@ jobs:
                     "$DAY squad, post-lunch flow dialed in? gaskeun classic mobile legends tipis-tipis" \
                     "midday legends $DAY, energy steady? yuuuk aim training bentar terus balik produktif" \
                     -n1)
-                  TITLE=$(shuf -e "afternoon skytizens" "midday skytizens" "hey skytizens" "$DAY afternoon break" -n1)
+                  TITLE=$(shuf -e "afternoon skytizen" "midday skytizen" "hey skytizen" "$DAY afternoon break" -n1)
                   FOOTER_TEXT=$(shuf -e "afternoon gaming energy" "$DAY midday vibes" "weekday break mode" "$DAY gaming flow" -n1)
                   ;;
                 "evening")
@@ -715,7 +715,7 @@ jobs:
                     "$DAY crew, evening transition smooth? gaskeun push rank mobile legends santai" \
                     "golden hour squad $DAY, ready to wind down? yuuuk roblox chill session bareng" \
                     -n1)
-                  TITLE=$(shuf -e "evening skytizens" "golden hour skytizens" "sunset skytizens" "$DAY evening squad" -n1)
+                  TITLE=$(shuf -e "evening skytizen" "golden hour skytizen" "sunset skytizen" "$DAY evening squad" -n1)
                   FOOTER_TEXT=$(shuf -e "evening gaming vibes" "$DAY wind down energy" "weekday evening mode" "$DAY gaming time" -n1)
                   ;;
                 "night")
@@ -724,7 +724,7 @@ jobs:
                     "$DAY nocturnal legends, peaceful late hours? gaskeun classic mobile legends santai" \
                     "late shift squad $DAY, midnight energy flowing? yuuuk roblox chill session wind down" \
                     -n1)
-                  TITLE=$(shuf -e "night skytizens" "late night skytizens" "midnight skytizens" "$DAY night squad" -n1)
+                  TITLE=$(shuf -e "night skytizen" "late night skytizen" "midnight skytizen" "$DAY night squad" -n1)
                   FOOTER_TEXT=$(shuf -e "weekday night vibes" "$DAY late shift energy" "midnight gaming mode" "$DAY nocturnal gaming" -n1)
                   ;;
               esac
