@@ -1,14 +1,14 @@
 {
   "Tanggal": "25 Agu 2025",
-  "Jam": "16:48:45 WIB",
-  "DateTime": "2025-08-25T09:48:45+00:00",
-  "Coordinates": "-2.92,119.41",
-  "Lintang": "2.92 LS",
-  "Bujur": "119.41 BT",
-  "Magnitude": "2.7",
-  "Kedalaman": "7 km",
-  "Wilayah": "Pusat gempa berada di darat 9 km Tenggara Mamasa",
+  "Jam": "17:19:15 WIB",
+  "DateTime": "2025-08-25T10:19:15+00:00",
+  "Coordinates": "-3.25,135.64",
+  "Lintang": "3.25 LS",
+  "Bujur": "135.64 BT",
+  "Magnitude": "3.2",
+  "Kedalaman": "6 km",
+  "Wilayah": "Pusat gempa berada di darat 19 km timur laut Nabire",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III Mamasa",
-  "Shakemap": "20250825164845.mmi.jpg"
+  "Dirasakan": "II-III Nabire",
+  "Shakemap": "20250825171915.mmi.jpg"
 }
