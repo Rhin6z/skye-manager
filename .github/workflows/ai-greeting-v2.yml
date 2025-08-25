@@ -291,7 +291,7 @@ jobs:
                       "Content-Type": "application/json"
                   }
                   payload = {
-                      "model": "deepseek/deepseek-r1",
+                      "model": "deepseek/deepseek-r1:free",
                       "messages": [
                           {"role": "user", "content": prompt}
                       ],
