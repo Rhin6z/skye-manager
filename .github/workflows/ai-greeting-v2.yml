@@ -40,8 +40,6 @@ jobs:
         id: context
         run: |
           export TZ='Asia/Jakarta'
-          
-          OPENWRT_MODE=false
           if command -v opkg >/dev/null 2>&1 || [[ -f /etc/openwrt_release ]] || [[ "${{ github.event.inputs.trigger_source }}" == "openwrt" ]]; then
             OPENWRT_MODE=true
             echo "🏠 OpenWrt detected - optimized timing mode"
@@ -109,8 +107,6 @@ jobs:
         id: creative_context
         run: |
           echo "🎨 Setting up creative context for AI generation..."
-          
-          # Enhanced mood and vibe combinations for more natural output
           MOOD_WORDS=("chill" "energetic" "focused" "relaxed" "cozy" "vibrant" "zen" "balanced")
           VIBES=("gaming energy" "squad vibes" "community spirit" "team energy" "collective mood" "crew connection" "shared moments")
           
@@ -134,36 +130,28 @@ jobs:
         run: |
           echo "🤖 Generating natural AI content with gaming slang..."
 
-          # Weekend flag
           if [ "$CONTEXT" = "weekend" ]; then
             export IS_WEEKEND=true
           else
             export IS_WEEKEND=false
           fi
           
-          # Enhanced AI generator dengan gaming slang integration
           cat > /tmp/slang_ai_generator.py << 'EOL'
           import os, re, random, requests, sys, json
 
-          # Enhanced gaming slang dictionary dari kamus_slang.txt (expanded)
           GAMING_SLANG = {
               "indo_slang": {
                   "yuk": "ajakan halus untuk mulai",
                   "yuuuk": "ajakan halus lebih excited", 
                   "yok": "ajakan halus",
                   "ayoo": "ajakan halus",
-                  "gas": "ajakan tegas langsung jalan",
-                  "gaskeun": "ajakan push terus tanpa ragu",
+                  "gassin": "ajakan tegas langsung jalan",
                   "mabar": "main bareng",
                   "classic": "mode santai (ml/valo)",
                   "unrated": "match non-rank (valo)",
-                  "push_rank": "naik peringkat",
-                  "aim_training": "latihan aim",
-                  "comms": "voice aktif koordinasi",
-                  "comms_on": "voice aktif koordinasi",
-                  "to_do": "daftar tugas",
+                  "push rank": "naik peringkat",
                   "rapihin": "merapikan/beresin",
-                  "tipis_tipis": "sedikit/ringan",
+                  "tipis tipis": "sedikit/ringan",
                   "bentar": "sebentar",
                   "santai": "rileks/non-kompetitif",
                   "chill": "rileks/non-kompetitif",
@@ -178,49 +166,25 @@ jobs:
                   "ytta": "yang tau tau aja",
                   "dah": "penutup/selesai",
                   "ngulik": "eksplor/otak-atik",
-                  "ngide": "lempar ide",
+                  "ngide": "sok lempar ide",
                   "mantul": "mantap betul",
                   "bocil": "pemain muda (hati-hati penggunaan)",
                   "nongkrong": "hang out virtual",
+                  "nongki": "hang out virtual",
                   "rebahan": "santai sambil tiduran",
-                  "semangin": "semangatin/motivasi"
               },
               "english_slang": {
-                  "crew": "sapaan ke grup",
                   "squad": "sapaan ke grup", 
                   "team": "sapaan ke grup",
                   "fam": "family/keluarga casual",
                   "vibes": "suasana/feel",
                   "grind": "kerja keras",
-                  "queue_up": "antri match",
-                  "dialed_in": "fokus siap",
-                  "booting": "masih pemanasan",
-                  "heads_on": "pikiran siap",
-                  "keep_it_steady": "ritme stabil",
-                  "we_move": "lanjut jalan",
-                  "feeling_sharp": "ngerasa fit",
-                  "light_and_easy": "santai, low effort",
-                  "wind_down": "turun tempo/tutup hari",
-                  "locked_in": "fokus banget",
-                  "one_step_at_a_time": "pelan tapi pasti",
-                  "chill_session": "sesi santai",
-                  "low_tilt": "emosi rendah",
-                  "after_hours": "di luar jam kerja",
                   "afk": "away from keyboard",
                   "brb": "be right back",
                   "gtg": "got to go (cabut)",
                   "gg": "good game",
-                  "op": "overpowered (meta kuat)",
-                  "nerf": "lemahkan (patch)",
-                  "buff": "kuatkan (patch)",
-                  "meta": "most effective tactic",
-                  "clutch": "menangin momen genting",
-                  "frag": "kill/elim",
-                  "carry": "mengangkat tim",
-                  "throw": "main buruk sampai ngelempar game",
                   "lol": "ketawa ringan",
                   "lmao": "ketawa lebih kuat",
-                  "kek": "ketawa gaya gamer"
               }
           }
 
@@ -236,11 +200,10 @@ jobs:
               if not api_key:
                   raise Exception("No API key")
               
-              # Minimal emojis untuk title saja
-              title_emojis = ["🌅", "☀️", "🌇", "🌙", "🎮", "👋", "💫", "✨"]
+              # Emoji set yang diminta user
+              title_emojis = ["😜", "🥵", "🥶", "🤭", "🫣", "🤔", "🫡", "😵", "😮‍💨", "😪", "🤤", "🥱", "🤧", "🤪", "😫", "😖", "�", "�", "🤫"]
               random_emoji = random.choice(title_emojis)
               
-              # Natural greetings tanpa excessive emoticons
               natural_greetings = {
                   "morning": ["morning skytizen", "rise and shine crew", "good morning everyone", "morning legends"],
                   "afternoon": ["afternoon skytizen", "hey everyone", "afternoon squad", "what's up skytizen"],
@@ -249,7 +212,6 @@ jobs:
               }
               natural_greeting = random.choice(natural_greetings.get(time, ["hey skytizen"]))
               
-              # Format slang untuk prompt AI
               slang_context = "GAMING SLANG DICTIONARY (use naturally in appropriate contexts):\n"
               
               slang_context += "\nINDONESIAN SLANG (for second sentence):\n"
@@ -260,7 +222,6 @@ jobs:
               for term, meaning in GAMING_SLANG["english_slang"].items():
                   slang_context += f"- {term}: {meaning}\n"
               
-              # Enhanced prompt dengan fine-tuning berdasarkan sample yang bagus
               prompt = f"""You are a friendly Indonesian gaming community manager for "Skytizens". Create natural, human-like greeting that sounds authentic and engaging.
 
               CONTEXT:
@@ -276,7 +237,7 @@ jobs:
               2. **SECOND SENTENCE**: Indonesian response with CONTEXT-APPROPRIATE suggestion:
                  - WEEKDAY MORNING/AFTERNOON: Prioritize work/school/exercise first, gaming later
                  - WEEKDAY EVENING/NIGHT: Gaming is OK since work/school done
-                 - WEEKEND: Gaming anytime is fine
+                 - WEEKEND: Gaming anytime is fine + ADD ROLE TAG <@&1374047008829997157> naturally
               3. **TONE**: Sound like real friend texting, not template or bot
               4. **SLANG**: Use naturally, don't force it - mix appropriately 
               5. **LENGTH**: Keep it conversational, not too long
@@ -291,8 +252,13 @@ jobs:
               PERFECT EXAMPLES (context-aware):
               WEEKDAY MORNING: "Hey Skytizens, ready to conquer Monday productivity? yuk semangatin kerja dulu, mabar valorant nanti sore"
               WEEKDAY AFTERNOON: "What's up crew, how's the work grind? break makan siang dulu, aim training bentar boleh"
-              WEEKEND: "Hey fam, Saturday vibes hitting right? gas mabar ML santai sambil ngopi"
+              WEEKEND: "Hey fam, Saturday vibes hitting right? gas mabar ML santai <@&1374047008829997157> sambil ngopi"
               EVENING/NIGHT: "Night fam, how's the monday vibe treating your gaming spirit? gas genshin dulu sambil rebahan"
+
+              WEEKEND ROLE TAGGING:
+              - ALWAYS include <@&1374047008829997157> in weekend messages naturally
+              - Place it within the Indonesian sentence, not at the end
+              - Examples: "gas mabar <@&1374047008829997157> santai sambil ngopi", "yuk push rank <@&1374047008829997157> tipis-tipis"
 
               WEEKDAY PRODUCTIVITY FOCUS:
               - Morning/Afternoon: "semangatin kerja/sekolah dulu", "rapihin tugas dulu", "olahraga bentar dulu"
@@ -350,13 +316,11 @@ jobs:
                                   try:
                                       result = json.loads(match)
                                       if all(key in result for key in ['message', 'title', 'footer']):
-                                          # Validate and clean
                                           result['message'] = result['message'].lower().strip()
                                           result['title'] = result['title'].lower().strip()
                                           result['footer'] = result['footer'].lower().strip()
                                           result['source'] = 'deepseek-r1'
                                           
-                                          # Remove excessive emoticons
                                           result['message'] = re.sub(r'[^\w\s.,?!/]', '', result['message'])
                                           print("✅ DeepSeek R1 generation successful!")
                                           return result
@@ -364,10 +328,6 @@ jobs:
                                       continue
                   except Exception as e:
                       print(f"⚠️ OpenRouter error: {e}")
-              
-              # Fallback to Gemini
-              if not api_key:
-                  raise Exception("No API keys available")
               
               print("🤖 Fallback to Gemini Flash...")
               url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
@@ -389,14 +349,12 @@ jobs:
                   if 'candidates' in data and len(data['candidates']) > 0:
                       candidate = data['candidates'][0]
                       
-                      # Extract text
                       ai_text = ""
                       if 'content' in candidate and 'parts' in candidate['content']:
                           if len(candidate['content']['parts']) > 0 and 'text' in candidate['content']['parts'][0]:
                               ai_text = candidate['content']['parts'][0]['text'].strip()
                       
                       if ai_text:
-                          # Extract JSON
                           json_pattern = r'\{[^}]*"message"[^}]*"title"[^}]*"footer"[^}]*\}'
                           json_match = re.search(json_pattern, ai_text, re.DOTALL)
                           
@@ -404,12 +362,10 @@ jobs:
                               try:
                                   content = json.loads(json_match.group())
                                   if all(key in content for key in ['message', 'title', 'footer']):
-                                      # Clean and validate
                                       content['message'] = content['message'].lower().strip()
                                       content['title'] = content['title'].lower().strip()
                                       content['footer'] = content['footer'].lower().strip()
                                       
-                                      # Remove excessive emoticons
                                       content['message'] = re.sub(r'[^\w\s.,?!/]', '', content['message'])
                                       
                                       return {
@@ -427,16 +383,19 @@ jobs:
               day = os.environ.get("CURRENT_DAY", "today").lower()
               time = os.environ.get("TIME_OF_DAY", "day")
               context = os.environ.get("CONTEXT", "weekday")
+              is_weekend = context == "weekend"
               
-              # Natural titles following the pattern
+              # Emoji set yang sama dengan AI
+              title_emojis = ["😜", "🥵", "🥶", "🤭", "🫣", "🤔", "🫡", "😵", "😮‍💨", "😪", "🤤", "🥱", "🤧", "🤪", "😫", "😖", "😭", "😡", "🤫"]
+              random_emoji = random.choice(title_emojis)
+              
               titles = {
-                  "morning": ["wakey wakey skytizen", "rise and shine crew", "morning skytizen energy", "sunrise squad vibes"],
-                  "afternoon": ["midday skytizen energy", "afternoon vibes crew", "peak hours skytizen", "daylight squad mood"],
-                  "evening": ["sunset skytizen crew", "golden hour fam", "evening squad vibes", "twilight skytizen energy"],
-                  "night": ["nocturnal skytizen squad", "midnight crew energy", "night owl skytizen", "after dark squad"]
+                  "morning": [f"{random_emoji} wakey wakey skytizen", f"{random_emoji} rise and shine crew", f"{random_emoji} morning skytizen energy", f"{random_emoji} sunrise squad vibes"],
+                  "afternoon": [f"{random_emoji} midday skytizen energy", f"{random_emoji} afternoon vibes crew", f"{random_emoji} peak hours skytizen", f"{random_emoji} daylight squad mood"],
+                  "evening": [f"{random_emoji} sunset skytizen crew", f"{random_emoji} golden hour fam", f"{random_emoji} evening squad vibes", f"{random_emoji} twilight skytizen energy"],
+                  "night": [f"{random_emoji} nocturnal skytizen squad", f"{random_emoji} midnight crew energy", f"{random_emoji} night owl skytizen", f"{random_emoji} after dark squad"]
               }
               
-              # Enhanced English questions (first sentence)
               questions = {
                   "morning": [
                       f"Hey Skytizens, who's ready to conquer {day} with some early grind?",
@@ -464,7 +423,6 @@ jobs:
                   ]
               }
               
-              # Enhanced Indonesian gaming suggestions dengan logika yang tepat
               activities = {
                   "morning": [
                       "yuk semangatin kerja dulu, mabar valorant nanti sore" if not is_weekend else "gas mabar valorant santai sambil ngopi",
@@ -492,7 +450,6 @@ jobs:
                   ]
               }
               
-              # Natural footers
               footers = {
                   "morning": ["grind first", "morning energy", "productivity mode", "fresh start"],
                   "afternoon": ["slow grind mood", "steady pace", "afternoon chill", "midday vibes"],
@@ -530,19 +487,10 @@ jobs:
               f.write(result['footer'])
           with open('/tmp/ai_source.txt', 'w', encoding='utf-8') as f:
               f.write(result['source'])
-          
-          print(f"🎯 Generated natural content with slang:")
-          print(f"   Message: {result['message'][:70]}...")
-          print(f"   Title: {result['title']}")
-          print(f"   Footer: {result['footer']}")
-          print(f"   Source: {result['source']}")
           EOL
 
-          # Execute the slang generator
           echo "🧪 Executing AI generator with gaming slang..."
           python3 /tmp/slang_ai_generator.py
-          
-          # Process results
           if [[ -s /tmp/ai_message.txt && -s /tmp/ai_title.txt && -s /tmp/ai_footer.txt ]]; then
             AI_MESSAGE=$(cat /tmp/ai_message.txt)
             AI_TITLE=$(cat /tmp/ai_title.txt)
