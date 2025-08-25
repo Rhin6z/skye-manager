@@ -1,14 +1,14 @@
 {
   "Tanggal": "25 Agu 2025",
-  "Jam": "03:27:52 WIB",
-  "DateTime": "2025-08-24T20:27:52+00:00",
-  "Coordinates": "-6.48,107.25",
-  "Lintang": "6.48 LS",
-  "Bujur": "107.25 BT",
-  "Magnitude": "3.2",
-  "Kedalaman": "4 km",
-  "Wilayah": "Pusat gempa berada di darat 15 km tenggara Kab. Bekasi",
+  "Jam": "07:53:55 WIB",
+  "DateTime": "2025-08-25T00:53:55+00:00",
+  "Coordinates": "-3.31,135.59",
+  "Lintang": "3.31 LS",
+  "Bujur": "135.59 BT",
+  "Magnitude": "3.6",
+  "Kedalaman": "19 km",
+  "Wilayah": "Pusat gempa berada di darat 11 km Timur Laut Nabire",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II-III Karawang, II Cikarang",
-  "Shakemap": "20250825032752.mmi.jpg"
+  "Dirasakan": "II-III Nabire",
+  "Shakemap": "20250825075355.mmi.jpg"
 }
