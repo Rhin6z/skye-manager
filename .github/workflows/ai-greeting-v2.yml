@@ -273,23 +273,31 @@ jobs:
 
               CRITICAL FORMATTING RULES:
               1. **FIRST SENTENCE**: Pure English greeting + question about day/mood/vibes (natural, conversational)
-              2. **SECOND SENTENCE**: Indonesian gaming suggestion with slang (short, natural flow)
+              2. **SECOND SENTENCE**: Indonesian response with CONTEXT-APPROPRIATE suggestion:
+                 - WEEKDAY MORNING/AFTERNOON: Prioritize work/school/exercise first, gaming later
+                 - WEEKDAY EVENING/NIGHT: Gaming is OK since work/school done
+                 - WEEKEND: Gaming anytime is fine
               3. **TONE**: Sound like real friend texting, not template or bot
               4. **SLANG**: Use naturally, don't force it - mix appropriately 
               5. **LENGTH**: Keep it conversational, not too long
 
               GENERATE ONLY THIS JSON:
               {{
-                "message": "english question about day/mood + indonesian gaming suggestion",
+                "message": "english question about day/mood + indonesian context-appropriate suggestion",
                 "title": "{random_emoji} {natural_greeting}",
                 "footer": "short mood/activity phrase"
               }}
 
-              PERFECT EXAMPLES (based on your style):
-              - "Hey Skytizens, who's keeping the {day} afternoon vibes chill? mabar ML santai yuk biar ga stress"
-              - "Night fam, how's the {day} vibe treating your gaming spirit? gas genshin dulu sambil rebahan"
-              - "Ready to conquer {day} with some post-work victory laps? yok semangin kerja dulu, nanti malem gas mabar Valorant"
-              - "How's that {day} zen mode treating your grind? yok main Genshin dulu sambil nongkrong virtual"
+              PERFECT EXAMPLES (context-aware):
+              WEEKDAY MORNING: "Hey Skytizens, ready to conquer Monday productivity? yuk semangatin kerja dulu, mabar valorant nanti sore"
+              WEEKDAY AFTERNOON: "What's up crew, how's the work grind? break makan siang dulu, aim training bentar boleh"
+              WEEKEND: "Hey fam, Saturday vibes hitting right? gas mabar ML santai sambil ngopi"
+              EVENING/NIGHT: "Night fam, how's the monday vibe treating your gaming spirit? gas genshin dulu sambil rebahan"
+
+              WEEKDAY PRODUCTIVITY FOCUS:
+              - Morning/Afternoon: "semangatin kerja/sekolah dulu", "rapihin tugas dulu", "olahraga bentar dulu"
+              - Suggest gaming for "nanti sore/malem" (later evening/night)
+              - Light breaks OK: "aim training bentar", "classic tipis-tipis"
 
               STYLE NOTES:
               - Use "Skytizens" or "fam" for address
@@ -456,30 +464,30 @@ jobs:
                   ]
               }
               
-              # Natural Indonesian gaming suggestions (second sentence)
+              # Enhanced Indonesian gaming suggestions dengan logika yang tepat
               activities = {
                   "morning": [
-                      "yok semangin kerja dulu, nanti malem gas mabar Valorant",
-                      "gas rapihin to-do dulu, abis itu main ML santai",
-                      "yuk fokus produktif dulu, sore nanti push rank",
-                      "semangin grind dulu, malem kita ngulik Genshin"
+                      "yuk semangatin kerja dulu, mabar valorant nanti sore" if not is_weekend else "gas mabar valorant santai sambil ngopi",
+                      "rapihin tugas kuliah dulu, push rank ml nanti malem" if not is_weekend else "yuk push rank mobile legends tipis-tipis",
+                      "fokus sekolah dulu ya, gaming session abis maghrib" if not is_weekend else "gas main roblox bareng-bareng",
+                      "olahraga bentar dulu, nanti sore ngulik genshin" if not is_weekend else "comms on, unrated valorant dulu"
                   ],
                   "afternoon": [
-                      "mabar ML santai yuk biar ga stress",
-                      "gas main Valorant unrated bentar",
-                      "yok ngulik Genshin dulu sambil chill",
-                      "main classic ML tipis-tipis aja"
+                      "istirahat makan siang dulu, aim training bentar boleh" if not is_weekend else "mabar ML santai yuk biar ga stress",
+                      "break sejenak dari kerja, classic ml tipis-tipis" if not is_weekend else "gas main Valorant unrated bentar", 
+                      "recharge energy dulu, mini session genshin ok" if not is_weekend else "yok ngulik Genshin dulu sambil chill",
+                      "stretching dulu, terus aim training 10 menit" if not is_weekend else "main classic ML tipis-tipis aja"
                   ],
                   "evening": [
                       "yok main Genshin dulu sambil nongkrong virtual",
-                      "gas mabar Valorant santai sambil ngopi",
+                      "gas mabar Valorant santai sambil ngopi", 
                       "main ML push rank tipis-tipis yuk",
                       "chill session Genshin sambil rebahan"
                   ],
                   "night": [
                       "gas genshin dulu sambil rebahan",
                       "yok mabar Valorant bentar sebelum tidur",
-                      "main ML classic santai aja",
+                      "main ML classic santai aja", 
                       "ngulik game tipis-tipis sambil nongkrong"
                   ]
               }
@@ -569,48 +577,64 @@ jobs:
             
             DAY=$(echo "$CURRENT_DAY" | tr '[:upper:]' '[:lower:]')
             
-            # Natural backup options dengan slang
+            # Natural backup options dengan logika yang tepat
             case "$TIME_OF_DAY" in
               "morning")
                 if [[ "$CONTEXT" == "weekday" ]]; then
                   DESCS=(
-                    "how's that monday morning grind? yuk rapihin to-do dulu, gaming nanti sore"
-                    "morning legends, dialed in for the daily grind? gas fokus kerjaan dulu, mabar nanti malem"
-                    "rise and shine everyone, how's the morning vibe? yuk selesaiin tanggung jawab dulu, main game nanti"
+                    "hey skytizens, ready to crush monday productivity? yuk semangatin kerja dulu, mabar valorant nanti sore"
+                    "morning legends, feeling sharp for the daily grind? rapihin tugas kuliah dulu, gaming session nanti malem"
+                    "rise and shine everyone, monday motivation activated? fokus sekolah dulu ya, push rank ml abis maghrib"
+                    "good morning crew, how's that weekday energy? olahraga bentar dulu, ngulik genshin nanti sore"
                   )
                 else
                   DESCS=(
-                    "weekend morning everyone, how's the vibe? gas mabar valorant santai sambil ngopi"
+                    "weekend morning everyone, how's the saturday vibes? gas mabar valorant santai sambil ngopi"
                     "good morning weekend crew, ready for some gaming? yuk push rank mobile legends tipis-tipis"
                     "morning everyone, weekend energy going strong? gas main roblox bareng-bareng"
+                    "rise and shine weekend squad, feeling relaxed? comms on, unrated valorant dulu"
                   )
                 fi
                 TITLES=("morning skytizen" "rise and shine" "good morning everyone")
                 FOOTERS=("morning energy" "fresh start" "grind mode")
                 ;;
               "afternoon")
-                DESCS=(
-                  "how's the afternoon flow going? yuk quick match valorant bentar"
-                  "afternoon squad, keeping it steady? gas classic mobile legends santai"
-                  "what's everyone up to this afternoon? main genshin tipis-tipis yuk"
-                )
+                if [[ "$CONTEXT" == "weekday" ]]; then
+                  DESCS=(
+                    "hey crew, how's the work grind going? break makan siang dulu, aim training bentar boleh"
+                    "afternoon squad, keeping the productivity steady? istirahat sejenak, classic ml tipis-tipis ok"
+                    "what's everyone up to this afternoon? recharge energy dulu, mini session genshin boleh"
+                    "midday check-in everyone, work flow smooth? stretching dulu, terus main game bentar"
+                  )
+                else
+                  DESCS=(
+                    "afternoon weekend vibes, how's everyone feeling? mabar ML santai yuk biar ga stress"
+                    "hey weekend crew, saturday afternoon energy? gas main valorant unrated bentar"
+                    "weekend afternoon squad, ready for gaming? yok ngulik genshin dulu sambil chill"
+                    "saturday afternoon everyone, weekend mood activated? main classic ML tipis-tipis aja"
+                  )
+                fi
                 TITLES=("afternoon skytizen" "hey everyone" "afternoon squad")
                 FOOTERS=("afternoon vibes" "steady pace" "day energy")
                 ;;
               "evening")
+                # Evening always OK for gaming (work/school done)
                 DESCS=(
-                  "how was everyone's day grind? yuk mabar valorant santai"
-                  "evening folks, ready to wind down? gas push rank ml sesi pendek"
-                  "how's the evening vibe everyone? main genshin wind down yuk"
+                  "evening everyone, how was the monday grind? yuk mabar valorant santai sambil ngopi"
+                  "hey folks, ready to wind down from work? gas push rank ml sesi pendek"
+                  "evening squad, how's the post-work vibe? main genshin wind down yuk"
+                  "sunset time everyone, feeling relaxed? gas main classic ml sambil nongkrong"
                 )
                 TITLES=("evening skytizen" "hey folks" "evening crew")
                 FOOTERS=("evening mood" "wind down" "chill time")
                 ;;
               "night")
+                # Night always OK for gaming
                 DESCS=(
-                  "after hours crew still up? yuk unrated valorant bentar"
+                  "night fam, how's the monday vibe treating your gaming spirit? gas genshin dulu sambil rebahan"
+                  "after hours crew still up? yuk unrated valorant bentar sebelum tidur"
                   "night owls checking in, how's the energy? gas classic mobile legends tipis"
-                  "nocturnal squad still grinding? main roblox santai sebelum tidur"
+                  "nocturnal squad still grinding? main roblox santai sambil nongkrong virtual"
                 )
                 TITLES=("night skytizen" "late night crew" "night owls")
                 FOOTERS=("night energy" "late night" "after hours")
