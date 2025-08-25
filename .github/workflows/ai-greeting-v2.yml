@@ -278,7 +278,13 @@ jobs:
               - Too formal tone
               - Forced slang placement
 
-              Make it sound exactly like the good examples. Return ONLY the JSON:"""
+              Make it sound exactly like the good examples. Return ONLY the JSON without any explanation or reasoning:
+
+              {{
+                "message": "english question about day/mood + indonesian context-appropriate suggestion",
+                "title": "{random_emoji} {natural_greeting}",
+                "footer": "short mood/activity phrase"
+              }}"""
               
               api_key = os.environ.get("GEMINI_API_KEY")
               openrouter_key = os.environ.get("OPENROUTER_API_KEY") 
@@ -295,9 +301,9 @@ jobs:
                       "messages": [
                           {"role": "user", "content": prompt}
                       ],
-                      "temperature": 0.95,
-                      "max_tokens": 400,
-                      "top_p": 0.92
+                      "temperature": 0.9,
+                      "max_tokens": 800,
+                      "top_p": 0.9
                   }
                   
                   try:
@@ -307,10 +313,18 @@ jobs:
                           if 'choices' in data and len(data['choices']) > 0:
                               content = data['choices'][0]['message']['content'].strip()
                               print(f"🧠 DeepSeek R1 response received: {len(content)} chars")
+                              print(f"🔍 DeepSeek content preview: {content[:200]}...")
                               
-                              # Extract JSON from response
-                              json_pattern = r'\{[^{}]*"message"[^{}]*"title"[^{}]*"footer"[^{}]*\}'
-                              matches = re.findall(json_pattern, content, re.DOTALL)
+                              json_patterns = [
+                                  r'\{[^{}]*"message"[^{}]*"title"[^{}]*"footer"[^{}]*\}',
+                                  r'\{.*?"message".*?"title".*?"footer".*?\}',
+                                  r'\{[\s\S]*?"message"[\s\S]*?"title"[\s\S]*?"footer"[\s\S]*?\}'
+                              ]
+                              
+                              for pattern in json_patterns:
+                                  matches = re.findall(pattern, content, re.DOTALL)
+                                  if matches:
+                                      break
                               
                               for match in matches:
                                   try:
@@ -330,14 +344,14 @@ jobs:
                       print(f"⚠️ OpenRouter error: {e}")
               
               print("🤖 Fallback to Gemini Flash...")
-              url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+              url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
               payload = {
                   "contents": [{"parts": [{"text": prompt}]}],
                   "generationConfig": {
                       "temperature": 0.95,
                       "topK": 40,
                       "topP": 0.92,
-                      "maxOutputTokens": 400,
+                      "maxOutputTokens": 700,
                   }
               }
               
