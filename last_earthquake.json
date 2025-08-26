@@ -1,14 +1,14 @@
 {
-  "Tanggal": "26 Agu 2025",
-  "Jam": "10:51:17 WIB",
-  "DateTime": "2025-08-26T03:51:17+00:00",
-  "Coordinates": "-4.81,123.13",
-  "Lintang": "4.81 LS",
-  "Bujur": "123.13 BT",
-  "Magnitude": "2.0",
-  "Kedalaman": "4 km",
-  "Wilayah": "Pusat gempa berada di laut 5 km barat daya Kulisusu, Buton Utara",
+  "Tanggal": "27 Agu 2025",
+  "Jam": "05:26:54 WIB",
+  "DateTime": "2025-08-26T22:26:54+00:00",
+  "Coordinates": "-1.14,136.35",
+  "Lintang": "1.14 LS",
+  "Bujur": "136.35 BT",
+  "Magnitude": "4.2",
+  "Kedalaman": "14 km",
+  "Wilayah": "Pusat gempa berada di laut 29 km timur laut Biak",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Kulisusu",
-  "Shakemap": "20250826105117.mmi.jpg"
+  "Dirasakan": "III-IV Biak",
+  "Shakemap": "20250827052654.mmi.jpg"
 }
