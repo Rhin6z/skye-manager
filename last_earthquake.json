@@ -1,14 +1,14 @@
 {
-  "Tanggal": "27 Agu 2025",
-  "Jam": "05:26:54 WIB",
-  "DateTime": "2025-08-26T22:26:54+00:00",
-  "Coordinates": "-1.14,136.35",
-  "Lintang": "1.14 LS",
-  "Bujur": "136.35 BT",
-  "Magnitude": "4.2",
-  "Kedalaman": "14 km",
-  "Wilayah": "Pusat gempa berada di laut 29 km timur laut Biak",
+  "Tanggal": "28 Agu 2025",
+  "Jam": "00:06:44 WIB",
+  "DateTime": "2025-08-27T17:06:44+00:00",
+  "Coordinates": "-1.34,120.60",
+  "Lintang": "1.34 LS",
+  "Bujur": "120.60 BT",
+  "Magnitude": "3.6",
+  "Kedalaman": "5 km",
+  "Wilayah": "Pusat gempa berada di darat 18 km Barat laut Poso",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III-IV Biak",
-  "Shakemap": "20250827052654.mmi.jpg"
+  "Dirasakan": "II-III Poso",
+  "Shakemap": "20250828000644.mmi.jpg"
 }
