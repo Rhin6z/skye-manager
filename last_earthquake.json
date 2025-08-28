@@ -1,14 +1,14 @@
 {
-  "Tanggal": "28 Agu 2025",
-  "Jam": "09:15:43 WIB",
-  "DateTime": "2025-08-28T02:15:43+00:00",
-  "Coordinates": "-4.76,104.68",
-  "Lintang": "4.76 LS",
-  "Bujur": "104.68 BT",
-  "Magnitude": "5.0",
-  "Kedalaman": "184 km",
-  "Wilayah": "22 km BaratLaut LAMPUNGUTARA",
-  "Potensi": "Tidak berpotensi tsunami",
-  "Dirasakan": "-",
-  "Shakemap": "20250828091816.mmi.jpg"
+  "Tanggal": "29 Agu 2025",
+  "Jam": "02:36:49 WIB",
+  "DateTime": "2025-08-28T19:36:49+00:00",
+  "Coordinates": "-9.51,116.32",
+  "Lintang": "9.51 LS",
+  "Bujur": "116.32 BT",
+  "Magnitude": "4.2",
+  "Kedalaman": "23 km",
+  "Wilayah": "Pusat gempa berada di laut 89 km Lombok Tengah",
+  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
+  "Dirasakan": "III Lombok Tengah , III Lombok Barat, III Lombok Timur , III Kota Mataram",
+  "Shakemap": "20250829023649.mmi.jpg"
 }
