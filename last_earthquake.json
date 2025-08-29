@@ -1,14 +1,14 @@
 {
   "Tanggal": "29 Agu 2025",
-  "Jam": "03:34:20 WIB",
-  "DateTime": "2025-08-28T20:34:20+00:00",
-  "Coordinates": "4.48,96.62",
-  "Lintang": "4.48 LU",
-  "Bujur": "96.62 BT",
-  "Magnitude": "3.6",
-  "Kedalaman": "2 km",
-  "Wilayah": "Pusat gempa berada di darat 29 km Barat Daya Takengon, Aceh Tengah",
+  "Jam": "11:45:09 WIB",
+  "DateTime": "2025-08-29T04:45:09+00:00",
+  "Coordinates": "-7.19,107.44",
+  "Lintang": "7.19 LS",
+  "Bujur": "107.44 BT",
+  "Magnitude": "2.6",
+  "Kedalaman": "4 km",
+  "Wilayah": "Pusat gempa berada di darat 21 km barat daya Kabupaten Bandung",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II-III Takengon",
-  "Shakemap": "20250829033420.mmi.jpg"
+  "Dirasakan": "II Ciwidey",
+  "Shakemap": "20250829114509.mmi.jpg"
 }
