@@ -281,12 +281,18 @@ jobs:
               STYLE NOTES:
               - Use "Skytizens" or "fam" or "squad" for address
               - Mix "yok/yuk/gas" naturally in suggestions
-              - Include game context: "Roblox"/"Rosblok", "ML", "Genshin", "Valorant"
+              - Include game context: "ML/Mobile Legends", "Roblox", "Genshin", "Valorant" (prioritize ML and Roblox)
               - Natural flow: "dulu", "sambil", "biar ga", "bentar"
               - Keep emoji minimal in message
 
+              GAME PRIORITY (use more often):
+              1. **ML/Mobile Legends** (highest priority - 40%)
+              2. **Roblox** (second priority - 30%) 
+              3. Genshin (20%)
+              4. Valorant (10%)
+
               LOGICAL COMBINATIONS:
-              ✅ GOOD: "ngulii genshin sambil rebahan", "daily quest santai", "main ML classic tipis-tipis"
+              ✅ GOOD: "ngulik genshin sambil rebahan", "daily quest santai", "main ML classic tipis-tipis", "main roblox bareng-bareng"
               ❌ BAD: "mabar valorant sambil rebahan", "push rank sambil tidur", "competitive sambil rebahan"
 
               AVOID:
@@ -328,6 +334,37 @@ jobs:
                   try:
                       response = requests.post(url, json=payload, headers=headers, timeout=30)
                       if response.status_code == 200:
+                          data = response.json()
+                          if 'choices' in data and len(data['choices']) > 0:
+                              content = data['choices'][0]['message']['content'].strip()
+                              print(f"🧠 DeepSeek R1 response received: {len(content)} chars")
+                              print(f"🔍 DeepSeek content preview: {content[:200]}...")
+                              
+                              json_patterns = [
+                                  r'\{[^{}]*"message"[^{}]*"title"[^{}]*"footer"[^{}]*\}',
+                                  r'\{.*?"message".*?"title".*?"footer".*?\}',
+                                  r'\{[\s\S]*?"message"[\s\S]*?"title"[\s\S]*?"footer"[\s\S]*?\}'
+                              ]
+                              
+                              for pattern in json_patterns:
+                                  matches = re.findall(pattern, content, re.DOTALL)
+                                  if matches:
+                                      break
+                              
+                              for match in matches:
+                                  try:
+                                      result = json.loads(match)
+                                      if all(key in result for key in ['message', 'title', 'footer']):
+                                          result['message'] = result['message'].lower().strip()
+                                          result['title'] = result['title'].lower().strip()
+                                          result['footer'] = result['footer'].lower().strip()
+                                          result['source'] = 'deepseek-r1'
+                                          
+                                          result['message'] = re.sub(r'[^\w\s.,?!/]', '', result['message'])
+                                          print("✅ DeepSeek R1 generation successful!")
+                                          return result
+                                  except:
+                                      continue
                           data = response.json()
                           if 'choices' in data and len(data['choices']) > 0:
                               content = data['choices'][0]['message']['content'].strip()
@@ -458,28 +495,32 @@ jobs:
               
               activities = {
                   "morning": [
-                      "yuk semangatin kerja dulu, mabar valorant nanti sore" if not is_weekend else "gas mabar valorant santai sambil ngopi",
-                      "rapihin tugas kuliah dulu, push rank ml nanti malem" if not is_weekend else "yuk push rank mobile legends tipis-tipis",
-                      "fokus sekolah dulu ya, gaming session abis maghrib" if not is_weekend else "gas main roblox bareng-bareng",
-                      "olahraga bentar dulu, nanti sore ngulik genshin" if not is_weekend else "comms on, unrated valorant dulu"
+                      "yuk semangatin kerja dulu, mabar ML nanti sore" if not is_weekend else "gas main roblox bareng-bareng sambil ngopi",
+                      "rapihin tugas kuliah dulu, push rank ml nanti malem" if not is_weekend else "yuk main roblox tipis-tipis",
+                      "fokus sekolah dulu ya, main ML classic nanti sore" if not is_weekend else "gas main roblox santai",
+                      "olahraga bentar dulu, nanti sore main ML" if not is_weekend else "main roblox bareng-bareng dulu"
                   ],
                   "afternoon": [
-                      "istirahat makan siang dulu, aim training bentar boleh" if not is_weekend else "mabar ML santai yuk biar ga stress",
-                      "break sejenak dari kerja, classic ml tipis-tipis" if not is_weekend else "gas main Valorant unrated bentar", 
-                      "recharge energy dulu, mini session genshin ok" if not is_weekend else "yok ngulik Genshin dulu sambil chill",
-                      "stretching dulu, terus aim training 10 menit" if not is_weekend else "main classic ML tipis-tipis aja"
+                      "istirahat makan siang dulu, classic ML bentar boleh" if not is_weekend else "mabar ML santai yuk biar ga stress",
+                      "break sejenak dari kerja, main roblox tipis-tipis" if not is_weekend else "gas main roblox bentar", 
+                      "recharge energy dulu, mini session ML ok" if not is_weekend else "yok main roblox dulu sambil chill",
+                      "stretching dulu, terus main ML classic 10 menit" if not is_weekend else "main roblox tipis-tipis aja"
                   ],
                   "evening": [
-                      "yuk main valorant unrated santai",
+                      "yuk main ML classic santai",
                       "gas push rank ML sesi pendek", 
-                      "main genshin wind down yuk",
-                      "gas classic ML sambil nongkrong"
+                      "main roblox wind down yuk",
+                      "gas classic ML sambil nongkrong",
+                      "main roblox bareng-bareng",
+                      "push rank ML tipis-tipis"
                   ],
                   "night": [
-                      "ngulik genshin artifact farming santai",
-                      "daily quest genshin bentar sebelum tidur",
+                      "main ML classic sambil rebahan",
+                      "main roblox santai bentar sebelum tidur",
                       "main ML classic santai aja", 
-                      "genshin dailies sambil rebahan"
+                      "roblox dailies sambil rebahan",
+                      "ngulik ML hero baru sambil santai",
+                      "main roblox tipis-tipis"
                   ]
               }
               
@@ -563,17 +604,17 @@ jobs:
               "morning")
                 if [[ "$CONTEXT" == "weekday" ]]; then
                   DESCS=(
-                    "hey skytizens, ready to crush monday productivity? yuk semangatin kerja dulu, mabar valorant nanti sore"
-                    "morning legends, feeling sharp for the daily grind? rapihin tugas kuliah dulu, gaming session nanti malem"
-                    "rise and shine everyone, monday motivation activated? fokus sekolah dulu ya, push rank ml abis maghrib"
-                    "good morning crew, how's that weekday energy? olahraga bentar dulu, ngulik genshin nanti sore"
+                    "hey skytizens, ready to crush monday productivity? yuk semangatin kerja dulu, mabar ML nanti sore"
+                    "morning legends, feeling sharp for the daily grind? rapihin tugas kuliah dulu, main roblox nanti malem"
+                    "rise and shine everyone, monday motivation activated? fokus sekolah dulu ya, push rank ML abis maghrib"
+                    "good morning crew, how's that weekday energy? olahraga bentar dulu, main roblox nanti sore"
                   )
                 else
                   DESCS=(
-                    "weekend morning everyone, how's the saturday vibes? gas mabar valorant santai sambil ngopi"
-                    "good morning weekend crew, ready for some gaming? yuk push rank mobile legends tipis-tipis"
-                    "morning everyone, weekend energy going strong? gas main roblox bareng-bareng"
-                    "rise and shine weekend squad, feeling relaxed? comms on, unrated valorant dulu"
+                    "weekend morning everyone, how's the saturday vibes? gas main roblox bareng-bareng sambil ngopi"
+                    "good morning weekend crew, ready for some gaming? yuk main ML classic tipis-tipis"
+                    "morning everyone, weekend energy going strong? gas main roblox santai"
+                    "rise and shine weekend squad, feeling relaxed? main ML bareng-bareng dulu"
                   )
                 fi
                 TITLES=("morning skytizen" "rise and shine" "good morning everyone")
@@ -582,17 +623,17 @@ jobs:
               "afternoon")
                 if [[ "$CONTEXT" == "weekday" ]]; then
                   DESCS=(
-                    "hey crew, how's the work grind going? break makan siang dulu, aim training bentar boleh"
-                    "afternoon squad, keeping the productivity steady? istirahat sejenak, classic ml tipis-tipis ok"
-                    "what's everyone up to this afternoon? recharge energy dulu, mini session genshin boleh"
-                    "midday check-in everyone, work flow smooth? stretching dulu, terus main game bentar"
+                    "hey crew, how's the work grind going? break makan siang dulu, classic ML bentar boleh"
+                    "afternoon squad, keeping the productivity steady? istirahat sejenak, main roblox tipis-tipis ok"
+                    "what's everyone up to this afternoon? recharge energy dulu, mini session ML boleh"
+                    "midday check-in everyone, work flow smooth? stretching dulu, terus main roblox bentar"
                   )
                 else
                   DESCS=(
                     "afternoon weekend vibes, how's everyone feeling? mabar ML santai yuk biar ga stress"
-                    "hey weekend crew, saturday afternoon energy? gas main valorant unrated bentar"
-                    "weekend afternoon squad, ready for gaming? yok ngulik genshin dulu sambil chill"
-                    "saturday afternoon everyone, weekend mood activated? main classic ML tipis-tipis aja"
+                    "hey weekend crew, saturday afternoon energy? gas main roblox bentar"
+                    "weekend afternoon squad, ready for gaming? yok main ML dulu sambil chill"
+                    "saturday afternoon everyone, weekend mood activated? main roblox tipis-tipis aja"
                   )
                 fi
                 TITLES=("afternoon skytizen" "hey everyone" "afternoon squad")
@@ -600,20 +641,20 @@ jobs:
                 ;;
               "evening")
                 DESCS=(
-                  "evening everyone, how was the monday grind? yuk main valorant unrated santai"
-                  "hey folks, ready to wind down from work? gas push rank ml sesi pendek"
-                  "evening squad, how's the post-work vibe? main genshin wind down yuk"
-                  "sunset time everyone, feeling relaxed? gas classic ml sambil nongkrong"
+                  "evening everyone, how was the monday grind? yuk main ML classic santai"
+                  "hey folks, ready to wind down from work? gas push rank ML sesi pendek"
+                  "evening squad, how's the post-work vibe? main roblox wind down yuk"
+                  "sunset time everyone, feeling relaxed? gas main roblox sambil nongkrong"
                 )
                 TITLES=("evening skytizen" "hey folks" "evening crew")
                 FOOTERS=("evening mood" "wind down" "chill time")
                 ;;
               "night")
                 DESCS=(
-                  "night fam, still up after the monday grind? ngulik genshin artifact farming santai"
-                  "after hours crew still up? daily quest genshin bentar sebelum tidur"
-                  "night owls checking in, how's the energy? main ml classic santai aja"
-                  "nocturnal squad still grinding? genshin dailies sambil rebahan"
+                  "night fam, still up after the monday grind? main ML classic sambil rebahan"
+                  "after hours crew still up? main roblox santai bentar sebelum tidur"
+                  "night owls checking in, how's the energy? main ML classic santai aja"
+                  "nocturnal squad still grinding? roblox tipis-tipis sambil rebahan"
                 )
                 TITLES=("night skytizen" "late night crew" "night owls")
                 FOOTERS=("night energy" "late night" "after hours")
