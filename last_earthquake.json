@@ -1,14 +1,14 @@
 {
-  "Tanggal": "25 Agu 2025",
-  "Jam": "17:19:15 WIB",
-  "DateTime": "2025-08-25T10:19:15+00:00",
-  "Coordinates": "-3.25,135.64",
-  "Lintang": "3.25 LS",
-  "Bujur": "135.64 BT",
-  "Magnitude": "3.2",
-  "Kedalaman": "6 km",
-  "Wilayah": "Pusat gempa berada di darat 19 km timur laut Nabire",
+  "Tanggal": "29 Agu 2025",
+  "Jam": "21:02:14 WIB",
+  "DateTime": "2025-08-29T14:02:14+00:00",
+  "Coordinates": "-8.65,108.79",
+  "Lintang": "8.65 LS",
+  "Bujur": "108.79 BT",
+  "Magnitude": "4.9",
+  "Kedalaman": "10 km",
+  "Wilayah": "Pusat gempa berada di laut 105 km Barat Daya Cilacap",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II-III Nabire",
-  "Shakemap": "20250825171915.mmi.jpg"
+  "Dirasakan": "II-III Pangandaran",
+  "Shakemap": "20250829210214.mmi.jpg"
 }
