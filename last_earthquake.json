@@ -1,14 +1,14 @@
 {
-  "Tanggal": "29 Agu 2025",
-  "Jam": "21:02:14 WIB",
-  "DateTime": "2025-08-29T14:02:14+00:00",
-  "Coordinates": "-8.65,108.79",
-  "Lintang": "8.65 LS",
-  "Bujur": "108.79 BT",
-  "Magnitude": "4.9",
-  "Kedalaman": "10 km",
-  "Wilayah": "Pusat gempa berada di laut 105 km Barat Daya Cilacap",
-  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II-III Pangandaran",
-  "Shakemap": "20250829210214.mmi.jpg"
+  "Tanggal": "30 Agu 2025",
+  "Jam": "20:35:34 WIB",
+  "DateTime": "2025-08-30T13:35:34+00:00",
+  "Coordinates": "-4.92,102.99",
+  "Lintang": "4.92 LS",
+  "Bujur": "102.99 BT",
+  "Magnitude": "5.0",
+  "Kedalaman": "21 km",
+  "Wilayah": "42 km BaratDaya KAUR-BENGKULU",
+  "Potensi": "Tidak berpotensi tsunami",
+  "Dirasakan": "-",
+  "Shakemap": "20250830203916.mmi.jpg"
 }
