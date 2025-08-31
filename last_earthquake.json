@@ -1,14 +1,14 @@
 {
   "Tanggal": "31 Agu 2025",
-  "Jam": "08:14:43 WIB",
-  "DateTime": "2025-08-31T01:14:43+00:00",
-  "Coordinates": "0.67,98.53",
-  "Lintang": "0.67 LU",
-  "Bujur": "98.53 BT",
-  "Magnitude": "4.7",
-  "Kedalaman": "18 km",
-  "Wilayah": "Pusat gempa berada di laut 80 km timurlaut Nias Selatan",
+  "Jam": "11:18:45 WIB",
+  "DateTime": "2025-08-31T04:18:45+00:00",
+  "Coordinates": "-6.50,107.25",
+  "Lintang": "6.50 LS",
+  "Bujur": "107.25 BT",
+  "Magnitude": "2.9",
+  "Kedalaman": "9 km",
+  "Wilayah": "Pusat gempa berada di darat 17 km Tenggara Kab. Bekasi",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III Kab. Mandailing Natal",
-  "Shakemap": "20250831081443.mmi.jpg"
+  "Dirasakan": "III Tegalwaru",
+  "Shakemap": "20250831111845.mmi.jpg"
 }
