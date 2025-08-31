@@ -1,14 +1,14 @@
 {
   "Tanggal": "31 Agu 2025",
-  "Jam": "06:03:55 WIB",
-  "DateTime": "2025-08-30T23:03:55+00:00",
-  "Coordinates": "-6.13,131.29",
-  "Lintang": "6.13 LS",
-  "Bujur": "131.29 BT",
-  "Magnitude": "5.4",
-  "Kedalaman": "97 km",
-  "Wilayah": "168 km BaratDaya MALUKUTENGGARA",
-  "Potensi": "Tidak berpotensi tsunami",
-  "Dirasakan": "-",
-  "Shakemap": "20250831060649.mmi.jpg"
+  "Jam": "08:14:43 WIB",
+  "DateTime": "2025-08-31T01:14:43+00:00",
+  "Coordinates": "0.67,98.53",
+  "Lintang": "0.67 LU",
+  "Bujur": "98.53 BT",
+  "Magnitude": "4.7",
+  "Kedalaman": "18 km",
+  "Wilayah": "Pusat gempa berada di laut 80 km timurlaut Nias Selatan",
+  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
+  "Dirasakan": "III Kab. Mandailing Natal",
+  "Shakemap": "20250831081443.mmi.jpg"
 }
