@@ -1,14 +1,14 @@
 {
   "Tanggal": "31 Agu 2025",
-  "Jam": "11:18:45 WIB",
-  "DateTime": "2025-08-31T04:18:45+00:00",
-  "Coordinates": "-6.50,107.25",
-  "Lintang": "6.50 LS",
-  "Bujur": "107.25 BT",
-  "Magnitude": "2.9",
-  "Kedalaman": "9 km",
-  "Wilayah": "Pusat gempa berada di darat 17 km Tenggara Kab. Bekasi",
+  "Jam": "17:23:20 WIB",
+  "DateTime": "2025-08-31T10:23:20+00:00",
+  "Coordinates": "-3.20,135.41",
+  "Lintang": "3.20 LS",
+  "Bujur": "135.41 BT",
+  "Magnitude": "3.9",
+  "Kedalaman": "29 km",
+  "Wilayah": "Pusat gempa berada di darat 21 km Barat Laut Nabire",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III Tegalwaru",
-  "Shakemap": "20250831111845.mmi.jpg"
+  "Dirasakan": "",
+  "Shakemap": "20250831172320.mmi.jpg"
 }
