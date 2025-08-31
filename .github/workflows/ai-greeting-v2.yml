@@ -241,6 +241,7 @@ jobs:
               3. **TONE**: Sound like real friend texting, not template or bot
               4. **SLANG**: Use naturally, don't force it - mix appropriately 
               5. **LENGTH**: Keep it conversational, not too long
+              6. **ROLE TAG PLACEMENT**: For weekends, place <@&1374047008829997157> naturally WITHIN the Indonesian sentence
 
               GENERATE ONLY THIS JSON:
               {{
@@ -249,17 +250,21 @@ jobs:
                 "footer": "short mood/activity phrase"
               }}
 
-              PERFECT EXAMPLES (context-aware):
+              PERFECT EXAMPLES (natural flow):
               WEEKDAY MORNING: "Hey Skytizens, ready to conquer Monday productivity? yuk semangatin kerja dulu, mabar valorant nanti sore"
               WEEKDAY AFTERNOON: "What's up crew, how's the work grind? break makan siang dulu, aim training bentar boleh"
-              WEEKEND: "Hey fam, Saturday vibes hitting right? gas mabar ML santai <@&1374047008829997157> sambil ngopi"
-              WEEKDAY EVENING: "Evening squad, how's the post-work energy? yuk main valorant unrated santai"
-              WEEKDAY NIGHT: "Night fam, still up after the Monday grind? ngulik genshin artifact farming sambil santai"
+              WEEKEND MORNING: "Hey fam, Saturday vibes hitting right? gas mabar ML <@&1374047008829997157> sambil ngopi santai"
+              WEEKEND AFTERNOON: "What's good everyone, Sunday energy still flowing? yuk push rank ML <@&1374047008829997157> tipis-tipis"
+              WEEKEND EVENING: "Evening squad, how's the weekend treating you? gas main roblox <@&1374047008829997157> bareng-bareng"
+              WEEKEND NIGHT: "Night fam, Sunday night vibes still chill? yuk main ML classic <@&1374047008829997157> sambil rebahan"
 
-              WEEKEND ROLE TAGGING:
-              - ALWAYS include <@&1374047008829997157> in weekend messages naturally
-              - Place it within the Indonesian sentence, not at the end
-              - Examples: "gas mabar <@&1374047008829997157> santai sambil ngopi", "yuk push rank <@&1374047008829997157> tipis-tipis"
+              WEEKEND ROLE TAGGING RULES:
+              - ALWAYS include <@&1374047008829997157> in weekend messages
+              - Place it NATURALLY within the Indonesian sentence
+              - GOOD: "gas mabar ML <@&1374047008829997157> sambil ngopi"
+              - GOOD: "yuk push rank <@&1374047008829997157> tipis-tipis"
+              - BAD: "gas mabar ML sambil ngopi <@&1374047008829997157>" (awkward placement)
+              - BAD: "gas mabar ML @☑️ • Skye's Member sambil ngopi" (wrong format)
 
               WEEKDAY PRODUCTIVITY FOCUS:
               - Morning/Afternoon: "semangatin kerja/sekolah dulu", "rapihin tugas dulu", "olahraga bentar dulu"
@@ -273,17 +278,16 @@ jobs:
               - Use logical combinations: "rebahan sambil ngulik", "santai main genshin", "daily quest bentar"
 
               SLANG USAGE RULES:
-              - "ytta" = only use when making insider jokes or when everyone should know something obvious
+              - "ytta" = only use when making insider jokes or when everyone should know something obvious (USE SPARINGLY)
               - "rebahan" = only pair with chill activities (genshin dailies, artifact farming, mobile games)
               - "mabar" = active multiplayer gaming (not compatible with rebahan)
               - "gas" = energetic start, "yuk" = gentle invitation, "santai" = relaxed approach
 
-              STYLE NOTES:
-              - Use "Skytizens" or "fam" or "squad" for address
-              - Mix "yok/yuk/gas" naturally in suggestions
-              - Include game context: "ML/Mobile Legends", "Roblox", "Genshin", "Valorant" (prioritize ML and Roblox)
-              - Natural flow: "dulu", "sambil", "biar ga", "bentar"
-              - Keep emoji minimal in message
+              NATURAL CONVERSATION FLOW:
+              - Use proper sentence structure: Subject + Verb + Object
+              - Connect ideas with "sambil", "terus", "dulu", "nanti", "ntarr"
+              - Keep Indonesian grammar natural: "main ML bareng" not "bareng main ML"
+              - Avoid random word placement or broken sentences
 
               GAME PRIORITY (use more often):
               1. **ML/Mobile Legends** (highest priority - 40%)
@@ -292,8 +296,8 @@ jobs:
               4. Valorant (10%)
 
               LOGICAL COMBINATIONS:
-              ✅ GOOD: "ngulik genshin sambil rebahan", "daily quest santai", "main ML classic tipis-tipis", "main roblox bareng-bareng"
-              ❌ BAD: "mabar valorant sambil rebahan", "push rank sambil tidur", "competitive sambil rebahan"
+              ✅ GOOD: "gas main ML <@&1374047008829997157> sambil ngopi", "yuk push rank <@&1374047008829997157> tipis-tipis", "main roblox <@&1374047008829997157> bareng-bareng"
+              ❌ BAD: "gas push rank ml @☑️ • Skye's Member sebelom weekdimana mulu ytta" (broken grammar, wrong format, forced slang)
 
               AVOID:
               - Robotic language
@@ -302,8 +306,14 @@ jobs:
               - Forced slang placement
               - Illogical activity combinations
               - Random slang without context
+              - Broken Indonesian grammar
+              - Wrong role tag format (must be <@&1374047008829997157>)
+              - Random slang placement without context
+              - Typos or misspellings
+              - Forcing too much slang in one sentence
+              - Breaking natural sentence flow
 
-              Make it sound exactly like the good examples. Return ONLY the JSON without any explanation or reasoning:
+              Make it sound natural like talking to friends. Return ONLY the JSON without any explanation:
 
               {{
                 "message": "english question about day/mood + indonesian context-appropriate suggestion",
@@ -465,32 +475,28 @@ jobs:
               
               activities = {
                   "morning": [
-                      "yuk semangatin kerja dulu, mabar ML nanti sore" if not is_weekend else "gas main roblox bareng-bareng <@&1374047008829997157> sambil ngopi",
+                      "yuk semangatin kerja dulu, mabar ML nanti sore" if not is_weekend else "gas main ML <@&1374047008829997157> sambil ngopi santai",
                       "rapihin tugas kuliah dulu, push rank ml nanti malem" if not is_weekend else "yuk main roblox <@&1374047008829997157> tipis-tipis",
-                      "fokus sekolah dulu ya, main ML classic nanti sore" if not is_weekend else "gas main roblox santai <@&1374047008829997157>",
-                      "olahraga bentar dulu, nanti sore main ML" if not is_weekend else "main roblox bareng-bareng <@&1374047008829997157> dulu"
+                      "fokus sekolah dulu ya, main ML classic nanti sore" if not is_weekend else "gas main roblox <@&1374047008829997157> bareng-bareng",
+                      "olahraga bentar dulu, nanti sore main ML" if not is_weekend else "main ML classic <@&1374047008829997157> sambil santai"
                   ],
                   "afternoon": [
-                      "istirahat makan siang dulu, classic ML bentar boleh" if not is_weekend else "mabar ML santai <@&1374047008829997157> yuk biar ga stress",
-                      "break sejenak dari kerja, main roblox tipis-tipis" if not is_weekend else "gas main roblox <@&1374047008829997157> bentar", 
-                      "recharge energy dulu, mini session ML ok" if not is_weekend else "yok main roblox <@&1374047008829997157> dulu sambil chill",
-                      "stretching dulu, terus main ML classic 10 menit" if not is_weekend else "main roblox <@&1374047008829997157> tipis-tipis aja"
+                      "istirahat makan siang dulu, classic ML bentar boleh" if not is_weekend else "gas main ML <@&1374047008829997157> sambil chill",
+                      "break sejenak dari kerja, main roblox tipis-tipis" if not is_weekend else "yuk push rank ML <@&1374047008829997157> tipis-tipis", 
+                      "recharge energy dulu, mini session ML ok" if not is_weekend else "main roblox <@&1374047008829997157> bareng-bareng",
+                      "stretching dulu, terus main ML classic 10 menit" if not is_weekend else "gas main ML classic <@&1374047008829997157> santai"
                   ],
                   "evening": [
-                      "yuk main ML classic <@&1374047008829997157> santai" if is_weekend else "yuk main ML classic santai",
-                      "gas push rank ML <@&1374047008829997157> sesi pendek" if is_weekend else "gas push rank ML sesi pendek", 
-                      "main roblox <@&1374047008829997157> wind down yuk" if is_weekend else "main roblox wind down yuk",
-                      "gas classic ML <@&1374047008829997157> sambil nongkrong" if is_weekend else "gas classic ML sambil nongkrong",
-                      "main roblox bareng-bareng <@&1374047008829997157>" if is_weekend else "main roblox bareng-bareng",
-                      "push rank ML <@&1374047008829997157> tipis-tipis" if is_weekend else "push rank ML tipis-tipis"
+                      "yuk main ML classic <@&1374047008829997157> sambil santai" if is_weekend else "yuk main ML classic sambil santai",
+                      "gas push rank ML <@&1374047008829997157> tipis-tipis" if is_weekend else "gas push rank ML tipis-tipis", 
+                      "main roblox <@&1374047008829997157> bareng-bareng" if is_weekend else "main roblox bareng-bareng",
+                      "gas main ML <@&1374047008829997157> sambil nongkrong" if is_weekend else "gas main ML sambil nongkrong"
                   ],
                   "night": [
-                      "main ML classic <@&1374047008829997157> sambil rebahan" if is_weekend else "main ML classic sambil rebahan",
-                      "main roblox santai <@&1374047008829997157> bentar sebelum tidur" if is_weekend else "main roblox santai bentar sebelum tidur",
-                      "main ML classic <@&1374047008829997157> santai aja" if is_weekend else "main ML classic santai aja", 
-                      "roblox dailies <@&1374047008829997157> sambil rebahan" if is_weekend else "roblox dailies sambil rebahan",
-                      "ngulik ML hero baru <@&1374047008829997157> sambil santai" if is_weekend else "ngulik ML hero baru sambil santai",
-                      "main roblox <@&1374047008829997157> tipis-tipis" if is_weekend else "main roblox tipis-tipis"
+                      "yuk main ML classic <@&1374047008829997157> sambil rebahan" if is_weekend else "yuk main ML classic sambil rebahan",
+                      "main roblox <@&1374047008829997157> santai bentar sebelum tidur" if is_weekend else "main roblox santai bentar sebelum tidur",
+                      "gas main ML classic <@&1374047008829997157> santai aja" if is_weekend else "gas main ML classic santai aja", 
+                      "main roblox <@&1374047008829997157> tipis-tipis sambil rebahan" if is_weekend else "main roblox tipis-tipis sambil rebahan"
                   ]
               }
               
