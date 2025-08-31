@@ -360,63 +360,14 @@ jobs:
                                           result['footer'] = result['footer'].lower().strip()
                                           result['source'] = 'deepseek-r1'
                                           
-                                          result['message'] = re.sub(r'[^\w\s.,?!/]', '', result['message'])
+                                          # Don't remove Discord role tags and basic punctuation
+                                          result['message'] = re.sub(r'[^\w\s.,?!/<>@&#]', '', result['message'])
                                           print("✅ DeepSeek R1 generation successful!")
                                           return result
                                   except:
                                       continue
                           data = response.json()
                           if 'choices' in data and len(data['choices']) > 0:
-                              content = data['choices'][0]['message']['content'].strip()
-                              print(f"🧠 DeepSeek R1 response received: {len(content)} chars")
-                              print(f"🔍 DeepSeek content preview: {content[:200]}...")
-                              
-                              json_patterns = [
-                                  r'\{[^{}]*"message"[^{}]*"title"[^{}]*"footer"[^{}]*\}',
-                                  r'\{.*?"message".*?"title".*?"footer".*?\}',
-                                  r'\{[\s\S]*?"message"[\s\S]*?"title"[\s\S]*?"footer"[\s\S]*?\}'
-                              ]
-                              
-                              for pattern in json_patterns:
-                                  matches = re.findall(pattern, content, re.DOTALL)
-                                  if matches:
-                                      break
-                              
-                              for match in matches:
-                                  try:
-                                      result = json.loads(match)
-                                      if all(key in result for key in ['message', 'title', 'footer']):
-                                          result['message'] = result['message'].lower().strip()
-                                          result['title'] = result['title'].lower().strip()
-                                          result['footer'] = result['footer'].lower().strip()
-                                          result['source'] = 'deepseek-r1'
-                                          
-                                          result['message'] = re.sub(r'[^\w\s.,?!/]', '', result['message'])
-                                          print("✅ DeepSeek R1 generation successful!")
-                                          return result
-                                  except:
-                                      continue
-                  except Exception as e:
-                      print(f"⚠️ OpenRouter error: {e}")
-              
-              print("🤖 Fallback to Gemini Flash...")
-              url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
-              payload = {
-                  "contents": [{"parts": [{"text": prompt}]}],
-                  "generationConfig": {
-                      "temperature": 0.95,
-                      "topK": 40,
-                      "topP": 0.92,
-                      "maxOutputTokens": 700,
-                  }
-              }
-              
-              response = requests.post(url, json=payload, timeout=25)
-              
-              if response.status_code == 200:
-                  data = response.json()
-                  
-                  if 'candidates' in data and len(data['candidates']) > 0:
                       candidate = data['candidates'][0]
                       
                       ai_text = ""
@@ -436,7 +387,8 @@ jobs:
                                       content['title'] = content['title'].lower().strip()
                                       content['footer'] = content['footer'].lower().strip()
                                       
-                                      content['message'] = re.sub(r'[^\w\s.,?!/]', '', content['message'])
+                                      # Don't remove Discord role tags and basic punctuation
+                                      content['message'] = re.sub(r'[^\w\s.,?!/<>@&#]', '', content['message'])
                                       
                                       return {
                                           'message': content['message'],
@@ -495,32 +447,32 @@ jobs:
               
               activities = {
                   "morning": [
-                      "yuk semangatin kerja dulu, mabar ML nanti sore" if not is_weekend else "gas main roblox bareng-bareng sambil ngopi",
-                      "rapihin tugas kuliah dulu, push rank ml nanti malem" if not is_weekend else "yuk main roblox tipis-tipis",
-                      "fokus sekolah dulu ya, main ML classic nanti sore" if not is_weekend else "gas main roblox santai",
-                      "olahraga bentar dulu, nanti sore main ML" if not is_weekend else "main roblox bareng-bareng dulu"
+                      "yuk semangatin kerja dulu, mabar ML nanti sore" if not is_weekend else "gas main roblox bareng-bareng <@&1374047008829997157> sambil ngopi",
+                      "rapihin tugas kuliah dulu, push rank ml nanti malem" if not is_weekend else "yuk main roblox <@&1374047008829997157> tipis-tipis",
+                      "fokus sekolah dulu ya, main ML classic nanti sore" if not is_weekend else "gas main roblox santai <@&1374047008829997157>",
+                      "olahraga bentar dulu, nanti sore main ML" if not is_weekend else "main roblox bareng-bareng <@&1374047008829997157> dulu"
                   ],
                   "afternoon": [
-                      "istirahat makan siang dulu, classic ML bentar boleh" if not is_weekend else "mabar ML santai yuk biar ga stress",
-                      "break sejenak dari kerja, main roblox tipis-tipis" if not is_weekend else "gas main roblox bentar", 
-                      "recharge energy dulu, mini session ML ok" if not is_weekend else "yok main roblox dulu sambil chill",
-                      "stretching dulu, terus main ML classic 10 menit" if not is_weekend else "main roblox tipis-tipis aja"
+                      "istirahat makan siang dulu, classic ML bentar boleh" if not is_weekend else "mabar ML santai <@&1374047008829997157> yuk biar ga stress",
+                      "break sejenak dari kerja, main roblox tipis-tipis" if not is_weekend else "gas main roblox <@&1374047008829997157> bentar", 
+                      "recharge energy dulu, mini session ML ok" if not is_weekend else "yok main roblox <@&1374047008829997157> dulu sambil chill",
+                      "stretching dulu, terus main ML classic 10 menit" if not is_weekend else "main roblox <@&1374047008829997157> tipis-tipis aja"
                   ],
                   "evening": [
-                      "yuk main ML classic santai",
-                      "gas push rank ML sesi pendek", 
-                      "main roblox wind down yuk",
-                      "gas classic ML sambil nongkrong",
-                      "main roblox bareng-bareng",
-                      "push rank ML tipis-tipis"
+                      "yuk main ML classic <@&1374047008829997157> santai" if is_weekend else "yuk main ML classic santai",
+                      "gas push rank ML <@&1374047008829997157> sesi pendek" if is_weekend else "gas push rank ML sesi pendek", 
+                      "main roblox <@&1374047008829997157> wind down yuk" if is_weekend else "main roblox wind down yuk",
+                      "gas classic ML <@&1374047008829997157> sambil nongkrong" if is_weekend else "gas classic ML sambil nongkrong",
+                      "main roblox bareng-bareng <@&1374047008829997157>" if is_weekend else "main roblox bareng-bareng",
+                      "push rank ML <@&1374047008829997157> tipis-tipis" if is_weekend else "push rank ML tipis-tipis"
                   ],
                   "night": [
-                      "main ML classic sambil rebahan",
-                      "main roblox santai bentar sebelum tidur",
-                      "main ML classic santai aja", 
-                      "roblox dailies sambil rebahan",
-                      "ngulik ML hero baru sambil santai",
-                      "main roblox tipis-tipis"
+                      "main ML classic <@&1374047008829997157> sambil rebahan" if is_weekend else "main ML classic sambil rebahan",
+                      "main roblox santai <@&1374047008829997157> bentar sebelum tidur" if is_weekend else "main roblox santai bentar sebelum tidur",
+                      "main ML classic <@&1374047008829997157> santai aja" if is_weekend else "main ML classic santai aja", 
+                      "roblox dailies <@&1374047008829997157> sambil rebahan" if is_weekend else "roblox dailies sambil rebahan",
+                      "ngulik ML hero baru <@&1374047008829997157> sambil santai" if is_weekend else "ngulik ML hero baru sambil santai",
+                      "main roblox <@&1374047008829997157> tipis-tipis" if is_weekend else "main roblox tipis-tipis"
                   ]
               }
               
@@ -611,10 +563,10 @@ jobs:
                   )
                 else
                   DESCS=(
-                    "weekend morning everyone, how's the saturday vibes? gas main roblox bareng-bareng sambil ngopi"
-                    "good morning weekend crew, ready for some gaming? yuk main ML classic tipis-tipis"
-                    "morning everyone, weekend energy going strong? gas main roblox santai"
-                    "rise and shine weekend squad, feeling relaxed? main ML bareng-bareng dulu"
+                    "weekend morning everyone, how's the saturday vibes? gas main roblox bareng-bareng <@&1374047008829997157> sambil ngopi"
+                    "good morning weekend crew, ready for some gaming? yuk main ML classic <@&1374047008829997157> tipis-tipis"
+                    "morning everyone, weekend energy going strong? gas main roblox santai <@&1374047008829997157>"
+                    "rise and shine weekend squad, feeling relaxed? main ML bareng-bareng <@&1374047008829997157> dulu"
                   )
                 fi
                 TITLES=("morning skytizen" "rise and shine" "good morning everyone")
@@ -630,10 +582,10 @@ jobs:
                   )
                 else
                   DESCS=(
-                    "afternoon weekend vibes, how's everyone feeling? mabar ML santai yuk biar ga stress"
-                    "hey weekend crew, saturday afternoon energy? gas main roblox bentar"
-                    "weekend afternoon squad, ready for gaming? yok main ML dulu sambil chill"
-                    "saturday afternoon everyone, weekend mood activated? main roblox tipis-tipis aja"
+                    "afternoon weekend vibes, how's everyone feeling? mabar ML santai <@&1374047008829997157> yuk biar ga stress"
+                    "hey weekend crew, saturday afternoon energy? gas main roblox <@&1374047008829997157> bentar"
+                    "weekend afternoon squad, ready for gaming? yok main ML <@&1374047008829997157> dulu sambil chill"
+                    "saturday afternoon everyone, weekend mood activated? main roblox <@&1374047008829997157> tipis-tipis aja"
                   )
                 fi
                 TITLES=("afternoon skytizen" "hey everyone" "afternoon squad")
