@@ -1,14 +1,14 @@
 {
-  "Tanggal": "30 Agu 2025",
-  "Jam": "21:49:42 WIB",
-  "DateTime": "2025-08-30T14:49:42+00:00",
-  "Coordinates": "-1.34,120.66",
-  "Lintang": "1.34 LS",
-  "Bujur": "120.66 BT",
-  "Magnitude": "3.4",
-  "Kedalaman": "5 km",
-  "Wilayah": "Pusat gempa berada di laut 12 km baratlaut Poso",
-  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III Poso",
-  "Shakemap": "20250830214942.mmi.jpg"
+  "Tanggal": "31 Agu 2025",
+  "Jam": "06:03:55 WIB",
+  "DateTime": "2025-08-30T23:03:55+00:00",
+  "Coordinates": "-6.13,131.29",
+  "Lintang": "6.13 LS",
+  "Bujur": "131.29 BT",
+  "Magnitude": "5.4",
+  "Kedalaman": "97 km",
+  "Wilayah": "168 km BaratDaya MALUKUTENGGARA",
+  "Potensi": "Tidak berpotensi tsunami",
+  "Dirasakan": "-",
+  "Shakemap": "20250831060649.mmi.jpg"
 }
