@@ -366,8 +366,26 @@ jobs:
                                           return result
                                   except:
                                       continue
-                          data = response.json()
-                          if 'choices' in data and len(data['choices']) > 0:
+                  except Exception as e:
+                      print(f"⚠️ OpenRouter error: {e}")
+              
+              print("🤖 Fallback to Gemini Flash...")
+              url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
+              payload = {
+                  "contents": [{"parts": [{"text": prompt}]}],
+                  "generationConfig": {
+                      "temperature": 0.95,
+                      "topK": 40,
+                      "topP": 0.92,
+                      "maxOutputTokens": 700,
+                  }
+              }
+              
+              response = requests.post(url, json=payload, timeout=25)
+              
+              if response.status_code == 200:
+                  data = response.json()
+                  if 'candidates' in data and len(data['candidates']) > 0:
                       candidate = data['candidates'][0]
                       
                       ai_text = ""
