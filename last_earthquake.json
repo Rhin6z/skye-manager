@@ -1,14 +1,14 @@
 {
   "Tanggal": "01 Sep 2025",
-  "Jam": "06:04:33 WIB",
-  "DateTime": "2025-08-31T23:04:33+00:00",
-  "Coordinates": "-8.15,107.62",
-  "Lintang": "8.15 LS",
-  "Bujur": "107.62 BT",
-  "Magnitude": "4.4",
-  "Kedalaman": "28 km",
-  "Wilayah": "Pusat gempa berada di laut 103 km baratdaya Kab. Tasikmalaya",
+  "Jam": "14:42:58 WIB",
+  "DateTime": "2025-09-01T07:42:58+00:00",
+  "Coordinates": "-4.13,121.94",
+  "Lintang": "4.13 LS",
+  "Bujur": "121.94 BT",
+  "Magnitude": "2.6",
+  "Kedalaman": "5 km",
+  "Wilayah": "Pusat gempa berada di darat 14 km Tenggara Kolaka Timur",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Tasikmalaya, II Pamengpeuk",
-  "Shakemap": "20250901060433.mmi.jpg"
+  "Dirasakan": "III Kolaka Timur",
+  "Shakemap": "20250901144258.mmi.jpg"
 }
