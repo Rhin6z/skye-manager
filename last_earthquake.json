@@ -1,14 +1,14 @@
 {
   "Tanggal": "02 Sep 2025",
-  "Jam": "19:36:04 WIB",
-  "DateTime": "2025-09-02T12:36:04+00:00",
-  "Coordinates": "-3.29,129.09",
-  "Lintang": "3.29 LS",
-  "Bujur": "129.09 BT",
-  "Magnitude": "3.9",
+  "Jam": "20:17:16 WIB",
+  "DateTime": "2025-09-02T13:17:16+00:00",
+  "Coordinates": "-3.27,129.12",
+  "Lintang": "3.27 LS",
+  "Bujur": "129.12 BT",
+  "Magnitude": "4.3",
   "Kedalaman": "10 km",
-  "Wilayah": "Pusat gempa berada di darat 19 km timur Masohi, Maluku Tengah",
+  "Wilayah": "Pusat gempa berada di darat 23 km timur Masohi, Maluku Tengah",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III Masohi",
-  "Shakemap": "20250902193604.mmi.jpg"
+  "Dirasakan": "III-IV Masohi",
+  "Shakemap": "20250902201716.mmi.jpg"
 }
