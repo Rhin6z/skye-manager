@@ -1,14 +1,14 @@
 {
-  "Tanggal": "01 Sep 2025",
-  "Jam": "14:42:58 WIB",
-  "DateTime": "2025-09-01T07:42:58+00:00",
-  "Coordinates": "-4.13,121.94",
-  "Lintang": "4.13 LS",
-  "Bujur": "121.94 BT",
-  "Magnitude": "2.6",
-  "Kedalaman": "5 km",
-  "Wilayah": "Pusat gempa berada di darat 14 km Tenggara Kolaka Timur",
+  "Tanggal": "02 Sep 2025",
+  "Jam": "11:52:40 WIB",
+  "DateTime": "2025-09-02T04:52:40+00:00",
+  "Coordinates": "-6.70,107.65",
+  "Lintang": "6.70 LS",
+  "Bujur": "107.65 BT",
+  "Magnitude": "2.2",
+  "Kedalaman": "9 km",
+  "Wilayah": "Pusat gempa berada di darat 18 km baratdaya KAB-SUBANG",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III Kolaka Timur",
-  "Shakemap": "20250901144258.mmi.jpg"
+  "Dirasakan": "II-III Ciater",
+  "Shakemap": "20250902115240.mmi.jpg"
 }
