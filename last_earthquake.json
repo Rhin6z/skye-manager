@@ -1,14 +1,14 @@
 {
   "Tanggal": "02 Sep 2025",
-  "Jam": "11:52:40 WIB",
-  "DateTime": "2025-09-02T04:52:40+00:00",
-  "Coordinates": "-6.70,107.65",
-  "Lintang": "6.70 LS",
-  "Bujur": "107.65 BT",
-  "Magnitude": "2.2",
-  "Kedalaman": "9 km",
-  "Wilayah": "Pusat gempa berada di darat 18 km baratdaya KAB-SUBANG",
+  "Jam": "19:05:28 WIB",
+  "DateTime": "2025-09-02T12:05:28+00:00",
+  "Coordinates": "-3.32,129.12",
+  "Lintang": "3.32 LS",
+  "Bujur": "129.12 BT",
+  "Magnitude": "4.3",
+  "Kedalaman": "6 km",
+  "Wilayah": "Pusat gempa berada di darat 22 km timur Masohi",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II-III Ciater",
-  "Shakemap": "20250902115240.mmi.jpg"
+  "Dirasakan": "III-IV Masohi",
+  "Shakemap": "20250902190528.mmi.jpg"
 }
