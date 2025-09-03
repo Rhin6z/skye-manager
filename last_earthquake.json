@@ -1,14 +1,14 @@
 {
   "Tanggal": "03 Sep 2025",
-  "Jam": "05:22:42 WIB",
-  "DateTime": "2025-09-02T22:22:42+00:00",
-  "Coordinates": "-4.00,121.63",
-  "Lintang": "4.00 LS",
-  "Bujur": "121.63 BT",
-  "Magnitude": "2.7",
-  "Kedalaman": "2 km",
-  "Wilayah": "Pusat gempa berada di darat 2 km baratdaya Kolaka",
-  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III Kolaka, II Kolaka Timur",
-  "Shakemap": "20250903052242.mmi.jpg"
+  "Jam": "06:53:12 WIB",
+  "DateTime": "2025-09-02T23:53:12+00:00",
+  "Coordinates": "-0.88,120.28",
+  "Lintang": "0.88 LS",
+  "Bujur": "120.28 BT",
+  "Magnitude": "5.0",
+  "Kedalaman": "10 km",
+  "Wilayah": "44 km TimurLaut PALU-SULTENG",
+  "Potensi": "Tidak berpotensi tsunami",
+  "Dirasakan": "-",
+  "Shakemap": "20250903065552.mmi.jpg"
 }
