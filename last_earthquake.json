@@ -1,14 +1,14 @@
 {
-  "Tanggal": "03 Sep 2025",
-  "Jam": "23:41:12 WIB",
-  "DateTime": "2025-09-03T16:41:12+00:00",
-  "Coordinates": "-1.73,139.11",
-  "Lintang": "1.73 LS",
-  "Bujur": "139.11 BT",
-  "Magnitude": "5.0",
+  "Tanggal": "04 Sep 2025",
+  "Jam": "04:55:06 WIB",
+  "DateTime": "2025-09-03T21:55:06+00:00",
+  "Coordinates": "-1.75,139.13",
+  "Lintang": "1.75 LS",
+  "Bujur": "139.13 BT",
+  "Magnitude": "4.4",
   "Kedalaman": "10 km",
-  "Wilayah": "42 km TimurLaut SARMI-PAPUA",
-  "Potensi": "Tidak berpotensi tsunami",
-  "Dirasakan": "-",
-  "Shakemap": "20250903234408.mmi.jpg"
+  "Wilayah": "Pusat gempa berada dilaut 44 km timurlaut Sarmi",
+  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
+  "Dirasakan": "II Sarmi",
+  "Shakemap": "20250904045506.mmi.jpg"
 }
