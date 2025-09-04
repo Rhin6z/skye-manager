@@ -1,14 +1,14 @@
 {
   "Tanggal": "04 Sep 2025",
-  "Jam": "07:14:28 WIB",
-  "DateTime": "2025-09-04T00:14:28+00:00",
-  "Coordinates": "-2.77,130.12",
-  "Lintang": "2.77 LS",
-  "Bujur": "130.12 BT",
-  "Magnitude": "4.9",
-  "Kedalaman": "8 km",
-  "Wilayah": "Pusat gempa berada di laut 36 km timurlaut Kobisonta, Maluku Tengah",
+  "Jam": "07:23:15 WIB",
+  "DateTime": "2025-09-04T00:23:15+00:00",
+  "Coordinates": "-2.79,130.17",
+  "Lintang": "2.79 LS",
+  "Bujur": "130.17 BT",
+  "Magnitude": "3.2",
+  "Kedalaman": "9 km",
+  "Wilayah": "Pusat gempa berada di laut 39 km timurlaut Kobisonta, Maluku Tengah",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
   "Dirasakan": "II-III Kobisonta",
-  "Shakemap": "20250904071428.mmi.jpg"
+  "Shakemap": "20250904072315.mmi.jpg"
 }
