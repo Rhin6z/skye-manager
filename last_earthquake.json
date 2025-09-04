@@ -1,14 +1,14 @@
 {
   "Tanggal": "05 Sep 2025",
-  "Jam": "02:48:03 WIB",
-  "DateTime": "2025-09-04T19:48:03+00:00",
-  "Coordinates": "-1.81,137.38",
-  "Lintang": "1.81 LS",
-  "Bujur": "137.38 BT",
-  "Magnitude": "4.7",
-  "Kedalaman": "20 km",
-  "Wilayah": "Pusat gempa berada di darat 91 km BaratLaut Kasonaweja",
+  "Jam": "05:10:30 WIB",
+  "DateTime": "2025-09-04T22:10:30+00:00",
+  "Coordinates": "-4.30,122.49",
+  "Lintang": "4.30 LS",
+  "Bujur": "122.49 BT",
+  "Magnitude": "2.9",
+  "Kedalaman": "5 km",
+  "Wilayah": "Pusat gempa berada di darat 3 km TimurLaut Konawe Selatan",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II-III Waropen, II Nabire",
-  "Shakemap": "20250905024803.mmi.jpg"
+  "Dirasakan": "II-III Konawe Selatan",
+  "Shakemap": "20250905051030.mmi.jpg"
 }
