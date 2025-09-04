@@ -1,14 +1,14 @@
 {
   "Tanggal": "04 Sep 2025",
-  "Jam": "04:55:06 WIB",
-  "DateTime": "2025-09-03T21:55:06+00:00",
-  "Coordinates": "-1.75,139.13",
-  "Lintang": "1.75 LS",
-  "Bujur": "139.13 BT",
-  "Magnitude": "4.4",
-  "Kedalaman": "10 km",
-  "Wilayah": "Pusat gempa berada dilaut 44 km timurlaut Sarmi",
+  "Jam": "07:14:28 WIB",
+  "DateTime": "2025-09-04T00:14:28+00:00",
+  "Coordinates": "-2.77,130.12",
+  "Lintang": "2.77 LS",
+  "Bujur": "130.12 BT",
+  "Magnitude": "4.9",
+  "Kedalaman": "8 km",
+  "Wilayah": "Pusat gempa berada di laut 36 km timurlaut Kobisonta, Maluku Tengah",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Sarmi",
-  "Shakemap": "20250904045506.mmi.jpg"
+  "Dirasakan": "II-III Kobisonta",
+  "Shakemap": "20250904071428.mmi.jpg"
 }
