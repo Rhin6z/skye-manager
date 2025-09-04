@@ -1,14 +1,14 @@
 {
   "Tanggal": "04 Sep 2025",
-  "Jam": "08:09:58 WIB",
-  "DateTime": "2025-09-04T01:09:58+00:00",
-  "Coordinates": "-0.85,120.29",
-  "Lintang": "0.85 LS",
-  "Bujur": "120.29 BT",
-  "Magnitude": "4.7",
-  "Kedalaman": "5 km",
-  "Wilayah": "Pusat gempa berada di laut 13 km Timur Parigi",
+  "Jam": "18:49:15 WIB",
+  "DateTime": "2025-09-04T11:49:15+00:00",
+  "Coordinates": "-3.41,128.66",
+  "Lintang": "3.41 LS",
+  "Bujur": "128.66 BT",
+  "Magnitude": "2.9",
+  "Kedalaman": "10 km",
+  "Wilayah": "Pusat gempa berada di darat 3 km Barat Laut Amalatu, Seram Bagian Barat",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III-IV Toboli, III Palu",
-  "Shakemap": "20250904080958.mmi.jpg"
+  "Dirasakan": "II-III Amalatu",
+  "Shakemap": "20250904184915.mmi.jpg"
 }
