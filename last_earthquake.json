@@ -1,14 +1,14 @@
 {
   "Tanggal": "05 Sep 2025",
-  "Jam": "05:10:30 WIB",
-  "DateTime": "2025-09-04T22:10:30+00:00",
-  "Coordinates": "-4.30,122.49",
-  "Lintang": "4.30 LS",
-  "Bujur": "122.49 BT",
-  "Magnitude": "2.9",
-  "Kedalaman": "5 km",
-  "Wilayah": "Pusat gempa berada di darat 3 km TimurLaut Konawe Selatan",
+  "Jam": "23:29:07 WIB",
+  "DateTime": "2025-09-05T16:29:07+00:00",
+  "Coordinates": "-9.69,113.73",
+  "Lintang": "9.69 LS",
+  "Bujur": "113.73 BT",
+  "Magnitude": "4.6",
+  "Kedalaman": "10 km",
+  "Wilayah": "Pusat gempa berada di laut 166 km tenggara Jember",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II-III Konawe Selatan",
-  "Shakemap": "20250905051030.mmi.jpg"
+  "Dirasakan": "III Kuta Selatan",
+  "Shakemap": "20250905232907.mmi.jpg"
 }
