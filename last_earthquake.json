@@ -1,14 +1,14 @@
 {
   "Tanggal": "06 Sep 2025",
-  "Jam": "01:43:21 WIB",
-  "DateTime": "2025-09-05T18:43:21+00:00",
-  "Coordinates": "-3.30,129.09",
-  "Lintang": "3.30 LS",
-  "Bujur": "129.09 BT",
-  "Magnitude": "3.8",
+  "Jam": "10:38:19 WIB",
+  "DateTime": "2025-09-06T03:38:19+00:00",
+  "Coordinates": "-3.82,127.77",
+  "Lintang": "3.82 LS",
+  "Bujur": "127.77 BT",
+  "Magnitude": "3.3",
   "Kedalaman": "10 km",
-  "Wilayah": "Pusat gempa berada di darat 35 km timur Elpaputih, Seram Bagian Barat",
+  "Wilayah": "Pusat gempa berada di laut 48 km barat Ambon",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III Masohi",
-  "Shakemap": "20250906014321.mmi.jpg"
+  "Dirasakan": "II Ambon",
+  "Shakemap": "20250906103819.mmi.jpg"
 }
