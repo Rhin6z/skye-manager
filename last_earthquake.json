@@ -1,14 +1,14 @@
 {
   "Tanggal": "07 Sep 2025",
-  "Jam": "09:24:35 WIB",
-  "DateTime": "2025-09-07T02:24:35+00:00",
-  "Coordinates": "-3.94,122.51",
-  "Lintang": "3.94 LS",
-  "Bujur": "122.51 BT",
-  "Magnitude": "2.7",
-  "Kedalaman": "4 km",
-  "Wilayah": "Pusat gempa berada di darat 1 km BaratDaya Mandonga, Kota Kendari",
+  "Jam": "18:35:53 WIB",
+  "DateTime": "2025-09-07T11:35:53+00:00",
+  "Coordinates": "-6.72,107.61",
+  "Lintang": "6.72 LS",
+  "Bujur": "107.61 BT",
+  "Magnitude": "1.8",
+  "Kedalaman": "11 km",
+  "Wilayah": "Pusat gempa berada di darat 18 km TimurLaut Kab. Bandung Barat",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II-III Kendari",
-  "Shakemap": "20250907092435.mmi.jpg"
+  "Dirasakan": "II Ciater",
+  "Shakemap": "20250907183553.mmi.jpg"
 }
