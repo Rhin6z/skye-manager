@@ -1,14 +1,14 @@
 {
   "Tanggal": "07 Sep 2025",
-  "Jam": "18:35:53 WIB",
-  "DateTime": "2025-09-07T11:35:53+00:00",
-  "Coordinates": "-6.72,107.61",
-  "Lintang": "6.72 LS",
-  "Bujur": "107.61 BT",
-  "Magnitude": "1.8",
-  "Kedalaman": "11 km",
-  "Wilayah": "Pusat gempa berada di darat 18 km TimurLaut Kab. Bandung Barat",
-  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Ciater",
-  "Shakemap": "20250907183553.mmi.jpg"
+  "Jam": "22:29:14 WIB",
+  "DateTime": "2025-09-07T15:29:14+00:00",
+  "Coordinates": "-6.30,130.84",
+  "Lintang": "6.30 LS",
+  "Bujur": "130.84 BT",
+  "Magnitude": "5.2",
+  "Kedalaman": "88 km",
+  "Wilayah": "192 km BaratLaut TANIMBAR",
+  "Potensi": "Tidak berpotensi tsunami",
+  "Dirasakan": "-",
+  "Shakemap": "20250907223217.mmi.jpg"
 }
