@@ -1,14 +1,14 @@
 {
   "Tanggal": "07 Sep 2025",
-  "Jam": "09:18:08 WIB",
-  "DateTime": "2025-09-07T02:18:08+00:00",
+  "Jam": "09:24:35 WIB",
+  "DateTime": "2025-09-07T02:24:35+00:00",
   "Coordinates": "-3.94,122.51",
   "Lintang": "3.94 LS",
   "Bujur": "122.51 BT",
-  "Magnitude": "3.5",
-  "Kedalaman": "5 km",
-  "Wilayah": "Pusat gempa berada di darat 1 km Barat daya Mandonga, Kota Kendari",
+  "Magnitude": "2.7",
+  "Kedalaman": "4 km",
+  "Wilayah": "Pusat gempa berada di darat 1 km BaratDaya Mandonga, Kota Kendari",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II-III Konawe, III Kendari",
-  "Shakemap": "20250907091808.mmi.jpg"
+  "Dirasakan": "II-III Kendari",
+  "Shakemap": "20250907092435.mmi.jpg"
 }
