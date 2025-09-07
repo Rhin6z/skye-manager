@@ -1,14 +1,14 @@
 {
   "Tanggal": "07 Sep 2025",
-  "Jam": "22:29:14 WIB",
-  "DateTime": "2025-09-07T15:29:14+00:00",
-  "Coordinates": "-6.30,130.84",
-  "Lintang": "6.30 LS",
-  "Bujur": "130.84 BT",
-  "Magnitude": "5.2",
-  "Kedalaman": "88 km",
-  "Wilayah": "192 km BaratLaut TANIMBAR",
-  "Potensi": "Tidak berpotensi tsunami",
-  "Dirasakan": "-",
-  "Shakemap": "20250907223217.mmi.jpg"
+  "Jam": "22:21:57 WIB",
+  "DateTime": "2025-09-07T15:21:57+00:00",
+  "Coordinates": "-4.32,122.53",
+  "Lintang": "4.32 LS",
+  "Bujur": "122.53 BT",
+  "Magnitude": "3.3",
+  "Kedalaman": "2 km",
+  "Wilayah": "Pusat gempa berada di darat 1 km baratdaya Laeya, Konawe Selatan",
+  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
+  "Dirasakan": "III Kendari, III Konawe Selatan",
+  "Shakemap": "20250907222157.mmi.jpg"
 }
