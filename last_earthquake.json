@@ -1,14 +1,14 @@
 {
-  "Tanggal": "06 Sep 2025",
-  "Jam": "10:38:19 WIB",
-  "DateTime": "2025-09-06T03:38:19+00:00",
-  "Coordinates": "-3.82,127.77",
-  "Lintang": "3.82 LS",
-  "Bujur": "127.77 BT",
-  "Magnitude": "3.3",
-  "Kedalaman": "10 km",
-  "Wilayah": "Pusat gempa berada di laut 48 km barat Ambon",
+  "Tanggal": "07 Sep 2025",
+  "Jam": "07:50:59 WIB",
+  "DateTime": "2025-09-07T00:50:59+00:00",
+  "Coordinates": "-4.29,122.51",
+  "Lintang": "4.29 LS",
+  "Bujur": "122.51 BT",
+  "Magnitude": "2.8",
+  "Kedalaman": "8 km",
+  "Wilayah": "Pusat gempa berada di darat 2 km baratdaya Laeya, Konawe Selatan",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Ambon",
-  "Shakemap": "20250906103819.mmi.jpg"
+  "Dirasakan": "II-III Konawe Selatan",
+  "Shakemap": "20250907075059.mmi.jpg"
 }
