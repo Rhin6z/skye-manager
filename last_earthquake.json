@@ -1,14 +1,14 @@
 {
   "Tanggal": "08 Sep 2025",
-  "Jam": "11:23:03 WIB",
-  "DateTime": "2025-09-08T04:23:03+00:00",
-  "Coordinates": "-0.98,134.32",
-  "Lintang": "0.98 LS",
-  "Bujur": "134.32 BT",
-  "Magnitude": "4.4",
-  "Kedalaman": "14 km",
-  "Wilayah": "Pusat gempa berada di laut 33 km tenggara Manokwari",
+  "Jam": "22:49:27 WIB",
+  "DateTime": "2025-09-08T15:49:27+00:00",
+  "Coordinates": "-0.31,99.44",
+  "Lintang": "0.31 LS",
+  "Bujur": "99.44 BT",
+  "Magnitude": "4.3",
+  "Kedalaman": "53 km",
+  "Wilayah": "Pusat gempa berada di laut 57 km Tenggara Air Bangis, Pasaman Barat",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Manokwari",
-  "Shakemap": "20250908112303.mmi.jpg"
+  "Dirasakan": "I-II Padang Panjang, II-III Pasaman Barat, II-III Pariaman, II-III Padang",
+  "Shakemap": "20250908224927.mmi.jpg"
 }
