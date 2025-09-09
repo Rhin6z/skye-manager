@@ -1,14 +1,14 @@
 {
   "Tanggal": "10 Sep 2025",
-  "Jam": "04:02:46 WIB",
-  "DateTime": "2025-09-09T21:02:46+00:00",
-  "Coordinates": "-4.69,121.99",
-  "Lintang": "4.69 LS",
-  "Bujur": "121.99 BT",
-  "Magnitude": "3.3",
+  "Jam": "04:19:58 WIB",
+  "DateTime": "2025-09-09T21:19:58+00:00",
+  "Coordinates": "-4.67,122.02",
+  "Lintang": "4.67 LS",
+  "Bujur": "122.02 BT",
+  "Magnitude": "2.5",
   "Kedalaman": "5 km",
-  "Wilayah": "Pusat gempa berada di laut 1 km Barat Daya Rorowatu Utara, Bombana",
+  "Wilayah": "Pusat gempa berada di darat 1 km Tenggara Rorowatu Utara, Bombana",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III Bombana",
-  "Shakemap": "20250910040246.mmi.jpg"
+  "Dirasakan": "II-III Bombana",
+  "Shakemap": "20250910041958.mmi.jpg"
 }
