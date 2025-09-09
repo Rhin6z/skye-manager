@@ -1,14 +1,14 @@
 {
-  "Tanggal": "09 Sep 2025",
-  "Jam": "19:26:16 WIB",
-  "DateTime": "2025-09-09T12:26:16+00:00",
-  "Coordinates": "-6.79,111.93",
-  "Lintang": "6.79 LS",
-  "Bujur": "111.93 BT",
-  "Magnitude": "2.4",
-  "Kedalaman": "15 km",
-  "Wilayah": "Pusat gempa berada di darat 16 km barat laut Tuban",
+  "Tanggal": "10 Sep 2025",
+  "Jam": "04:02:46 WIB",
+  "DateTime": "2025-09-09T21:02:46+00:00",
+  "Coordinates": "-4.69,121.99",
+  "Lintang": "4.69 LS",
+  "Bujur": "121.99 BT",
+  "Magnitude": "3.3",
+  "Kedalaman": "5 km",
+  "Wilayah": "Pusat gempa berada di laut 1 km Barat Daya Rorowatu Utara, Bombana",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Tuban",
-  "Shakemap": "20250909192616.mmi.jpg"
+  "Dirasakan": "III Bombana",
+  "Shakemap": "20250910040246.mmi.jpg"
 }
