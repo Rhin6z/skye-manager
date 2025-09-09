@@ -1,14 +1,14 @@
 {
-  "Tanggal": "08 Sep 2025",
-  "Jam": "22:49:27 WIB",
-  "DateTime": "2025-09-08T15:49:27+00:00",
-  "Coordinates": "-0.31,99.44",
-  "Lintang": "0.31 LS",
-  "Bujur": "99.44 BT",
-  "Magnitude": "4.3",
-  "Kedalaman": "53 km",
-  "Wilayah": "Pusat gempa berada di laut 57 km Tenggara Air Bangis, Pasaman Barat",
+  "Tanggal": "09 Sep 2025",
+  "Jam": "21:24:22 WIB",
+  "DateTime": "2025-09-09T14:24:22+00:00",
+  "Coordinates": "-9.07,110.42",
+  "Lintang": "9.07 LS",
+  "Bujur": "110.42 BT",
+  "Magnitude": "3.1",
+  "Kedalaman": "24 km",
+  "Wilayah": "Pusat gempa berada di laut 121 km barat daya Gunung Kidul",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "I-II Padang Panjang, II-III Pasaman Barat, II-III Pariaman, II-III Padang",
-  "Shakemap": "20250908224927.mmi.jpg"
+  "Dirasakan": "II Bawean",
+  "Shakemap": "20250909212422.mmi.jpg"
 }
