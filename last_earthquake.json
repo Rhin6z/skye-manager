@@ -1,14 +1,14 @@
 {
   "Tanggal": "09 Sep 2025",
-  "Jam": "21:24:22 WIB",
-  "DateTime": "2025-09-09T14:24:22+00:00",
-  "Coordinates": "-9.07,110.42",
-  "Lintang": "9.07 LS",
-  "Bujur": "110.42 BT",
-  "Magnitude": "3.1",
-  "Kedalaman": "24 km",
-  "Wilayah": "Pusat gempa berada di laut 121 km barat daya Gunung Kidul",
+  "Jam": "19:26:16 WIB",
+  "DateTime": "2025-09-09T12:26:16+00:00",
+  "Coordinates": "-6.79,111.93",
+  "Lintang": "6.79 LS",
+  "Bujur": "111.93 BT",
+  "Magnitude": "2.4",
+  "Kedalaman": "15 km",
+  "Wilayah": "Pusat gempa berada di darat 16 km barat laut Tuban",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Bawean",
-  "Shakemap": "20250909212422.mmi.jpg"
+  "Dirasakan": "II Tuban",
+  "Shakemap": "20250909192616.mmi.jpg"
 }
