@@ -1,14 +1,14 @@
 {
   "Tanggal": "10 Sep 2025",
-  "Jam": "04:19:58 WIB",
-  "DateTime": "2025-09-09T21:19:58+00:00",
-  "Coordinates": "-4.67,122.02",
-  "Lintang": "4.67 LS",
-  "Bujur": "122.02 BT",
-  "Magnitude": "2.5",
-  "Kedalaman": "5 km",
-  "Wilayah": "Pusat gempa berada di darat 1 km Tenggara Rorowatu Utara, Bombana",
+  "Jam": "20:26:09 WIB",
+  "DateTime": "2025-09-10T13:26:09+00:00",
+  "Coordinates": "-7.45,106.70",
+  "Lintang": "7.45 LS",
+  "Bujur": "106.70 BT",
+  "Magnitude": "4.7",
+  "Kedalaman": "31 km",
+  "Wilayah": "Pusat gempa berada di laut 53 km tenggara Kab. Sukabumi",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II-III Bombana",
-  "Shakemap": "20250910041958.mmi.jpg"
+  "Dirasakan": "III Bayah, III Pangalengan, III Pelabuhan Ratu, II-III Cilaku, II-III Cireunghas, II-III Sukabumi, II-III Cisolok, II-III Kota Bandung, II-III Bandung Barat, II-III Jampang Kulon, II-III Cicurug, II-III Curugkembar, II-III Kabupaten Bandung, II-III Cimahi, II Cidadap, II Depok",
+  "Shakemap": "20250910202609.mmi.jpg"
 }
