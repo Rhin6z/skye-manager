@@ -1,14 +1,14 @@
 {
   "Tanggal": "10 Sep 2025",
-  "Jam": "20:26:09 WIB",
-  "DateTime": "2025-09-10T13:26:09+00:00",
-  "Coordinates": "-7.45,106.70",
-  "Lintang": "7.45 LS",
-  "Bujur": "106.70 BT",
-  "Magnitude": "4.7",
-  "Kedalaman": "31 km",
-  "Wilayah": "Pusat gempa berada di laut 53 km tenggara Kab. Sukabumi",
+  "Jam": "22:06:03 WIB",
+  "DateTime": "2025-09-10T15:06:03+00:00",
+  "Coordinates": "-3.71,135.53",
+  "Lintang": "3.71 LS",
+  "Bujur": "135.53 BT",
+  "Magnitude": "2.1",
+  "Kedalaman": "10 km",
+  "Wilayah": "Pusat gempa berada di darat 39 km Tenggara Nabire",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III Bayah, III Pangalengan, III Pelabuhan Ratu, II-III Cilaku, II-III Cireunghas, II-III Sukabumi, II-III Cisolok, II-III Kota Bandung, II-III Bandung Barat, II-III Jampang Kulon, II-III Cicurug, II-III Curugkembar, II-III Kabupaten Bandung, II-III Cimahi, II Cidadap, II Depok",
-  "Shakemap": "20250910202609.mmi.jpg"
+  "Dirasakan": "II Nabire",
+  "Shakemap": "20250910220603.mmi.jpg"
 }
