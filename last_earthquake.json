@@ -1,14 +1,14 @@
 {
   "Tanggal": "11 Sep 2025",
-  "Jam": "16:06:28 WIB",
-  "DateTime": "2025-09-11T09:06:28+00:00",
-  "Coordinates": "-5.50,131.77",
-  "Lintang": "5.50 LS",
-  "Bujur": "131.77 BT",
-  "Magnitude": "5.3",
-  "Kedalaman": "100 km",
-  "Wilayah": "108 km BaratLaut MALUKUTENGGARA",
-  "Potensi": "Tidak berpotensi tsunami",
-  "Dirasakan": "-",
-  "Shakemap": "20250911160913.mmi.jpg"
+  "Jam": "17:44:09 WIB",
+  "DateTime": "2025-09-11T10:44:09+00:00",
+  "Coordinates": "-4.22,122.30",
+  "Lintang": "4.22 LS",
+  "Bujur": "122.30 BT",
+  "Magnitude": "2.5",
+  "Kedalaman": "6 km",
+  "Wilayah": "Pusat gempa berada di darat 1 km tenggara Baito, Konawe Selatan",
+  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
+  "Dirasakan": "III Konawe Selatan",
+  "Shakemap": "20250911174409.mmi.jpg"
 }
