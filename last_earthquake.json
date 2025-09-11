@@ -1,14 +1,14 @@
 {
   "Tanggal": "11 Sep 2025",
-  "Jam": "10:15:00 WIB",
-  "DateTime": "2025-09-11T03:15:00+00:00",
-  "Coordinates": "-9.40,112.89",
-  "Lintang": "9.40 LS",
-  "Bujur": "112.89 BT",
-  "Magnitude": "5.0",
-  "Kedalaman": "10 km",
-  "Wilayah": "144 km Tenggara KAB-MALANG-JATIM",
+  "Jam": "16:06:28 WIB",
+  "DateTime": "2025-09-11T09:06:28+00:00",
+  "Coordinates": "-5.50,131.77",
+  "Lintang": "5.50 LS",
+  "Bujur": "131.77 BT",
+  "Magnitude": "5.3",
+  "Kedalaman": "100 km",
+  "Wilayah": "108 km BaratLaut MALUKUTENGGARA",
   "Potensi": "Tidak berpotensi tsunami",
   "Dirasakan": "-",
-  "Shakemap": "20250911101753.mmi.jpg"
+  "Shakemap": "20250911160913.mmi.jpg"
 }
