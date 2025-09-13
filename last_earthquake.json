@@ -1,14 +1,14 @@
 {
   "Tanggal": "13 Sep 2025",
-  "Jam": "08:01:11 WIB",
-  "DateTime": "2025-09-13T01:01:11+00:00",
-  "Coordinates": "-6.36,104.60",
-  "Lintang": "6.36 LS",
-  "Bujur": "104.60 BT",
-  "Magnitude": "4.4",
-  "Kedalaman": "23 km",
-  "Wilayah": "Pusat gempa berada di laut 98 km barat daya Tanggamus",
-  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Ngaras Bengkunat",
-  "Shakemap": "20250913080111.mmi.jpg"
+  "Jam": "22:05:43 WIB",
+  "DateTime": "2025-09-13T15:05:43+00:00",
+  "Coordinates": "-4.05,142.01",
+  "Lintang": "4.05 LS",
+  "Bujur": "142.01 BT",
+  "Magnitude": "5.2",
+  "Kedalaman": "84 km",
+  "Wilayah": "159 km Tenggara KEEROM-PAPUA",
+  "Potensi": "Tidak berpotensi tsunami",
+  "Dirasakan": "-",
+  "Shakemap": "20250913220912.mmi.jpg"
 }
