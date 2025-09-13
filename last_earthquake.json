@@ -1,14 +1,14 @@
 {
-  "Tanggal": "12 Sep 2025",
-  "Jam": "21:48:57 WIB",
-  "DateTime": "2025-09-12T14:48:57+00:00",
-  "Coordinates": "-4.28,122.27",
-  "Lintang": "4.28 LS",
-  "Bujur": "122.27 BT",
-  "Magnitude": "2.5",
-  "Kedalaman": "6 km",
-  "Wilayah": "Pusat gempa berada di darat 1 km baratlaut Baito, Konawe Selatan",
+  "Tanggal": "13 Sep 2025",
+  "Jam": "08:01:11 WIB",
+  "DateTime": "2025-09-13T01:01:11+00:00",
+  "Coordinates": "-6.36,104.60",
+  "Lintang": "6.36 LS",
+  "Bujur": "104.60 BT",
+  "Magnitude": "4.4",
+  "Kedalaman": "23 km",
+  "Wilayah": "Pusat gempa berada di laut 98 km barat daya Tanggamus",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III Konawe Selatan",
-  "Shakemap": "20250912214857.mmi.jpg"
+  "Dirasakan": "II Ngaras Bengkunat",
+  "Shakemap": "20250913080111.mmi.jpg"
 }
