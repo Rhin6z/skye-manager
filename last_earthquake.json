@@ -1,14 +1,14 @@
 {
-  "Tanggal": "13 Sep 2025",
-  "Jam": "22:05:43 WIB",
-  "DateTime": "2025-09-13T15:05:43+00:00",
-  "Coordinates": "-4.05,142.01",
-  "Lintang": "4.05 LS",
-  "Bujur": "142.01 BT",
-  "Magnitude": "5.2",
-  "Kedalaman": "84 km",
-  "Wilayah": "159 km Tenggara KEEROM-PAPUA",
-  "Potensi": "Tidak berpotensi tsunami",
-  "Dirasakan": "-",
-  "Shakemap": "20250913220912.mmi.jpg"
+  "Tanggal": "14 Sep 2025",
+  "Jam": "08:13:43 WIB",
+  "DateTime": "2025-09-14T01:13:43+00:00",
+  "Coordinates": "2.44,95.59",
+  "Lintang": "2.44 LU",
+  "Bujur": "95.59 BT",
+  "Magnitude": "4.9",
+  "Kedalaman": "2 km",
+  "Wilayah": "Pusat gempa berada di laut 86 km barat daya Sinabang",
+  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
+  "Dirasakan": "III Simeulue",
+  "Shakemap": "20250914081343.mmi.jpg"
 }
