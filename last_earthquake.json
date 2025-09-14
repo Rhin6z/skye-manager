@@ -1,14 +1,14 @@
 {
   "Tanggal": "14 Sep 2025",
-  "Jam": "08:13:43 WIB",
-  "DateTime": "2025-09-14T01:13:43+00:00",
-  "Coordinates": "2.44,95.59",
-  "Lintang": "2.44 LU",
-  "Bujur": "95.59 BT",
-  "Magnitude": "4.9",
-  "Kedalaman": "2 km",
-  "Wilayah": "Pusat gempa berada di laut 86 km barat daya Sinabang",
-  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III Simeulue",
-  "Shakemap": "20250914081343.mmi.jpg"
+  "Jam": "21:49:42 WIB",
+  "DateTime": "2025-09-14T14:49:42+00:00",
+  "Coordinates": "-2.84,100.93",
+  "Lintang": "2.84 LS",
+  "Bujur": "100.93 BT",
+  "Magnitude": "5.2",
+  "Kedalaman": "18 km",
+  "Wilayah": "35 km BaratDaya MUKOMUKO-BENGKULU",
+  "Potensi": "Tidak berpotensi tsunami",
+  "Dirasakan": "-",
+  "Shakemap": "20250914215214.mmi.jpg"
 }
