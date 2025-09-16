@@ -1,14 +1,14 @@
 {
   "Tanggal": "17 Sep 2025",
-  "Jam": "01:58:36 WIB",
-  "DateTime": "2025-09-16T18:58:36+00:00",
-  "Coordinates": "-3.52,135.49",
-  "Lintang": "3.52 LS",
-  "Bujur": "135.49 BT",
+  "Jam": "02:43:06 WIB",
+  "DateTime": "2025-09-16T19:43:06+00:00",
+  "Coordinates": "-0.59,135.65",
+  "Lintang": "0.59 LS",
+  "Bujur": "135.65 BT",
   "Magnitude": "4.3",
-  "Kedalaman": "21 km",
-  "Wilayah": "Pusat gempa berada di darat 18 km barat daya mabire",
+  "Kedalaman": "10 km",
+  "Wilayah": "Pusat gempa berada di laut 18 Km barat laut Supiori",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III Nabire",
-  "Shakemap": "20250917015836.mmi.jpg"
+  "Dirasakan": "III Supiori",
+  "Shakemap": "20250917024306.mmi.jpg"
 }
