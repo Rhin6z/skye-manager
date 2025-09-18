@@ -1,14 +1,14 @@
 {
   "Tanggal": "18 Sep 2025",
-  "Jam": "10:30:32 WIB",
-  "DateTime": "2025-09-18T03:30:32+00:00",
-  "Coordinates": "-0.66,128.04",
-  "Lintang": "0.66 LS",
-  "Bujur": "128.04 BT",
-  "Magnitude": "4.6",
-  "Kedalaman": "9 km",
-  "Wilayah": "Pusat gempa berada di darat 60 km timur Labuha",
+  "Jam": "14:07:10 WIB",
+  "DateTime": "2025-09-18T07:07:10+00:00",
+  "Coordinates": "-2.53,121.12",
+  "Lintang": "2.53 LS",
+  "Bujur": "121.12 BT",
+  "Magnitude": "3.2",
+  "Kedalaman": "5 km",
+  "Wilayah": "Pusat gempa berada di darat 8 km barat laut Luwu Timur",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III-IV Gane Barat Selatan",
-  "Shakemap": "20250918103032.mmi.jpg"
+  "Dirasakan": "III Malili",
+  "Shakemap": "20250918140710.mmi.jpg"
 }
