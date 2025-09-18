@@ -1,14 +1,14 @@
 {
-  "Tanggal": "17 Sep 2025",
-  "Jam": "20:11:57 WIB",
-  "DateTime": "2025-09-17T13:11:57+00:00",
-  "Coordinates": "-2.79,128.06",
-  "Lintang": "2.79 LS",
-  "Bujur": "128.06 BT",
-  "Magnitude": "4.4",
-  "Kedalaman": "13 km",
-  "Wilayah": "Pusat gempa berada di laut 42 km Utara Huamual Belakang-Seram Bagian Barat",
-  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III Piru",
-  "Shakemap": "20250917201157.mmi.jpg"
+  "Tanggal": "18 Sep 2025",
+  "Jam": "10:47:33 WIB",
+  "DateTime": "2025-09-18T03:47:33+00:00",
+  "Coordinates": "4.28,127.77",
+  "Lintang": "4.28 LU",
+  "Bujur": "127.77 BT",
+  "Magnitude": "5.4",
+  "Kedalaman": "118 km",
+  "Wilayah": "93 km Tenggara PULAUKARATUNG-SULUT",
+  "Potensi": "Tidak berpotensi tsunami",
+  "Dirasakan": "-",
+  "Shakemap": "20250918105019.mmi.jpg"
 }
