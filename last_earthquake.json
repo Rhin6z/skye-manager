@@ -1,14 +1,14 @@
 {
   "Tanggal": "18 Sep 2025",
-  "Jam": "17:26:39 WIB",
-  "DateTime": "2025-09-18T10:26:39+00:00",
-  "Coordinates": "-4.02,122.29",
-  "Lintang": "4.02 LS",
-  "Bujur": "122.29 BT",
-  "Magnitude": "2.9",
-  "Kedalaman": "5 km",
-  "Wilayah": "Pusat gempa berada di darat 2 km timur laut Sabulakoa, Konawe Selatan",
+  "Jam": "21:59:34 WIB",
+  "DateTime": "2025-09-18T14:59:34+00:00",
+  "Coordinates": "-10.30,113.96",
+  "Lintang": "10.30 LS",
+  "Bujur": "113.96 BT",
+  "Magnitude": "4.7",
+  "Kedalaman": "10 km",
+  "Wilayah": "Pusat gempa berada di laut 218 Km barat daya Kuta Selatan",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Konawe, II Kendari",
-  "Shakemap": "20250918172639.mmi.jpg"
+  "Dirasakan": "II Kuta, II Denpasar",
+  "Shakemap": "20250918215934.mmi.jpg"
 }
