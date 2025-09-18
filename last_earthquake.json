@@ -1,14 +1,14 @@
 {
-  "Tanggal": "18 Sep 2025",
-  "Jam": "21:59:34 WIB",
-  "DateTime": "2025-09-18T14:59:34+00:00",
-  "Coordinates": "-10.30,113.96",
-  "Lintang": "10.30 LS",
-  "Bujur": "113.96 BT",
-  "Magnitude": "4.7",
-  "Kedalaman": "10 km",
-  "Wilayah": "Pusat gempa berada di laut 218 Km barat daya Kuta Selatan",
-  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Kuta, II Denpasar",
-  "Shakemap": "20250918215934.mmi.jpg"
+  "Tanggal": "19 Sep 2025",
+  "Jam": "01:19:50 WIB",
+  "DateTime": "2025-09-18T18:19:50+00:00",
+  "Coordinates": "-3.47,135.49",
+  "Lintang": "3.47 LS",
+  "Bujur": "135.49 BT",
+  "Magnitude": "6.6",
+  "Kedalaman": "24 km",
+  "Wilayah": "29 km BaratLaut NABIRE-PAPUATENGAH",
+  "Potensi": "Tidak berpotensi tsunami",
+  "Dirasakan": "-",
+  "Shakemap": "20250919012236.mmi.jpg"
 }
