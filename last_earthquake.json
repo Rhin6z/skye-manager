@@ -1,14 +1,14 @@
 {
   "Tanggal": "19 Sep 2025",
-  "Jam": "10:06:51 WIB",
-  "DateTime": "2025-09-19T03:06:51+00:00",
-  "Coordinates": "-3.38,135.56",
-  "Lintang": "3.38 LS",
-  "Bujur": "135.56 BT",
-  "Magnitude": "3.9",
-  "Kedalaman": "23 km",
-  "Wilayah": "Pusat gempa berada di darat 6 km tenggara Nabire",
+  "Jam": "13:55:10 WIB",
+  "DateTime": "2025-09-19T06:55:10+00:00",
+  "Coordinates": "-3.56,122.31",
+  "Lintang": "3.56 LS",
+  "Bujur": "122.31 BT",
+  "Magnitude": "3.5",
+  "Kedalaman": "5 km",
+  "Wilayah": "Pusat gempa berada di darat 5 km tenggara Konawe Utara",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II-III Nabire",
-  "Shakemap": "20250919100651.mmi.jpg"
+  "Dirasakan": "III Konawe Utara",
+  "Shakemap": "20250919135510.mmi.jpg"
 }
