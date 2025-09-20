@@ -1,14 +1,14 @@
 {
-  "Tanggal": "19 Sep 2025",
-  "Jam": "23:00:10 WIB",
-  "DateTime": "2025-09-19T16:00:10+00:00",
-  "Coordinates": "-3.53,135.57",
-  "Lintang": "3.53 LS",
-  "Bujur": "135.57 BT",
-  "Magnitude": "3.5",
-  "Kedalaman": "24 km",
-  "Wilayah": "Pusat gempa berada di darat 20 km tenggara Nabire",
+  "Tanggal": "20 Sep 2025",
+  "Jam": "08:01:13 WIB",
+  "DateTime": "2025-09-20T01:01:13+00:00",
+  "Coordinates": "-3.16,135.85",
+  "Lintang": "3.16 LS",
+  "Bujur": "135.85 BT",
+  "Magnitude": "3.6",
+  "Kedalaman": "10 km",
+  "Wilayah": "Pusat gempa berada di darat 44 km timur laut Nabire",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
   "Dirasakan": "II Nabire",
-  "Shakemap": "20250919230010.mmi.jpg"
+  "Shakemap": "20250920080113.mmi.jpg"
 }
