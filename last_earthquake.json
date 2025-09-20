@@ -1,14 +1,14 @@
 {
   "Tanggal": "21 Sep 2025",
-  "Jam": "01:07:05 WIB",
-  "DateTime": "2025-09-20T18:07:05+00:00",
-  "Coordinates": "-3.67,134.87",
-  "Lintang": "3.67 LS",
-  "Bujur": "134.87 BT",
-  "Magnitude": "3.7",
-  "Kedalaman": "10 km",
-  "Wilayah": "Pusat gempa berada di darat 75 km barat daya Nabire",
+  "Jam": "01:59:05 WIB",
+  "DateTime": "2025-09-20T18:59:05+00:00",
+  "Coordinates": "-6.74,106.59",
+  "Lintang": "6.74 LS",
+  "Bujur": "106.59 BT",
+  "Magnitude": "3.8",
+  "Kedalaman": "5 km",
+  "Wilayah": "Pusat gempa berada di darat 27 km barat daya Kota Bogor",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Nabire",
-  "Shakemap": "20250921010705.mmi.jpg"
+  "Dirasakan": "III Leuwiliang, III Kabandungan, II - III Cibadak, III Pamijahan, II Pelabuhan Ratu",
+  "Shakemap": "20250921015905.mmi.jpg"
 }
