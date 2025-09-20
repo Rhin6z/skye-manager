@@ -1,14 +1,14 @@
 {
   "Tanggal": "20 Sep 2025",
-  "Jam": "08:01:13 WIB",
-  "DateTime": "2025-09-20T01:01:13+00:00",
-  "Coordinates": "-3.16,135.85",
-  "Lintang": "3.16 LS",
-  "Bujur": "135.85 BT",
-  "Magnitude": "3.6",
+  "Jam": "13:54:15 WIB",
+  "DateTime": "2025-09-20T06:54:15+00:00",
+  "Coordinates": "-3.73,127.85",
+  "Lintang": "3.73 LS",
+  "Bujur": "127.85 BT",
+  "Magnitude": "4.8",
   "Kedalaman": "10 km",
-  "Wilayah": "Pusat gempa berada di darat 44 km timur laut Nabire",
+  "Wilayah": "Pusat gempa berada di laut 37 km barat Ambon",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Nabire",
-  "Shakemap": "20250920080113.mmi.jpg"
+  "Dirasakan": "III-IV Ambon",
+  "Shakemap": "20250920135415.mmi.jpg"
 }
