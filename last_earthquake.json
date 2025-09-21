@@ -1,14 +1,14 @@
 {
   "Tanggal": "21 Sep 2025",
-  "Jam": "16:23:37 WIB",
-  "DateTime": "2025-09-21T09:23:37+00:00",
-  "Coordinates": "-6.73,106.58",
-  "Lintang": "6.73 LS",
-  "Bujur": "106.58 BT",
-  "Magnitude": "3.8",
-  "Kedalaman": "8 km",
-  "Wilayah": "Pusat gempa berada di darat 28 km timur laut Sukabumi",
+  "Jam": "22:57:08 WIB",
+  "DateTime": "2025-09-21T15:57:08+00:00",
+  "Coordinates": "-3.25,135.54",
+  "Lintang": "3.25 LS",
+  "Bujur": "135.54 BT",
+  "Magnitude": "3.1",
+  "Kedalaman": "17 km",
+  "Wilayah": "Pusat gempa berada di darat 13 km timur laut Nabire",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Kalapanunggal",
-  "Shakemap": "20250921162337.mmi.jpg"
+  "Dirasakan": "II Nabire",
+  "Shakemap": "20250921225708.mmi.jpg"
 }
