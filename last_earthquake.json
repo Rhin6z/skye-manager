@@ -1,14 +1,14 @@
 {
-  "Tanggal": "22 Sep 2025",
-  "Jam": "23:35:09 WIB",
-  "DateTime": "2025-09-22T16:35:09+00:00",
-  "Coordinates": "4.85,96.82",
-  "Lintang": "4.85 LU",
-  "Bujur": "96.82 BT",
-  "Magnitude": "3.2",
-  "Kedalaman": "2 km",
-  "Wilayah": "Pusat gempa berada di darat 14 km barat laut Kab. Bener Meriah",
-  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II-III Kab. Bener Meriah",
-  "Shakemap": "20250922233509.mmi.jpg"
+  "Tanggal": "23 Sep 2025",
+  "Jam": "01:31:54 WIB",
+  "DateTime": "2025-09-22T18:31:54+00:00",
+  "Coordinates": "-6.02,130.86",
+  "Lintang": "6.02 LS",
+  "Bujur": "130.86 BT",
+  "Magnitude": "5.3",
+  "Kedalaman": "140 km",
+  "Wilayah": "211 km BaratDaya MALUKUTENGGARA",
+  "Potensi": "Tidak berpotensi tsunami",
+  "Dirasakan": "-",
+  "Shakemap": "20250923013456.mmi.jpg"
 }
