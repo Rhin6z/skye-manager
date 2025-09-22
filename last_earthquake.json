@@ -1,14 +1,14 @@
 {
   "Tanggal": "22 Sep 2025",
-  "Jam": "03:34:09 WIB",
-  "DateTime": "2025-09-21T20:34:09+00:00",
-  "Coordinates": "-3.49,135.51",
-  "Lintang": "3.49 LS",
-  "Bujur": "135.51 BT",
-  "Magnitude": "3.2",
-  "Kedalaman": "24 km",
-  "Wilayah": "Pusat gempa berada di darat 14 km tenggara Nabire",
+  "Jam": "07:30:04 WIB",
+  "DateTime": "2025-09-22T00:30:04+00:00",
+  "Coordinates": "-3.39,135.55",
+  "Lintang": "3.39 LS",
+  "Bujur": "135.55 BT",
+  "Magnitude": "3.5",
+  "Kedalaman": "27 km",
+  "Wilayah": "Pusat gempa berada di darat 6 Km tenggara Nabire",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Nabire",
-  "Shakemap": "20250922033409.mmi.jpg"
+  "Dirasakan": "II-III Nabire",
+  "Shakemap": "20250922073004.mmi.jpg"
 }
