@@ -1,14 +1,14 @@
 {
   "Tanggal": "22 Sep 2025",
-  "Jam": "16:50:18 WIB",
-  "DateTime": "2025-09-22T09:50:18+00:00",
-  "Coordinates": "-3.39,135.56",
-  "Lintang": "3.39 LS",
-  "Bujur": "135.56 BT",
-  "Magnitude": "4.2",
-  "Kedalaman": "23 km",
-  "Wilayah": "Pusat gempa berada di darat 7 km Tenggara Nabire",
+  "Jam": "19:19:36 WIB",
+  "DateTime": "2025-09-22T12:19:36+00:00",
+  "Coordinates": "4.85,96.73",
+  "Lintang": "4.85 LU",
+  "Bujur": "96.73 BT",
+  "Magnitude": "3.5",
+  "Kedalaman": "2 km",
+  "Wilayah": "Pusat gempa berada di darat 19 km barat laut Kab. Bener Meriah",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III Nabire",
-  "Shakemap": "20250922165018.mmi.jpg"
+  "Dirasakan": "II - III Kec. Pintu Rime Gayo, Kab. Bener Meriah",
+  "Shakemap": "20250922191936.mmi.jpg"
 }
