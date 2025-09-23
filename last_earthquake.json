@@ -1,7 +1,7 @@
 {
-  "Tanggal": "24 Sep 2025",
+  "Tanggal": "23 Sep 2025",
   "Jam": "06:43:37 WIB",
-  "DateTime": "2025-09-23T23:43:37+00:00",
+  "DateTime": "2025-09-22T23:43:37+00:00",
   "Coordinates": "-3.45,135.56",
   "Lintang": "3.45 LS",
   "Bujur": "135.56 BT",
@@ -10,5 +10,5 @@
   "Wilayah": "Pusat gempa berada di darat 11 km tenggara Nabire",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
   "Dirasakan": "III Nabire",
-  "Shakemap": "20250924064337.mmi.jpg"
+  "Shakemap": "20250923064337.mmi.jpg"
 }
