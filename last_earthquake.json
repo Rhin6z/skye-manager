@@ -1,14 +1,14 @@
 {
-  "Tanggal": "23 Sep 2025",
-  "Jam": "08:20:38 WIB",
-  "DateTime": "2025-09-23T01:20:38+00:00",
-  "Coordinates": "2.61,95.27",
-  "Lintang": "2.61 LU",
-  "Bujur": "95.27 BT",
-  "Magnitude": "5.2",
-  "Kedalaman": "10 km",
-  "Wilayah": "122 km BaratLaut SINABANG-ACEH",
+  "Tanggal": "24 Sep 2025",
+  "Jam": "01:50:39 WIB",
+  "DateTime": "2025-09-23T18:50:39+00:00",
+  "Coordinates": "-6.13,131.31",
+  "Lintang": "6.13 LS",
+  "Bujur": "131.31 BT",
+  "Magnitude": "5.1",
+  "Kedalaman": "108 km",
+  "Wilayah": "166 km BaratDaya MALUKUTENGGARA",
   "Potensi": "Tidak berpotensi tsunami",
   "Dirasakan": "-",
-  "Shakemap": "20250923082329.mmi.jpg"
+  "Shakemap": "20250924015331.mmi.jpg"
 }
