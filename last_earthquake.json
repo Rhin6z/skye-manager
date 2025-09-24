@@ -1,14 +1,14 @@
 {
   "Tanggal": "24 Sep 2025",
-  "Jam": "21:53:11 WIB",
-  "DateTime": "2025-09-24T14:53:11+00:00",
-  "Coordinates": "-4.14,142.75",
-  "Lintang": "4.14 LS",
-  "Bujur": "142.75 BT",
-  "Magnitude": "5.4",
-  "Kedalaman": "10 km",
-  "Wilayah": "114 km BaratDaya WEWAK-PNG",
-  "Potensi": "Tidak berpotensi tsunami",
-  "Dirasakan": "-",
-  "Shakemap": "20250924215601.mmi.jpg"
+  "Jam": "22:29:30 WIB",
+  "DateTime": "2025-09-24T15:29:30+00:00",
+  "Coordinates": "4.15,97.50",
+  "Lintang": "4.15 LU",
+  "Bujur": "97.50 BT",
+  "Magnitude": "4.4",
+  "Kedalaman": "2 km",
+  "Wilayah": "Pusat gempa berada di darat 24 km timur laut Kabupaten Gayo Lues",
+  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
+  "Dirasakan": "III Pining-Gayo Lues, II - III Aceh Tengah, II Bener Meriah",
+  "Shakemap": "20250924222930.mmi.jpg"
 }
