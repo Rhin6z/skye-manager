@@ -1,14 +1,14 @@
 {
   "Tanggal": "24 Sep 2025",
-  "Jam": "22:29:30 WIB",
-  "DateTime": "2025-09-24T15:29:30+00:00",
-  "Coordinates": "4.15,97.50",
-  "Lintang": "4.15 LU",
-  "Bujur": "97.50 BT",
-  "Magnitude": "4.4",
-  "Kedalaman": "2 km",
-  "Wilayah": "Pusat gempa berada di darat 24 km timur laut Kabupaten Gayo Lues",
+  "Jam": "23:40:40 WIB",
+  "DateTime": "2025-09-24T16:40:40+00:00",
+  "Coordinates": "-3.58,135.57",
+  "Lintang": "3.58 LS",
+  "Bujur": "135.57 BT",
+  "Magnitude": "2.2",
+  "Kedalaman": "28 km",
+  "Wilayah": "Pusat gempa berada di darat 26 km Tenggara Nabire",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III Pining-Gayo Lues, II - III Aceh Tengah, II Bener Meriah",
-  "Shakemap": "20250924222930.mmi.jpg"
+  "Dirasakan": "II Nabire",
+  "Shakemap": "20250924234040.mmi.jpg"
 }
