@@ -1,14 +1,14 @@
 {
   "Tanggal": "24 Sep 2025",
-  "Jam": "01:50:39 WIB",
-  "DateTime": "2025-09-23T18:50:39+00:00",
-  "Coordinates": "-6.13,131.31",
-  "Lintang": "6.13 LS",
-  "Bujur": "131.31 BT",
+  "Jam": "02:54:43 WIB",
+  "DateTime": "2025-09-23T19:54:43+00:00",
+  "Coordinates": "-9.50,119.62",
+  "Lintang": "9.50 LS",
+  "Bujur": "119.62 BT",
   "Magnitude": "5.1",
-  "Kedalaman": "108 km",
-  "Wilayah": "166 km BaratDaya MALUKUTENGGARA",
-  "Potensi": "Tidak berpotensi tsunami",
-  "Dirasakan": "-",
-  "Shakemap": "20250924015331.mmi.jpg"
+  "Kedalaman": "34 km",
+  "Wilayah": "Pusat gempa berada di darat 13 km timur laut Waibakul",
+  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
+  "Dirasakan": "III-IV Waikabubak, III-IV Waibakul, III Waingapu, III Tambolaka, II Kota Bima, II Sumbawa",
+  "Shakemap": "20250924025443.mmi.jpg"
 }
