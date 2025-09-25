@@ -1,14 +1,14 @@
 {
   "Tanggal": "25 Sep 2025",
-  "Jam": "16:04:12 WIB",
-  "DateTime": "2025-09-25T09:04:12+00:00",
-  "Coordinates": "-7.82,114.47",
-  "Lintang": "7.82 LS",
-  "Bujur": "114.47 BT",
-  "Magnitude": "5.7",
-  "Kedalaman": "12 km",
-  "Wilayah": "46 km TimurLaut BANYUWANGI-JATIM",
-  "Potensi": "Tidak berpotensi tsunami",
-  "Dirasakan": "-",
-  "Shakemap": "20250925160650.mmi.jpg"
+  "Jam": "17:06:46 WIB",
+  "DateTime": "2025-09-25T10:06:46+00:00",
+  "Coordinates": "0.91,117.12",
+  "Lintang": "0.91 LU",
+  "Bujur": "117.12 BT",
+  "Magnitude": "2.9",
+  "Kedalaman": "5 km",
+  "Wilayah": "Pusat gempa berada di darat 15 km tenggara Kutai Timur",
+  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
+  "Dirasakan": "II-III Kutai Timur",
+  "Shakemap": "20250925170646.mmi.jpg"
 }
