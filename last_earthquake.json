@@ -1,14 +1,14 @@
 {
   "Tanggal": "25 Sep 2025",
-  "Jam": "07:57:52 WIB",
-  "DateTime": "2025-09-25T00:57:52+00:00",
-  "Coordinates": "-3.37,135.57",
-  "Lintang": "3.37 LS",
-  "Bujur": "135.57 BT",
-  "Magnitude": "4.0",
-  "Kedalaman": "22 km",
-  "Wilayah": "Pusat gempa berada di darat 8 km Tenggara NABIRE-PAPUATENGAH",
-  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Nabire",
-  "Shakemap": "20250925075752.mmi.jpg"
+  "Jam": "16:04:12 WIB",
+  "DateTime": "2025-09-25T09:04:12+00:00",
+  "Coordinates": "-7.82,114.47",
+  "Lintang": "7.82 LS",
+  "Bujur": "114.47 BT",
+  "Magnitude": "5.7",
+  "Kedalaman": "12 km",
+  "Wilayah": "46 km TimurLaut BANYUWANGI-JATIM",
+  "Potensi": "Tidak berpotensi tsunami",
+  "Dirasakan": "-",
+  "Shakemap": "20250925160650.mmi.jpg"
 }
