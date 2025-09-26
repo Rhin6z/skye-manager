@@ -1,14 +1,14 @@
 {
   "Tanggal": "26 Sep 2025",
-  "Jam": "20:22:19 WIB",
-  "DateTime": "2025-09-26T13:22:19+00:00",
-  "Coordinates": "1.40,117.73",
-  "Lintang": "1.40 LU",
-  "Bujur": "117.73 BT",
-  "Magnitude": "3.4",
-  "Kedalaman": "6 km",
-  "Wilayah": "Pusat gempa berada di darat 83 km tenggara Berau",
+  "Jam": "21:55:03 WIB",
+  "DateTime": "2025-09-26T14:55:03+00:00",
+  "Coordinates": "-5.47,104.51",
+  "Lintang": "5.47 LS",
+  "Bujur": "104.51 BT",
+  "Magnitude": "4.5",
+  "Kedalaman": "5 km",
+  "Wilayah": "Pusat gempa berada di darat 19 km barat laut Tanggamus",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II-III Karangan",
-  "Shakemap": "20250926202219.mmi.jpg"
+  "Dirasakan": "III-IV Semaka, III Kota Agung, II-III Limau",
+  "Shakemap": "20250926215503.mmi.jpg"
 }
