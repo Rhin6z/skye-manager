@@ -1,14 +1,14 @@
 {
   "Tanggal": "26 Sep 2025",
-  "Jam": "18:24:05 WIB",
-  "DateTime": "2025-09-26T11:24:05+00:00",
-  "Coordinates": "-6.76,106.60",
-  "Lintang": "6.76 LS",
-  "Bujur": "106.60 BT",
-  "Magnitude": "2.9",
-  "Kedalaman": "8 km",
-  "Wilayah": "Pusat gempa berada di darat 25 km TimurLaut Kab. Sukabumi",
+  "Jam": "20:22:19 WIB",
+  "DateTime": "2025-09-26T13:22:19+00:00",
+  "Coordinates": "1.40,117.73",
+  "Lintang": "1.40 LU",
+  "Bujur": "117.73 BT",
+  "Magnitude": "3.4",
+  "Kedalaman": "6 km",
+  "Wilayah": "Pusat gempa berada di darat 83 km tenggara Berau",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III Kabandungan, II-III Pamijahan, II-III Kalapanunggal",
-  "Shakemap": "20250926182405.mmi.jpg"
+  "Dirasakan": "II-III Karangan",
+  "Shakemap": "20250926202219.mmi.jpg"
 }
