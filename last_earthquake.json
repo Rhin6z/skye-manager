@@ -1,14 +1,14 @@
 {
   "Tanggal": "26 Sep 2025",
-  "Jam": "11:51:42 WIB",
-  "DateTime": "2025-09-26T04:51:42+00:00",
-  "Coordinates": "1.95,99.07",
-  "Lintang": "1.95 LU",
-  "Bujur": "99.07 BT",
-  "Magnitude": "3.6",
-  "Kedalaman": "5 km",
-  "Wilayah": "Pusat gempa berada di darat 13 km Tenggara Tapanuli Utara",
+  "Jam": "17:55:42 WIB",
+  "DateTime": "2025-09-26T10:55:42+00:00",
+  "Coordinates": "-6.76,106.58",
+  "Lintang": "6.76 LS",
+  "Bujur": "106.58 BT",
+  "Magnitude": "2.5",
+  "Kedalaman": "7 km",
+  "Wilayah": "Pusat gempa berada di darat 25 km Timur Laut Kab. Sukabumi",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II-III Tarutung",
-  "Shakemap": "20250926115142.mmi.jpg"
+  "Dirasakan": "II-III Kab. Sukabumi",
+  "Shakemap": "20250926175542.mmi.jpg"
 }
