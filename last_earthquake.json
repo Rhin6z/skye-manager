@@ -1,14 +1,14 @@
 {
   "Tanggal": "27 Sep 2025",
-  "Jam": "07:09:10 WIB",
-  "DateTime": "2025-09-27T00:09:10+00:00",
-  "Coordinates": "-3.33,135.47",
-  "Lintang": "3.33 LS",
-  "Bujur": "135.47 BT",
-  "Magnitude": "4.1",
-  "Kedalaman": "13 km",
-  "Wilayah": "Pusat gempa berada di darat 5 Km BaratLaut Nabire",
-  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III Nabire",
-  "Shakemap": "20250927070910.mmi.jpg"
+  "Jam": "16:08:55 WIB",
+  "DateTime": "2025-09-27T09:08:55+00:00",
+  "Coordinates": "-2.73,129.51",
+  "Lintang": "2.73 LS",
+  "Bujur": "129.51 BT",
+  "Magnitude": "5.1",
+  "Kedalaman": "12 km",
+  "Wilayah": "88 km TimurLaut MALUKUTENGAH",
+  "Potensi": "Tidak berpotensi tsunami",
+  "Dirasakan": "-",
+  "Shakemap": "20250927161131.mmi.jpg"
 }
