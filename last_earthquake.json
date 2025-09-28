@@ -1,14 +1,14 @@
 {
   "Tanggal": "28 Sep 2025",
-  "Jam": "09:54:26 WIB",
-  "DateTime": "2025-09-28T02:54:26+00:00",
-  "Coordinates": "-2.30,119.07",
-  "Lintang": "2.30 LS",
-  "Bujur": "119.07 BT",
-  "Magnitude": "3.5",
-  "Kedalaman": "5 km",
-  "Wilayah": "Pusat gempa berada di laut 51 km barat daya Mamuju Tengah",
+  "Jam": "21:06:20 WIB",
+  "DateTime": "2025-09-28T14:06:20+00:00",
+  "Coordinates": "-6.70,106.64",
+  "Lintang": "6.70 LS",
+  "Bujur": "106.64 BT",
+  "Magnitude": "2.8",
+  "Kedalaman": "17 km",
+  "Wilayah": "Pusat gempa berada di darat 20 km BaratDaya Kota Bogor",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III Mamuju",
-  "Shakemap": "20250928095426.mmi.jpg"
+  "Dirasakan": "II-III Leuwiliang, II Pamijahan",
+  "Shakemap": "20250928210620.mmi.jpg"
 }
