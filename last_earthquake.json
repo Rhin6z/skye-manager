@@ -1,14 +1,14 @@
 {
-  "Tanggal": "27 Sep 2025",
-  "Jam": "16:08:55 WIB",
-  "DateTime": "2025-09-27T09:08:55+00:00",
-  "Coordinates": "-2.73,129.51",
-  "Lintang": "2.73 LS",
-  "Bujur": "129.51 BT",
-  "Magnitude": "5.1",
-  "Kedalaman": "12 km",
-  "Wilayah": "88 km TimurLaut MALUKUTENGAH",
-  "Potensi": "Tidak berpotensi tsunami",
-  "Dirasakan": "-",
-  "Shakemap": "20250927161131.mmi.jpg"
+  "Tanggal": "28 Sep 2025",
+  "Jam": "09:54:26 WIB",
+  "DateTime": "2025-09-28T02:54:26+00:00",
+  "Coordinates": "-2.30,119.07",
+  "Lintang": "2.30 LS",
+  "Bujur": "119.07 BT",
+  "Magnitude": "3.5",
+  "Kedalaman": "5 km",
+  "Wilayah": "Pusat gempa berada di laut 51 km barat daya Mamuju Tengah",
+  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
+  "Dirasakan": "III Mamuju",
+  "Shakemap": "20250928095426.mmi.jpg"
 }
