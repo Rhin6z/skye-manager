@@ -1,14 +1,14 @@
 {
   "Tanggal": "29 Sep 2025",
-  "Jam": "12:03:28 WIB",
-  "DateTime": "2025-09-29T05:03:28+00:00",
-  "Coordinates": "-8.16,124.60",
-  "Lintang": "8.16 LS",
-  "Bujur": "124.60 BT",
-  "Magnitude": "3.1",
-  "Kedalaman": "15 km",
-  "Wilayah": "Pusat gempa berada di darat 15 km timur laut Alor",
+  "Jam": "22:24:06 WIB",
+  "DateTime": "2025-09-29T15:24:06+00:00",
+  "Coordinates": "-3.25,135.31",
+  "Lintang": "3.25 LS",
+  "Bujur": "135.31 BT",
+  "Magnitude": "2.7",
+  "Kedalaman": "35 km",
+  "Wilayah": "Pusat gempa berada di darat 25 km Barat Laut Nabire",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II-III Alor",
-  "Shakemap": "20250929120328.mmi.jpg"
+  "Dirasakan": "II Nabire",
+  "Shakemap": "20250929222406.mmi.jpg"
 }
