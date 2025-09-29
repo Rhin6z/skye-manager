@@ -1,14 +1,14 @@
 {
-  "Tanggal": "28 Sep 2025",
-  "Jam": "21:06:20 WIB",
-  "DateTime": "2025-09-28T14:06:20+00:00",
-  "Coordinates": "-6.70,106.64",
-  "Lintang": "6.70 LS",
-  "Bujur": "106.64 BT",
-  "Magnitude": "2.8",
-  "Kedalaman": "17 km",
-  "Wilayah": "Pusat gempa berada di darat 20 km BaratDaya Kota Bogor",
+  "Tanggal": "29 Sep 2025",
+  "Jam": "12:03:28 WIB",
+  "DateTime": "2025-09-29T05:03:28+00:00",
+  "Coordinates": "-8.16,124.60",
+  "Lintang": "8.16 LS",
+  "Bujur": "124.60 BT",
+  "Magnitude": "3.1",
+  "Kedalaman": "15 km",
+  "Wilayah": "Pusat gempa berada di darat 15 km timur laut Alor",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II-III Leuwiliang, II Pamijahan",
-  "Shakemap": "20250928210620.mmi.jpg"
+  "Dirasakan": "II-III Alor",
+  "Shakemap": "20250929120328.mmi.jpg"
 }
