@@ -1,14 +1,14 @@
 {
-  "Tanggal": "29 Okt 2025",
-  "Jam": "22:24:06 WIB",
-  "DateTime": "2025-10-29T15:24:06+00:00",
-  "Coordinates": "-3.25,135.31",
-  "Lintang": "3.25 LS",
-  "Bujur": "135.31 BT",
-  "Magnitude": "2.7",
-  "Kedalaman": "35 km",
-  "Wilayah": "Pusat gempa berada di laut 25 km Baratlaut Nabire",
+  "Tanggal": "30 Sep 2025",
+  "Jam": "05:30:15 WIB",
+  "DateTime": "2025-09-29T22:30:15+00:00",
+  "Coordinates": "-8.20,107.41",
+  "Lintang": "8.20 LS",
+  "Bujur": "107.41 BT",
+  "Magnitude": "4.9",
+  "Kedalaman": "12 km",
+  "Wilayah": "Pusat gempa berada di laut, 121 km BaratDaya KAB-GARUT",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Nabire",
-  "Shakemap": "20251029222406.mmi.jpg"
+  "Dirasakan": "II Kota Sukabumi, II-III Kota Garut",
+  "Shakemap": "20250930053015.mmi.jpg"
 }
