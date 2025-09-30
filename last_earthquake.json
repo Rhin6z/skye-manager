@@ -1,14 +1,14 @@
 {
   "Tanggal": "30 Sep 2025",
-  "Jam": "05:30:15 WIB",
-  "DateTime": "2025-09-29T22:30:15+00:00",
-  "Coordinates": "-8.20,107.41",
-  "Lintang": "8.20 LS",
-  "Bujur": "107.41 BT",
-  "Magnitude": "4.9",
-  "Kedalaman": "12 km",
-  "Wilayah": "Pusat gempa berada di laut, 121 km BaratDaya KAB-GARUT",
+  "Jam": "08:41:30 WIB",
+  "DateTime": "2025-09-30T01:41:30+00:00",
+  "Coordinates": "-8.22,107.38",
+  "Lintang": "8.22 LS",
+  "Bujur": "107.38 BT",
+  "Magnitude": "3.5",
+  "Kedalaman": "13 km",
+  "Wilayah": "Pusat gempa berada di laut 125 km baratdaya Kabupaten Garut",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Kota Sukabumi, II-III Kota Garut",
-  "Shakemap": "20250930053015.mmi.jpg"
+  "Dirasakan": "II Kabupaten Pangandaran",
+  "Shakemap": "20250930084130.mmi.jpg"
 }
