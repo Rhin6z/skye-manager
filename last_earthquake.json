@@ -1,14 +1,14 @@
 {
-  "Tanggal": "30 Sep 2025",
-  "Jam": "23:49:43 WIB",
-  "DateTime": "2025-09-30T16:49:43+00:00",
-  "Coordinates": "-7.25,114.22",
-  "Lintang": "7.25 LS",
-  "Bujur": "114.22 BT",
-  "Magnitude": "6.5",
-  "Kedalaman": "11 km",
-  "Wilayah": "50 km Tenggara SUMENEP-JATIM",
+  "Tanggal": "01 Okt 2025",
+  "Jam": "20:49:51 WIB",
+  "DateTime": "2025-10-01T13:49:51+00:00",
+  "Coordinates": "-7.61,128.37",
+  "Lintang": "7.61 LS",
+  "Bujur": "128.37 BT",
+  "Magnitude": "6.1",
+  "Kedalaman": "163 km",
+  "Wilayah": "88 km TimurLaut MALUKUBRTDAYA",
   "Potensi": "Tidak berpotensi tsunami",
   "Dirasakan": "-",
-  "Shakemap": "20250930235240.mmi.jpg"
+  "Shakemap": "20251001205234.mmi.jpg"
 }
