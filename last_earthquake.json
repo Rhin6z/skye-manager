@@ -1,14 +1,14 @@
 {
-  "Tanggal": "01 Okt 2025",
-  "Jam": "20:49:51 WIB",
-  "DateTime": "2025-10-01T13:49:51+00:00",
-  "Coordinates": "-7.61,128.37",
-  "Lintang": "7.61 LS",
-  "Bujur": "128.37 BT",
-  "Magnitude": "6.1",
-  "Kedalaman": "163 km",
-  "Wilayah": "88 km TimurLaut MALUKUBRTDAYA",
-  "Potensi": "Tidak berpotensi tsunami",
-  "Dirasakan": "-",
-  "Shakemap": "20251001205234.mmi.jpg"
+  "Tanggal": "02 Okt 2025",
+  "Jam": "12:59:17 WIB",
+  "DateTime": "2025-10-02T05:59:17+00:00",
+  "Coordinates": "-8.23,124.61",
+  "Lintang": "8.23 LS",
+  "Bujur": "124.61 BT",
+  "Magnitude": "2.3",
+  "Kedalaman": "24 km",
+  "Wilayah": "Pusat gempa berada di darat, 9 km TimurLaut Alor",
+  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
+  "Dirasakan": "II-III Alor",
+  "Shakemap": "20251002125917.mmi.jpg"
 }
