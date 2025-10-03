@@ -1,14 +1,14 @@
 {
   "Tanggal": "03 Okt 2025",
-  "Jam": "10:55:54 WIB",
-  "DateTime": "2025-10-03T03:55:54+00:00",
-  "Coordinates": "1.46,122.99",
-  "Lintang": "1.46 LU",
-  "Bujur": "122.99 BT",
-  "Magnitude": "4.6",
+  "Jam": "13:02:39 WIB",
+  "DateTime": "2025-10-03T06:02:39+00:00",
+  "Coordinates": "-2.88,136.32",
+  "Lintang": "2.88 LS",
+  "Bujur": "136.32 BT",
+  "Magnitude": "5.4",
   "Kedalaman": "10 km",
-  "Wilayah": "Pusat gempa berada di laut 68 km barat laut Boroko-Bolmut",
-  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II-III Kabupaten Bone Bolango, II Kabupaten Gorontalo",
-  "Shakemap": "20251003105554.mmi.jpg"
+  "Wilayah": "39 km BaratDaya WAROPEN-PAPUA",
+  "Potensi": "Tidak berpotensi tsunami",
+  "Dirasakan": "-",
+  "Shakemap": "20251003130505.mmi.jpg"
 }
