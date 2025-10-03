@@ -1,14 +1,14 @@
 {
   "Tanggal": "03 Okt 2025",
-  "Jam": "13:18:30 WIB",
-  "DateTime": "2025-10-03T06:18:30+00:00",
-  "Coordinates": "-2.83,136.29",
-  "Lintang": "2.83 LS",
-  "Bujur": "136.29 BT",
-  "Magnitude": "4.8",
-  "Kedalaman": "16 km",
-  "Wilayah": "Pusat gempa berada di darat 67 km baratdaya Waropen",
+  "Jam": "18:03:18 WIB",
+  "DateTime": "2025-10-03T11:03:18+00:00",
+  "Coordinates": "-3.08,101.23",
+  "Lintang": "3.08 LS",
+  "Bujur": "101.23 BT",
+  "Magnitude": "4.9",
+  "Kedalaman": "25 km",
+  "Wilayah": "Pusat gempa berada di laut 57 km tenggara Muko-Muko",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Enarotali",
-  "Shakemap": "20251003131830.mmi.jpg"
+  "Dirasakan": "III Muko-Muko, II-III Pesisir Selatan",
+  "Shakemap": "20251003180318.mmi.jpg"
 }
