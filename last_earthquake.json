@@ -1,14 +1,14 @@
 {
   "Tanggal": "03 Okt 2025",
-  "Jam": "18:03:18 WIB",
-  "DateTime": "2025-10-03T11:03:18+00:00",
-  "Coordinates": "-3.08,101.23",
-  "Lintang": "3.08 LS",
-  "Bujur": "101.23 BT",
-  "Magnitude": "4.9",
-  "Kedalaman": "25 km",
-  "Wilayah": "Pusat gempa berada di laut 57 km tenggara Muko-Muko",
+  "Jam": "22:26:00 WIB",
+  "DateTime": "2025-10-03T15:26:00+00:00",
+  "Coordinates": "1.33,117.03",
+  "Lintang": "1.33 LU",
+  "Bujur": "117.03 BT",
+  "Magnitude": "3.1",
+  "Kedalaman": "2 km",
+  "Wilayah": "Pusat gempa berada di darat 43 km timur laut Kutai Timur",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III Muko-Muko, II-III Pesisir Selatan",
-  "Shakemap": "20251003180318.mmi.jpg"
+  "Dirasakan": "II-III Kelay Kab. Berau",
+  "Shakemap": "20251003222600.mmi.jpg"
 }
