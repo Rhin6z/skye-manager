@@ -1,14 +1,14 @@
 {
-  "Tanggal": "03 Okt 2025",
-  "Jam": "22:26:00 WIB",
-  "DateTime": "2025-10-03T15:26:00+00:00",
-  "Coordinates": "1.33,117.03",
-  "Lintang": "1.33 LU",
-  "Bujur": "117.03 BT",
-  "Magnitude": "3.1",
-  "Kedalaman": "2 km",
-  "Wilayah": "Pusat gempa berada di darat 43 km timur laut Kutai Timur",
+  "Tanggal": "04 Okt 2025",
+  "Jam": "19:35:58 WIB",
+  "DateTime": "2025-10-04T12:35:58+00:00",
+  "Coordinates": "-7.25,114.13",
+  "Lintang": "7.25 LS",
+  "Bujur": "114.13 BT",
+  "Magnitude": "3.6",
+  "Kedalaman": "11 km",
+  "Wilayah": "Pusat gempa berada di laut 43 km Tenggara Sumenep",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II-III Kelay Kab. Berau",
-  "Shakemap": "20251003222600.mmi.jpg"
+  "Dirasakan": "II Sapundi",
+  "Shakemap": "20251004193558.mmi.jpg"
 }
