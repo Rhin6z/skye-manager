@@ -1,14 +1,14 @@
 {
-  "Tanggal": "04 Okt 2025",
-  "Jam": "19:35:58 WIB",
-  "DateTime": "2025-10-04T12:35:58+00:00",
-  "Coordinates": "-7.25,114.13",
-  "Lintang": "7.25 LS",
-  "Bujur": "114.13 BT",
-  "Magnitude": "3.6",
-  "Kedalaman": "11 km",
-  "Wilayah": "Pusat gempa berada di laut 43 km Tenggara Sumenep",
+  "Tanggal": "06 Okt 2025",
+  "Jam": "03:29:44 WIB",
+  "DateTime": "2025-10-05T20:29:44+00:00",
+  "Coordinates": "-4.08,121.86",
+  "Lintang": "4.08 LS",
+  "Bujur": "121.86 BT",
+  "Magnitude": "2.2",
+  "Kedalaman": "7 km",
+  "Wilayah": "Pusat gempa berada di darat 2 km tenggara Loea, Kolaka Timur",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Sapundi",
-  "Shakemap": "20251004193558.mmi.jpg"
+  "Dirasakan": "II Lalolae",
+  "Shakemap": "20251006032944.mmi.jpg"
 }
