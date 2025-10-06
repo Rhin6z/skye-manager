@@ -1,14 +1,14 @@
 {
   "Tanggal": "06 Okt 2025",
-  "Jam": "03:29:44 WIB",
-  "DateTime": "2025-10-05T20:29:44+00:00",
-  "Coordinates": "-4.08,121.86",
-  "Lintang": "4.08 LS",
-  "Bujur": "121.86 BT",
-  "Magnitude": "2.2",
-  "Kedalaman": "7 km",
-  "Wilayah": "Pusat gempa berada di darat 2 km tenggara Loea, Kolaka Timur",
-  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Lalolae",
-  "Shakemap": "20251006032944.mmi.jpg"
+  "Jam": "17:11:54 WIB",
+  "DateTime": "2025-10-06T10:11:54+00:00",
+  "Coordinates": "0.79,92.45",
+  "Lintang": "0.79 LU",
+  "Bujur": "92.45 BT",
+  "Magnitude": "5.5",
+  "Kedalaman": "10 km",
+  "Wilayah": "473 km BaratDaya SINABANG-ACEH",
+  "Potensi": "Tidak berpotensi tsunami",
+  "Dirasakan": "-",
+  "Shakemap": "20251006171442.mmi.jpg"
 }
