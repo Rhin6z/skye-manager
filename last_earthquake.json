@@ -1,14 +1,14 @@
 {
-  "Tanggal": "06 Okt 2025",
-  "Jam": "17:11:54 WIB",
-  "DateTime": "2025-10-06T10:11:54+00:00",
-  "Coordinates": "0.79,92.45",
-  "Lintang": "0.79 LU",
-  "Bujur": "92.45 BT",
-  "Magnitude": "5.5",
+  "Tanggal": "08 Okt 2025",
+  "Jam": "03:59:53 WIB",
+  "DateTime": "2025-10-07T20:59:53+00:00",
+  "Coordinates": "-3.64,128.21",
+  "Lintang": "3.64 LS",
+  "Bujur": "128.21 BT",
+  "Magnitude": "2.7",
   "Kedalaman": "10 km",
-  "Wilayah": "473 km BaratDaya SINABANG-ACEH",
-  "Potensi": "Tidak berpotensi tsunami",
-  "Dirasakan": "-",
-  "Shakemap": "20251006171442.mmi.jpg"
+  "Wilayah": "Pusat gempa berada di laut 7 km timur laut Ambon",
+  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
+  "Dirasakan": "II Ambon",
+  "Shakemap": "20251008035953.mmi.jpg"
 }
