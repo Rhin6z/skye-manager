@@ -1,14 +1,14 @@
 {
   "Tanggal": "08 Okt 2025",
-  "Jam": "09:07:50 WIB",
-  "DateTime": "2025-10-08T02:07:50+00:00",
-  "Coordinates": "-7.22,114.18",
-  "Lintang": "7.22 LS",
-  "Bujur": "114.18 BT",
-  "Magnitude": "4.1",
-  "Kedalaman": "18 km",
-  "Wilayah": "Pusat gempa berada di laut 44 km Tenggara SUMENEP",
+  "Jam": "15:09:05 WIB",
+  "DateTime": "2025-10-08T08:09:05+00:00",
+  "Coordinates": "-4.27,102.24",
+  "Lintang": "4.27 LS",
+  "Bujur": "102.24 BT",
+  "Magnitude": "4.7",
+  "Kedalaman": "28 km",
+  "Wilayah": "Pusat gempa berada di laut 43 km barat daya Seluma",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III Sapudi",
-  "Shakemap": "20251008090750.mmi.jpg"
+  "Dirasakan": "II-III Kota Bengkulu, II-III Seluma",
+  "Shakemap": "20251008150905.mmi.jpg"
 }
