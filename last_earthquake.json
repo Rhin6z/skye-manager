@@ -1,14 +1,14 @@
 {
   "Tanggal": "08 Okt 2025",
-  "Jam": "03:59:53 WIB",
-  "DateTime": "2025-10-07T20:59:53+00:00",
-  "Coordinates": "-3.64,128.21",
-  "Lintang": "3.64 LS",
-  "Bujur": "128.21 BT",
-  "Magnitude": "2.7",
-  "Kedalaman": "10 km",
-  "Wilayah": "Pusat gempa berada di laut 7 km timur laut Ambon",
+  "Jam": "09:07:50 WIB",
+  "DateTime": "2025-10-08T02:07:50+00:00",
+  "Coordinates": "-7.22,114.18",
+  "Lintang": "7.22 LS",
+  "Bujur": "114.18 BT",
+  "Magnitude": "4.1",
+  "Kedalaman": "18 km",
+  "Wilayah": "Pusat gempa berada di laut 44 km Tenggara SUMENEP",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Ambon",
-  "Shakemap": "20251008035953.mmi.jpg"
+  "Dirasakan": "III Sapudi",
+  "Shakemap": "20251008090750.mmi.jpg"
 }
