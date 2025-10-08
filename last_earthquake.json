@@ -1,14 +1,14 @@
 {
   "Tanggal": "08 Okt 2025",
-  "Jam": "15:09:05 WIB",
-  "DateTime": "2025-10-08T08:09:05+00:00",
-  "Coordinates": "-4.27,102.24",
-  "Lintang": "4.27 LS",
-  "Bujur": "102.24 BT",
-  "Magnitude": "4.7",
-  "Kedalaman": "28 km",
-  "Wilayah": "Pusat gempa berada di laut 43 km barat daya Seluma",
+  "Jam": "16:19:42 WIB",
+  "DateTime": "2025-10-08T09:19:42+00:00",
+  "Coordinates": "-2.06,120.68",
+  "Lintang": "2.06 LS",
+  "Bujur": "120.68 BT",
+  "Magnitude": "4.6",
+  "Kedalaman": "5 km",
+  "Wilayah": "Pusat gempa berada di darat 21 km tenggara Taipa (Kab. Poso)",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II-III Kota Bengkulu, II-III Seluma",
-  "Shakemap": "20251008150905.mmi.jpg"
+  "Dirasakan": "III - IV Pendolo (Kab. Poso)",
+  "Shakemap": "20251008161942.mmi.jpg"
 }
