@@ -1,14 +1,14 @@
 {
-  "Tanggal": "08 Okt 2025",
-  "Jam": "17:09:31 WIB",
-  "DateTime": "2025-10-08T10:09:31+00:00",
-  "Coordinates": "-2.06,120.68",
-  "Lintang": "2.06 LS",
-  "Bujur": "120.68 BT",
-  "Magnitude": "4.6",
-  "Kedalaman": "5 km",
-  "Wilayah": "Pusat gempa berada di darat 21 km Tenggara Taipa Kabupaten Poso",
+  "Tanggal": "09 Okt 2025",
+  "Jam": "06:58:06 WIB",
+  "DateTime": "2025-10-08T23:58:06+00:00",
+  "Coordinates": "-2.31,140.55",
+  "Lintang": "2.31 LS",
+  "Bujur": "140.55 BT",
+  "Magnitude": "3.4",
+  "Kedalaman": "9 km",
+  "Wilayah": "Pusat gempa berada di laut 32 km barat laut Kota Jayapura",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III - IV Pendolo (kab. Poso)",
-  "Shakemap": "20251008170931.mmi.jpg"
+  "Dirasakan": "II-III Jayapura, II-III Sentani",
+  "Shakemap": "20251009065806.mmi.jpg"
 }
