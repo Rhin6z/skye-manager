@@ -1,14 +1,14 @@
 {
   "Tanggal": "10 Okt 2025",
-  "Jam": "08:44:00 WIB",
-  "DateTime": "2025-10-10T01:44:00+00:00",
-  "Coordinates": "7.23,126.83",
-  "Lintang": "7.23 LU",
-  "Bujur": "126.83 BT",
-  "Magnitude": "7.4",
-  "Kedalaman": "58 km",
-  "Wilayah": "275 km BaratLaut PULAUKARATUNG-SULUT",
-  "Potensi": "Potensi tsunami untuk diteruskan pada masyarakat",
-  "Dirasakan": "-",
-  "Shakemap": "20251010132510.mmi.jpg"
+  "Jam": "13:35:10 WIB",
+  "DateTime": "2025-10-10T06:35:10+00:00",
+  "Coordinates": "5.14,94.87",
+  "Lintang": "5.14 LU",
+  "Bujur": "94.87 BT",
+  "Magnitude": "4.5",
+  "Kedalaman": "43 km",
+  "Wilayah": "Pusat gempa berada di laut 82 km barat daya Aceh Besar",
+  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
+  "Dirasakan": "II - III Aceh Besar, II Banda Aceh",
+  "Shakemap": "20251010133510.mmi.jpg"
 }
