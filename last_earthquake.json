@@ -1,14 +1,14 @@
 {
-  "Tanggal": "09 Okt 2025",
-  "Jam": "06:58:06 WIB",
-  "DateTime": "2025-10-08T23:58:06+00:00",
-  "Coordinates": "-2.31,140.55",
-  "Lintang": "2.31 LS",
-  "Bujur": "140.55 BT",
-  "Magnitude": "3.4",
-  "Kedalaman": "9 km",
-  "Wilayah": "Pusat gempa berada di laut 32 km barat laut Kota Jayapura",
-  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II-III Jayapura, II-III Sentani",
-  "Shakemap": "20251009065806.mmi.jpg"
+  "Tanggal": "10 Okt 2025",
+  "Jam": "08:43:58 WIB",
+  "DateTime": "2025-10-10T01:43:58+00:00",
+  "Coordinates": "7.34,126.87",
+  "Lintang": "7.34 LU",
+  "Bujur": "126.87 BT",
+  "Magnitude": "7.6",
+  "Kedalaman": "56 km",
+  "Wilayah": "287 km BaratLaut PULAUKARATUNG-SULUT",
+  "Potensi": "Potensi tsunami untuk diteruskan pada masyarakat",
+  "Dirasakan": "-",
+  "Shakemap": "20251010085144.mmi.jpg"
 }
