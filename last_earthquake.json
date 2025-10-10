@@ -1,14 +1,14 @@
 {
   "Tanggal": "10 Okt 2025",
-  "Jam": "18:12:12 WIB",
-  "DateTime": "2025-10-10T11:12:12+00:00",
-  "Coordinates": "6.93,126.66",
-  "Lintang": "6.93 LU",
-  "Bujur": "126.66 BT",
-  "Magnitude": "6.9",
-  "Kedalaman": "56 km",
-  "Wilayah": "Pusat gempa berada di Mindanao",
+  "Jam": "19:08:35 WIB",
+  "DateTime": "2025-10-10T12:08:35+00:00",
+  "Coordinates": "-3.38,135.55",
+  "Lintang": "3.38 LS",
+  "Bujur": "135.55 BT",
+  "Magnitude": "3.0",
+  "Kedalaman": "25 km",
+  "Wilayah": "Pusat gempa berada di darat 5 km Tenggara Nabire",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III Naha",
-  "Shakemap": "20251010181212.mmi.jpg"
+  "Dirasakan": "",
+  "Shakemap": "20251010190835.mmi.jpg"
 }
