@@ -1,14 +1,14 @@
 {
   "Tanggal": "10 Okt 2025",
-  "Jam": "17:02:50 WIB",
-  "DateTime": "2025-10-10T10:02:50+00:00",
-  "Coordinates": "-7.09,129.68",
-  "Lintang": "7.09 LS",
-  "Bujur": "129.68 BT",
-  "Magnitude": "5.7",
-  "Kedalaman": "226 km",
-  "Wilayah": "205 km BaratLaut TANIMBAR",
-  "Potensi": "Tidak berpotensi tsunami",
-  "Dirasakan": "-",
-  "Shakemap": "20251010170523.mmi.jpg"
+  "Jam": "18:12:12 WIB",
+  "DateTime": "2025-10-10T11:12:12+00:00",
+  "Coordinates": "6.93,126.66",
+  "Lintang": "6.93 LU",
+  "Bujur": "126.66 BT",
+  "Magnitude": "6.9",
+  "Kedalaman": "56 km",
+  "Wilayah": "Pusat gempa berada di Mindanao",
+  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
+  "Dirasakan": "III Naha",
+  "Shakemap": "20251010181212.mmi.jpg"
 }
