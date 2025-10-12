@@ -1,14 +1,14 @@
 {
-  "Tanggal": "11 Okt 2025",
-  "Jam": "15:15:18 WIB",
-  "DateTime": "2025-10-11T08:15:18+00:00",
-  "Coordinates": "-6.69,107.79",
-  "Lintang": "6.69 LS",
-  "Bujur": "107.79 BT",
-  "Magnitude": "2.4",
-  "Kedalaman": "4 km",
-  "Wilayah": "Pusat gempa berada di darat 13 km tenggara Kabupaten Subang",
-  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II-III Ciater",
-  "Shakemap": "20251011151518.mmi.jpg"
+  "Tanggal": "12 Okt 2025",
+  "Jam": "10:00:34 WIB",
+  "DateTime": "2025-10-12T03:00:34+00:00",
+  "Coordinates": "-2.50,139.38",
+  "Lintang": "2.50 LS",
+  "Bujur": "139.38 BT",
+  "Magnitude": "5.3",
+  "Kedalaman": "20 km",
+  "Wilayah": "100 km Tenggara SARMI-PAPUA",
+  "Potensi": "Tidak berpotensi tsunami",
+  "Dirasakan": "-",
+  "Shakemap": "20251012100310.mmi.jpg"
 }
