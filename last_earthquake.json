@@ -1,14 +1,14 @@
 {
-  "Tanggal": "12 Okt 2025",
-  "Jam": "21:41:06 WIB",
-  "DateTime": "2025-10-12T14:41:06+00:00",
-  "Coordinates": "-4.75,122.64",
-  "Lintang": "4.75 LS",
-  "Bujur": "122.64 BT",
-  "Magnitude": "4.4",
-  "Kedalaman": "10 km",
-  "Wilayah": "Pusat gempa berada di darat 22 km TimurLaut Muna Barat",
+  "Tanggal": "13 Okt 2025",
+  "Jam": "05:08:58 WIB",
+  "DateTime": "2025-10-12T22:08:58+00:00",
+  "Coordinates": "-4.77,122.59",
+  "Lintang": "4.77 LS",
+  "Bujur": "122.59 BT",
+  "Magnitude": "4.6",
+  "Kedalaman": "5 km",
+  "Wilayah": "Pusat gempa berada di darat 16 km timurlaut Muna Barat",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III - IV Muna",
-  "Shakemap": "20251012214106.mmi.jpg"
+  "Dirasakan": "III - IV Muna Barat, III - IV Muna",
+  "Shakemap": "20251013050858.mmi.jpg"
 }
