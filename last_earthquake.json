@@ -1,14 +1,14 @@
 {
-  "Tanggal": "13 Okt 2025",
-  "Jam": "22:57:08 WIB",
-  "DateTime": "2025-10-13T15:57:08+00:00",
-  "Coordinates": "0.13,100.04",
-  "Lintang": "0.13 LU",
-  "Bujur": "100.04 BT",
-  "Magnitude": "3.2",
-  "Kedalaman": "4 km",
-  "Wilayah": "Pusat gempa berada di darat 12 km Tenggara Talu-Pasaman Barat",
+  "Tanggal": "15 Okt 2025",
+  "Jam": "00:03:02 WIB",
+  "DateTime": "2025-10-14T17:03:02+00:00",
+  "Coordinates": "-3.53,135.49",
+  "Lintang": "3.53 LS",
+  "Bujur": "135.49 BT",
+  "Magnitude": "2.9",
+  "Kedalaman": "10 km",
+  "Wilayah": "Pusat gempa berada di darat 19 km BaratDaya Nabire",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Lubuk Sikaping",
-  "Shakemap": "20251013225708.mmi.jpg"
+  "Dirasakan": "II Nabire",
+  "Shakemap": "20251015000302.mmi.jpg"
 }
