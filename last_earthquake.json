@@ -1,14 +1,14 @@
 {
-  "Tanggal": "16 Okt 2025",
-  "Jam": "23:01:43 WIB",
-  "DateTime": "2025-10-16T16:01:43+00:00",
-  "Coordinates": "-2.07,139.18",
-  "Lintang": "2.07 LS",
-  "Bujur": "139.18 BT",
-  "Magnitude": "5.0",
-  "Kedalaman": "10 km",
-  "Wilayah": "53 km Tenggara SARMI-PAPUA",
+  "Tanggal": "17 Okt 2025",
+  "Jam": "00:02:58 WIB",
+  "DateTime": "2025-10-16T17:02:58+00:00",
+  "Coordinates": "-1.91,139.21",
+  "Lintang": "1.91 LS",
+  "Bujur": "139.21 BT",
+  "Magnitude": "5.2",
+  "Kedalaman": "14 km",
+  "Wilayah": "51 km Tenggara SARMI-PAPUA",
   "Potensi": "Tidak berpotensi tsunami",
   "Dirasakan": "-",
-  "Shakemap": "20251016230429.mmi.jpg"
+  "Shakemap": "20251017000528.mmi.jpg"
 }
