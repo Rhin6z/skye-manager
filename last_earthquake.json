@@ -1,14 +1,14 @@
 {
   "Tanggal": "16 Okt 2025",
-  "Jam": "21:31:06 WIB",
-  "DateTime": "2025-10-16T14:31:06+00:00",
-  "Coordinates": "-1.91,138.91",
-  "Lintang": "1.91 LS",
-  "Bujur": "138.91 BT",
-  "Magnitude": "4.8",
-  "Kedalaman": "20 km",
-  "Wilayah": "Pusat gempa berada di laut 18 km Tenggara Sarmi",
-  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II-III Sarmi",
-  "Shakemap": "20251016213106.mmi.jpg"
+  "Jam": "23:01:43 WIB",
+  "DateTime": "2025-10-16T16:01:43+00:00",
+  "Coordinates": "-2.07,139.18",
+  "Lintang": "2.07 LS",
+  "Bujur": "139.18 BT",
+  "Magnitude": "5.0",
+  "Kedalaman": "10 km",
+  "Wilayah": "53 km Tenggara SARMI-PAPUA",
+  "Potensi": "Tidak berpotensi tsunami",
+  "Dirasakan": "-",
+  "Shakemap": "20251016230429.mmi.jpg"
 }
