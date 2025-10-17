@@ -1,14 +1,14 @@
 {
   "Tanggal": "17 Okt 2025",
-  "Jam": "09:30:14 WIB",
-  "DateTime": "2025-10-17T02:30:14+00:00",
-  "Coordinates": "-1.60,139.03",
-  "Lintang": "1.60 LS",
-  "Bujur": "139.03 BT",
-  "Magnitude": "3.0",
-  "Kedalaman": "10 km",
-  "Wilayah": "Pusat gempa berada di laut 43 km timur laut Sarmi",
+  "Jam": "10:06:20 WIB",
+  "DateTime": "2025-10-17T03:06:20+00:00",
+  "Coordinates": "-3.36,135.56",
+  "Lintang": "3.36 LS",
+  "Bujur": "135.56 BT",
+  "Magnitude": "3.9",
+  "Kedalaman": "25 km",
+  "Wilayah": "Pusat gempa berada di darat 6 km timur laut Nabire",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Sarmi",
-  "Shakemap": "20251017093014.mmi.jpg"
+  "Dirasakan": "II Nabire",
+  "Shakemap": "20251017100620.mmi.jpg"
 }
