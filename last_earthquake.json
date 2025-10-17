@@ -1,14 +1,14 @@
 {
   "Tanggal": "17 Okt 2025",
-  "Jam": "11:13:04 WIB",
-  "DateTime": "2025-10-17T04:13:04+00:00",
-  "Coordinates": "-2.21,139.05",
-  "Lintang": "2.21 LS",
-  "Bujur": "139.05 BT",
-  "Magnitude": "4.9",
-  "Kedalaman": "19 km",
-  "Wilayah": "Pusat gempa berada di darat 51 km Tenggara Sarmi",
+  "Jam": "16:32:18 WIB",
+  "DateTime": "2025-10-17T09:32:18+00:00",
+  "Coordinates": "-3.86,118.70",
+  "Lintang": "3.86 LS",
+  "Bujur": "118.70 BT",
+  "Magnitude": "4.2",
+  "Kedalaman": "10 km",
+  "Wilayah": "Pusat gempa berada di laut 75 km Barat Daya Polewali Mandar",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "IV Sarmi",
-  "Shakemap": "20251017111304.mmi.jpg"
+  "Dirasakan": "III Polewali Mandar",
+  "Shakemap": "20251017163218.mmi.jpg"
 }
