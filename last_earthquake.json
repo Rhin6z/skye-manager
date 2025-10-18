@@ -1,14 +1,14 @@
 {
-  "Tanggal": "17 Okt 2025",
-  "Jam": "16:32:18 WIB",
-  "DateTime": "2025-10-17T09:32:18+00:00",
-  "Coordinates": "-3.86,118.70",
-  "Lintang": "3.86 LS",
-  "Bujur": "118.70 BT",
-  "Magnitude": "4.2",
-  "Kedalaman": "10 km",
-  "Wilayah": "Pusat gempa berada di laut 75 km Barat Daya Polewali Mandar",
+  "Tanggal": "18 Okt 2025",
+  "Jam": "22:57:02 WIB",
+  "DateTime": "2025-10-18T15:57:02+00:00",
+  "Coordinates": "-8.11,114.78",
+  "Lintang": "8.11 LS",
+  "Bujur": "114.78 BT",
+  "Magnitude": "3.8",
+  "Kedalaman": "197 km",
+  "Wilayah": "Pusat gempa berada di laut 33 km Jembrana",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III Polewali Mandar",
-  "Shakemap": "20251017163218.mmi.jpg"
+  "Dirasakan": "II Kuta",
+  "Shakemap": "20251018225702.mmi.jpg"
 }
