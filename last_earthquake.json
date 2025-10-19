@@ -1,14 +1,14 @@
 {
   "Tanggal": "19 Okt 2025",
-  "Jam": "17:05:26 WIB",
-  "DateTime": "2025-10-19T10:05:26+00:00",
-  "Coordinates": "-1.93,138.88",
-  "Lintang": "1.93 LS",
-  "Bujur": "138.88 BT",
-  "Magnitude": "4.5",
-  "Kedalaman": "12 km",
-  "Wilayah": "Pusat gempa berada di laut 15 km tenggara Sarmi",
+  "Jam": "22:37:20 WIB",
+  "DateTime": "2025-10-19T15:37:20+00:00",
+  "Coordinates": "1.38,125.85",
+  "Lintang": "1.38 LU",
+  "Bujur": "125.85 BT",
+  "Magnitude": "4.9",
+  "Kedalaman": "21 km",
+  "Wilayah": "Pusat gempa berada di laut 81 km Tenggara Bitung",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Sarmi",
-  "Shakemap": "20251019170526.mmi.jpg"
+  "Dirasakan": "II-III Bitung, II-III MInahasa Utara, II-III Minahasa, II-III Tomohon, II Manado",
+  "Shakemap": "20251019223720.mmi.jpg"
 }
