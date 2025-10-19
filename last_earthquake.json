@@ -1,14 +1,14 @@
 {
   "Tanggal": "19 Okt 2025",
-  "Jam": "09:52:35 WIB",
-  "DateTime": "2025-10-19T02:52:35+00:00",
-  "Coordinates": "-1.73,139.04",
-  "Lintang": "1.73 LS",
-  "Bujur": "139.04 BT",
-  "Magnitude": "5.1",
-  "Kedalaman": "40 km",
-  "Wilayah": "35 km TimurLaut SARMI-PAPUA",
-  "Potensi": "Tidak berpotensi tsunami",
-  "Dirasakan": "-",
-  "Shakemap": "20251019095526.mmi.jpg"
+  "Jam": "13:53:21 WIB",
+  "DateTime": "2025-10-19T06:53:21+00:00",
+  "Coordinates": "-8.26,109.20",
+  "Lintang": "8.26 LS",
+  "Bujur": "109.20 BT",
+  "Magnitude": "4.5",
+  "Kedalaman": "30 km",
+  "Wilayah": "Pusat gempa berada di laut 63 km tenggara Cilacap",
+  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
+  "Dirasakan": "II-III Cilacap, II-III Kroya, II Baturaden , II Purworejo, II Bantul, II Kebumen",
+  "Shakemap": "20251019135321.mmi.jpg"
 }
