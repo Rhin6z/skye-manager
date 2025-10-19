@@ -1,14 +1,14 @@
 {
-  "Tanggal": "18 Okt 2025",
-  "Jam": "22:57:02 WIB",
-  "DateTime": "2025-10-18T15:57:02+00:00",
-  "Coordinates": "-8.11,114.78",
-  "Lintang": "8.11 LS",
-  "Bujur": "114.78 BT",
-  "Magnitude": "3.8",
-  "Kedalaman": "197 km",
-  "Wilayah": "Pusat gempa berada di laut 33 km Jembrana",
-  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Kuta",
-  "Shakemap": "20251018225702.mmi.jpg"
+  "Tanggal": "19 Okt 2025",
+  "Jam": "09:52:35 WIB",
+  "DateTime": "2025-10-19T02:52:35+00:00",
+  "Coordinates": "-1.73,139.04",
+  "Lintang": "1.73 LS",
+  "Bujur": "139.04 BT",
+  "Magnitude": "5.1",
+  "Kedalaman": "40 km",
+  "Wilayah": "35 km TimurLaut SARMI-PAPUA",
+  "Potensi": "Tidak berpotensi tsunami",
+  "Dirasakan": "-",
+  "Shakemap": "20251019095526.mmi.jpg"
 }
