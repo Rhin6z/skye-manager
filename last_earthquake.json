@@ -1,14 +1,14 @@
 {
-  "Tanggal": "19 Okt 2025",
-  "Jam": "22:37:20 WIB",
-  "DateTime": "2025-10-19T15:37:20+00:00",
-  "Coordinates": "1.38,125.85",
-  "Lintang": "1.38 LU",
-  "Bujur": "125.85 BT",
-  "Magnitude": "4.9",
-  "Kedalaman": "21 km",
-  "Wilayah": "Pusat gempa berada di laut 81 km Tenggara Bitung",
-  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II-III Bitung, II-III MInahasa Utara, II-III Minahasa, II-III Tomohon, II Manado",
-  "Shakemap": "20251019223720.mmi.jpg"
+  "Tanggal": "20 Okt 2025",
+  "Jam": "05:44:53 WIB",
+  "DateTime": "2025-10-19T22:44:53+00:00",
+  "Coordinates": "-7.40,130.80",
+  "Lintang": "7.40 LS",
+  "Bujur": "130.80 BT",
+  "Magnitude": "5.2",
+  "Kedalaman": "121 km",
+  "Wilayah": "84 km BaratLaut TANIMBAR",
+  "Potensi": "Tidak berpotensi tsunami",
+  "Dirasakan": "-",
+  "Shakemap": "20251020054734.mmi.jpg"
 }
