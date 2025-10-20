@@ -1,14 +1,14 @@
 {
   "Tanggal": "20 Okt 2025",
-  "Jam": "05:44:53 WIB",
-  "DateTime": "2025-10-19T22:44:53+00:00",
-  "Coordinates": "-7.40,130.80",
-  "Lintang": "7.40 LS",
-  "Bujur": "130.80 BT",
-  "Magnitude": "5.2",
-  "Kedalaman": "121 km",
-  "Wilayah": "84 km BaratLaut TANIMBAR",
-  "Potensi": "Tidak berpotensi tsunami",
-  "Dirasakan": "-",
-  "Shakemap": "20251020054734.mmi.jpg"
+  "Jam": "12:56:03 WIB",
+  "DateTime": "2025-10-20T05:56:03+00:00",
+  "Coordinates": "-9.27,119.86",
+  "Lintang": "9.27 LS",
+  "Bujur": "119.86 BT",
+  "Magnitude": "4.9",
+  "Kedalaman": "17 km",
+  "Wilayah": "Pusat gempa berada di laut 47 km barat laut Lewa, Sumba Timur",
+  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
+  "Dirasakan": "III Waingapu, III Kab. Bima, III Kota Bima",
+  "Shakemap": "20251020125603.mmi.jpg"
 }
