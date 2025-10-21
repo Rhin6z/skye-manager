@@ -1,14 +1,14 @@
 {
-  "Tanggal": "20 Okt 2025",
-  "Jam": "23:15:21 WIB",
-  "DateTime": "2025-10-20T16:15:21+00:00",
-  "Coordinates": "-1.76,138.96",
-  "Lintang": "1.76 LS",
-  "Bujur": "138.96 BT",
-  "Magnitude": "4.5",
-  "Kedalaman": "16 km",
-  "Wilayah": "Pusat gempa berada di laut 26 km timur laut Sarmi",
+  "Tanggal": "21 Okt 2025",
+  "Jam": "07:31:30 WIB",
+  "DateTime": "2025-10-21T00:31:30+00:00",
+  "Coordinates": "-8.29,120.34",
+  "Lintang": "8.29 LS",
+  "Bujur": "120.34 BT",
+  "Magnitude": "3.1",
+  "Kedalaman": "14 km",
+  "Wilayah": "Pusat gempa berada di darat 38 km barat laut Ruteng Manggarai",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III-IV Sarmi",
-  "Shakemap": "20251020231521.mmi.jpg"
+  "Dirasakan": "I-II Manggarai Timur",
+  "Shakemap": "20251021073130.mmi.jpg"
 }
