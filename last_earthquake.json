@@ -1,14 +1,14 @@
 {
   "Tanggal": "22 Okt 2025",
-  "Jam": "20:25:08 WIB",
-  "DateTime": "2025-10-22T13:25:08+00:00",
-  "Coordinates": "-0.79,127.53",
-  "Lintang": "0.79 LS",
-  "Bujur": "127.53 BT",
-  "Magnitude": "4.0",
-  "Kedalaman": "11 km",
-  "Wilayah": "Pusat gempa berada di darat 17 km tenggara Labuha",
+  "Jam": "22:07:57 WIB",
+  "DateTime": "2025-10-22T15:07:57+00:00",
+  "Coordinates": "5.38,94.76",
+  "Lintang": "5.38 LU",
+  "Bujur": "94.76 BT",
+  "Magnitude": "4.5",
+  "Kedalaman": "38 km",
+  "Wilayah": "Pusat gempa berada di laut 84 km Barat Daya Kota Sabang",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II-III Labuha",
-  "Shakemap": "20251022202508.mmi.jpg"
+  "Dirasakan": "II Banda Aceh, II Aceh Besar",
+  "Shakemap": "20251022220757.mmi.jpg"
 }
