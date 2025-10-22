@@ -1,14 +1,14 @@
 {
   "Tanggal": "22 Okt 2025",
-  "Jam": "16:07:13 WIB",
-  "DateTime": "2025-10-22T09:07:13+00:00",
-  "Coordinates": "-4.05,126.26",
-  "Lintang": "4.05 LS",
-  "Bujur": "126.26 BT",
-  "Magnitude": "4.8",
-  "Kedalaman": "12 km",
-  "Wilayah": "Pusat gempa berada di laut 59 km Barat Daya Namrole, Buru Selatan",
+  "Jam": "20:25:08 WIB",
+  "DateTime": "2025-10-22T13:25:08+00:00",
+  "Coordinates": "-0.79,127.53",
+  "Lintang": "0.79 LS",
+  "Bujur": "127.53 BT",
+  "Magnitude": "4.0",
+  "Kedalaman": "11 km",
+  "Wilayah": "Pusat gempa berada di darat 17 km tenggara Labuha",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Leksula",
-  "Shakemap": "20251022160713.mmi.jpg"
+  "Dirasakan": "II-III Labuha",
+  "Shakemap": "20251022202508.mmi.jpg"
 }
