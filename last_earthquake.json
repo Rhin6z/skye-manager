@@ -1,14 +1,14 @@
 {
-  "Tanggal": "23 Okt 2025",
-  "Jam": "18:46:12 WIB",
-  "DateTime": "2025-10-23T11:46:12+00:00",
-  "Coordinates": "-6.17,131.08",
-  "Lintang": "6.17 LS",
-  "Bujur": "131.08 BT",
-  "Magnitude": "6.1",
-  "Kedalaman": "117 km",
-  "Wilayah": "192 km BaratDaya MALUKUTENGGARA",
-  "Potensi": "Tidak berpotensi tsunami",
-  "Dirasakan": "-",
-  "Shakemap": "20251023184859.mmi.jpg"
+  "Tanggal": "24 Okt 2025",
+  "Jam": "03:12:11 WIB",
+  "DateTime": "2025-10-23T20:12:11+00:00",
+  "Coordinates": "-4.00,121.96",
+  "Lintang": "4.00 LS",
+  "Bujur": "121.96 BT",
+  "Magnitude": "3.0",
+  "Kedalaman": "5 km",
+  "Wilayah": "Pusat gempa berada di darat 4 km timur laut Kolaka Timur",
+  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
+  "Dirasakan": "III Kolaka Timur",
+  "Shakemap": "20251024031211.mmi.jpg"
 }
