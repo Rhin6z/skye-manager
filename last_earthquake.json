@@ -1,14 +1,14 @@
 {
   "Tanggal": "24 Okt 2025",
-  "Jam": "03:12:11 WIB",
-  "DateTime": "2025-10-23T20:12:11+00:00",
-  "Coordinates": "-4.00,121.96",
-  "Lintang": "4.00 LS",
-  "Bujur": "121.96 BT",
-  "Magnitude": "3.0",
-  "Kedalaman": "5 km",
-  "Wilayah": "Pusat gempa berada di darat 4 km timur laut Kolaka Timur",
+  "Jam": "08:52:03 WIB",
+  "DateTime": "2025-10-24T01:52:03+00:00",
+  "Coordinates": "-4.31,122.39",
+  "Lintang": "4.31 LS",
+  "Bujur": "122.39 BT",
+  "Magnitude": "3.3",
+  "Kedalaman": "10 km",
+  "Wilayah": "Pusat gempa berada di darat 9 km Barat Daya Konawe Selatan",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III Kolaka Timur",
-  "Shakemap": "20251024031211.mmi.jpg"
+  "Dirasakan": "III Andoolo, III Palangga",
+  "Shakemap": "20251024085203.mmi.jpg"
 }
