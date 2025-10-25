@@ -1,14 +1,14 @@
 {
-  "Tanggal": "24 Okt 2025",
-  "Jam": "11:46:36 WIB",
-  "DateTime": "2025-10-24T04:46:36+00:00",
-  "Coordinates": "-9.03,123.73",
-  "Lintang": "9.03 LS",
-  "Bujur": "123.73 BT",
-  "Magnitude": "5.3",
-  "Kedalaman": "108 km",
-  "Wilayah": "67 km Tenggara LEMBATA-NTT",
-  "Potensi": "Tidak berpotensi tsunami",
-  "Dirasakan": "-",
-  "Shakemap": "20251024114906.mmi.jpg"
+  "Tanggal": "26 Okt 2025",
+  "Jam": "10:59:17 WIB",
+  "DateTime": "2025-10-26T03:59:17+00:00",
+  "Coordinates": "-2.08,120.67",
+  "Lintang": "2.08 LS",
+  "Bujur": "120.67 BT",
+  "Magnitude": "4.5",
+  "Kedalaman": "5 km",
+  "Wilayah": "Pusat gempa berada di darat 76 km barat daya Poso",
+  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
+  "Dirasakan": "II Masamba, II-III Pamona",
+  "Shakemap": "20251026105917.mmi.jpg"
 }
