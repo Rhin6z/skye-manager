@@ -1,14 +1,14 @@
 {
-  "Tanggal": "25 Okt 2025",
-  "Jam": "11:56:27 WIB",
-  "DateTime": "2025-10-25T04:56:27+00:00",
-  "Coordinates": "4.43,96.51",
-  "Lintang": "4.43 LU",
-  "Bujur": "96.51 BT",
-  "Magnitude": "5.0",
-  "Kedalaman": "10 km",
-  "Wilayah": "Pusat gempa berada di darat 29 km timur laut Kab. Nagan Raya",
-  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III Nagan Raya, II-III Bener Meriah, II-III Aceh Tengah, II Aceh Selatan",
-  "Shakemap": "20251025115627.mmi.jpg"
+  "Tanggal": "27 Okt 2025",
+  "Jam": "00:04:28 WIB",
+  "DateTime": "2025-10-26T17:04:28+00:00",
+  "Coordinates": "-9.06,123.97",
+  "Lintang": "9.06 LS",
+  "Bujur": "123.97 BT",
+  "Magnitude": "6.3",
+  "Kedalaman": "75 km",
+  "Wilayah": "82 km BaratLaut TIMORTENGAHUT-NTT",
+  "Potensi": "Tidak berpotensi tsunami",
+  "Dirasakan": "-",
+  "Shakemap": "20251027000640.mmi.jpg"
 }
