@@ -1,14 +1,14 @@
 {
-  "Tanggal": "27 Okt 2025",
-  "Jam": "22:56:58 WIB",
-  "DateTime": "2025-10-27T15:56:58+00:00",
-  "Coordinates": "4.21,97.50",
-  "Lintang": "4.21 LU",
-  "Bujur": "97.50 BT",
-  "Magnitude": "4.3",
-  "Kedalaman": "6 km",
-  "Wilayah": "Pusat gempa berada di darat 29 km timur laut Kabupaten Gayo Lues",
-  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III Gayo Lues , II-III Aceh Selatan, II-III Bener Meriah, II Aceh Tengah, II Aceh Tamiang",
-  "Shakemap": "20251027225658.mmi.jpg"
+  "Tanggal": "28 Okt 2025",
+  "Jam": "06:35:15 WIB",
+  "DateTime": "2025-10-27T23:35:15+00:00",
+  "Coordinates": "4.89,96.06",
+  "Lintang": "4.89 LU",
+  "Bujur": "96.06 BT",
+  "Magnitude": "5.3",
+  "Kedalaman": "10 km",
+  "Wilayah": "26 km BaratDaya KAB-PIDIEJAYA-ACEH",
+  "Potensi": "Tidak berpotensi tsunami",
+  "Dirasakan": "-",
+  "Shakemap": "20251028063737.mmi.jpg"
 }
