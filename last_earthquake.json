@@ -1,14 +1,14 @@
 {
   "Tanggal": "28 Okt 2025",
-  "Jam": "06:35:15 WIB",
-  "DateTime": "2025-10-27T23:35:15+00:00",
-  "Coordinates": "4.89,96.06",
-  "Lintang": "4.89 LU",
-  "Bujur": "96.06 BT",
-  "Magnitude": "5.3",
+  "Jam": "08:31:20 WIB",
+  "DateTime": "2025-10-28T01:31:20+00:00",
+  "Coordinates": "1.43,121.77",
+  "Lintang": "1.43 LU",
+  "Bujur": "121.77 BT",
+  "Magnitude": "5.5",
   "Kedalaman": "10 km",
-  "Wilayah": "26 km BaratDaya KAB-PIDIEJAYA-ACEH",
+  "Wilayah": "68 km TimurLaut BUOL-SULTENG",
   "Potensi": "Tidak berpotensi tsunami",
   "Dirasakan": "-",
-  "Shakemap": "20251028063737.mmi.jpg"
+  "Shakemap": "20251028083345.mmi.jpg"
 }
