@@ -1,14 +1,14 @@
 {
   "Tanggal": "28 Okt 2025",
-  "Jam": "16:23:53 WIB",
-  "DateTime": "2025-10-28T09:23:53+00:00",
-  "Coordinates": "2.38,96.96",
-  "Lintang": "2.38 LU",
-  "Bujur": "96.96 BT",
-  "Magnitude": "4.1",
-  "Kedalaman": "11 km",
-  "Wilayah": "Pusat gempa berada di laut 66 km Tenggara Sinabang",
-  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II-III Sinabang",
-  "Shakemap": "20251028162353.mmi.jpg"
+  "Jam": "21:40:18 WIB",
+  "DateTime": "2025-10-28T14:40:18+00:00",
+  "Coordinates": "-6.81,130.13",
+  "Lintang": "6.81 LS",
+  "Bujur": "130.13 BT",
+  "Magnitude": "6.8",
+  "Kedalaman": "185 km",
+  "Wilayah": "183 km BaratLaut TANIMBAR",
+  "Potensi": "Tidak berpotensi tsunami",
+  "Dirasakan": "-",
+  "Shakemap": "20251028214313.mmi.jpg"
 }
