@@ -1,14 +1,14 @@
 {
   "Tanggal": "28 Okt 2025",
-  "Jam": "08:31:20 WIB",
-  "DateTime": "2025-10-28T01:31:20+00:00",
-  "Coordinates": "1.43,121.77",
-  "Lintang": "1.43 LU",
-  "Bujur": "121.77 BT",
-  "Magnitude": "5.5",
-  "Kedalaman": "10 km",
-  "Wilayah": "68 km TimurLaut BUOL-SULTENG",
-  "Potensi": "Tidak berpotensi tsunami",
-  "Dirasakan": "-",
-  "Shakemap": "20251028083345.mmi.jpg"
+  "Jam": "16:23:53 WIB",
+  "DateTime": "2025-10-28T09:23:53+00:00",
+  "Coordinates": "2.38,96.96",
+  "Lintang": "2.38 LU",
+  "Bujur": "96.96 BT",
+  "Magnitude": "4.1",
+  "Kedalaman": "11 km",
+  "Wilayah": "Pusat gempa berada di laut 66 km Tenggara Sinabang",
+  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
+  "Dirasakan": "II-III Sinabang",
+  "Shakemap": "20251028162353.mmi.jpg"
 }
