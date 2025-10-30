@@ -1,14 +1,14 @@
 {
   "Tanggal": "30 Okt 2025",
-  "Jam": "10:38:59 WIB",
-  "DateTime": "2025-10-30T03:38:59+00:00",
-  "Coordinates": "-3.14,128.25",
-  "Lintang": "3.14 LS",
-  "Bujur": "128.25 BT",
-  "Magnitude": "3.3",
-  "Kedalaman": "5 km",
-  "Wilayah": "Pusat gempa berada di 10 km barat laut Kairatu Barat",
-  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III-IV Piru",
-  "Shakemap": "20251030103859.mmi.jpg"
+  "Jam": "15:04:02 WIB",
+  "DateTime": "2025-10-30T08:04:02+00:00",
+  "Coordinates": "-2.68,139.44",
+  "Lintang": "2.68 LS",
+  "Bujur": "139.44 BT",
+  "Magnitude": "5.3",
+  "Kedalaman": "52 km",
+  "Wilayah": "107 km BaratDaya KAB-JAYAPURA-PAPUA",
+  "Potensi": "Tidak berpotensi tsunami",
+  "Dirasakan": "-",
+  "Shakemap": "20251030150701.mmi.jpg"
 }
