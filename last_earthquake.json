@@ -1,14 +1,14 @@
 {
-  "Tanggal": "28 Okt 2025",
-  "Jam": "21:40:18 WIB",
-  "DateTime": "2025-10-28T14:40:18+00:00",
-  "Coordinates": "-6.81,130.13",
-  "Lintang": "6.81 LS",
-  "Bujur": "130.13 BT",
-  "Magnitude": "6.8",
-  "Kedalaman": "185 km",
-  "Wilayah": "183 km BaratLaut TANIMBAR",
-  "Potensi": "Tidak berpotensi tsunami",
-  "Dirasakan": "-",
-  "Shakemap": "20251028214313.mmi.jpg"
+  "Tanggal": "30 Okt 2025",
+  "Jam": "10:38:59 WIB",
+  "DateTime": "2025-10-30T03:38:59+00:00",
+  "Coordinates": "-3.14,128.25",
+  "Lintang": "3.14 LS",
+  "Bujur": "128.25 BT",
+  "Magnitude": "3.3",
+  "Kedalaman": "5 km",
+  "Wilayah": "Pusat gempa berada di 10 km barat laut Kairatu Barat",
+  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
+  "Dirasakan": "III-IV Piru",
+  "Shakemap": "20251030103859.mmi.jpg"
 }
