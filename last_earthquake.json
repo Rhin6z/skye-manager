@@ -1,14 +1,14 @@
 {
-  "Tanggal": "31 Okt 2025",
-  "Jam": "16:54:07 WIB",
-  "DateTime": "2025-10-31T09:54:07+00:00",
-  "Coordinates": "2.70,117.70",
-  "Lintang": "2.70 LU",
-  "Bujur": "117.70 BT",
-  "Magnitude": "4.0",
-  "Kedalaman": "5 km",
-  "Wilayah": "Pusat gempa berada di darat 73 km tenggara Tarakan",
-  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "I-II Tanjung Selor",
-  "Shakemap": "20251031165407.mmi.jpg"
+  "Tanggal": "01 Nov 2025",
+  "Jam": "00:02:21 WIB",
+  "DateTime": "2025-10-31T17:02:21+00:00",
+  "Coordinates": "-6.11,133.20",
+  "Lintang": "6.11 LS",
+  "Bujur": "133.20 BT",
+  "Magnitude": "5.1",
+  "Kedalaman": "55 km",
+  "Wilayah": "71 km Tenggara MALUKUTENGGARA",
+  "Potensi": "Tidak berpotensi tsunami",
+  "Dirasakan": "-",
+  "Shakemap": "20251101000458.mmi.jpg"
 }
