@@ -1,14 +1,14 @@
 {
   "Tanggal": "01 Nov 2025",
-  "Jam": "00:02:21 WIB",
-  "DateTime": "2025-10-31T17:02:21+00:00",
-  "Coordinates": "-6.11,133.20",
-  "Lintang": "6.11 LS",
-  "Bujur": "133.20 BT",
-  "Magnitude": "5.1",
-  "Kedalaman": "55 km",
-  "Wilayah": "71 km Tenggara MALUKUTENGGARA",
+  "Jam": "06:20:57 WIB",
+  "DateTime": "2025-10-31T23:20:57+00:00",
+  "Coordinates": "-4.44,134.07",
+  "Lintang": "4.44 LS",
+  "Bujur": "134.07 BT",
+  "Magnitude": "5.0",
+  "Kedalaman": "10 km",
+  "Wilayah": "128 km Tenggara KAIMANA-PAPUABRT",
   "Potensi": "Tidak berpotensi tsunami",
   "Dirasakan": "-",
-  "Shakemap": "20251101000458.mmi.jpg"
+  "Shakemap": "20251101062342.mmi.jpg"
 }
