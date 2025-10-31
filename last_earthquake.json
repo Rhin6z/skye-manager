@@ -1,14 +1,14 @@
 {
-  "Tanggal": "30 Okt 2025",
-  "Jam": "19:08:04 WIB",
-  "DateTime": "2025-10-30T12:08:04+00:00",
-  "Coordinates": "-6.69,105.20",
-  "Lintang": "6.69 LS",
-  "Bujur": "105.20 BT",
-  "Magnitude": "4.0",
-  "Kedalaman": "21 km",
-  "Wilayah": "Pusat gempa berada di laut 41 km barat daya Sumur",
+  "Tanggal": "31 Okt 2025",
+  "Jam": "15:51:22 WIB",
+  "DateTime": "2025-10-31T08:51:22+00:00",
+  "Coordinates": "-7.11,109.92",
+  "Lintang": "7.11 LS",
+  "Bujur": "109.92 BT",
+  "Magnitude": "3.4",
+  "Kedalaman": "10 km",
+  "Wilayah": "Pusat gempa berada di darat 28 km timur laut Wonosobo",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Sumur",
-  "Shakemap": "20251030190804.mmi.jpg"
+  "Dirasakan": "II Dieng, II Batang",
+  "Shakemap": "20251031155122.mmi.jpg"
 }
