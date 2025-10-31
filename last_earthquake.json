@@ -1,14 +1,14 @@
 {
   "Tanggal": "31 Okt 2025",
-  "Jam": "15:51:22 WIB",
-  "DateTime": "2025-10-31T08:51:22+00:00",
-  "Coordinates": "-7.11,109.92",
-  "Lintang": "7.11 LS",
-  "Bujur": "109.92 BT",
-  "Magnitude": "3.4",
-  "Kedalaman": "10 km",
-  "Wilayah": "Pusat gempa berada di darat 28 km timur laut Wonosobo",
+  "Jam": "16:54:07 WIB",
+  "DateTime": "2025-10-31T09:54:07+00:00",
+  "Coordinates": "2.70,117.70",
+  "Lintang": "2.70 LU",
+  "Bujur": "117.70 BT",
+  "Magnitude": "4.0",
+  "Kedalaman": "5 km",
+  "Wilayah": "Pusat gempa berada di darat 73 km tenggara Tarakan",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II Dieng, II Batang",
-  "Shakemap": "20251031155122.mmi.jpg"
+  "Dirasakan": "I-II Tanjung Selor",
+  "Shakemap": "20251031165407.mmi.jpg"
 }
