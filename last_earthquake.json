@@ -1,14 +1,14 @@
 {
-  "Tanggal": "01 Nov 2025",
-  "Jam": "12:26:34 WIB",
-  "DateTime": "2025-11-01T05:26:34+00:00",
-  "Coordinates": "-3.44,102.44",
-  "Lintang": "3.44 LS",
-  "Bujur": "102.44 BT",
-  "Magnitude": "3.7",
-  "Kedalaman": "6 km",
-  "Wilayah": "Pusat gempa berada di darat 10 km Barat Laut Rejang Lebong",
+  "Tanggal": "02 Nov 2025",
+  "Jam": "00:04:19 WIB",
+  "DateTime": "2025-11-01T17:04:19+00:00",
+  "Coordinates": "-7.16,107.63",
+  "Lintang": "7.16 LS",
+  "Bujur": "107.63 BT",
+  "Magnitude": "3.0",
+  "Kedalaman": "4 km",
+  "Wilayah": "Pusat gempa berada di darat 19 km tenggara Bandung",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III Rejang Lebong",
-  "Shakemap": "20251101122634.mmi.jpg"
+  "Dirasakan": "III Kertasari, III Pangalengan",
+  "Shakemap": "20251102000419.mmi.jpg"
 }
