@@ -1,14 +1,14 @@
 {
   "Tanggal": "01 Nov 2025",
-  "Jam": "11:32:33 WIB",
-  "DateTime": "2025-11-01T04:32:33+00:00",
-  "Coordinates": "-1.64,139.44",
-  "Lintang": "1.64 LS",
-  "Bujur": "139.44 BT",
-  "Magnitude": "5.3",
-  "Kedalaman": "10 km",
-  "Wilayah": "80 km TimurLaut SARMI-PAPUA",
-  "Potensi": "Tidak berpotensi tsunami",
-  "Dirasakan": "-",
-  "Shakemap": "20251101113504.mmi.jpg"
+  "Jam": "12:26:34 WIB",
+  "DateTime": "2025-11-01T05:26:34+00:00",
+  "Coordinates": "-3.44,102.44",
+  "Lintang": "3.44 LS",
+  "Bujur": "102.44 BT",
+  "Magnitude": "3.7",
+  "Kedalaman": "6 km",
+  "Wilayah": "Pusat gempa berada di darat 10 km Barat Laut Rejang Lebong",
+  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
+  "Dirasakan": "III Rejang Lebong",
+  "Shakemap": "20251101122634.mmi.jpg"
 }
