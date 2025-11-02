@@ -1,14 +1,14 @@
 {
   "Tanggal": "02 Nov 2025",
-  "Jam": "04:00:08 WIB",
-  "DateTime": "2025-11-01T21:00:08+00:00",
-  "Coordinates": "3.94,95.93",
-  "Lintang": "3.94 LU",
-  "Bujur": "95.93 BT",
-  "Magnitude": "4.9",
-  "Kedalaman": "28 km",
-  "Wilayah": "Pusat gempa berada di laut 31 km barat daya Meulaboh, Aceh Barat",
-  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III-IV Meulaboh, III Aceh Barat Daya, III Calang, II-III Tapak Tuan, II Aceh Selatan, II Sigli",
-  "Shakemap": "20251102040008.mmi.jpg"
+  "Jam": "10:09:21 WIB",
+  "DateTime": "2025-11-02T03:09:21+00:00",
+  "Coordinates": "-7.79,127.81",
+  "Lintang": "7.79 LS",
+  "Bujur": "127.81 BT",
+  "Magnitude": "5.5",
+  "Kedalaman": "139 km",
+  "Wilayah": "40 km TimurLaut MALUKUBRTDAYA",
+  "Potensi": "Tidak berpotensi tsunami",
+  "Dirasakan": "-",
+  "Shakemap": "20251102101212.mmi.jpg"
 }
