@@ -1,14 +1,14 @@
 {
-  "Tanggal": "02 Nov 2025",
-  "Jam": "13:47:31 WIB",
-  "DateTime": "2025-11-02T06:47:31+00:00",
-  "Coordinates": "-4.02,121.83",
-  "Lintang": "4.02 LS",
-  "Bujur": "121.83 BT",
-  "Magnitude": "2.9",
-  "Kedalaman": "17 km",
-  "Wilayah": "Pusat gempa berada di darat 10 km barat daya Kolaka Timur",
-  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II-III Kolaka Timur",
-  "Shakemap": "20251102134731.mmi.jpg"
+  "Tanggal": "03 Nov 2025",
+  "Jam": "11:21:24 WIB",
+  "DateTime": "2025-11-03T04:21:24+00:00",
+  "Coordinates": "5.11,125.37",
+  "Lintang": "5.11 LU",
+  "Bujur": "125.37 BT",
+  "Magnitude": "5.3",
+  "Kedalaman": "10 km",
+  "Wilayah": "167 km BaratLaut TAHUNA-KEP.SANGIHE-SULUT",
+  "Potensi": "Tidak berpotensi tsunami",
+  "Dirasakan": "-",
+  "Shakemap": "20251103112357.mmi.jpg"
 }
