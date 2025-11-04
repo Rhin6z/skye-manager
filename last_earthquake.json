@@ -1,14 +1,14 @@
 {
   "Tanggal": "04 Nov 2025",
-  "Jam": "17:04:36 WIB",
-  "DateTime": "2025-11-04T10:04:36+00:00",
-  "Coordinates": "-7.19,107.60",
-  "Lintang": "7.19 LS",
-  "Bujur": "107.60 BT",
-  "Magnitude": "3.6",
-  "Kedalaman": "10 km",
-  "Wilayah": "Pusat gempa berada di darat 20 km Tenggara Kab. Bandung",
-  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "III Kec. Pangalengan",
-  "Shakemap": "20251104170436.mmi.jpg"
+  "Jam": "22:58:26 WIB",
+  "DateTime": "2025-11-04T15:58:26+00:00",
+  "Coordinates": "1.88,127.06",
+  "Lintang": "1.88 LU",
+  "Bujur": "127.06 BT",
+  "Magnitude": "5.1",
+  "Kedalaman": "20 km",
+  "Wilayah": "83 km BaratLaut HALMAHERABARAT-MALUT",
+  "Potensi": "Tidak berpotensi tsunami",
+  "Dirasakan": "-",
+  "Shakemap": "20251104230105.mmi.jpg"
 }
