@@ -1,14 +1,14 @@
 {
-  "Tanggal": "03 Nov 2025",
-  "Jam": "11:21:24 WIB",
-  "DateTime": "2025-11-03T04:21:24+00:00",
-  "Coordinates": "5.11,125.37",
-  "Lintang": "5.11 LU",
-  "Bujur": "125.37 BT",
-  "Magnitude": "5.3",
-  "Kedalaman": "10 km",
-  "Wilayah": "167 km BaratLaut TAHUNA-KEP.SANGIHE-SULUT",
-  "Potensi": "Tidak berpotensi tsunami",
-  "Dirasakan": "-",
-  "Shakemap": "20251103112357.mmi.jpg"
+  "Tanggal": "04 Nov 2026",
+  "Jam": "16:23:11 WIB",
+  "DateTime": "2026-11-04T09:23:11+00:00",
+  "Coordinates": "-0.54,119.72",
+  "Lintang": "0.54 LS",
+  "Bujur": "119.72 BT",
+  "Magnitude": "4.6",
+  "Kedalaman": "23 km",
+  "Wilayah": "Pusat gempa berada di laut 18 km barat daya Donggala",
+  "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
+  "Dirasakan": "III Palu",
+  "Shakemap": "20261104162311.mmi.jpg"
 }
