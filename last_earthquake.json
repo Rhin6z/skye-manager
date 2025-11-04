@@ -1,14 +1,14 @@
 {
-  "Tanggal": "04 Nov 2025",
-  "Jam": "22:58:26 WIB",
-  "DateTime": "2025-11-04T15:58:26+00:00",
-  "Coordinates": "1.88,127.06",
-  "Lintang": "1.88 LU",
-  "Bujur": "127.06 BT",
-  "Magnitude": "5.1",
-  "Kedalaman": "20 km",
-  "Wilayah": "83 km BaratLaut HALMAHERABARAT-MALUT",
+  "Tanggal": "05 Nov 2025",
+  "Jam": "06:32:24 WIB",
+  "DateTime": "2025-11-04T23:32:24+00:00",
+  "Coordinates": "-0.11,123.13",
+  "Lintang": "0.11 LS",
+  "Bujur": "123.13 BT",
+  "Magnitude": "6.2",
+  "Kedalaman": "103 km",
+  "Wilayah": "71 km BaratDaya BONEBOLANGO-GORONTALO",
   "Potensi": "Tidak berpotensi tsunami",
   "Dirasakan": "-",
-  "Shakemap": "20251104230105.mmi.jpg"
+  "Shakemap": "20251105063457.mmi.jpg"
 }
