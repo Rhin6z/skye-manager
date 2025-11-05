@@ -1,14 +1,14 @@
 {
   "Tanggal": "05 Nov 2025",
-  "Jam": "17:37:11 WIB",
-  "DateTime": "2025-11-05T10:37:11+00:00",
-  "Coordinates": "3.33,117.82",
-  "Lintang": "3.33 LU",
-  "Bujur": "117.82 BT",
-  "Magnitude": "4.8",
-  "Kedalaman": "10 km",
-  "Wilayah": "Pusat gempa berada di laut 24 km tenggara Tarakan",
+  "Jam": "22:21:05 WIB",
+  "DateTime": "2025-11-05T15:21:05+00:00",
+  "Coordinates": "3.29,117.75",
+  "Lintang": "3.29 LU",
+  "Bujur": "117.75 BT",
+  "Magnitude": "2.7",
+  "Kedalaman": "3 km",
+  "Wilayah": "Pusat gempa berada di laut 18 km Tenggara Tarakan",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "IV-V Tarakan, III-IV Tanjung Selor, III-IV Berau, III-IV Nunukan",
-  "Shakemap": "20251105173711.mmi.jpg"
+  "Dirasakan": "II-III Kota Tarakan",
+  "Shakemap": "20251105222105.mmi.jpg"
 }
