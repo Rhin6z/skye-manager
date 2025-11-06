@@ -1,14 +1,14 @@
 {
-  "Tanggal": "05 Nov 2025",
-  "Jam": "23:56:09 WIB",
-  "DateTime": "2025-11-05T16:56:09+00:00",
-  "Coordinates": "-4.29,122.51",
-  "Lintang": "4.29 LS",
-  "Bujur": "122.51 BT",
-  "Magnitude": "2.3",
-  "Kedalaman": "3 km",
-  "Wilayah": "Pusat gempa berada di darat 36 km timur Konawe Selatan",
+  "Tanggal": "07 Nov 2025",
+  "Jam": "05:28:29 WIB",
+  "DateTime": "2025-11-06T22:28:29+00:00",
+  "Coordinates": "3.30,117.73",
+  "Lintang": "3.30 LU",
+  "Bujur": "117.73 BT",
+  "Magnitude": "2.8",
+  "Kedalaman": "5 km",
+  "Wilayah": "Pusat gempa berada di laut 15 km Tenggara Tarakan",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II-III Laeya",
-  "Shakemap": "20251105235609.mmi.jpg"
+  "Dirasakan": "II-III Tarakan",
+  "Shakemap": "20251107052829.mmi.jpg"
 }
