@@ -1,14 +1,14 @@
 {
   "Tanggal": "07 Nov 2025",
-  "Jam": "05:28:29 WIB",
-  "DateTime": "2025-11-06T22:28:29+00:00",
-  "Coordinates": "3.30,117.73",
-  "Lintang": "3.30 LU",
-  "Bujur": "117.73 BT",
-  "Magnitude": "2.8",
-  "Kedalaman": "5 km",
-  "Wilayah": "Pusat gempa berada di laut 15 km Tenggara Tarakan",
+  "Jam": "15:02:26 WIB",
+  "DateTime": "2025-11-07T08:02:26+00:00",
+  "Coordinates": "-3.36,135.63",
+  "Lintang": "3.36 LS",
+  "Bujur": "135.63 BT",
+  "Magnitude": "3.6",
+  "Kedalaman": "17 km",
+  "Wilayah": "Pusat gempa berada di darat 13 km Timur Laut Nabire",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "II-III Tarakan",
-  "Shakemap": "20251107052829.mmi.jpg"
+  "Dirasakan": "III Nabire",
+  "Shakemap": "20251107150226.mmi.jpg"
 }
