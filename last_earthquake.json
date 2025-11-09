@@ -1,14 +1,14 @@
 {
-  "Tanggal": "08 Nov 2025",
-  "Jam": "15:56:36 WIB",
-  "DateTime": "2025-11-08T08:56:36+00:00",
-  "Coordinates": "3.31,117.67",
-  "Lintang": "3.31 LU",
-  "Bujur": "117.67 BT",
-  "Magnitude": "4.4",
-  "Kedalaman": "10 km",
-  "Wilayah": "Pusat gempa berada di laut 9 km tenggara Tarakan",
+  "Tanggal": "09 Nov 2025",
+  "Jam": "10:01:33 WIB",
+  "DateTime": "2025-11-09T03:01:33+00:00",
+  "Coordinates": "-6.84,108.22",
+  "Lintang": "6.84 LS",
+  "Bujur": "108.22 BT",
+  "Magnitude": "3.1",
+  "Kedalaman": "14 km",
+  "Wilayah": "Pusat gempa berada di darat 0 km baratdaya Kab. Majalengka",
   "Potensi": "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-  "Dirasakan": "IV-V Tarakan, III-IV Tanjung Selor, III-IV Tana Tidung, III Nunukan, II-III Tanjung Redep",
-  "Shakemap": "20251108155636.mmi.jpg"
+  "Dirasakan": "III Majalengka",
+  "Shakemap": "20251109100133.mmi.jpg"
 }
